@@ -23,7 +23,7 @@ public:
     virtual void onMouseClick(){}
     virtual void onItemDrag(const string &itemId, const string &objId){};
     virtual void onItemClick(const string &itemId, const string &objId){};
-    virtual void onItemChange(const string &itemId, const string &objId){PrintFormat("onItemChange");};
+    virtual void onItemChange(const string &itemId, const string &objId){};
     virtual void onItemDeleted(const string &itemId, const string &objId){};
 
 protected:
