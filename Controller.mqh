@@ -1,12 +1,16 @@
 #include "Base/BaseItem.mqh"
 #include "DrawingTool/Line.mqh"
 #include "DrawingTool/HLine.mqh"
+#include "InfoItem/MouseInfo.mqh"
 
 #define NOT_ACTIVE -1
-#define NOT_ACTIVE_RETURN if(mActive == NOT_ACTIVE){return;}
+#define CHECK_NOT_ACTIVE_RETURN if(mActive == NOT_ACTIVE){return;}
+#define CHECK_ACTIVE_RETURN if(mActive != NOT_ACTIVE){return;}
 
 #define LINE_IDX 0
 #define HLINE_IDX 1
+
+#define ITEM_LINE "Line"
 
 class Controller
 {
@@ -14,13 +18,14 @@ private:
     BaseItem* mListItem[10];
     int mActive;
     FinishedJob mFinishedJobCb;
+    MouseInfo* pMouseInfo;
 
 private:
-    void activeItemByKey(const int key);
-    void activeItemByName(const string& name);
+    int findItemIdByKey(const int key);
+    int findItemIdByName(const string& name);
 
 public:
-    Controller(CommonData* commonData);
+    Controller(CommonData* commonData, MouseInfo* mouseInfo);
 
 public:
     void handleKeyEvent(const long &key);
@@ -30,10 +35,11 @@ public:
     void finishedJob();
 };
 
-void Controller::Controller(CommonData* commonData)
+void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
 {
+    pMouseInfo = mouseInfo;
     mActive = NOT_ACTIVE;
-    mListItem[LINE_IDX] = new Line("Line", commonData);
+    mListItem[LINE_IDX] = new Line(ITEM_LINE, commonData, mouseInfo);
     // mListItem[HLINE_IDX] = new HLine();
 }
 
@@ -45,38 +51,61 @@ void Controller::setFinishedJobCB(FinishedJob cb)
 
 void Controller::finishedJob()
 {
+    pMouseInfo.setText("");
     mActive = NOT_ACTIVE;
 }
 
-void Controller::activeItemByKey(const int key)
-{}
+int Controller::findItemIdByKey(const int key)
+{
+    if (key == 'L')
+    {
+        return LINE_IDX;
+    }
+    return NOT_ACTIVE;
+}
 
-void Controller::activeItemByName(const string& name)
-{}
+int Controller::findItemIdByName(const string& name)
+{
+    if (name == ITEM_LINE)
+    {
+        return LINE_IDX;
+    }
+    return NOT_ACTIVE;
+}
 
 void Controller::handleKeyEvent(const long &key)
 {
-    PrintFormat("handleKeyEvent %c", key);
+    PrintFormat("handleKeyEvent %c %d", key, key);
+
+    // S1: handle functional Key
     switch ((int)key)
     {
-    case 'L':
-        mActive = LINE_IDX;
-        break;
-    // case 'A':
-    //     mActive = HLINE_IDX;
-    //     break;
     case 27:
-        mActive = NOT_ACTIVE; 
+        finishedJob();
         break;
     }
-    NOT_ACTIVE_RETURN
+
+    // S2: Active drawing tool
+    int activeTarget = findItemIdByKey((int)key);
+    if (activeTarget == NOT_ACTIVE)
+    {
+        return;
+    }
+    if (activeTarget == mActive)
+    {
+        // TODO: change charactise
+        mListItem[mActive].changeActiveType();
+        return;
+    }
+    CHECK_ACTIVE_RETURN
+    mActive = activeTarget;
     
     mListItem[mActive].startActivate(mFinishedJobCb);
 }
 
 void Controller::handleIdEventOnly(const int id)
 {
-    NOT_ACTIVE_RETURN
+    CHECK_NOT_ACTIVE_RETURN
 
     switch (id)
     {
@@ -92,7 +121,7 @@ void Controller::handleIdEventOnly(const int id)
 
 void Controller::handleSparamEvent(const int id, const string& sparam)
 {
-    NOT_ACTIVE_RETURN
+    CHECK_ACTIVE_RETURN
 
     string sparamItems[];
     int k=StringSplit(sparam,'_',sparamItems);
@@ -100,23 +129,27 @@ void Controller::handleSparamEvent(const int id, const string& sparam)
     {
         return;
     }
-    activeItemByName(sparamItems[0]);
-    string objId = sparamItems[0] + "_" + sparamItems[1];
-    mListItem[mActive].activateObject(objId);
+    int receiverItem = findItemIdByName(sparamItems[0]);
+    if (receiverItem == NOT_ACTIVE)
+    {
+        return;
+    }
+
+    string itemId = sparamItems[0] + "_" + sparamItems[1];
+    mListItem[receiverItem].activateItem(itemId);
     switch (id)
     {
     case CHARTEVENT_OBJECT_DELETE:
-        mListItem[mActive].onObjectDeleted(objId);
+        mListItem[receiverItem].onItemDeleted(itemId, sparam);
         break;
     case CHARTEVENT_OBJECT_DRAG:
-        mListItem[mActive].onObjectDrag(objId);
+        mListItem[receiverItem].onItemDrag(itemId, sparam);
         break;
     case CHARTEVENT_OBJECT_CHANGE:
-        mListItem[mActive].onObjectChange(objId);
+        mListItem[receiverItem].onItemChange(itemId, sparam);
         break;
     case CHARTEVENT_OBJECT_CLICK:
-        mListItem[mActive].onObjectClick(objId);
+        mListItem[receiverItem].onItemClick(itemId, sparam);
         break;
     }
-    mListItem[mActive].refreshData();
 }

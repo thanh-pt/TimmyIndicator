@@ -2,11 +2,15 @@
 
 #include "Controller.mqh"
 #include "CommonData.mqh"
+#include "InfoItem/CrossHair.mqh"
+#include "InfoItem/MouseInfo.mqh"
 
 void FinishedJobFunc();
 
 CommonData gCommonData;
-Controller gController(&gCommonData);
+CrossHair  gCrossHair(&gCommonData);
+MouseInfo  gMouseInfo(&gCommonData);
+Controller gController(&gCommonData, &gMouseInfo);
 
 int OnInit()
 {
@@ -40,6 +44,12 @@ void OnChartEvent(const int id,
     break;
 
     case CHARTEVENT_MOUSE_MOVE:
+    {
+        int option = StrToInteger(sparam);
+        gCommonData.updateMousePosition(lparam, dparam, option);
+        gCrossHair.onMouseMove();
+        gMouseInfo.onMouseMove();
+    }
     case CHARTEVENT_CLICK:
         gController.handleIdEventOnly(id);
         break;
@@ -47,6 +57,8 @@ void OnChartEvent(const int id,
     // event need sparam
     case CHARTEVENT_OBJECT_CLICK:
     case CHARTEVENT_OBJECT_DELETE:
+        gCrossHair.onObjectDeleted(sparam);
+        gMouseInfo.onObjectDeleted(sparam);
     case CHARTEVENT_OBJECT_DRAG:
     case CHARTEVENT_OBJECT_CHANGE:
         gController.handleSparamEvent(id, sparam);
