@@ -172,3 +172,8 @@ void Line::onMouseMove()
     time2  = pCommonData.mMouseTime;
     refreshData();
 }
+void Line::onItemDeleted(const string &itemId, const string &objId)
+{
+    ObjectDelete(cMainLine);
+    ObjectDelete(cText    );
+}

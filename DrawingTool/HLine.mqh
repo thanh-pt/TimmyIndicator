@@ -199,4 +199,8 @@ void HLine::onItemDrag(const string &itemId, const string &objId)
 }
 void HLine::onItemClick(const string &itemId, const string &objId){}
 void HLine::onItemChange(const string &itemId, const string &objId){}
-void HLine::onItemDeleted(const string &itemId, const string &objId){}
+void HLine::onItemDeleted(const string &itemId, const string &objId)
+{
+    ObjectDelete(cMainLine);
+    ObjectDelete(cText    );
+}
