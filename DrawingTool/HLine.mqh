@@ -26,10 +26,12 @@ private:
     ENUM_LINE_STYLE     mStyleType[MAX_TYPE];
     string              mText_Type[MAX_TYPE];
     ENUM_ANCHOR_POINT   mAnchrType[MAX_TYPE];
+
 // Component name
 private:
     string cMainLine;
     string cText    ;
+
 // Value define for Item
 private:
     double price;

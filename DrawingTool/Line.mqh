@@ -2,24 +2,30 @@
 #include "../Utility.mqh"
 
 input string          Line_ = "Line Config";
+//--------------------------------------------
 input color           Line1_Color = clrWhite;
 input int             Line1_Width = 1;
 input ENUM_LINE_STYLE Line1_Style = 0;
+//--------------------------------------------
 input color           Line2_Color = clrRed;
 input int             Line2_Width = 1;
 input ENUM_LINE_STYLE Line2_Style = 2;
+//--------------------------------------------
 
 class Line : public BaseItem
 {
+// Internal Value
 private:
     color mColorType[MAX_TYPE];
     int   mWidthType[MAX_TYPE];
     int   mStyleType[MAX_TYPE];
 
+// Component name
 private:
     string cMainLine;
     string cText    ;
 
+// Value define for Item
 private:
     datetime time1;
     datetime time2;
@@ -31,6 +37,8 @@ private:
 public:
     Line(const string name, CommonData* commonData, MouseInfo* mouseInfo);
 
+// Internal Event
+public:
     virtual void activateItem(const string& itemId);
     virtual void refreshData();
     virtual void createItem();
@@ -38,6 +46,8 @@ public:
     virtual void updateTypeProperty();
     virtual void prepareActive();
     virtual void updateItemAfterChangeType();
+
+// Chart Event
 public:
     virtual void onMouseMove();
     virtual void onMouseClick();
@@ -55,7 +65,7 @@ Line::Line(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mColorType[0] = Line1_Color;
     mWidthType[0] = Line1_Width;
     mStyleType[0] = Line1_Style;
-
+    //--------------------------------
     mNameType [1] = "Line2";
     mColorType[1] = Line2_Color;
     mWidthType[1] = Line2_Width;
@@ -65,6 +75,7 @@ Line::Line(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mTypeNum = 2;
 }
 
+// Internal Event
 void Line::prepareActive()
 {
     mFirstPoint = false;
