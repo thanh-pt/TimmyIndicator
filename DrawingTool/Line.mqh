@@ -1,7 +1,7 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          Line_ = "Line Config:";
+input string          Line_ = "Line Config";
 input color           Line_Color = clrWhite;
 input int             Line_Width = 1;
 input ENUM_LINE_STYLE Line_Style = 0;
@@ -90,7 +90,6 @@ void Line::refreshData()
     ObjectSet(cMainLine, OBJPROP_TIME2,  time2);
     ObjectSet(cMainLine, OBJPROP_PRICE2, price2);
 
-    
     ObjectSet(cText, OBJPROP_TIME1,  time3);
     ObjectSet(cText, OBJPROP_PRICE1, price3);
 }
@@ -125,7 +124,6 @@ void Line::onItemDrag(const string &itemId, const string &objId)
 
 void Line::onItemChange(const string &itemId, const string &objId)
 {
-    PrintFormat("Line::onItemChange");
     if (objId == cMainLine)
     {
         ObjectSet(cText, OBJPROP_COLOR, ObjectGet(cMainLine, OBJPROP_COLOR));
