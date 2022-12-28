@@ -136,12 +136,14 @@ void Line::changeActiveType()
 {
     UPDATE_TYPE
     
-    ObjectSet(cMainLine, OBJPROP_COLOR, mColorType[mIndexType]);
-    ObjectSet(cMainLine, OBJPROP_WIDTH, mWidthType[mIndexType]);
-    ObjectSet(cMainLine, OBJPROP_STYLE, mStyleType[mIndexType]);
-    ObjectSet(cText,     OBJPROP_COLOR, mColorType[mIndexType]);
-
     pMouseInfo.setText(mNameType[mIndexType]);
+    if (mFirstPoint == true)
+    {
+        ObjectSet(cMainLine, OBJPROP_COLOR, mColorType[mIndexType]);
+        ObjectSet(cMainLine, OBJPROP_WIDTH, mWidthType[mIndexType]);
+        ObjectSet(cMainLine, OBJPROP_STYLE, mStyleType[mIndexType]);
+        ObjectSet(cText,     OBJPROP_COLOR, mColorType[mIndexType]);
+    }
 }
 
 void Line::onItemDrag(const string &itemId, const string &objId)
