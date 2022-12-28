@@ -12,6 +12,8 @@ CrossHair  gCrossHair(&gCommonData);
 MouseInfo  gMouseInfo(&gCommonData);
 Controller gController(&gCommonData, &gMouseInfo);
 
+input bool DEBUG = true;
+
 int OnInit()
 {
     gController.setFinishedJobCB(FinishedJobFunc);

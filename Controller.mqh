@@ -75,7 +75,7 @@ int Controller::findItemIdByName(const string& name)
 
 void Controller::handleKeyEvent(const long &key)
 {
-    PrintFormat("handleKeyEvent %c %d", key, key);
+    if (DEBUG) PrintFormat("handleKeyEvent %c %d", key, key);
 
     // S1: handle functional Key
     switch ((int)key)
