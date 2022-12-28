@@ -10,7 +10,8 @@
 #define LINE_IDX 0
 #define HLINE_IDX 1
 
-#define ITEM_LINE "Line"
+#define ITEM_LINE   "Line"
+#define ITEM_HLINE  "HLine"
 
 class Controller
 {
@@ -40,7 +41,7 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
     mActive = NOT_ACTIVE;
     mListItem[LINE_IDX] = new Line(ITEM_LINE, commonData, mouseInfo);
-    // mListItem[HLINE_IDX] = new HLine();
+    mListItem[HLINE_IDX] = new HLine(ITEM_HLINE, commonData, mouseInfo);
 }
 
 
@@ -61,6 +62,10 @@ int Controller::findItemIdByKey(const int key)
     {
         return LINE_IDX;
     }
+    if (key == 'H')
+    {
+        return HLINE_IDX;
+    }
     return NOT_ACTIVE;
 }
 
@@ -69,6 +74,10 @@ int Controller::findItemIdByName(const string& name)
     if (name == ITEM_LINE)
     {
         return LINE_IDX;
+    }
+    if (name == ITEM_HLINE)
+    {
+        return HLINE_IDX;
     }
     return NOT_ACTIVE;
 }

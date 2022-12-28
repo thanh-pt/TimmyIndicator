@@ -9,6 +9,14 @@ void getCenterPos(const datetime& time1, const datetime& time2, double price1, d
     ChartXYToTimePrice(ChartID(), x1, y1, window, outTime, outPrice);
 }
 
+datetime getCenterTime(const datetime& time1, const datetime& time2)
+{
+    datetime centerTime;
+    double price;
+    getCenterPos(time1, time2, Close[0], Close[0], centerTime, price);
+    return centerTime;
+}
+
 void unSelectAll()
 {
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
