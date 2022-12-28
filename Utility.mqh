@@ -8,3 +8,11 @@ void getCenterPos(const datetime& time1, const datetime& time2, double price1, d
     y1 = (y1+y2)/2;
     ChartXYToTimePrice(ChartID(), x1, y1, window, outTime, outPrice);
 }
+
+void unSelectAll()
+{
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        ObjectSet(ObjectName(i), OBJPROP_SELECTED, 0);
+    }
+}

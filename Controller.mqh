@@ -82,6 +82,7 @@ void Controller::handleKeyEvent(const long &key)
     {
     case 27:
         finishedJob();
+        unSelectAll();
         break;
     }
 
