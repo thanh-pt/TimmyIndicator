@@ -137,7 +137,7 @@ void Controller::handleSparamEvent(const int id, const string& sparam)
     }
 
     string itemId = sparamItems[0] + "_" + sparamItems[1];
-    mListItem[receiverItem].activateItem(itemId);
+    mListItem[receiverItem].touchItem(itemId);
     switch (id)
     {
     case CHARTEVENT_OBJECT_DELETE:

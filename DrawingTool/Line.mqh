@@ -39,7 +39,7 @@ public:
 public:
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
-    virtual void changeActiveType();
+    virtual void updateItemAfterChangeType();
 };
 
 Line::Line(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -132,11 +132,8 @@ void Line::createItem()
     price1 = pCommonData.mMousePrice;
 }
 
-void Line::changeActiveType()
+void Line::updateItemAfterChangeType()
 {
-    UPDATE_TYPE
-    
-    pMouseInfo.setText(mNameType[mIndexType]);
     if (mFirstPoint == true)
     {
         ObjectSet(cMainLine, OBJPROP_COLOR, mColorType[mIndexType]);

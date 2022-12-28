@@ -28,15 +28,17 @@ public:
     virtual void onItemChange(const string &itemId, const string &objId){};
     virtual void onItemDeleted(const string &itemId, const string &objId){};
 
-protected:
-    virtual void prepareActive(){};
-    virtual void createItem()=0;
-
 public:
     void startActivate(FinishedJob cb);
-    virtual void activateItem(const string& itemId)=0;
+    void changeActiveType();
+    void touchItem(const string& itemId);
+
+protected:
+    virtual void createItem()=0;
     virtual void refreshData()=0;
-    virtual void changeActiveType(){};
+    virtual void prepareActive(){};
+    virtual void updateItemAfterChangeType(){};
+    virtual void activateItem(const string& itemId)=0;
 };
 
 void BaseItem::startActivate(FinishedJob cb)
@@ -46,5 +48,25 @@ void BaseItem::startActivate(FinishedJob cb)
     string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(TimeLocal());
     activateItem(itemId);
     if (DEBUG) PrintFormat("NewItem: %s", itemId);
+}
+
+void BaseItem::touchItem(const string& itemId)
+{
+    activateItem(itemId);
+}
+
+void BaseItem::changeActiveType()
+{
+    if (mTypeNum <= 0)
+    {
+        return;
+    }
     
+    if((++mIndexType) >= mTypeNum)
+    {
+        mIndexType = 0;
+    }
+    
+    pMouseInfo.setText(mNameType[mIndexType]);
+    updateItemAfterChangeType();
 }
