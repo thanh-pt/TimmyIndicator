@@ -24,3 +24,106 @@ void unSelectAll()
         ObjectSet(ObjectName(i), OBJPROP_SELECTED, 0);
     }
 }
+
+string findItemUnderMouse(int posX, int posY)
+{
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        string objName = ObjectName(i);
+        if (ObjectGet(objName, OBJPROP_SELECTED) == false) continue;
+
+        int objType = ObjectType(objName);
+
+        if (objType == OBJ_TREND)
+        {
+            int x1, y1, x2, y2;
+            ChartTimePriceToXY(0, 0, (datetime)ObjectGet(objName, OBJPROP_TIME1), ObjectGet(objName, OBJPROP_PRICE1), x1, y1);
+            ChartTimePriceToXY(0, 0, (datetime)ObjectGet(objName, OBJPROP_TIME2), ObjectGet(objName, OBJPROP_PRICE2), x2, y2);
+
+            int offset = 10;
+            if (x1 > x2)
+            {
+                int temp = x1;
+                x1 = x2;
+                x2 = temp;
+            }
+            if (posX < (x1 - offset) || posX > (x2 + offset))
+            {
+                continue;
+            }
+            if (y1 > y2)
+            {
+                int temp = y1;
+                y1 = y2;
+                y2 = temp;
+            }
+            if (posY >= (y1 - offset) && posY < (y2 + offset))
+            {
+                return objName;
+            }
+            continue;
+        }
+        if (objType == OBJ_RECTANGLE)
+        {
+            int x1, y1, x2, y2;
+            ChartTimePriceToXY(0, 0, (datetime)ObjectGet(objName, OBJPROP_TIME1), ObjectGet(objName, OBJPROP_PRICE1), x1, y1);
+            ChartTimePriceToXY(0, 0, (datetime)ObjectGet(objName, OBJPROP_TIME2), ObjectGet(objName, OBJPROP_PRICE2), x2, y2);
+
+            int offset = 10;
+            if (x1 > x2)
+            {
+                int temp = x1;
+                x1 = x2;
+                x2 = temp;
+            }
+            if (posX < (x1 - offset) || posX > (x2 + offset))
+            {
+                continue;
+            }
+            if (y1 > y2)
+            {
+                int temp = y1;
+                y1 = y2;
+                y2 = temp;
+            }
+            if (posY >= (y1 - offset) && posY < (y2 + offset))
+            {
+                return objName;
+            }
+            continue;
+        }
+        if (objType == OBJ_ARROW || objType == OBJ_TEXT)
+        {
+            int x1, y1;
+            ChartTimePriceToXY(0, 0, (datetime)ObjectGet(objName, OBJPROP_TIME1), ObjectGet(objName, OBJPROP_PRICE1), x1, y1);
+
+            int offset = 10;
+            if (posX < (x1 - offset) || posX > (x1 + offset))
+            {
+                continue;
+            }
+            if (posY >= (y1 - offset) && posY < (y1 + offset))
+            {
+                return objName;
+            }
+            continue;
+        }
+        if (objType == OBJ_LABEL)
+        {
+            int x1 = (int)ObjectGet(objName, OBJPROP_XDISTANCE);
+            int y1 = (int)ObjectGet(objName, OBJPROP_YDISTANCE);
+
+            int offset = 20;
+            if (posX < (x1 - offset) || posX > (x1 + offset))
+            {
+                continue;
+            }
+            if (posY >= (y1 - offset) && posY < (y1 + offset))
+            {
+                return objName;
+            }
+            continue;
+        }
+    }
+    return "";
+}

@@ -6,6 +6,7 @@
 #include "InfoItem/MouseInfo.mqh"
 
 void FinishedJobFunc();
+void detectMouseDraging(const string &sparam);
 
 CommonData gCommonData;
 CrossHair  gCrossHair(&gCommonData);
@@ -16,6 +17,9 @@ input bool DEBUG = true;
 
 int OnInit()
 {
+    ChartSetInteger(ChartID(), CHART_EVENT_MOUSE_MOVE, true);
+    ChartSetInteger(ChartID(), CHART_EVENT_OBJECT_DELETE, true);
+    
     gController.setFinishedJobCB(FinishedJobFunc);
     return (INIT_SUCCEEDED);
 }
@@ -46,12 +50,10 @@ void OnChartEvent(const int id,
     break;
 
     case CHARTEVENT_MOUSE_MOVE:
-    {
-        int option = StrToInteger(sparam);
-        gCommonData.updateMousePosition(lparam, dparam, option);
+        gCommonData.updateMousePosition(lparam, dparam, sparam);
         gCrossHair.onMouseMove();
         gMouseInfo.onMouseMove();
-    }
+        detectMouseDraging(sparam);
     case CHARTEVENT_CLICK:
         gController.handleIdEventOnly(id);
         break;
@@ -71,4 +73,33 @@ void OnChartEvent(const int id,
 void FinishedJobFunc()
 {
     gController.finishedJob();
+}
+
+string gTargetItem;
+bool gIsPress;
+int gPreviousOption;
+void detectMouseDraging(const string &sparam)
+{
+    int option = StrToInteger(sparam);
+    // Press event
+    if ((option & 0x01) != 0 && (gPreviousOption & 0x01) == 0)
+    {
+        gIsPress = true;
+        gTargetItem = findItemUnderMouse(gCommonData.mMouseX, gCommonData.mMouseY);
+    }
+    else
+        // Release event
+        if ((option & 0x01) == 0 && (gPreviousOption & 0x01) != 0)
+        {
+            gIsPress = false;
+            gTargetItem = "";
+        }
+    // Press and draging
+    if (gIsPress && (option & 0x01) != 0)
+    {
+        // if (DEBUG) PrintFormat("Draging %s", gTargetItem);
+        gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, gTargetItem);
+    }
+
+    gPreviousOption = option;
 }

@@ -13,8 +13,9 @@ public:
     bool     mShiftHold;
     bool     mCtrlHold;
 public:
-    void updateMousePosition(const long& x, const double& y, const int& option)
+    void updateMousePosition(const long& x, const double& y, const string &sparam)
     {
+        int option = StrToInteger(sparam);
         mShiftHold = ((option & SHIFT_HOLD) != 0);
         mCtrlHold  = ((option & CTRL_HOLD) != 0);
         mMouseX = (int) x;
