@@ -1,18 +1,18 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          Line_ = "Line Config";
+input string          Trend_ = "Trend Config";
 //--------------------------------------------
-input color           Line1_Color = clrWhite;
-input int             Line1_Width = 1;
-input ENUM_LINE_STYLE Line1_Style = 0;
+input color           Trend1_Color = clrWhite;
+input int             Trend1_Width = 1;
+input ENUM_LINE_STYLE Trend1_Style = 0;
 //--------------------------------------------
-input color           Line2_Color = clrRed;
-input int             Line2_Width = 1;
-input ENUM_LINE_STYLE Line2_Style = 2;
+input color           Trend2_Color = clrRed;
+input int             Trend2_Width = 1;
+input ENUM_LINE_STYLE Trend2_Style = 2;
 //--------------------------------------------
 
-class Line : public BaseItem
+class Trend : public BaseItem
 {
 // Internal Value
 private:
@@ -22,7 +22,7 @@ private:
 
 // Component name
 private:
-    string cMainLine;
+    string cMainTrend;
     string cText    ;
 
 // Value define for Item
@@ -35,7 +35,7 @@ private:
     double price3;
 
 public:
-    Line(const string name, CommonData* commonData, MouseInfo* mouseInfo);
+    Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo);
 
 // Internal Event
 public:
@@ -53,57 +53,58 @@ public:
     virtual void onMouseClick();
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
+    virtual void onItemDeleted(const string &itemId, const string &objId);
 };
 
-Line::Line(const string name, CommonData* commonData, MouseInfo* mouseInfo)
+Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
 {
     mItemName = name;
     pCommonData = commonData;
     pMouseInfo = mouseInfo;
 
-    mNameType [0] = "Line1";
-    mColorType[0] = Line1_Color;
-    mWidthType[0] = Line1_Width;
-    mStyleType[0] = Line1_Style;
+    mNameType [0] = "Trend1";
+    mColorType[0] = Trend1_Color;
+    mWidthType[0] = Trend1_Width;
+    mStyleType[0] = Trend1_Style;
     //--------------------------------
-    mNameType [1] = "Line2";
-    mColorType[1] = Line2_Color;
-    mWidthType[1] = Line2_Width;
-    mStyleType[1] = Line2_Style;
+    mNameType [1] = "Trend2";
+    mColorType[1] = Trend2_Color;
+    mWidthType[1] = Trend2_Width;
+    mStyleType[1] = Trend2_Style;
 
     mIndexType = 0;
     mTypeNum = 2;
 }
 
 // Internal Event
-void Line::prepareActive()
+void Trend::prepareActive()
 {
     mFirstPoint = false;
     pMouseInfo.setText(mNameType[mIndexType]);
 }
 
-void Line::activateItem(const string& itemId)
+void Trend::activateItem(const string& itemId)
 {
-    cMainLine = itemId + "_mainLine";
+    cMainTrend = itemId + "_mainTrend";
     cText     = itemId + "_text";
 }
 
-void Line::refreshData()
+void Trend::refreshData()
 {
     getCenterPos(time1, time2, price1, price2, time3, price3);
-    ObjectSet(cMainLine, OBJPROP_TIME1,  time1);
-    ObjectSet(cMainLine, OBJPROP_PRICE1, price1);
+    ObjectSet(cMainTrend, OBJPROP_TIME1,  time1);
+    ObjectSet(cMainTrend, OBJPROP_PRICE1, price1);
 
-    ObjectSet(cMainLine, OBJPROP_TIME2,  time2);
-    ObjectSet(cMainLine, OBJPROP_PRICE2, price2);
+    ObjectSet(cMainTrend, OBJPROP_TIME2,  time2);
+    ObjectSet(cMainTrend, OBJPROP_PRICE2, price2);
 
     ObjectSet(cText, OBJPROP_TIME1,  time3);
     ObjectSet(cText, OBJPROP_PRICE1, price3);
 }
 
-void Line::createItem()
+void Trend::createItem()
 {
-    ObjectCreate(cMainLine, OBJ_TREND, 0, 0, 0);
+    ObjectCreate(cMainTrend, OBJ_TREND, 0, 0, 0);
     ObjectCreate(cText    , OBJ_TEXT , 0, 0, 0);
 
     updateTypeProperty();
@@ -111,20 +112,20 @@ void Line::createItem()
     time1  = pCommonData.mMouseTime;
     price1 = pCommonData.mMousePrice;
 }
-void Line::updateDefaultProperty()
+void Trend::updateDefaultProperty()
 {
-    ObjectSet(cMainLine, OBJPROP_RAY, false);
+    ObjectSet(cMainTrend, OBJPROP_RAY, false);
     ObjectSetText(cText, "");
-    ObjectSetString(ChartID(), cMainLine ,OBJPROP_TOOLTIP,"\n");
+    ObjectSetString(ChartID(), cMainTrend ,OBJPROP_TOOLTIP,"\n");
 }
-void Line::updateTypeProperty()
+void Trend::updateTypeProperty()
 {
-    ObjectSet(cMainLine, OBJPROP_COLOR, mColorType[mIndexType]);
-    ObjectSet(cMainLine, OBJPROP_WIDTH, mWidthType[mIndexType]);
-    ObjectSet(cMainLine, OBJPROP_STYLE, mStyleType[mIndexType]);
+    ObjectSet(cMainTrend, OBJPROP_COLOR, mColorType[mIndexType]);
+    ObjectSet(cMainTrend, OBJPROP_WIDTH, mWidthType[mIndexType]);
+    ObjectSet(cMainTrend, OBJPROP_STYLE, mStyleType[mIndexType]);
     ObjectSet(cText,     OBJPROP_COLOR, mColorType[mIndexType]);
 }
-void Line::updateItemAfterChangeType()
+void Trend::updateItemAfterChangeType()
 {
     if (mFirstPoint == true)
     {
@@ -133,30 +134,30 @@ void Line::updateItemAfterChangeType()
 }
 
 //Chart Event
-void Line::onItemDrag(const string &itemId, const string &objId)
+void Trend::onItemDrag(const string &itemId, const string &objId)
 {
-    time1 = (datetime)ObjectGet(cMainLine, OBJPROP_TIME1);
-    time2 = (datetime)ObjectGet(cMainLine, OBJPROP_TIME2);
-    price1 = ObjectGet(cMainLine, OBJPROP_PRICE1);
-    price2 = ObjectGet(cMainLine, OBJPROP_PRICE2);
+    time1 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME1);
+    time2 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME2);
+    price1 = ObjectGet(cMainTrend, OBJPROP_PRICE1);
+    price2 = ObjectGet(cMainTrend, OBJPROP_PRICE2);
 
     refreshData();
 }
-void Line::onItemChange(const string &itemId, const string &objId)
+void Trend::onItemChange(const string &itemId, const string &objId)
 {
-    if (objId == cMainLine)
+    if (objId == cMainTrend)
     {
-        ObjectSet(cText, OBJPROP_COLOR, ObjectGet(cMainLine, OBJPROP_COLOR));
+        ObjectSet(cText, OBJPROP_COLOR, ObjectGet(cMainTrend, OBJPROP_COLOR));
         
-        string lineDescription = ObjectDescription(cMainLine);
+        string lineDescription = ObjectDescription(cMainTrend);
         if (lineDescription != "")
         {
             ObjectSetText(cText    , lineDescription);
-            ObjectSetText(cMainLine, "");
+            ObjectSetText(cMainTrend, "");
         }
     }
 }
-void Line::onMouseClick()
+void Trend::onMouseClick()
 {
     if (mFirstPoint == false)
     {
@@ -166,7 +167,7 @@ void Line::onMouseClick()
     }
     mFinishedJobCb();
 }
-void Line::onMouseMove()
+void Trend::onMouseMove()
 {
     if (mFirstPoint == false)
     {
@@ -183,8 +184,8 @@ void Line::onMouseMove()
     time2  = pCommonData.mMouseTime;
     refreshData();
 }
-void Line::onItemDeleted(const string &itemId, const string &objId)
+void Trend::onItemDeleted(const string &itemId, const string &objId)
 {
-    ObjectDelete(cMainLine);
+    ObjectDelete(cMainTrend);
     ObjectDelete(cText    );
 }

@@ -1,17 +1,17 @@
 #include "Base/BaseItem.mqh"
-#include "DrawingTool/Line.mqh"
-#include "DrawingTool/HLine.mqh"
+#include "DrawingTool/Trend.mqh"
+#include "DrawingTool/HTrend.mqh"
 #include "InfoItem/MouseInfo.mqh"
 
-#define NOT_ACTIVE -1
-#define CHECK_NOT_ACTIVE_RETURN if(mActive == NOT_ACTIVE){return;}
-#define CHECK_ACTIVE_RETURN if(mActive != NOT_ACTIVE){return;}
+#define CHECK_NOT_ACTIVE_RETURN if(mActive == IDX_NONE){return;}
+#define CHECK_ACTIVE_RETURN if(mActive != IDX_NONE){return;}
 
-#define LINE_IDX 0
-#define HLINE_IDX 1
+#define IDX_NONE    -1
+#define IDX_TREND   0
+#define IDX_HTREND  1
 
-#define ITEM_LINE   "Line"
-#define ITEM_HLINE  "HLine"
+#define ITEM_TREND   "Trend"
+#define ITEM_HTREND  "HTrend"
 
 class Controller
 {
@@ -39,9 +39,9 @@ public:
 void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
 {
     pMouseInfo = mouseInfo;
-    mActive = NOT_ACTIVE;
-    mListItem[LINE_IDX] = new Line(ITEM_LINE, commonData, mouseInfo);
-    mListItem[HLINE_IDX] = new HLine(ITEM_HLINE, commonData, mouseInfo);
+    mActive = IDX_NONE;
+    mListItem[IDX_TREND] = new Trend(ITEM_TREND, commonData, mouseInfo);
+    mListItem[IDX_HTREND] = new HTrend(ITEM_HTREND, commonData, mouseInfo);
 }
 
 
@@ -53,33 +53,33 @@ void Controller::setFinishedJobCB(FinishedJob cb)
 void Controller::finishedJob()
 {
     pMouseInfo.setText("");
-    mActive = NOT_ACTIVE;
+    mActive = IDX_NONE;
 }
 
 int Controller::findItemIdByKey(const int key)
 {
-    if (key == 'L')
+    if (key == 'T')
     {
-        return LINE_IDX;
+        return IDX_TREND;
     }
     if (key == 'H')
     {
-        return HLINE_IDX;
+        return IDX_HTREND;
     }
-    return NOT_ACTIVE;
+    return IDX_NONE;
 }
 
 int Controller::findItemIdByName(const string& name)
 {
-    if (name == ITEM_LINE)
+    if (name == ITEM_TREND)
     {
-        return LINE_IDX;
+        return IDX_TREND;
     }
-    if (name == ITEM_HLINE)
+    if (name == ITEM_HTREND)
     {
-        return HLINE_IDX;
+        return IDX_HTREND;
     }
-    return NOT_ACTIVE;
+    return IDX_NONE;
 }
 
 void Controller::handleKeyEvent(const long &key)
@@ -97,7 +97,7 @@ void Controller::handleKeyEvent(const long &key)
 
     // S2: Active drawing tool
     int activeTarget = findItemIdByKey((int)key);
-    if (activeTarget == NOT_ACTIVE)
+    if (activeTarget == IDX_NONE)
     {
         return;
     }
@@ -140,7 +140,7 @@ void Controller::handleSparamEvent(const int id, const string& sparam)
         return;
     }
     int receiverItem = findItemIdByName(sparamItems[0]);
-    if (receiverItem == NOT_ACTIVE)
+    if (receiverItem == IDX_NONE)
     {
         return;
     }
