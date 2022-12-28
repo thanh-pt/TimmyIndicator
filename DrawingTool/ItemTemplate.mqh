@@ -19,6 +19,8 @@ public:
 public:
     virtual void prepareActive();
     virtual void createItem();
+    virtual void updateDefaultProperty();
+    virtual void updateTypeProperty();
     virtual void activateItem(const string& itemId);
     virtual void updateItemAfterChangeType();
     virtual void refreshData();
@@ -48,6 +50,8 @@ ItemTemplate::ItemTemplate(const string name, CommonData* commonData, MouseInfo*
 // Internal Event
 void ItemTemplate::prepareActive(){}
 void ItemTemplate::createItem(){}
+void ItemTemplate::updateDefaultProperty(){}
+void ItemTemplate::updateTypeProperty(){}
 void ItemTemplate::activateItem(const string& itemId){}
 void ItemTemplate::updateItemAfterChangeType(){}
 void ItemTemplate::refreshData(){}

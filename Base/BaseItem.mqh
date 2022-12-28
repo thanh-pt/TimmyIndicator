@@ -24,11 +24,11 @@ protected:
 protected:
     virtual void prepareActive(){};
     virtual void createItem()=0;
+    virtual void updateDefaultProperty(){};
+    virtual void updateTypeProperty(){};
     virtual void activateItem(const string& itemId)=0;
     virtual void updateItemAfterChangeType(){};
     virtual void refreshData()=0;
-    virtual void updateDefaultProperty(){};
-    virtual void updateTypeProperty(){};
 
 // Chart Event:
 public:
