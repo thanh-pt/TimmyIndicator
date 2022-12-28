@@ -49,6 +49,7 @@ public:
 
 void BaseItem::startActivate(FinishedJob cb)
 {
+    ChartSetInteger(0, CHART_MOUSE_SCROLL, false);
     mFinishedJobCb = cb;
     prepareActive();
     string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(TimeLocal());
@@ -58,6 +59,7 @@ void BaseItem::startActivate(FinishedJob cb)
 
 void BaseItem::finishedDeactivate()
 {
+    ChartSetInteger(0, CHART_MOUSE_SCROLL, true);
     finishedJobDone();
 }
 
