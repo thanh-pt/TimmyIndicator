@@ -5,6 +5,8 @@ typedef void(*FinishedJob)();
 
 #define MAX_TYPE 10
 
+#define UPDATE_TYPE if((++mIndexType) >= mTypeNum){mIndexType = 0;}
+
 class BaseItem
 {
 protected:
@@ -34,7 +36,7 @@ public:
     void startActivate(FinishedJob cb);
     virtual void activateItem(const string& itemId)=0;
     virtual void refreshData()=0;
-    void changeActiveType(){};
+    virtual void changeActiveType(){};
 };
 
 void BaseItem::startActivate(FinishedJob cb)
