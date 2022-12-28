@@ -86,7 +86,7 @@ void Trend::prepareActive()
 void Trend::activateItem(const string& itemId)
 {
     cMainTrend = itemId + "_mainTrend";
-    cText     = itemId + "_text";
+    cText      = itemId + "_text";
 }
 
 void Trend::refreshData()

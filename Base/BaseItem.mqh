@@ -29,6 +29,7 @@ protected:
     virtual void activateItem(const string& itemId)=0;
     virtual void updateItemAfterChangeType(){};
     virtual void refreshData()=0;
+    virtual void finishedJobDone(){};
 
 // Chart Event:
 public:
@@ -41,6 +42,7 @@ public:
 
 public:
     void startActivate(FinishedJob cb);
+    void finishedDeactivate();
     void changeActiveType();
     void touchItem(const string& itemId);
 };
@@ -52,6 +54,11 @@ void BaseItem::startActivate(FinishedJob cb)
     string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(TimeLocal());
     activateItem(itemId);
     if (DEBUG) PrintFormat("NewItem: %s", itemId);
+}
+
+void BaseItem::finishedDeactivate()
+{
+    finishedJobDone();
 }
 
 void BaseItem::touchItem(const string& itemId)

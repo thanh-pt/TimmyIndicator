@@ -1,17 +1,28 @@
 #include "Base/BaseItem.mqh"
+#include "InfoItem/MouseInfo.mqh"
 #include "DrawingTool/Trend.mqh"
 #include "DrawingTool/HTrend.mqh"
-#include "InfoItem/MouseInfo.mqh"
+#include "DrawingTool/ZigZag.mqh"
 
 #define CHECK_NOT_ACTIVE_RETURN if(mActive == IDX_NONE){return;}
 #define CHECK_ACTIVE_RETURN if(mActive != IDX_NONE){return;}
 
-#define IDX_NONE    -1
-#define IDX_TREND   0
-#define IDX_HTREND  1
+#define IDX_NONE        -1
+#define IDX_TREND       0
+#define IDX_HTREND      1
+#define IDX_ZIGZAG      2
+#define IDX_RECTANGLE   3
+#define IDX_FIBONACI    4
+#define IDX_CALLOUT     5
+#define IDX_LONGSHORT   6
 
-#define ITEM_TREND   "Trend"
-#define ITEM_HTREND  "HTrend"
+#define ITEM_TREND      "Trend"
+#define ITEM_HTREND     "HTrend"
+#define ITEM_ZIGZAG     "ZigZag"
+#define ITEM_RECTANGLE  "Rectangle"
+#define ITEM_FIBONACI   "Fibonaci"
+#define ITEM_CALLOUT    "CallOut"
+#define ITEM_LONGSHORT  "LongShort"
 
 class Controller
 {
@@ -40,8 +51,9 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
 {
     pMouseInfo = mouseInfo;
     mActive = IDX_NONE;
-    mListItem[IDX_TREND] = new Trend(ITEM_TREND, commonData, mouseInfo);
-    mListItem[IDX_HTREND] = new HTrend(ITEM_HTREND, commonData, mouseInfo);
+    mListItem[IDX_TREND]    = new Trend(ITEM_TREND, commonData, mouseInfo);
+    mListItem[IDX_HTREND]   = new HTrend(ITEM_HTREND, commonData, mouseInfo);
+    mListItem[IDX_ZIGZAG]   = new ZigZag(ITEM_ZIGZAG, commonData, mouseInfo);
 }
 
 
@@ -52,33 +64,33 @@ void Controller::setFinishedJobCB(FinishedJob cb)
 
 void Controller::finishedJob()
 {
+    CHECK_NOT_ACTIVE_RETURN
     pMouseInfo.setText("");
+    mListItem[mActive].finishedDeactivate();
     mActive = IDX_NONE;
 }
 
 int Controller::findItemIdByKey(const int key)
 {
-    if (key == 'T')
-    {
-        return IDX_TREND;
-    }
-    if (key == 'H')
-    {
-        return IDX_HTREND;
-    }
+    if (key == 'T') return IDX_TREND    ;
+    if (key == 'H') return IDX_HTREND   ;
+    if (key == 'Z') return IDX_ZIGZAG   ;
+    if (key == 'R') return IDX_RECTANGLE;
+    if (key == 'F') return IDX_FIBONACI ;
+    if (key == 'C') return IDX_CALLOUT  ;
+    if (key == 'S') return IDX_LONGSHORT;
     return IDX_NONE;
 }
 
 int Controller::findItemIdByName(const string& name)
 {
-    if (name == ITEM_TREND)
-    {
-        return IDX_TREND;
-    }
-    if (name == ITEM_HTREND)
-    {
-        return IDX_HTREND;
-    }
+    if (name == ITEM_TREND    ) return IDX_TREND    ;
+    if (name == ITEM_HTREND   ) return IDX_HTREND   ;
+    if (name == ITEM_ZIGZAG   ) return IDX_ZIGZAG   ;
+    if (name == ITEM_RECTANGLE) return IDX_RECTANGLE;
+    if (name == ITEM_FIBONACI ) return IDX_FIBONACI ;
+    if (name == ITEM_CALLOUT  ) return IDX_CALLOUT  ;
+    if (name == ITEM_LONGSHORT) return IDX_LONGSHORT;
     return IDX_NONE;
 }
 
@@ -103,7 +115,6 @@ void Controller::handleKeyEvent(const long &key)
     }
     if (activeTarget == mActive)
     {
-        // TODO: change charactise
         mListItem[mActive].changeActiveType();
         return;
     }
