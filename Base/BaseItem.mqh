@@ -20,6 +20,15 @@ protected:
     int         mTypeNum;
     string      mNameType[MAX_TYPE];
 
+// Internal Event:
+protected:
+    virtual void prepareActive(){};
+    virtual void createItem()=0;
+    virtual void activateItem(const string& itemId)=0;
+    virtual void updateItemAfterChangeType(){};
+    virtual void refreshData()=0;
+
+// Chart Event:
 public:
     virtual void onMouseMove(){}
     virtual void onMouseClick(){}
@@ -32,13 +41,6 @@ public:
     void startActivate(FinishedJob cb);
     void changeActiveType();
     void touchItem(const string& itemId);
-
-protected:
-    virtual void createItem()=0;
-    virtual void refreshData()=0;
-    virtual void prepareActive(){};
-    virtual void updateItemAfterChangeType(){};
-    virtual void activateItem(const string& itemId)=0;
 };
 
 void BaseItem::startActivate(FinishedJob cb)
