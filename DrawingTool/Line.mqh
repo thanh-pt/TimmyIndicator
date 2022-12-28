@@ -30,16 +30,19 @@ private:
 
 public:
     Line(const string name, CommonData* commonData, MouseInfo* mouseInfo);
-    virtual void onMouseMove();
-    virtual void onMouseClick();
+
     virtual void activateItem(const string& itemId);
     virtual void refreshData();
     virtual void createItem();
+    virtual void updateDefaultProperty();
+    virtual void updateTypeProperty();
     virtual void prepareActive();
+    virtual void updateItemAfterChangeType();
 public:
+    virtual void onMouseMove();
+    virtual void onMouseClick();
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
-    virtual void updateItemAfterChangeType();
 };
 
 Line::Line(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -60,35 +63,6 @@ Line::Line(const string name, CommonData* commonData, MouseInfo* mouseInfo)
 
     mIndexType = 0;
     mTypeNum = 2;
-}
-
-void Line::onMouseClick()
-{
-    if (mFirstPoint == false)
-    {
-        createItem();
-        mFirstPoint = true;
-        return;
-    }
-    mFinishedJobCb();
-}
-
-void Line::onMouseMove()
-{
-    if (mFirstPoint == false)
-    {
-        return;
-    }
-    if (pCommonData.mShiftHold)
-    {
-        price2 = price1;
-    }
-    else
-    {
-        price2 = pCommonData.mMousePrice;
-    }
-    time2  = pCommonData.mMouseTime;
-    refreshData();
 }
 
 void Line::prepareActive()
@@ -121,28 +95,33 @@ void Line::createItem()
     ObjectCreate(cMainLine, OBJ_TREND, 0, 0, 0);
     ObjectCreate(cText    , OBJ_TEXT , 0, 0, 0);
 
+    updateTypeProperty();
+    updateDefaultProperty();
+    time1  = pCommonData.mMouseTime;
+    price1 = pCommonData.mMousePrice;
+}
+void Line::updateDefaultProperty()
+{
     ObjectSet(cMainLine, OBJPROP_RAY, false);
+    ObjectSetText(cText, "");
+    ObjectSetString(ChartID(), cMainLine ,OBJPROP_TOOLTIP,"\n");
+}
+void Line::updateTypeProperty()
+{
     ObjectSet(cMainLine, OBJPROP_COLOR, mColorType[mIndexType]);
     ObjectSet(cMainLine, OBJPROP_WIDTH, mWidthType[mIndexType]);
     ObjectSet(cMainLine, OBJPROP_STYLE, mStyleType[mIndexType]);
     ObjectSet(cText,     OBJPROP_COLOR, mColorType[mIndexType]);
-    ObjectSetText(cText, "");
-    ObjectSetString(ChartID(), cMainLine ,OBJPROP_TOOLTIP,"\n");
-    time1  = pCommonData.mMouseTime;
-    price1 = pCommonData.mMousePrice;
 }
-
 void Line::updateItemAfterChangeType()
 {
     if (mFirstPoint == true)
     {
-        ObjectSet(cMainLine, OBJPROP_COLOR, mColorType[mIndexType]);
-        ObjectSet(cMainLine, OBJPROP_WIDTH, mWidthType[mIndexType]);
-        ObjectSet(cMainLine, OBJPROP_STYLE, mStyleType[mIndexType]);
-        ObjectSet(cText,     OBJPROP_COLOR, mColorType[mIndexType]);
+        updateTypeProperty();
     }
 }
 
+//Chart Event
 void Line::onItemDrag(const string &itemId, const string &objId)
 {
     time1 = (datetime)ObjectGet(cMainLine, OBJPROP_TIME1);
@@ -152,7 +131,6 @@ void Line::onItemDrag(const string &itemId, const string &objId)
 
     refreshData();
 }
-
 void Line::onItemChange(const string &itemId, const string &objId)
 {
     if (objId == cMainLine)
@@ -166,4 +144,31 @@ void Line::onItemChange(const string &itemId, const string &objId)
             ObjectSetText(cMainLine, "");
         }
     }
+}
+void Line::onMouseClick()
+{
+    if (mFirstPoint == false)
+    {
+        createItem();
+        mFirstPoint = true;
+        return;
+    }
+    mFinishedJobCb();
+}
+void Line::onMouseMove()
+{
+    if (mFirstPoint == false)
+    {
+        return;
+    }
+    if (pCommonData.mShiftHold)
+    {
+        price2 = price1;
+    }
+    else
+    {
+        price2 = pCommonData.mMousePrice;
+    }
+    time2  = pCommonData.mMouseTime;
+    refreshData();
 }
