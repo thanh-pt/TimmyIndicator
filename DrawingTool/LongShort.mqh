@@ -420,7 +420,6 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
 void LongShort::onItemChange(const string &itemId, const string &objId){}
 void LongShort::onItemDeleted(const string &itemId, const string &objId)
 {
-    if (DEBUG) PrintFormat("LongShort::onItemDeleted %s", objId);
     ObjectDelete(cBgndSL );
     ObjectDelete(cBgndTP );
     ObjectDelete(cTpLine );

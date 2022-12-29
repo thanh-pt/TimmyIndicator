@@ -123,6 +123,8 @@ void Rectangle::updateDefaultProperty()
 
     ObjectSet(cLeftPoint    , OBJPROP_COLOR, clrNONE);
     ObjectSet(cRightPoint   , OBJPROP_COLOR, clrNONE);
+    ObjectSet(cLeftPoint    , OBJPROP_ARROWCODE, 255);
+    ObjectSet(cRightPoint   , OBJPROP_ARROWCODE, 255);
 
     ObjectSetString(ChartID(), cBackground ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cBoder      ,OBJPROP_TOOLTIP,"\n");
