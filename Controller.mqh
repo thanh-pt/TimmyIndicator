@@ -31,10 +31,11 @@
 class Controller
 {
 private:
-    BaseItem* mListItem[10];
-    int mActive;
+    BaseItem*    mListItem[10];
+    int         mActive;
     FinishedJob mFinishedJobCb;
-    MouseInfo* pMouseInfo;
+    MouseInfo*  pMouseInfo;
+    bool        mbStartErase;
 
 private:
     int findItemIdByKey(const int key);
@@ -42,6 +43,7 @@ private:
 
 public:
     Controller(CommonData* commonData, MouseInfo* mouseInfo);
+    ~Controller();
 
 public:
     void handleKeyEvent(const long &key);
@@ -64,6 +66,16 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     mListItem[IDX_LONGSHORT]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
 }
 
+Controller::~Controller()
+{
+    delete mListItem[IDX_TREND    ];
+    delete mListItem[IDX_HTREND   ];
+    delete mListItem[IDX_ZIGZAG   ];
+    delete mListItem[IDX_RECTANGLE];
+    delete mListItem[IDX_FIBONACI ];
+    delete mListItem[IDX_CALLOUT  ];
+    delete mListItem[IDX_LONGSHORT];
+}
 
 void Controller::setFinishedJobCB(FinishedJob cb)
 {
@@ -113,6 +125,27 @@ void Controller::handleKeyEvent(const long &key)
         finishedJob();
         unSelectAll();
         break;
+    case '1':
+        if (mbStartErase) EraseAll();
+        break;
+    case '2':
+        if (mbStartErase) EraseThisTF();
+        break;
+    case '3':
+        if (mbStartErase) EraseLowerTF();
+        break;
+    default:
+        break;
+    }
+    if (key == 'E' && mActive == IDX_NONE)
+    {
+        mbStartErase = true;
+        pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF");
+    }
+    else
+    {
+        mbStartErase = false;
+        pMouseInfo.setText("");
     }
 
     // S2: Active drawing tool

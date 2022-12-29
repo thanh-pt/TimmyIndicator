@@ -127,3 +127,48 @@ string findItemUnderMouse(int posX, int posY)
     }
     return "";
 }
+
+void EraseAll()
+{
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        ObjectDelete(ObjectName(i));
+    }
+}
+
+void EraseLowerTF()
+{
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        string sparamItems[];
+        int k1=StringSplit(ObjectName(i),'_',sparamItems);
+        if (k1 == 3)
+        {
+            string strInfoItem[];
+            int k2 = StringSplit(sparamItems[1],'#',strInfoItem);
+            if (k2 == 2 && StrToInteger(strInfoItem[0]) >= ChartPeriod())
+            {
+                continue;
+            }
+        }
+        ObjectDelete(ObjectName(i));
+    }
+}
+
+void EraseThisTF()
+{
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        string sparamItems[];
+        int k1=StringSplit(ObjectName(i),'_',sparamItems);
+        if (k1 == 3)
+        {
+            string strInfoItem[];
+            int k2 = StringSplit(sparamItems[1],'#',strInfoItem);
+            if (k2 == 2 && StrToInteger(strInfoItem[0]) == ChartPeriod())
+            {
+                ObjectDelete(ObjectName(i));
+            }
+        }
+    }
+}
