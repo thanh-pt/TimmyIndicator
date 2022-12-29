@@ -146,7 +146,6 @@ void HTrend::refreshData()
     {
         if (priceText == price)
         {
-            if (DEBUG) PrintFormat("HTrend::refreshData() priceText == price");
             ObjectSet(cText, OBJPROP_TIME1, getCenterTime(time1, time2));
             break;
         }
