@@ -123,7 +123,7 @@ void Trend::updateTypeProperty()
     ObjectSet(cMainTrend, OBJPROP_COLOR, mColorType[mIndexType]);
     ObjectSet(cMainTrend, OBJPROP_WIDTH, mWidthType[mIndexType]);
     ObjectSet(cMainTrend, OBJPROP_STYLE, mStyleType[mIndexType]);
-    ObjectSet(cText,     OBJPROP_COLOR, mColorType[mIndexType]);
+    ObjectSet(cText,      OBJPROP_COLOR, mColorType[mIndexType]);
 }
 void Trend::updateItemAfterChangeType()
 {
