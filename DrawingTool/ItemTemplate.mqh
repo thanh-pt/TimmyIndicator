@@ -24,6 +24,7 @@ public:
     virtual void activateItem(const string& itemId);
     virtual void updateItemAfterChangeType();
     virtual void refreshData();
+    virtual void finishedJobDone();
 
 // Chart Event
 public:
@@ -55,6 +56,7 @@ void ItemTemplate::updateTypeProperty(){}
 void ItemTemplate::activateItem(const string& itemId){}
 void ItemTemplate::updateItemAfterChangeType(){}
 void ItemTemplate::refreshData(){}
+void ItemTemplate::finishedJobDone(){}
 
 // Chart Event
 void ItemTemplate::onMouseMove(){}
