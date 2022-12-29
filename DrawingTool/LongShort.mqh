@@ -79,6 +79,8 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
+// Special functional
+    void showHideHistory();
 };
 
 LongShort::LongShort(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -229,7 +231,7 @@ void LongShort::activateItem(const string& itemId)
     cPointTP = itemId + "_PointTP";
     cPointSL = itemId + "_PointSL";
     cPointEN = itemId + "_PointEN";
-    cPointWD = itemId + "_PointWD";
+    cPointWD = itemId + "_PointWDSpecialLongShort";
 }
 void LongShort::updateItemAfterChangeType(){}
 void LongShort::refreshData()
@@ -436,4 +438,66 @@ void LongShort::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(cPointSL);
     ObjectDelete(cPointEN);
     ObjectDelete(cPointWD);
+}
+
+//-------------------------------------------------------------------
+void LongShort::showHideHistory()
+{
+    static bool isShow = true;
+    for (int i = ObjectsTotal() - 1; i >= 0; i--)
+    {
+        string objName = ObjectName(i);
+        if (StringFind(objName, "PointWDSpecialLongShort") == -1)
+        {
+            continue;
+        }
+        string sparamItems[];
+        int k=StringSplit(objName,'_',sparamItems);
+        if (k != 3 || sparamItems[0] != mItemName)
+        {
+            continue;
+        }
+        string objId = sparamItems[0] + "_" + sparamItems[1];
+        activateItem(objId);
+        if (isShow)
+        {
+            priceTP =           ObjectGet(cPointTP, OBJPROP_PRICE1);
+            priceEN =           ObjectGet(cPointEN, OBJPROP_PRICE1);
+            priceSL =           ObjectGet(cPointSL, OBJPROP_PRICE1);
+            time1   = (datetime)ObjectGet(cBoder, OBJPROP_TIME1);
+            time2   = (datetime)ObjectGet(cBoder, OBJPROP_TIME2);
+            refreshData();
+            continue;
+        }
+        
+        if ((bool)ObjectGet(cPointWD, OBJPROP_SELECTED))
+        {
+            continue;
+        }
+        // Hide Item
+        ObjectSet(cBgndSL , OBJPROP_PRICE1, 0);
+        ObjectSet(cBgndTP , OBJPROP_PRICE1, 0);
+        ObjectSet(cTpLine , OBJPROP_PRICE1, 0);
+        ObjectSet(cEnLine , OBJPROP_PRICE1, 0);
+        ObjectSet(cSlLine , OBJPROP_PRICE1, 0);
+        ObjectSet(cBoder  , OBJPROP_PRICE1, 0);
+        ObjectSet(cBgndSL , OBJPROP_PRICE2, 0);
+        ObjectSet(cBgndTP , OBJPROP_PRICE2, 0);
+        ObjectSet(cTpLine , OBJPROP_PRICE2, 0);
+        ObjectSet(cEnLine , OBJPROP_PRICE2, 0);
+        ObjectSet(cSlLine , OBJPROP_PRICE2, 0);
+        ObjectSet(cBoder  , OBJPROP_PRICE2, 0);
+
+        ObjectSet(cTpPrice, OBJPROP_TIME1, 0);
+        ObjectSet(cEnPrice, OBJPROP_TIME1, 0);
+        ObjectSet(cSlPrice, OBJPROP_TIME1, 0);
+        ObjectSet(cTpText , OBJPROP_TIME1, 0);
+        ObjectSet(cEnText , OBJPROP_TIME1, 0);
+        ObjectSet(cSlText , OBJPROP_TIME1, 0);
+        ObjectSet(cPointTP, OBJPROP_TIME1, 0);
+        ObjectSet(cPointSL, OBJPROP_TIME1, 0);
+        ObjectSet(cPointEN, OBJPROP_TIME1, 0);
+        ObjectSet(cPointWD, OBJPROP_TIME1, 0);
+    }
+    isShow = !isShow;
 }

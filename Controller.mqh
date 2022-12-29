@@ -98,7 +98,7 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'R') return IDX_RECTANGLE;
     if (key == 'F') return IDX_FIBONACI ;
     if (key == 'C') return IDX_CALLOUT  ;
-    if (key == 'S') return IDX_LONGSHORT;
+    if (key == 'L') return IDX_LONGSHORT;
     return IDX_NONE;
 }
 
@@ -133,6 +133,9 @@ void Controller::handleKeyEvent(const long &key)
         break;
     case '3':
         if (mbStartErase) EraseLowerTF();
+        break;
+    case 'S':
+        ((LongShort*)mListItem[IDX_LONGSHORT]).showHideHistory();
         break;
     default:
         break;
