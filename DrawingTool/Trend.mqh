@@ -33,6 +33,7 @@ private:
     double price1;
     double price2;
     double price3;
+    double priceText;
 
 public:
     Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo);
@@ -91,7 +92,6 @@ void Trend::activateItem(const string& itemId)
 
 void Trend::refreshData()
 {
-    getCenterPos(time1, time2, price1, price2, time3, price3);
     ObjectSet(cMainTrend, OBJPROP_TIME1,  time1);
     ObjectSet(cMainTrend, OBJPROP_PRICE1, price1);
 
@@ -100,12 +100,24 @@ void Trend::refreshData()
 
     ObjectSet(cText, OBJPROP_TIME1,  time3);
     ObjectSet(cText, OBJPROP_PRICE1, price3);
+    if (priceText == price3)
+    {
+        return;
+    }
+    if (priceText > price3)
+    {
+        ObjectSetInteger(0, cText, OBJPROP_ANCHOR, ANCHOR_LOWER);
+    }
+    else
+    {
+        ObjectSetInteger(0, cText, OBJPROP_ANCHOR, ANCHOR_UPPER);
+    }
 }
 
 void Trend::createItem()
 {
     ObjectCreate(cMainTrend, OBJ_TREND, 0, 0, 0);
-    ObjectCreate(cText    , OBJ_TEXT , 0, 0, 0);
+    ObjectCreate(cText     , OBJ_TEXT , 0, 0, 0);
 
     updateTypeProperty();
     updateDefaultProperty();
@@ -140,6 +152,13 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
     time2 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME2);
     price1 = ObjectGet(cMainTrend, OBJPROP_PRICE1);
     price2 = ObjectGet(cMainTrend, OBJPROP_PRICE2);
+    getCenterPos(time1, time2, price1, price2, time3, price3);
+    priceText = price3;
+
+    if (objId == cText)
+    {
+        priceText = ObjectGet(cText, OBJPROP_PRICE1);
+    }
 
     refreshData();
 }

@@ -140,15 +140,18 @@ void Controller::handleKeyEvent(const long &key)
     default:
         break;
     }
-    if (key == 'E' && mActive == IDX_NONE)
+    if (mActive == IDX_NONE)
     {
-        mbStartErase = true;
-        pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF");
-    }
-    else
-    {
-        mbStartErase = false;
-        pMouseInfo.setText("");
+        if (key == 'E')
+        {
+            mbStartErase = true;
+            pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF");
+        }
+        else
+        {
+            mbStartErase = false;
+            pMouseInfo.setText("");
+        }
     }
 
     // S2: Active drawing tool
