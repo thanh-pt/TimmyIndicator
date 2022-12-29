@@ -4,9 +4,9 @@
 #include "DrawingTool/HTrend.mqh"
 #include "DrawingTool/ZigZag.mqh"
 #include "DrawingTool/Rectangle.mqh"
-#include "DrawingTool/Fibonacci.mqh"
 #include "DrawingTool/CallOut.mqh"
-// #include "DrawingTool/LongShort.mqh"
+#include "DrawingTool/LongShort.mqh"
+#include "DrawingTool/Fibonacci.mqh"
 
 #define CHECK_NOT_ACTIVE_RETURN if(mActive == IDX_NONE){return;}
 #define CHECK_ACTIVE_RETURN if(mActive != IDX_NONE){return;}
@@ -61,7 +61,7 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     mListItem[IDX_RECTANGLE]    = new Rectangle ( ITEM_RECTANGLE , commonData, mouseInfo);
     mListItem[IDX_FIBONACI ]    = new Fibonacci ( ITEM_FIBONACI  , commonData, mouseInfo);
     mListItem[IDX_CALLOUT  ]    = new CallOut   ( ITEM_CALLOUT   , commonData, mouseInfo);
-    // mListItem[IDX_LONGSHORT]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
+    mListItem[IDX_LONGSHORT]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
 }
 
 
