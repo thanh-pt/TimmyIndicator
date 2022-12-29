@@ -3,49 +3,49 @@
 
 input string          Fibonacci_  = "Fibonacci Config";
 //--------------------------------------------
-input color           FibCenterColor = clrWhite;
+input color           FibCenterColor = clrGray;
 input int             FibCenterWidth = 1;
 input ENUM_LINE_STYLE FibCenterStyle = 2;
 //--------------------------------------------
 input string          Fib_0_Name  = "0";
-input double          Fib_0_Value = 0;
+input double          Fib_0_Ratio = 0;
 input bool            Fib_0_Show  = true;
-input color           Fib_0_Color = clrWhite;
+input color           Fib_0_Color = clrGray;
 input int             Fib_0_Width = 1;
 input ENUM_LINE_STYLE Fib_0_Style = 0;
 //--------------------------------------------
 input string          Fib_1_Name  = "1";
-input double          Fib_1_Value = 1;
+input double          Fib_1_Ratio = 1;
 input bool            Fib_1_Show  = true;
-input color           Fib_1_Color = clrWhite;
+input color           Fib_1_Color = clrGray;
 input int             Fib_1_Width = 1;
 input ENUM_LINE_STYLE Fib_1_Style = 0;
 //--------------------------------------------
 input string          Fib_2_Name  = "0.5";
-input double          Fib_2_Value = 0.5;
+input double          Fib_2_Ratio = 0.5;
 input bool            Fib_2_Show  = true;
-input color           Fib_2_Color = clrWhite;
+input color           Fib_2_Color = clrYellow;
 input int             Fib_2_Width = 1;
 input ENUM_LINE_STYLE Fib_2_Style = 0;
 //--------------------------------------------
 input string          Fib_3_Name  = "0.618";
-input double          Fib_3_Value = 0.618;
+input double          Fib_3_Ratio = 0.618;
 input bool            Fib_3_Show  = true;
-input color           Fib_3_Color = clrWhite;
+input color           Fib_3_Color = clrYellow;
 input int             Fib_3_Width = 1;
 input ENUM_LINE_STYLE Fib_3_Style = 0;
 //--------------------------------------------
 input string          Fib_4_Name  = "-0.27";
-input double          Fib_4_Value = -0.27;
+input double          Fib_4_Ratio = -0.27;
 input bool            Fib_4_Show  = true;
-input color           Fib_4_Color = clrWhite;
+input color           Fib_4_Color = clrGold;
 input int             Fib_4_Width = 1;
 input ENUM_LINE_STYLE Fib_4_Style = 0;
 //--------------------------------------------
 input string          Fib_5_Name  = "-0.62";
-input double          Fib_5_Value = -0.62;
+input double          Fib_5_Ratio = -0.62;
 input bool            Fib_5_Show  = true;
-input color           Fib_5_Color = clrWhite;
+input color           Fib_5_Color = clrRed;
 input int             Fib_5_Width = 1;
 input ENUM_LINE_STYLE Fib_5_Style = 0;
 
@@ -72,10 +72,10 @@ private:
 
 // Value define for Item
 private:
+    datetime time0;
     datetime time1;
-    datetime time2;
+    double price0;
     double price1;
-    double price2;
 
 public:
     Fibonacci(const string name, CommonData* commonData, MouseInfo* mouseInfo);
@@ -121,26 +121,26 @@ void Fibonacci::prepareActive()
 }
 void Fibonacci::createItem()
 {
-    if (cFib0) ObjectCreate(cFib0, OBJ_TREND, 0, 0, 0);
-    if (cFib1) ObjectCreate(cFib1, OBJ_TREND, 0, 0, 0);
-    if (cFib2) ObjectCreate(cFib2, OBJ_TREND, 0, 0, 0);
-    if (cFib3) ObjectCreate(cFib3, OBJ_TREND, 0, 0, 0);
-    if (cFib4) ObjectCreate(cFib4, OBJ_TREND, 0, 0, 0);
-    if (cFib5) ObjectCreate(cFib5, OBJ_TREND, 0, 0, 0);
+    if (Fib_0_Show) ObjectCreate(cFib0, OBJ_TREND, 0, 0, 0);
+    if (Fib_1_Show) ObjectCreate(cFib1, OBJ_TREND, 0, 0, 0);
+    if (Fib_2_Show) ObjectCreate(cFib2, OBJ_TREND, 0, 0, 0);
+    if (Fib_3_Show) ObjectCreate(cFib3, OBJ_TREND, 0, 0, 0);
+    if (Fib_4_Show) ObjectCreate(cFib4, OBJ_TREND, 0, 0, 0);
+    if (Fib_5_Show) ObjectCreate(cFib5, OBJ_TREND, 0, 0, 0);
     //------------------------------------------
-    if (cFib0) ObjectCreate(cText0, OBJ_TEXT, 0, 0, 0);
-    if (cFib1) ObjectCreate(cText1, OBJ_TEXT, 0, 0, 0);
-    if (cFib2) ObjectCreate(cText2, OBJ_TEXT, 0, 0, 0);
-    if (cFib3) ObjectCreate(cText3, OBJ_TEXT, 0, 0, 0);
-    if (cFib4) ObjectCreate(cText4, OBJ_TEXT, 0, 0, 0);
-    if (cFib5) ObjectCreate(cText5, OBJ_TEXT, 0, 0, 0);
+    if (Fib_0_Show) ObjectCreate(cText0, OBJ_TEXT, 0, 0, 0);
+    if (Fib_1_Show) ObjectCreate(cText1, OBJ_TEXT, 0, 0, 0);
+    if (Fib_2_Show) ObjectCreate(cText2, OBJ_TEXT, 0, 0, 0);
+    if (Fib_3_Show) ObjectCreate(cText3, OBJ_TEXT, 0, 0, 0);
+    if (Fib_4_Show) ObjectCreate(cText4, OBJ_TEXT, 0, 0, 0);
+    if (Fib_5_Show) ObjectCreate(cText5, OBJ_TEXT, 0, 0, 0);
     ObjectCreate(cMainLine, OBJ_TREND, 0, 0, 0);
 
     updateTypeProperty();
     updateDefaultProperty();
 
-    time1  = pCommonData.mMouseTime;
-    price1 = pCommonData.mMousePrice;
+    time0  = pCommonData.mMouseTime;
+    price0 = pCommonData.mMousePrice;
 }
 void Fibonacci::updateDefaultProperty()
 {
@@ -166,23 +166,36 @@ void Fibonacci::updateDefaultProperty()
     ObjectSetString(ChartID(), cText3   ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cText4   ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cText5   ,OBJPROP_TOOLTIP,"\n");
-    // TODO: update text anchor
+    //------------------------------------------
+    ObjectSetInteger(ChartID(), cText0  , OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    ObjectSetInteger(ChartID(), cText1  , OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    ObjectSetInteger(ChartID(), cText2  , OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    ObjectSetInteger(ChartID(), cText3  , OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    ObjectSetInteger(ChartID(), cText4  , OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    ObjectSetInteger(ChartID(), cText5  , OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    //------------------------------------------
+    ObjectSet(cText0, OBJPROP_SELECTABLE, 0);
+    ObjectSet(cText1, OBJPROP_SELECTABLE, 0);
+    ObjectSet(cText2, OBJPROP_SELECTABLE, 0);
+    ObjectSet(cText3, OBJPROP_SELECTABLE, 0);
+    ObjectSet(cText4, OBJPROP_SELECTABLE, 0);
+    ObjectSet(cText5, OBJPROP_SELECTABLE, 0);
+    //------------------------------------------
+    ObjectSet(cFib0 , OBJPROP_SELECTABLE, 0);
+    ObjectSet(cFib1 , OBJPROP_SELECTABLE, 0);
+    ObjectSet(cFib2 , OBJPROP_SELECTABLE, 0);
+    ObjectSet(cFib3 , OBJPROP_SELECTABLE, 0);
+    ObjectSet(cFib4 , OBJPROP_SELECTABLE, 0);
+    ObjectSet(cFib5 , OBJPROP_SELECTABLE, 0);
 }
 void Fibonacci::updateTypeProperty()
 {
-    ObjectSetText(cText0, Fib_0_Name);
-    ObjectSetText(cText1, Fib_1_Name);
-    ObjectSetText(cText2, Fib_2_Name);
-    ObjectSetText(cText3, Fib_3_Name);
-    ObjectSetText(cText4, Fib_4_Name);
-    ObjectSetText(cText5, Fib_5_Name);
-    //------------------------------------------
-    ObjectSet(cText0, OBJPROP_COLOR, Fib_0_Color);
-    ObjectSet(cText1, OBJPROP_COLOR, Fib_1_Color);
-    ObjectSet(cText2, OBJPROP_COLOR, Fib_2_Color);
-    ObjectSet(cText3, OBJPROP_COLOR, Fib_3_Color);
-    ObjectSet(cText4, OBJPROP_COLOR, Fib_4_Color);
-    ObjectSet(cText5, OBJPROP_COLOR, Fib_5_Color);
+    ObjectSetText(cText0, Fib_0_Name + "  ", 7, NULL, Fib_0_Color);
+    ObjectSetText(cText1, Fib_1_Name + "  ", 7, NULL, Fib_1_Color);
+    ObjectSetText(cText2, Fib_2_Name + "  ", 7, NULL, Fib_2_Color);
+    ObjectSetText(cText3, Fib_3_Name + "  ", 7, NULL, Fib_3_Color);
+    ObjectSetText(cText4, Fib_4_Name + "  ", 7, NULL, Fib_4_Color);
+    ObjectSetText(cText5, Fib_5_Name + "  ", 7, NULL, Fib_5_Color);
     //------------------------------------------
     ObjectSet(cMainLine, OBJPROP_COLOR, FibCenterColor);
     ObjectSet(cMainLine, OBJPROP_WIDTH, FibCenterWidth);
@@ -215,27 +228,75 @@ void Fibonacci::updateTypeProperty()
 }
 void Fibonacci::activateItem(const string& itemId)
 {
-    string cMainLine = itemId + "_" + "cMainLine";
-    string cFib0     = itemId + "_" + "cFib0";
-    string cFib1     = itemId + "_" + "cFib1";
-    string cFib2     = itemId + "_" + "cFib2";
-    string cFib3     = itemId + "_" + "cFib3";
-    string cFib4     = itemId + "_" + "cFib4";
-    string cFib5     = itemId + "_" + "cFib5";
-    string cText0    = itemId + "_" + "cText0";
-    string cText1    = itemId + "_" + "cText1";
-    string cText2    = itemId + "_" + "cText2";
-    string cText3    = itemId + "_" + "cText3";
-    string cText4    = itemId + "_" + "cText4";
-    string cText5    = itemId + "_" + "cText5";
+    cMainLine = itemId + "_" + "cMainLine";
+    cFib0     = itemId + "_" + "cFib0";
+    cFib1     = itemId + "_" + "cFib1";
+    cFib2     = itemId + "_" + "cFib2";
+    cFib3     = itemId + "_" + "cFib3";
+    cFib4     = itemId + "_" + "cFib4";
+    cFib5     = itemId + "_" + "cFib5";
+    cText0    = itemId + "_" + "cText0";
+    cText1    = itemId + "_" + "cText1";
+    cText2    = itemId + "_" + "cText2";
+    cText3    = itemId + "_" + "cText3";
+    cText4    = itemId + "_" + "cText4";
+    cText5    = itemId + "_" + "cText5";
 }
 void Fibonacci::updateItemAfterChangeType(){}
 void Fibonacci::refreshData()
 {
-    double priceFib2;
-    double priceFib3;
-    double priceFib4;
-    double priceFib5;
+    double price2 = price1-Fib_2_Ratio*(price1-price0);
+    double price3 = price1-Fib_3_Ratio*(price1-price0);
+    double price4 = price1-Fib_4_Ratio*(price1-price0);
+    double price5 = price1-Fib_5_Ratio*(price1-price0);
+    //-------------------------------------------------
+    ObjectSet(cMainLine   , OBJPROP_TIME1,  time0);
+    ObjectSet(cMainLine   , OBJPROP_TIME2,  time1);
+    ObjectSet(cMainLine   , OBJPROP_PRICE1, price0);
+    ObjectSet(cMainLine   , OBJPROP_PRICE2, price1);
+    //-------------------------------------------------
+    ObjectSet(cFib0, OBJPROP_TIME1,  time0);
+    ObjectSet(cFib1, OBJPROP_TIME1,  time0);
+    ObjectSet(cFib2, OBJPROP_TIME1,  time0);
+    ObjectSet(cFib3, OBJPROP_TIME1,  time0);
+    ObjectSet(cFib4, OBJPROP_TIME1,  time0);
+    ObjectSet(cFib5, OBJPROP_TIME1,  time0);
+    //-------------------------------------------------
+    ObjectSet(cFib0, OBJPROP_TIME2,  time1);
+    ObjectSet(cFib1, OBJPROP_TIME2,  time1);
+    ObjectSet(cFib2, OBJPROP_TIME2,  time1);
+    ObjectSet(cFib3, OBJPROP_TIME2,  time1);
+    ObjectSet(cFib4, OBJPROP_TIME2,  time1);
+    ObjectSet(cFib5, OBJPROP_TIME2,  time1);
+    //-------------------------------------------------
+    ObjectSet(cFib0, OBJPROP_PRICE1, price0);
+    ObjectSet(cFib1, OBJPROP_PRICE1, price1);
+    ObjectSet(cFib2, OBJPROP_PRICE1, price2);
+    ObjectSet(cFib3, OBJPROP_PRICE1, price3);
+    ObjectSet(cFib4, OBJPROP_PRICE1, price4);
+    ObjectSet(cFib5, OBJPROP_PRICE1, price5);
+    //-------------------------------------------------
+    ObjectSet(cFib0, OBJPROP_PRICE2, price0);
+    ObjectSet(cFib1, OBJPROP_PRICE2, price1);
+    ObjectSet(cFib2, OBJPROP_PRICE2, price2);
+    ObjectSet(cFib3, OBJPROP_PRICE2, price3);
+    ObjectSet(cFib4, OBJPROP_PRICE2, price4);
+    ObjectSet(cFib5, OBJPROP_PRICE2, price5);
+    //-------------------------------------------------
+    ObjectSet(cText0, OBJPROP_TIME1,  time0);
+    ObjectSet(cText1, OBJPROP_TIME1,  time0);
+    ObjectSet(cText2, OBJPROP_TIME1,  time0);
+    ObjectSet(cText3, OBJPROP_TIME1,  time0);
+    ObjectSet(cText4, OBJPROP_TIME1,  time0);
+    ObjectSet(cText5, OBJPROP_TIME1,  time0);
+    //-------------------------------------------------
+    ObjectSet(cText0, OBJPROP_PRICE1, price0);
+    ObjectSet(cText1, OBJPROP_PRICE1, price1);
+    ObjectSet(cText2, OBJPROP_PRICE1, price2);
+    ObjectSet(cText3, OBJPROP_PRICE1, price3);
+    ObjectSet(cText4, OBJPROP_PRICE1, price4);
+    ObjectSet(cText5, OBJPROP_PRICE1, price5);
+    //-------------------------------------------------
 }
 void Fibonacci::finishedJobDone(){}
 
@@ -246,8 +307,8 @@ void Fibonacci::onMouseMove()
     {
         return;
     }
-    time2  = pCommonData.mMouseTime;
-    price2 = pCommonData.mMousePrice;
+    time1  = pCommonData.mMouseTime;
+    price1 = pCommonData.mMousePrice;
     refreshData();
 }
 void Fibonacci::onMouseClick()
@@ -262,10 +323,10 @@ void Fibonacci::onMouseClick()
 }
 void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 {
-    time1   = (datetime)ObjectGet(cMainLine, OBJPROP_TIME1);
-    time2   = (datetime)ObjectGet(cMainLine, OBJPROP_TIME2);
-    price1  =           ObjectGet(cMainLine, OBJPROP_PRICE1);
-    price2  =           ObjectGet(cMainLine, OBJPROP_PRICE2);
+    time0   = (datetime)ObjectGet(cMainLine, OBJPROP_TIME1);
+    time1   = (datetime)ObjectGet(cMainLine, OBJPROP_TIME2);
+    price0  =           ObjectGet(cMainLine, OBJPROP_PRICE1);
+    price1  =           ObjectGet(cMainLine, OBJPROP_PRICE2);
 
     refreshData();
 }

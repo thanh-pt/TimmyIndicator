@@ -3,6 +3,10 @@
 #include "DrawingTool/Trend.mqh"
 #include "DrawingTool/HTrend.mqh"
 #include "DrawingTool/ZigZag.mqh"
+#include "DrawingTool/Rectangle.mqh"
+#include "DrawingTool/Fibonacci.mqh"
+// #include "DrawingTool/CallOut.mqh"
+// #include "DrawingTool/LongShort.mqh"
 
 #define CHECK_NOT_ACTIVE_RETURN if(mActive == IDX_NONE){return;}
 #define CHECK_ACTIVE_RETURN if(mActive != IDX_NONE){return;}
@@ -20,7 +24,7 @@
 #define ITEM_HTREND     "HTrend"
 #define ITEM_ZIGZAG     "ZigZag"
 #define ITEM_RECTANGLE  "Rectangle"
-#define ITEM_FIBONACI   "Fibonaci"
+#define ITEM_FIBONACI   "Fibonacci"
 #define ITEM_CALLOUT    "CallOut"
 #define ITEM_LONGSHORT  "LongShort"
 
@@ -51,9 +55,13 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
 {
     pMouseInfo = mouseInfo;
     mActive = IDX_NONE;
-    mListItem[IDX_TREND]    = new Trend(ITEM_TREND, commonData, mouseInfo);
-    mListItem[IDX_HTREND]   = new HTrend(ITEM_HTREND, commonData, mouseInfo);
-    mListItem[IDX_ZIGZAG]   = new ZigZag(ITEM_ZIGZAG, commonData, mouseInfo);
+    mListItem[IDX_TREND    ]    = new Trend     ( ITEM_TREND     , commonData, mouseInfo);
+    mListItem[IDX_HTREND   ]    = new HTrend    ( ITEM_HTREND    , commonData, mouseInfo);
+    mListItem[IDX_ZIGZAG   ]    = new ZigZag    ( ITEM_ZIGZAG    , commonData, mouseInfo);
+    mListItem[IDX_RECTANGLE]    = new Rectangle ( ITEM_RECTANGLE , commonData, mouseInfo);
+    mListItem[IDX_FIBONACI ]    = new Fibonacci ( ITEM_FIBONACI  , commonData, mouseInfo);
+    // mListItem[IDX_CALLOUT  ]    = new CallOut   ( ITEM_CALLOUT   , commonData, mouseInfo);
+    // mListItem[IDX_LONGSHORT]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
 }
 
 

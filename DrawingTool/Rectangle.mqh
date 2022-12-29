@@ -13,7 +13,7 @@ input string            Rectangle_2_NAME        = "Demand";
 input color             Rectangle_2_BoderColor  = clrNONE;
 input int               Rectangle_2_BoderWidth  = 0;
 input ENUM_LINE_STYLE   Rectangle_2_BoderStyle  = 2;
-input color             Rectangle_2_BackGrdClr  = clrOrangeRed;
+input color             Rectangle_2_BackGrdClr  = clrYellowGreen;
 //-----------------------------------------------------------
 input string            Rectangle_3_NAME        = "Boder";
 input color             Rectangle_3_BoderColor  = clrWhite;
@@ -121,6 +121,9 @@ void Rectangle::updateDefaultProperty()
     ObjectSet(cBoder        , OBJPROP_BACK , false);
     ObjectSet(cBackground   , OBJPROP_BACK , true);
 
+    ObjectSet(cLeftPoint    , OBJPROP_COLOR, clrNONE);
+    ObjectSet(cRightPoint   , OBJPROP_COLOR, clrNONE);
+
     ObjectSetString(ChartID(), cBackground ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cBoder      ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cLeftPoint  ,OBJPROP_TOOLTIP,"\n");
@@ -128,7 +131,7 @@ void Rectangle::updateDefaultProperty()
 }
 void Rectangle::updateTypeProperty()
 {
-    ObjectSet(cBackground   , OBJPROP_COLOR, mBoderColorType[mIndexType]);
+    ObjectSet(cBackground   , OBJPROP_COLOR, mBackGrdClrType[mIndexType]);
 
     ObjectSet(cBoder        , OBJPROP_COLOR, mBoderColorType[mIndexType]);
     ObjectSet(cBoder        , OBJPROP_WIDTH, mBoderWidthType[mIndexType]);
@@ -195,7 +198,7 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
     time1 = (datetime)ObjectGet(cBoder, OBJPROP_TIME1);
     time2 = (datetime)ObjectGet(cBoder, OBJPROP_TIME2);
     price1 = ObjectGet(cBoder, OBJPROP_PRICE1);
-    price2 = ObjectGet(cBoder, OBJPROP_PRICE1);
+    price2 = ObjectGet(cBoder, OBJPROP_PRICE2);
     if (objId == cLeftPoint)
     {
         time1 = (datetime)ObjectGet(cLeftPoint, OBJPROP_TIME1);
