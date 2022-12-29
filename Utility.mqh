@@ -132,7 +132,12 @@ void EraseAll()
 {
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
-        ObjectDelete(ObjectName(i));
+        string objName = ObjectName(i);
+        if (StringFind(objName, "LongShort") != -1)
+        {
+            continue;
+        }
+        ObjectDelete(objName);
     }
 }
 
@@ -140,8 +145,13 @@ void EraseLowerTF()
 {
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
+        string objName = ObjectName(i);
+        if (StringFind(objName, "LongShort") != -1)
+        {
+            continue;
+        }
         string sparamItems[];
-        int k1=StringSplit(ObjectName(i),'_',sparamItems);
+        int k1=StringSplit(objName,'_',sparamItems);
         if (k1 == 3)
         {
             string strInfoItem[];
@@ -151,7 +161,7 @@ void EraseLowerTF()
                 continue;
             }
         }
-        ObjectDelete(ObjectName(i));
+        ObjectDelete(objName);
     }
 }
 
@@ -159,15 +169,20 @@ void EraseThisTF()
 {
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
+        string objName = ObjectName(i);
+        if (StringFind(objName, "LongShort") != -1)
+        {
+            continue;
+        }
         string sparamItems[];
-        int k1=StringSplit(ObjectName(i),'_',sparamItems);
+        int k1=StringSplit(objName,'_',sparamItems);
         if (k1 == 3)
         {
             string strInfoItem[];
             int k2 = StringSplit(sparamItems[1],'#',strInfoItem);
             if (k2 == 2 && StrToInteger(strInfoItem[0]) == ChartPeriod())
             {
-                ObjectDelete(ObjectName(i));
+                ObjectDelete(objName);
             }
         }
     }
