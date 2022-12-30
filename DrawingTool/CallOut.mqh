@@ -97,6 +97,7 @@ void CallOut::updateTypeProperty()
     //-------------------------------------------------------------
     ObjectSet(cText       , OBJPROP_COLOR   , CallOut_Color);
     ObjectSet(cText       , OBJPROP_FONTSIZE, CallOut_TextSize);
+    ObjectSet(cText       , OBJPROP_SELECTED, true);
 }
 void CallOut::activateItem(const string& itemId)
 {

@@ -13,7 +13,8 @@ datetime getCenterTime(const datetime& time1, const datetime& time2)
 {
     datetime centerTime;
     double price;
-    getCenterPos(time1, time2, Close[0], Close[0], centerTime, price);
+    double priceInp = ChartGetDouble(ChartID(),CHART_FIXED_MAX);
+    getCenterPos(time1, time2, priceInp, priceInp, centerTime, price);
     return centerTime;
 }
 
@@ -146,10 +147,6 @@ void EraseLowerTF()
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
-        if (StringFind(objName, "LongShort") != -1)
-        {
-            continue;
-        }
         string sparamItems[];
         int k1=StringSplit(objName,'_',sparamItems);
         if (k1 == 3)

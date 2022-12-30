@@ -198,8 +198,28 @@ void HTrend::onItemDrag(const string &itemId, const string &objId)
 
     refreshData();
 }
-void HTrend::onItemClick(const string &itemId, const string &objId){}
-void HTrend::onItemChange(const string &itemId, const string &objId){}
+void HTrend::onItemClick(const string &itemId, const string &objId)
+{
+    if (objId == cText)
+    {
+        ObjectSet(cMainTrend, OBJPROP_SELECTED, ObjectGet(cText, OBJPROP_SELECTED));
+    }
+}
+void HTrend::onItemChange(const string &itemId, const string &objId)
+{
+    color c = (color)ObjectGet(objId, OBJPROP_COLOR);
+    ObjectSet(cMainTrend, OBJPROP_COLOR, c);
+    ObjectSet(cText     , OBJPROP_COLOR, c);
+    if (objId == cMainTrend)
+    {
+        string lineDescription = ObjectDescription(cMainTrend);
+        if (lineDescription != "")
+        {
+            ObjectSetText(cText    , lineDescription);
+            ObjectSetText(cMainTrend, "");
+        }
+    }
+}
 void HTrend::onItemDeleted(const string &itemId, const string &objId)
 {
     ObjectDelete(cMainTrend);

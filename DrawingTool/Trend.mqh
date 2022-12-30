@@ -53,6 +53,7 @@ public:
     virtual void onMouseMove();
     virtual void onMouseClick();
     virtual void onItemDrag(const string &itemId, const string &objId);
+    virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
 };
@@ -162,12 +163,20 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
 
     refreshData();
 }
+void Trend::onItemClick(const string &itemId, const string &objId)
+{
+    if (objId == cText)
+    {
+        ObjectSet(cMainTrend, OBJPROP_SELECTED, ObjectGet(cText, OBJPROP_SELECTED));
+    }
+}
 void Trend::onItemChange(const string &itemId, const string &objId)
 {
+    color c = (color)ObjectGet(objId, OBJPROP_COLOR);
+    ObjectSet(cMainTrend, OBJPROP_COLOR, c);
+    ObjectSet(cText     , OBJPROP_COLOR, c);
     if (objId == cMainTrend)
     {
-        ObjectSet(cText, OBJPROP_COLOR, ObjectGet(cMainTrend, OBJPROP_COLOR));
-        
         string lineDescription = ObjectDescription(cMainTrend);
         if (lineDescription != "")
         {
