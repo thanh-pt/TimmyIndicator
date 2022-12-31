@@ -129,6 +129,7 @@ void Trend::updateDefaultProperty()
 {
     ObjectSet(cMainTrend, OBJPROP_RAY, false);
     ObjectSetText(cText, "");
+    ObjectSetString(ChartID(), cText      ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cMainTrend ,OBJPROP_TOOLTIP,"\n");
 }
 void Trend::updateTypeProperty()

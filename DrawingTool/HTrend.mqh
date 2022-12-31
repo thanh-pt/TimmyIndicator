@@ -131,6 +131,7 @@ void HTrend::createItem()
 void HTrend::updateDefaultProperty()
 {
     ObjectSet(cMainTrend, OBJPROP_RAY, false);
+    ObjectSetString(ChartID(), cText      ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cMainTrend ,OBJPROP_TOOLTIP,"\n");
 }
 void HTrend::updateTypeProperty()
