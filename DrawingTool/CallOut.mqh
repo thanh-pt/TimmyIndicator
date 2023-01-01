@@ -61,11 +61,7 @@ CallOut::CallOut(const string name, CommonData* commonData, MouseInfo* mouseInfo
 }
 
 // Internal Event
-void CallOut::prepareActive()
-{
-    mFirstPoint = false;
-    pMouseInfo.setText(mItemName);
-}
+void CallOut::prepareActive(){}
 void CallOut::createItem()
 {
     ObjectCreate(cPointerLine, OBJ_TREND, 0, 0, 0);

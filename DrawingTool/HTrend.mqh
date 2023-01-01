@@ -108,11 +108,7 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
 }
 
 // Internal Event
-void HTrend::prepareActive()
-{
-    mFirstPoint = false;
-    pMouseInfo.setText(mNameType[mIndexType]);
-}
+void HTrend::prepareActive(){}
 
 void HTrend::createItem()
 {

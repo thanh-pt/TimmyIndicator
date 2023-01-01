@@ -98,11 +98,7 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
 }
 
 // Internal Event
-void Rectangle::prepareActive()
-{
-    mFirstPoint = false;
-    pMouseInfo.setText(mNameType[mIndexType]);
-}
+void Rectangle::prepareActive(){}
 void Rectangle::createItem()
 {
     ObjectCreate(cBackground, OBJ_RECTANGLE , 0, 0, 0);

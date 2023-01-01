@@ -56,9 +56,7 @@ ZigZag::ZigZag(const string name, CommonData* commonData, MouseInfo* mouseInfo)
 void ZigZag::prepareActive()
 {
     mLineIndex = 0;
-    mFirstPoint = false;
     mTempLine = "";
-    pMouseInfo.setText(mItemName);
 }
 void ZigZag::createItem()
 {

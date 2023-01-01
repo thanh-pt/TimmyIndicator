@@ -79,11 +79,7 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
 }
 
 // Internal Event
-void Trend::prepareActive()
-{
-    mFirstPoint = false;
-    pMouseInfo.setText(mNameType[mIndexType]);
-}
+void Trend::prepareActive(){}
 
 void Trend::activateItem(const string& itemId)
 {

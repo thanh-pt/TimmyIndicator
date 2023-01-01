@@ -97,10 +97,7 @@ LongShort::LongShort(const string name, CommonData* commonData, MouseInfo* mouse
 }
 
 // Internal Event
-void LongShort::prepareActive()
-{
-    pMouseInfo.setText(mNameType[mIndexType]);
-}
+void LongShort::prepareActive(){}
 void LongShort::createItem()
 {
     ObjectCreate(cBgndSL  , OBJ_RECTANGLE , 0, 0, 0);

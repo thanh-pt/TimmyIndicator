@@ -20,6 +20,9 @@ protected:
     int         mTypeNum;
     string      mNameType[MAX_TYPE];
 
+protected:
+    string createMouseInfo();
+
 // Internal Event:
 protected:
     virtual void prepareActive(){};
@@ -50,6 +53,15 @@ public:
 void BaseItem::startActivate(FinishedJob cb)
 {
     ChartSetInteger(0, CHART_MOUSE_SCROLL, false);
+    if (mTypeNum == 0)
+    {
+        pMouseInfo.setText(mItemName);
+    }
+    else
+    {
+        pMouseInfo.setText(createMouseInfo());
+    }
+    mFirstPoint = false;
     mFinishedJobCb = cb;
     prepareActive();
     string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(TimeLocal());
@@ -74,12 +86,41 @@ void BaseItem::changeActiveType()
     {
         return;
     }
-    
-    if((++mIndexType) >= mTypeNum)
+
+    if (pCommonData.mShiftHold)
     {
-        mIndexType = 0;
+        if((--mIndexType) < 0)
+        {
+            mIndexType = mTypeNum-1;
+        }
+    }
+    else
+    {
+        if((++mIndexType) >= mTypeNum)
+        {
+            mIndexType = 0;
+        }
     }
     
-    pMouseInfo.setText(mNameType[mIndexType]);
+    pMouseInfo.setText(createMouseInfo());
     updateItemAfterChangeType();
+}
+
+string BaseItem::createMouseInfo()
+{
+    string mouseInfo = "";
+    for (int i = 0; i < mTypeNum; i++)
+    {
+        if (mouseInfo != "")
+        {
+            mouseInfo += " - ";
+        }
+        if (i == mIndexType)
+        {
+            mouseInfo += "(" + mNameType[i] + ")";
+            continue;
+        }
+        mouseInfo += mNameType[i];
+    }
+    return mouseInfo;
 }

@@ -114,11 +114,7 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
 }
 
 // Internal Event
-void Fibonacci::prepareActive()
-{
-    mFirstPoint = false;
-    pMouseInfo.setText(mItemName);
-}
+void Fibonacci::prepareActive(){}
 void Fibonacci::createItem()
 {
     if (Fib_0_Show) ObjectCreate(cFib0, OBJ_TREND, 0, 0, 0);
