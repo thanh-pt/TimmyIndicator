@@ -81,6 +81,9 @@ public:
     virtual void onItemDeleted(const string &itemId, const string &objId);
 // Special functional
     void showHideHistory();
+
+// Alpha feature
+    void initData();
 };
 
 LongShort::LongShort(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -119,11 +122,13 @@ void LongShort::createItem()
 
     updateTypeProperty();
     updateDefaultProperty();
-
+}
+void LongShort::initData()
+{
     time1   = pCommonData.mMouseTime;
     priceEN = pCommonData.mMousePrice;
     static int wd = 0;
-    ChartXYToTimePrice(0, (int)pCommonData.mMouseX+100, (int)pCommonData.mMouseY+(mIndexType == LONG_IDX ? 50:-50), wd,  time2, priceSL);
+    ChartXYToTimePrice(ChartID(), (int)pCommonData.mMouseX+100, (int)pCommonData.mMouseY+(mIndexType == LONG_IDX ? 50:-50), wd,  time2, priceSL);
     priceTP = 4*priceEN - 3*priceSL;
 }
 void LongShort::updateDefaultProperty()
@@ -233,6 +238,10 @@ void LongShort::activateItem(const string& itemId)
 void LongShort::updateItemAfterChangeType(){}
 void LongShort::refreshData()
 {
+    if (ObjectFind(ChartID(), cBgndSL) < 0)
+    {
+        createItem();
+    }
     datetime centerTime = getCenterTime(time1, time2);
     ObjectSet(cBgndSL, OBJPROP_TIME1,  time1);
     ObjectSet(cBgndSL, OBJPROP_TIME2,  time2);
@@ -360,6 +369,7 @@ void LongShort::onMouseMove(){}
 void LongShort::onMouseClick()
 {
     createItem();
+    initData();
     refreshData();
     mFinishedJobCb();
 }
