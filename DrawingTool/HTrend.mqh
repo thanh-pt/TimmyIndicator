@@ -179,6 +179,12 @@ void HTrend::refreshData()
         ObjectSet(cText, OBJPROP_TIME1, timeText);
     }
     while (false);
+    string textString = ObjectGetString(ChartID(), cText, OBJPROP_TEXT);
+    if (StringFind(textString, "<") == -1 && textString != "")
+    {
+        textString += "<" + getTFString() + ">";
+        ObjectSetText(cText    , textString);
+    }
 }
 
 // Chart Event

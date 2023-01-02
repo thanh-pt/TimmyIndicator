@@ -184,3 +184,36 @@ void EraseThisTF()
         }
     }
 }
+
+string getTFString()
+{
+    string result = "";
+    int period = ChartPeriod();
+    if (period < PERIOD_H1)
+    {
+        result = "m";
+        result += IntegerToString(period);
+        return result;
+    }
+    if (period < PERIOD_D1)
+    {
+        result = "H";
+        result += IntegerToString(period/PERIOD_H1);
+        return result;
+    }
+    if (period < PERIOD_W1)
+    {
+        result = "D";
+        result += IntegerToString(period/PERIOD_D1);
+        return result;
+    }
+    if (period < PERIOD_MN1)
+    {
+        result = "W";
+        result += IntegerToString(period/PERIOD_W1);
+        return result;
+    }
+    result = "MN";
+    result += IntegerToString(period/PERIOD_MN1);
+    return result;
+}
