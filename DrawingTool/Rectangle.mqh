@@ -1,22 +1,24 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string            Rectangle_ = "Rectangle Config";
+input string            Rectangle_ = SEPARATE_LINE_BIG;
 //-----------------------------------------------------------
-input string            Rectangle_1_NAME        = "Suply";
+input string            Rectangle_1_NAME        = "Supply";
 input color             Rectangle_1_BoderColor  = clrNONE;
 input int               Rectangle_1_BoderWidth  = 0;
 input ENUM_LINE_STYLE   Rectangle_1_BoderStyle  = 2;
-input color             Rectangle_1_BackGrdClr  = clrOrangeRed;
+input color             Rectangle_1_BackGrdClr  = C'39,24,34';
+input string            Rectangle_1_sp          = SEPARATE_LINE;
 //-----------------------------------------------------------
 input string            Rectangle_2_NAME        = "Demand";
 input color             Rectangle_2_BoderColor  = clrNONE;
 input int               Rectangle_2_BoderWidth  = 0;
 input ENUM_LINE_STYLE   Rectangle_2_BoderStyle  = 2;
-input color             Rectangle_2_BackGrdClr  = clrYellowGreen;
+input color             Rectangle_2_BackGrdClr  = C'21,43,37';
+input string            Rectangle_2_sp          = SEPARATE_LINE;
 //-----------------------------------------------------------
 input string            Rectangle_3_NAME        = "Boder";
-input color             Rectangle_3_BoderColor  = clrWhite;
+input color             Rectangle_3_BoderColor  = clrDarkGray;
 input int               Rectangle_3_BoderWidth  = 0;
 input ENUM_LINE_STYLE   Rectangle_3_BoderStyle  = 2;
 input color             Rectangle_3_BackGrdClr  = clrNONE;

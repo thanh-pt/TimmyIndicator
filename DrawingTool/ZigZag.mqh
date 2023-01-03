@@ -1,7 +1,7 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          ZigZag_ = "ZigZag Config";
+input string          ZigZag_ = SEPARATE_LINE_BIG;
 input color           ZigZag_Color = clrWhite;
 input int             ZigZag_Width = 1;
 input ENUM_LINE_STYLE ZigZag_Style = 0;

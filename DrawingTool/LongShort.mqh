@@ -10,7 +10,7 @@ enum e_display
     SHOW_WHEN_SELECTED,
 };
 
-input string          LongShort_ = "LongShort Config";
+input string          LongShort_ = SEPARATE_LINE_BIG;
 input color           LongShort_TextColor = clrWhite;
 input int             LongShort_TextSize  = 8;
 input color           LongShort_TpColor   = clrYellowGreen;
@@ -19,6 +19,7 @@ input color           LongShort_EnColor   = clrOrange;
 input int             LongShort_LineWidth = 1;
 input color           LongShort_SlBkgrdColor = C'80,50,70';
 input color           LongShort_TpBkgrdColor = C'40,80,70';
+input string          LongShort_sp           = SEPARATE_LINE;
 //-------------------------------------------------
 input double          LongShort_Cost       = 50;
 input e_display       LongShort_ShowStats  = SHOW;

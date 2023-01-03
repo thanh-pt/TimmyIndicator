@@ -1,29 +1,35 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string            HTrend_ = "HTrend Config";
+input string            HTrend_ = SEPARATE_LINE_BIG;
 input int               HTrend_Width  = 0;
 input ENUM_LINE_STYLE   HTrend_Style  = 2;
+input string            HTrend_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_1_NAME   = "bos➚➚➚";
+input string            HTrend_1_NAME   = "bos➚";
 input color             HTrend_1_Color  = clrYellowGreen;
 input ENUM_ANCHOR_POINT HTrend_1_Anchor = ANCHOR_LOWER;
+input string            HTrend_1_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
 input string            HTrend_2_NAME   = "SH";
 input color             HTrend_2_Color  = clrYellowGreen;
 input ENUM_ANCHOR_POINT HTrend_2_Anchor = ANCHOR_LOWER;
+input string            HTrend_2_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
 input string            HTrend_3_NAME   = "Strong SH";
 input color             HTrend_3_Color  = clrYellowGreen;
 input ENUM_ANCHOR_POINT HTrend_3_Anchor = ANCHOR_LOWER;
+input string            HTrend_3_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_4_NAME   = "bos➘➘➘";
+input string            HTrend_4_NAME   = "bos➘";
 input color             HTrend_4_Color  = clrOrangeRed;
 input ENUM_ANCHOR_POINT HTrend_4_Anchor = ANCHOR_UPPER;
+input string            HTrend_4_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
 input string            HTrend_5_NAME   = "SL";
 input color             HTrend_5_Color  = clrOrangeRed;
 input ENUM_ANCHOR_POINT HTrend_5_Anchor = ANCHOR_UPPER;
+input string            HTrend_5_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
 input string            HTrend_6_NAME   = "Strong SL";
 input color             HTrend_6_Color  = clrOrangeRed;

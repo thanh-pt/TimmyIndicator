@@ -1,11 +1,12 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          Trend_ = "Trend Config";
+input string          Trend_ = SEPARATE_LINE_BIG;
 //--------------------------------------------
 input color           Trend1_Color = clrWhite;
 input int             Trend1_Width = 1;
 input ENUM_LINE_STYLE Trend1_Style = 0;
+input string          Trend1_sp    = SEPARATE_LINE;
 //--------------------------------------------
 input color           Trend2_Color = clrRed;
 input int             Trend2_Width = 1;

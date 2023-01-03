@@ -1,7 +1,7 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          CallOut_ = "CallOut Config";
+input string          CallOut_ = SEPARATE_LINE_BIG;
 input color           CallOut_Color = clrWhite;
 input int             CallOut_Width = 1;
 input int             CallOut_TextSize = 10;

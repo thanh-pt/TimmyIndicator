@@ -1,3 +1,6 @@
+#define SEPARATE_LINE       "------------------------------------------------------------------------------------------------------------------------"
+#define SEPARATE_LINE_BIG   "████████████████████████████████████"
+
 void getCenterPos(const datetime& time1, const datetime& time2, double price1, double price2, datetime& outTime, double& outPrice)
 {
     int x1,y1,x2,y2;
