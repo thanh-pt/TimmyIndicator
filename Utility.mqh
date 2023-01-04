@@ -188,6 +188,11 @@ void EraseThisTF()
     }
 }
 
+void SetChartScaleFix(bool bFix)
+{
+    ChartSetInteger(ChartID(), CHART_SCALEFIX, 0, bFix);
+}
+
 string getTFString()
 {
     string result = "";
