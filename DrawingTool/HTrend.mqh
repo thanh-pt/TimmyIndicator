@@ -1,47 +1,78 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string            HTrend_ = SEPARATE_LINE_BIG;
-input int               HTrend_Width  = 0;
-input ENUM_LINE_STYLE   HTrend_Style  = 2;
-input string            HTrend_sp     = SEPARATE_LINE;
+enum EV_ALIGN
+{
+    TOP     = 0,
+    MIDDLE  = 1,
+    BOTTOM  = 2,
+};
+enum EH_ALIGN
+{
+    LEFT    = 0,
+    CENTER  = 1,
+    RIGHT   = 2,
+};
+
+ENUM_ANCHOR_POINT gMatrixAnchorPoint[3][3] = {
+    ANCHOR_LEFT_LOWER  , ANCHOR_LOWER  , ANCHOR_RIGHT_LOWER ,
+    ANCHOR_LEFT        , ANCHOR_CENTER , ANCHOR_RIGHT       ,
+    ANCHOR_LEFT_UPPER  , ANCHOR_UPPER  , ANCHOR_RIGHT_UPPER 
+};
+
+input string            HTrend_         = SEPARATE_LINE_BIG;
+input int               HTrend_Width    = 0;
+input string            HTrend_sp       = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_1_NAME   = "bos➚";
-input color             HTrend_1_Color  = clrYellowGreen;
-input ENUM_ANCHOR_POINT HTrend_1_Anchor = ANCHOR_LOWER;
+input string            HTrend_1_NAME   = "bos up";
+input string            HTrend_1_TEXT   = "bos";
+input EV_ALIGN          HTrend_1_VAlign = EV_ALIGN::TOP;
+input EH_ALIGN          HTrend_1_HAlign = EH_ALIGN::LEFT;
+input ENUM_LINE_STYLE   HTrend_1_Style  = STYLE_DOT;
+input color             HTrend_1_Color  = clrDarkGray;
 input string            HTrend_1_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_2_NAME   = "SH";
-input color             HTrend_2_Color  = clrYellowGreen;
-input ENUM_ANCHOR_POINT HTrend_2_Anchor = ANCHOR_LOWER;
+input string            HTrend_2_NAME   = "bos down";
+input string            HTrend_2_TEXT   = "bos";
+input EV_ALIGN          HTrend_2_VAlign = EV_ALIGN::BOTTOM;
+input EH_ALIGN          HTrend_2_HAlign = EH_ALIGN::LEFT;
+input ENUM_LINE_STYLE   HTrend_2_Style  = STYLE_DOT;
+input color             HTrend_2_Color  = clrDarkGray;
 input string            HTrend_2_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_3_NAME   = "Strong SH";
-input color             HTrend_3_Color  = clrYellowGreen;
-input ENUM_ANCHOR_POINT HTrend_3_Anchor = ANCHOR_LOWER;
+input string            HTrend_3_NAME   = "high";
+input string            HTrend_3_TEXT   = "high";
+input EV_ALIGN          HTrend_3_VAlign = EV_ALIGN::TOP;
+input EH_ALIGN          HTrend_3_HAlign = EH_ALIGN::RIGHT;
+input ENUM_LINE_STYLE   HTrend_3_Style  = STYLE_SOLID;
+input color             HTrend_3_Color  = clrSilver;
 input string            HTrend_3_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_4_NAME   = "bos➘";
-input color             HTrend_4_Color  = clrOrangeRed;
-input ENUM_ANCHOR_POINT HTrend_4_Anchor = ANCHOR_UPPER;
+input string            HTrend_4_NAME   = "low";
+input string            HTrend_4_TEXT   = "low";
+input EV_ALIGN          HTrend_4_VAlign = EV_ALIGN::BOTTOM;
+input EH_ALIGN          HTrend_4_HAlign = EH_ALIGN::RIGHT;
+input ENUM_LINE_STYLE   HTrend_4_Style  = STYLE_SOLID;
+input color             HTrend_4_Color  = clrSilver;
 input string            HTrend_4_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_5_NAME   = "SL";
-input color             HTrend_5_Color  = clrOrangeRed;
-input ENUM_ANCHOR_POINT HTrend_5_Anchor = ANCHOR_UPPER;
+input string            HTrend_5_NAME   = "sweep";
+input string            HTrend_5_TEXT   = "sweep";
+input EV_ALIGN          HTrend_5_VAlign = EV_ALIGN::MIDDLE;
+input EH_ALIGN          HTrend_5_HAlign = EH_ALIGN::RIGHT;
+input ENUM_LINE_STYLE   HTrend_5_Style  = STYLE_DOT;
+input color             HTrend_5_Color  = clrRed;
 input string            HTrend_5_sp     = SEPARATE_LINE;
-//-----------------------------------------------------------
-input string            HTrend_6_NAME   = "Strong SL";
-input color             HTrend_6_Color  = clrOrangeRed;
-input ENUM_ANCHOR_POINT HTrend_6_Anchor = ANCHOR_UPPER;
 
 class HTrend : public BaseItem
 {
 // Internal Value
 private:
-    color               mColorType[MAX_TYPE];
-    ENUM_ANCHOR_POINT   mAnchrType[MAX_TYPE];
-
+    string              mPropText  [MAX_TYPE];
+    EV_ALIGN            mPropVAlign[MAX_TYPE];
+    EH_ALIGN            mPropHAlign[MAX_TYPE];
+    ENUM_LINE_STYLE     mPropStyle [MAX_TYPE];
+    color               mPropColor [MAX_TYPE];
 // Component name
 private:
     string cMainTrend;
@@ -50,10 +81,8 @@ private:
 // Value define for Item
 private:
     double price;
-    double priceText;
     datetime time1;
     datetime time2;
-    datetime timeText;
 
 public:
     HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo);
@@ -85,32 +114,43 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [0] = HTrend_1_NAME  ;
-    mColorType[0] = HTrend_1_Color ;
-    mAnchrType[0] = HTrend_1_Anchor;
+    mNameType  [0] = HTrend_1_NAME  ;
+    mPropText  [0] = HTrend_1_TEXT  ;
+    mPropVAlign[0] = HTrend_1_VAlign;
+    mPropHAlign[0] = HTrend_1_HAlign;
+    mPropStyle [0] = HTrend_1_Style ;
+    mPropColor [0] = HTrend_1_Color ;
     //-----------------------------
-    mNameType [1] = HTrend_2_NAME  ;
-    mColorType[1] = HTrend_2_Color ;
-    mAnchrType[1] = HTrend_2_Anchor;
+    mNameType  [1] = HTrend_2_NAME  ;
+    mPropText  [1] = HTrend_2_TEXT  ;
+    mPropVAlign[1] = HTrend_2_VAlign;
+    mPropHAlign[1] = HTrend_2_HAlign;
+    mPropStyle [1] = HTrend_2_Style ;
+    mPropColor [1] = HTrend_2_Color ;
     //-----------------------------
-    mNameType [2] = HTrend_3_NAME  ;
-    mColorType[2] = HTrend_3_Color ;
-    mAnchrType[2] = HTrend_3_Anchor;
+    mNameType  [2] = HTrend_3_NAME  ;
+    mPropText  [2] = HTrend_3_TEXT  ;
+    mPropVAlign[2] = HTrend_3_VAlign;
+    mPropHAlign[2] = HTrend_3_HAlign;
+    mPropStyle [2] = HTrend_3_Style ;
+    mPropColor [2] = HTrend_3_Color ;
     //-----------------------------
-    mNameType [3] = HTrend_4_NAME  ;
-    mColorType[3] = HTrend_4_Color ;
-    mAnchrType[3] = HTrend_4_Anchor;
+    mNameType  [3] = HTrend_4_NAME  ;
+    mPropText  [3] = HTrend_4_TEXT  ;
+    mPropVAlign[3] = HTrend_4_VAlign;
+    mPropHAlign[3] = HTrend_4_HAlign;
+    mPropStyle [3] = HTrend_4_Style ;
+    mPropColor [3] = HTrend_4_Color ;
     //-----------------------------
-    mNameType [4] = HTrend_5_NAME  ;
-    mColorType[4] = HTrend_5_Color ;
-    mAnchrType[4] = HTrend_5_Anchor;
-    //-----------------------------
-    mNameType [5] = HTrend_6_NAME  ;
-    mColorType[5] = HTrend_6_Color ;
-    mAnchrType[5] = HTrend_6_Anchor;
+    mNameType  [4] = HTrend_5_NAME  ;
+    mPropText  [4] = HTrend_5_TEXT  ;
+    mPropVAlign[4] = HTrend_5_VAlign;
+    mPropHAlign[4] = HTrend_5_HAlign;
+    mPropStyle [4] = HTrend_5_Style ;
+    mPropColor [4] = HTrend_5_Color ;
     //-----------------------------
     mIndexType = 0;
-    mTypeNum   = 6;
+    mTypeNum   = 5;
 }
 
 // Internal Event
@@ -118,7 +158,7 @@ void HTrend::prepareActive(){}
 
 void HTrend::createItem()
 {
-    ObjectCreate(cText    , OBJ_TEXT , 0, 0, 0);
+    ObjectCreate(cText     , OBJ_TEXT , 0, 0, 0);
     ObjectCreate(cMainTrend, OBJ_TREND, 0, 0, 0);
 
     updateTypeProperty();
@@ -128,7 +168,6 @@ void HTrend::createItem()
     // Value define update
     time1 = pCommonData.mMouseTime;
     price = pCommonData.mMousePrice;
-    priceText = price;
 }
 void HTrend::updateDefaultProperty()
 {
@@ -139,12 +178,12 @@ void HTrend::updateDefaultProperty()
 void HTrend::updateTypeProperty()
 {
     ObjectSet(cMainTrend, OBJPROP_WIDTH, HTrend_Width);
-    ObjectSet(cMainTrend, OBJPROP_STYLE, HTrend_Style);
+    ObjectSet(cMainTrend, OBJPROP_STYLE, mPropStyle[mIndexType]);
     //------------------------------------------------------------
-    ObjectSet(cMainTrend, OBJPROP_COLOR, mColorType[mIndexType]);
-    ObjectSet(cText,      OBJPROP_COLOR, mColorType[mIndexType]);
-    ObjectSetText(cText,  mNameType[mIndexType]);
-    ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, mAnchrType[mIndexType]);
+    ObjectSet(cMainTrend, OBJPROP_COLOR, mPropColor[mIndexType]);
+    ObjectSet(cText,      OBJPROP_COLOR, mPropColor[mIndexType]);
+    ObjectSetText(cText,  mPropText[mIndexType]);
+    ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, gMatrixAnchorPoint[mPropVAlign[mIndexType]][mPropHAlign[mIndexType]]);
 }
 void HTrend::activateItem(const string& itemId)
 {
@@ -166,29 +205,30 @@ void HTrend::refreshData()
     ObjectSet(cMainTrend, OBJPROP_PRICE2, price);
     ObjectSet(cText     , OBJPROP_PRICE1, price);
 
-    do
+    int propAnchor = (int)ObjectGetInteger(ChartID(), cText, OBJPROP_ANCHOR);
+    switch (propAnchor)
     {
-        if (priceText == price)
-        {
+         
+        case ANCHOR_RIGHT_LOWER:
+        case ANCHOR_RIGHT      :
+        case ANCHOR_RIGHT_UPPER:
+            ObjectSet(cText, OBJPROP_TIME1, time2);
+            break;
+        case ANCHOR_LOWER :
+        case ANCHOR_CENTER:
+        case ANCHOR_UPPER :
             ObjectSet(cText, OBJPROP_TIME1, getCenterTime(time1, time2));
             break;
-        }
-
-        if (priceText > price)
-        {
-            ObjectSetInteger(0, cText, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        }
-        else
-        {
-            ObjectSetInteger(0, cText, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        }
-        ObjectSet(cText, OBJPROP_TIME1, timeText);
+        case ANCHOR_LEFT_LOWER :
+        case ANCHOR_LEFT       :
+        case ANCHOR_LEFT_UPPER :
+            ObjectSet(cText, OBJPROP_TIME1, time1);
+            break;
     }
-    while (false);
     string textString = ObjectGetString(ChartID(), cText, OBJPROP_TEXT);
-    if (StringFind(textString, "<") == -1 && textString != "")
+    if (StringFind(textString, "#") == -1 && textString != "")
     {
-        textString += "<" + getTFString() + ">";
+        textString += "#" + getTFString();
         ObjectSetText(cText    , textString);
     }
 }
@@ -218,14 +258,13 @@ void HTrend::onItemDrag(const string &itemId, const string &objId)
     time1 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME1);
     time2 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME2);
     price = ObjectGet(cMainTrend, OBJPROP_PRICE1);
-    priceText = price;
-
-    if (objId == cText)
+    
+    if (time1 > time2)
     {
-        priceText = ObjectGet(cText, OBJPROP_PRICE1);
-        timeText = (datetime)ObjectGet(cText, OBJPROP_TIME1);
+        datetime temp = time1;
+        time1 = time2;
+        time2 = temp;
     }
-
     refreshData();
 }
 void HTrend::onItemClick(const string &itemId, const string &objId)
