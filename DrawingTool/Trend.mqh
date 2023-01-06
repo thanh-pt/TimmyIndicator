@@ -23,8 +23,10 @@ private:
 
 // Component name
 private:
+    string cPoint1   ;
+    string cPoint2   ;
     string cMainTrend;
-    string cText    ;
+    string cText     ;
 
 // Value define for Item
 private:
@@ -84,12 +86,20 @@ void Trend::prepareActive(){}
 
 void Trend::activateItem(const string& itemId)
 {
-    cMainTrend = itemId + "_mainTrend";
-    cText      = itemId + "_text";
+    cPoint1    = itemId + "_Point1";
+    cPoint2    = itemId + "_Point2";
+    cMainTrend = itemId + "_MainTrend";
+    cText      = itemId + "_Text";
 }
 
 void Trend::refreshData()
 {
+    ObjectSet(cPoint1, OBJPROP_TIME1,  time1);
+    ObjectSet(cPoint1, OBJPROP_PRICE1, price1);
+
+    ObjectSet(cPoint2, OBJPROP_TIME1,  time2);
+    ObjectSet(cPoint2, OBJPROP_PRICE1, price2);
+
     ObjectSet(cMainTrend, OBJPROP_TIME1,  time1);
     ObjectSet(cMainTrend, OBJPROP_PRICE1, price1);
 
@@ -116,6 +126,8 @@ void Trend::createItem()
 {
     ObjectCreate(cMainTrend, OBJ_TREND, 0, 0, 0);
     ObjectCreate(cText     , OBJ_TEXT , 0, 0, 0);
+    ObjectCreate(cPoint1   , OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPoint2   , OBJ_ARROW, 0, 0, 0);
 
     updateTypeProperty();
     updateDefaultProperty();
@@ -124,13 +136,23 @@ void Trend::createItem()
 }
 void Trend::updateDefaultProperty()
 {
-    ObjectSet(cMainTrend, OBJPROP_RAY, false);
+    ObjectSet(cMainTrend, OBJPROP_RAY      , false);
+    ObjectSet(cPoint1   , OBJPROP_ARROWCODE, 4);
+    ObjectSet(cPoint2   , OBJPROP_ARROWCODE, 4);
+
+    ObjectSet(cPoint1   , OBJPROP_WIDTH, 0);
+    ObjectSet(cPoint2   , OBJPROP_WIDTH, 0);
     ObjectSetText(cText, "");
+    ObjectSetString(ChartID(), cPoint1    ,OBJPROP_TOOLTIP,"\n");
+    ObjectSetString(ChartID(), cPoint2    ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cText      ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cMainTrend ,OBJPROP_TOOLTIP,"\n");
 }
 void Trend::updateTypeProperty()
 {
+    ObjectSet(cPoint1   , OBJPROP_COLOR, clrNONE);
+    ObjectSet(cPoint2   , OBJPROP_COLOR, clrNONE);
+
     ObjectSet(cMainTrend, OBJPROP_COLOR, mColorType[mIndexType]);
     ObjectSet(cMainTrend, OBJPROP_WIDTH, mWidthType[mIndexType]);
     ObjectSet(cMainTrend, OBJPROP_STYLE, mStyleType[mIndexType]);
@@ -151,6 +173,40 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
     time2 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME2);
     price1 = ObjectGet(cMainTrend, OBJPROP_PRICE1);
     price2 = ObjectGet(cMainTrend, OBJPROP_PRICE2);
+    
+    if (objId == cPoint1)
+    {
+        time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
+        if (pCommonData.mShiftHold)
+        {
+            price1 = price2;
+        }
+        else if (pCommonData.mCtrlHold)
+        {
+            price1 = pCommonData.mMousePrice;
+        }
+        else
+        {
+            price1 = ObjectGet(objId, OBJPROP_PRICE1);
+        }
+    }
+    else if (objId == cPoint2)
+    {
+        time2 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
+        if (pCommonData.mShiftHold)
+        {
+            price2 = price1;
+        }
+        else if (pCommonData.mCtrlHold)
+        {
+            price2 = pCommonData.mMousePrice;
+        }
+        else
+        {
+            price2 = ObjectGet(objId, OBJPROP_PRICE1);
+        }
+    }
+
     getCenterPos(time1, time2, price1, price2, time3, price3);
     priceText = price3;
 
@@ -163,10 +219,11 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
 }
 void Trend::onItemClick(const string &itemId, const string &objId)
 {
-    if (objId == cText)
-    {
-        ObjectSet(cMainTrend, OBJPROP_SELECTED, ObjectGet(cText, OBJPROP_SELECTED));
-    }
+    int objSelected = (int)ObjectGet(objId, OBJPROP_SELECTED);
+    ObjectSet(cPoint1   , OBJPROP_SELECTED, objSelected);
+    ObjectSet(cPoint2   , OBJPROP_SELECTED, objSelected);
+    ObjectSet(cMainTrend, OBJPROP_SELECTED, objSelected);
+    ObjectSet(cText     , OBJPROP_SELECTED, objSelected);
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
 {
