@@ -1,5 +1,6 @@
 #define SEPARATE_LINE       "------------------------------------------------------------------------------------------------------------------------"
 #define SEPARATE_LINE_BIG   "████████████████████████████████████"
+#define STATIC_TAG          "%"
 
 void getCenterPos(const datetime& time1, const datetime& time2, double price1, double price2, datetime& outTime, double& outPrice)
 {
@@ -137,10 +138,8 @@ void EraseAll()
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
-        if (StringFind(objName, "LongShort") != -1)
-        {
-            continue;
-        }
+        if (StringFind(objName, "LongShort") != -1) continue;
+        if (StringFind(objName, STATIC_TAG) != -1) continue;
         ObjectDelete(objName);
     }
 }
@@ -150,6 +149,7 @@ void EraseLowerTF()
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
+        if (StringFind(objName, STATIC_TAG) != -1) continue;
         string sparamItems[];
         int k1=StringSplit(objName,'_',sparamItems);
         if (k1 == 3)
@@ -170,10 +170,9 @@ void EraseThisTF()
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
-        if (StringFind(objName, "LongShort") != -1)
-        {
-            continue;
-        }
+        if (StringFind(objName, "LongShort") != -1) continue;
+        if (StringFind(objName, STATIC_TAG) != -1) continue;
+
         string sparamItems[];
         int k1=StringSplit(objName,'_',sparamItems);
         if (k1 == 3)
