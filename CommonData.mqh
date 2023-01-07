@@ -45,15 +45,23 @@ public:
                 mMousePrice = High[shift];
                 break;
             }
-            double centerPrice = (Low[shift] + High[shift]) / 2;
+            double bodyHigh = Open[shift];
+            double bodyLow  = Close[shift];
+            if (Close[shift] > Open[shift])
+            {
+                bodyHigh = Close[shift];
+                bodyLow  = Open[shift];
+            }
+            
+            double centerPrice = (bodyLow + bodyHigh) / 2;
             
             if (mMousePrice <= centerPrice)
             {
-                mMousePrice = Close[shift];
+                mMousePrice = bodyLow;
             }
             else
             {
-                mMousePrice = Open[shift];
+                mMousePrice = bodyHigh;
             }
 
         } while (false);
