@@ -1,4 +1,5 @@
 #include "../CommonData.mqh"
+#include "../Utility.mqh"
 
 input color MouseInfoColor = clrLightGray;
 
@@ -11,7 +12,7 @@ public:
     MouseInfo(CommonData* commonData)
     {
         pCommonData = commonData;
-        mObjMouseInfo = "MouseInfo";
+        mObjMouseInfo = STATIC_TAG+"MouseInfo";
         initDrawing();
     }
     void initDrawing()

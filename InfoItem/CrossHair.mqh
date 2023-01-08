@@ -1,4 +1,5 @@
 #include "../CommonData.mqh"
+#include "../Utility.mqh"
 
 input color CrossHairColor = clrLightGray;
 
@@ -11,8 +12,8 @@ private:
 public:
     CrossHair(CommonData* commonData)
     {
-        mVCrossHair = "VCrossHair";
-        mHCrossHair = "HCrossHair";
+        mVCrossHair = STATIC_TAG + "VCrossHair";
+        mHCrossHair = STATIC_TAG + "HCrossHair";
         pCommonData = commonData;
         initDrawing();
     }
