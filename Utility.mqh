@@ -254,3 +254,32 @@ string getTFString()
     result += intToStr(period/PERIOD_MN1);
     return result;
 }
+
+void setItemPos(const string& objName, const datetime& time1, const datetime& time2, const double price1, const double price2)
+{
+    ObjectSet(objName, OBJPROP_TIME1 , time1);
+    ObjectSet(objName, OBJPROP_PRICE1, price1);
+    ObjectSet(objName, OBJPROP_TIME2 , time2);
+    ObjectSet(objName, OBJPROP_PRICE2, price2);
+}
+
+void setItemPos(const string& objName, const datetime& time1, const double price1)
+{
+    ObjectSet(objName, OBJPROP_TIME1 , time1);
+    ObjectSet(objName, OBJPROP_PRICE1, price1);
+}
+
+void setTextPos(const string& objName, const datetime& time1, const double price1)
+{
+    ObjectSet(objName, OBJPROP_TIME1,  time1);
+
+    string textContent = ObjectDescription(objName);
+    if (textContent == "" || textContent == "Text")
+    {
+        ObjectSet(objName, OBJPROP_PRICE1, 0);
+    }
+    else
+    {
+        ObjectSet(objName, OBJPROP_PRICE1, price1);
+    }
+}

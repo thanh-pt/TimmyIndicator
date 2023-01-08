@@ -199,16 +199,11 @@ void HTrend::updateItemAfterChangeType()
 }
 void HTrend::refreshData()
 {
-    ObjectSet(cMainTrend, OBJPROP_TIME1,  time1);
-    ObjectSet(cMainTrend, OBJPROP_TIME2,  time2);
-    ObjectSet(cMainTrend, OBJPROP_PRICE1, price);
-    ObjectSet(cMainTrend, OBJPROP_PRICE2, price);
-    ObjectSet(cText     , OBJPROP_PRICE1, price);
-
+    setItemPos(cMainTrend, time1, time2, price, price);
+    ObjectSet(cText      , OBJPROP_PRICE1, price);
     int propAnchor = (int)ObjectGetInteger(ChartID(), cText, OBJPROP_ANCHOR);
     switch (propAnchor)
     {
-         
         case ANCHOR_RIGHT_LOWER:
         case ANCHOR_RIGHT      :
         case ANCHOR_RIGHT_UPPER:

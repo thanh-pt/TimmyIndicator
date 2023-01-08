@@ -182,32 +182,18 @@ void Rectangle::updateItemAfterChangeType()
 }
 void Rectangle::refreshData()
 {
-    ObjectSet(cBackground   , OBJPROP_TIME1,  time1);
-    ObjectSet(cBackground   , OBJPROP_TIME2,  time2);
-    ObjectSet(cBackground   , OBJPROP_PRICE1, price1);
-    ObjectSet(cBackground   , OBJPROP_PRICE2, price2);
-    //-------------------------------------------------
-    ObjectSet(cBoder        , OBJPROP_TIME1,  time1);
-    ObjectSet(cBoder        , OBJPROP_TIME2,  time2);
-    ObjectSet(cBoder        , OBJPROP_PRICE1, price1);
-    ObjectSet(cBoder        , OBJPROP_PRICE2, price2);
-    //-------------------------------------------------
     double centerPrice;
     datetime centerTime;
     getCenterPos(time1, time2, price1, price2, centerTime, centerPrice);
-    ObjectSet(cLeftPoint    , OBJPROP_TIME1,  time1);
-    ObjectSet(cLeftPoint    , OBJPROP_PRICE1, centerPrice);
+    setItemPos(cBackground, time1, time2, price1, price2);
+    setItemPos(cBoder     , time1, time2, price1, price2);
     //-------------------------------------------------
-    ObjectSet(cRightPoint   , OBJPROP_TIME1,  time2);
-    ObjectSet(cRightPoint   , OBJPROP_PRICE1, centerPrice);
+    setItemPos(cLeftPoint , time1, centerPrice);
+    setItemPos(cRightPoint, time2, centerPrice);
     //-------------------------------------------------
-    ObjectSet(cLeftText     , OBJPROP_TIME1,  time1);
-    ObjectSet(cLeftText     , OBJPROP_PRICE1, centerPrice);
-    ObjectSet(cRightText    , OBJPROP_TIME1,  time2);
-    ObjectSet(cRightText    , OBJPROP_PRICE1, centerPrice);
-    //-------------------------------------------------
-    ObjectSet(cCenterText   , OBJPROP_TIME1,  centerTime);
-    ObjectSet(cCenterText   , OBJPROP_PRICE1, centerPrice);
+    setTextPos(cLeftText  , time1,      centerPrice);
+    setTextPos(cRightText , time2,      centerPrice);
+    setTextPos(cCenterText, centerTime, centerPrice);
 }
 void Rectangle::finishedJobDone(){}
 
@@ -269,6 +255,7 @@ void Rectangle::onItemChange(const string &itemId, const string &objId)
     else                            return;
     
     ObjectSetText(targetItem, ObjectDescription(objId));
+    onItemDrag(itemId, objId);
 }
 void Rectangle::onItemDeleted(const string &itemId, const string &objId)
 {

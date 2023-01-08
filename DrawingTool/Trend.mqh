@@ -94,20 +94,10 @@ void Trend::activateItem(const string& itemId)
 
 void Trend::refreshData()
 {
-    ObjectSet(cPoint1, OBJPROP_TIME1,  time1);
-    ObjectSet(cPoint1, OBJPROP_PRICE1, price1);
-
-    ObjectSet(cPoint2, OBJPROP_TIME1,  time2);
-    ObjectSet(cPoint2, OBJPROP_PRICE1, price2);
-
-    ObjectSet(cMainTrend, OBJPROP_TIME1,  time1);
-    ObjectSet(cMainTrend, OBJPROP_PRICE1, price1);
-
-    ObjectSet(cMainTrend, OBJPROP_TIME2,  time2);
-    ObjectSet(cMainTrend, OBJPROP_PRICE2, price2);
-
-    ObjectSet(cText, OBJPROP_TIME1,  time3);
-    ObjectSet(cText, OBJPROP_PRICE1, price3);
+    setItemPos(cPoint1   , time1, price1);
+    setItemPos(cPoint2   , time2, price2);
+    setItemPos(cMainTrend, time1, time2, price1, price2);
+    setTextPos(cText     , time3, price3);
 
     double angle=ObjectGet(cMainTrend, OBJPROP_ANGLE);
     if (angle > 90 && angle < 270) angle = angle+180;
@@ -231,17 +221,18 @@ void Trend::onItemClick(const string &itemId, const string &objId)
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
 {
-    color c = (color)ObjectGet(objId, OBJPROP_COLOR);
-    ObjectSet(cMainTrend, OBJPROP_COLOR, c);
-    ObjectSet(cText     , OBJPROP_COLOR, c);
     if (objId == cMainTrend)
     {
+        color c = (color)ObjectGet(objId, OBJPROP_COLOR);
+        ObjectSet(cMainTrend, OBJPROP_COLOR, c);
+        ObjectSet(cText     , OBJPROP_COLOR, c);
         string lineDescription = ObjectDescription(cMainTrend);
         if (lineDescription != "")
         {
             ObjectSetText(cText    , lineDescription);
             ObjectSetText(cMainTrend, "");
         }
+        onItemDrag(itemId, objId);
     }
 }
 void Trend::onMouseClick()

@@ -244,58 +244,22 @@ void LongShort::refreshData()
         createItem();
     }
     datetime centerTime = getCenterTime(time1, time2);
-    ObjectSet(cBgndSL, OBJPROP_TIME1,  time1);
-    ObjectSet(cBgndSL, OBJPROP_TIME2,  time2);
-    ObjectSet(cBgndSL, OBJPROP_PRICE1, priceEN);
-    ObjectSet(cBgndSL, OBJPROP_PRICE2, priceSL);
+    
+    setItemPos(cBgndSL    , time1, time2, priceEN, priceSL);
+    setItemPos(cBgndTP    , time1, time2, priceEN, priceTP);
+    setItemPos(cBoder     , time1, time2, priceSL, priceTP);
+    setItemPos(cTpLine    , time1, time2, priceTP, priceTP);
+    setItemPos(cEnLine    , time1, time2, priceEN, priceEN);
+    setItemPos(cSlLine    , time1, time2, priceSL, priceSL);
     //-------------------------------------------------
-    ObjectSet(cBgndTP, OBJPROP_TIME1,  time1);
-    ObjectSet(cBgndTP, OBJPROP_TIME2,  time2);
-    ObjectSet(cBgndTP, OBJPROP_PRICE1, priceEN);
-    ObjectSet(cBgndTP, OBJPROP_PRICE2, priceTP);
+    setItemPos(cPointTP   , time1, priceTP);
+    setItemPos(cPointSL   , time1, priceSL);
+    setItemPos(cPointEN   , time1, priceEN);
+    setItemPos(cPointWD   , time2, priceEN);
     //-------------------------------------------------
-    ObjectSet(cBoder , OBJPROP_TIME1,  time1);
-    ObjectSet(cBoder , OBJPROP_TIME2,  time2);
-    ObjectSet(cBoder , OBJPROP_PRICE1, priceSL);
-    ObjectSet(cBoder , OBJPROP_PRICE2, priceTP);
-    //-------------------------------------------------
-    ObjectSet(cTpLine, OBJPROP_TIME1,  time1);
-    ObjectSet(cTpLine, OBJPROP_TIME2,  time2);
-    ObjectSet(cTpLine, OBJPROP_PRICE1, priceTP);
-    ObjectSet(cTpLine, OBJPROP_PRICE2, priceTP);
-    //-------------------------------------------------
-    ObjectSet(cEnLine, OBJPROP_TIME1,  time1);
-    ObjectSet(cEnLine, OBJPROP_TIME2,  time2);
-    ObjectSet(cEnLine, OBJPROP_PRICE1, priceEN);
-    ObjectSet(cEnLine, OBJPROP_PRICE2, priceEN);
-    //-------------------------------------------------
-    ObjectSet(cSlLine, OBJPROP_TIME1,  time1);
-    ObjectSet(cSlLine, OBJPROP_TIME2,  time2);
-    ObjectSet(cSlLine, OBJPROP_PRICE1, priceSL);
-    ObjectSet(cSlLine, OBJPROP_PRICE2, priceSL);
-    //-------------------------------------------------
-    ObjectSet(cPointTP, OBJPROP_TIME1,  time1);
-    ObjectSet(cPointSL, OBJPROP_TIME1,  time1);
-    ObjectSet(cPointEN, OBJPROP_TIME1,  time1);
-    ObjectSet(cPointWD, OBJPROP_TIME1,  time2);
-    ObjectSet(cPointTP, OBJPROP_PRICE1, priceTP);
-    ObjectSet(cPointSL, OBJPROP_PRICE1, priceSL);
-    ObjectSet(cPointEN, OBJPROP_PRICE1, priceEN);
-    ObjectSet(cPointWD, OBJPROP_PRICE1, priceEN);
-    //-------------------------------------------------
-    ObjectSet(cTpText, OBJPROP_TIME1,  centerTime);
-    ObjectSet(cEnText, OBJPROP_TIME1,  centerTime);
-    ObjectSet(cSlText, OBJPROP_TIME1,  centerTime);
-    ObjectSet(cTpText, OBJPROP_PRICE1, priceTP);
-    ObjectSet(cEnText, OBJPROP_PRICE1, priceEN);
-    ObjectSet(cSlText, OBJPROP_PRICE1, priceSL);
-    //-------------------------------------------------
-    ObjectSet(cTpPrice, OBJPROP_TIME1,  centerTime);
-    ObjectSet(cEnPrice, OBJPROP_TIME1,  centerTime);
-    ObjectSet(cSlPrice, OBJPROP_TIME1,  centerTime);
-    ObjectSet(cTpPrice, OBJPROP_PRICE1, priceTP);
-    ObjectSet(cEnPrice, OBJPROP_PRICE1, priceEN);
-    ObjectSet(cSlPrice, OBJPROP_PRICE1, priceSL);
+    setItemPos(cTpText   , centerTime, priceTP);
+    setItemPos(cEnText   , centerTime, priceEN);
+    setItemPos(cSlText   , centerTime, priceSL);
     //-------------------------------------------------
     ObjectSetInteger(0, cEnText, OBJPROP_ANCHOR, ANCHOR_LOWER);
     if (priceTP > priceSL)
@@ -342,19 +306,16 @@ void LongShort::refreshData()
     //-------------------------------------------------
     if (showPrice)
     {
-        ObjectSet(cTpPrice, OBJPROP_TIME1,  time2);
-        ObjectSet(cEnPrice, OBJPROP_TIME1,  time2);
-        ObjectSet(cSlPrice, OBJPROP_TIME1,  time2);
-        ObjectSet(cTpPrice, OBJPROP_PRICE1, priceTP);
-        ObjectSet(cEnPrice, OBJPROP_PRICE1, priceEN);
-        ObjectSet(cSlPrice, OBJPROP_PRICE1, priceSL);
+        setItemPos(cTpPrice, time2, priceTP);
+        setItemPos(cEnPrice, time2, priceEN);
+        setItemPos(cSlPrice, time2, priceSL);
         strEnInfo += " ~ " + DoubleToString(lot,2) + "lot";
     }
     else
     {
-        ObjectSet(cTpPrice, OBJPROP_PRICE1, 0);
-        ObjectSet(cEnPrice, OBJPROP_PRICE1, 0);
-        ObjectSet(cSlPrice, OBJPROP_PRICE1, 0);
+        setItemPos(cTpPrice, time2, 0);
+        setItemPos(cEnPrice, time2, 0);
+        setItemPos(cSlPrice, time2, 0);
     }
 
     //-------------------------------------------------

@@ -104,13 +104,8 @@ void CallOut::activateItem(const string& itemId)
 void CallOut::updateItemAfterChangeType(){}
 void CallOut::refreshData()
 {
-    ObjectSet(cPointerLine, OBJPROP_TIME1,  time1);
-    ObjectSet(cPointerLine, OBJPROP_PRICE1, price1);
-    ObjectSet(cPointerLine, OBJPROP_TIME2,  time2);
-    ObjectSet(cPointerLine, OBJPROP_PRICE2, price2);
-    //-------------------------------------------------------------
-    ObjectSet(cText, OBJPROP_TIME1,  time2);
-    ObjectSet(cText, OBJPROP_PRICE1, price2);
+    setItemPos(cPointerLine, time1, time2, price1, price2);
+    setItemPos(cText, time2, price2);
     //-------------------------------------------------------------
     int x, y, offset = 100;
     if (time1 > time2)
@@ -128,11 +123,7 @@ void CallOut::refreshData()
     ChartTimePriceToXY(ChartID(), 0, time2, price2, x, y);
     ChartXYToTimePrice(ChartID(), x + offset, y, offset, time3, price3);
     //-------------------------------------------------------------
-    ObjectSet(cUnderLine, OBJPROP_TIME1,  time2);
-    ObjectSet(cUnderLine, OBJPROP_PRICE1, price2);
-    ObjectSet(cUnderLine, OBJPROP_TIME2,  time3);
-    ObjectSet(cUnderLine, OBJPROP_PRICE2, price2);
-
+    setItemPos(cUnderLine, time2, time3, price2, price2);
 }
 void CallOut::finishedJobDone(){}
 

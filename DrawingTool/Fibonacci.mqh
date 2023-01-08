@@ -234,53 +234,21 @@ void Fibonacci::refreshData()
     double price4 = price1-Fib_4_Ratio*(price1-price0);
     double price5 = price1-Fib_5_Ratio*(price1-price0);
     //-------------------------------------------------
-    ObjectSet(cMainLine   , OBJPROP_TIME1,  time0);
-    ObjectSet(cMainLine   , OBJPROP_TIME2,  time1);
-    ObjectSet(cMainLine   , OBJPROP_PRICE1, price0);
-    ObjectSet(cMainLine   , OBJPROP_PRICE2, price1);
+    
+    setItemPos(cMainLine, time0, time1, price0, price1);
+    setItemPos(cFib0    , time0, time1, price0, price0);
+    setItemPos(cFib1    , time0, time1, price1, price1);
+    setItemPos(cFib2    , time0, time1, price2, price2);
+    setItemPos(cFib3    , time0, time1, price3, price3);
+    setItemPos(cFib4    , time0, time1, price4, price4);
+    setItemPos(cFib5    , time0, time1, price5, price5);
     //-------------------------------------------------
-    ObjectSet(cFib0, OBJPROP_TIME1,  time0);
-    ObjectSet(cFib1, OBJPROP_TIME1,  time0);
-    ObjectSet(cFib2, OBJPROP_TIME1,  time0);
-    ObjectSet(cFib3, OBJPROP_TIME1,  time0);
-    ObjectSet(cFib4, OBJPROP_TIME1,  time0);
-    ObjectSet(cFib5, OBJPROP_TIME1,  time0);
-    //-------------------------------------------------
-    ObjectSet(cFib0, OBJPROP_TIME2,  time1);
-    ObjectSet(cFib1, OBJPROP_TIME2,  time1);
-    ObjectSet(cFib2, OBJPROP_TIME2,  time1);
-    ObjectSet(cFib3, OBJPROP_TIME2,  time1);
-    ObjectSet(cFib4, OBJPROP_TIME2,  time1);
-    ObjectSet(cFib5, OBJPROP_TIME2,  time1);
-    //-------------------------------------------------
-    ObjectSet(cFib0, OBJPROP_PRICE1, price0);
-    ObjectSet(cFib1, OBJPROP_PRICE1, price1);
-    ObjectSet(cFib2, OBJPROP_PRICE1, price2);
-    ObjectSet(cFib3, OBJPROP_PRICE1, price3);
-    ObjectSet(cFib4, OBJPROP_PRICE1, price4);
-    ObjectSet(cFib5, OBJPROP_PRICE1, price5);
-    //-------------------------------------------------
-    ObjectSet(cFib0, OBJPROP_PRICE2, price0);
-    ObjectSet(cFib1, OBJPROP_PRICE2, price1);
-    ObjectSet(cFib2, OBJPROP_PRICE2, price2);
-    ObjectSet(cFib3, OBJPROP_PRICE2, price3);
-    ObjectSet(cFib4, OBJPROP_PRICE2, price4);
-    ObjectSet(cFib5, OBJPROP_PRICE2, price5);
-    //-------------------------------------------------
-    ObjectSet(cText0, OBJPROP_TIME1,  time0);
-    ObjectSet(cText1, OBJPROP_TIME1,  time0);
-    ObjectSet(cText2, OBJPROP_TIME1,  time0);
-    ObjectSet(cText3, OBJPROP_TIME1,  time0);
-    ObjectSet(cText4, OBJPROP_TIME1,  time0);
-    ObjectSet(cText5, OBJPROP_TIME1,  time0);
-    //-------------------------------------------------
-    ObjectSet(cText0, OBJPROP_PRICE1, price0);
-    ObjectSet(cText1, OBJPROP_PRICE1, price1);
-    ObjectSet(cText2, OBJPROP_PRICE1, price2);
-    ObjectSet(cText3, OBJPROP_PRICE1, price3);
-    ObjectSet(cText4, OBJPROP_PRICE1, price4);
-    ObjectSet(cText5, OBJPROP_PRICE1, price5);
-    //-------------------------------------------------
+    setItemPos(cText0   , time0, price0);
+    setItemPos(cText1   , time0, price1);
+    setItemPos(cText2   , time0, price2);
+    setItemPos(cText3   , time0, price3);
+    setItemPos(cText4   , time0, price4);
+    setItemPos(cText5   , time0, price5);
 }
 void Fibonacci::finishedJobDone(){}
 
