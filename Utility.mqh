@@ -36,6 +36,7 @@ string findItemUnderMouse(int posX, int posY)
     {
         string objName = ObjectName(i);
         if (ObjectGet(objName, OBJPROP_SELECTED) == false) continue;
+        if (ObjectGet(objName, OBJPROP_SELECTABLE) == false) continue;
 
         int objType = ObjectType(objName);
 

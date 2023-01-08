@@ -2,6 +2,7 @@
 #include "../Utility.mqh"
 
 input string            Rectangle_ = SEPARATE_LINE_BIG;
+input color             Rectangle_TextColor = clrDarkGray;
 //-----------------------------------------------------------
 input string            Rectangle_1_NAME        = "Supply";
 input color             Rectangle_1_BoderColor  = clrNONE;
@@ -38,6 +39,9 @@ private:
     string cBackground;
     string cLeftPoint ;
     string cRightPoint;
+    string cCenterText;
+    string cLeftText  ;
+    string cRightText ;
 
 // Value define for Item
 private:
@@ -103,6 +107,9 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
 void Rectangle::prepareActive(){}
 void Rectangle::createItem()
 {
+    ObjectCreate(cCenterText, OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(cLeftText  , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(cRightText , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(cBackground, OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cBoder     , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cLeftPoint , OBJ_ARROW     , 0, 0, 0);
@@ -124,10 +131,29 @@ void Rectangle::updateDefaultProperty()
     ObjectSet(cLeftPoint    , OBJPROP_ARROWCODE, 255);
     ObjectSet(cRightPoint   , OBJPROP_ARROWCODE, 255);
 
+    ObjectSet(cCenterText   , OBJPROP_COLOR, Rectangle_TextColor);
+    ObjectSet(cLeftText     , OBJPROP_COLOR, Rectangle_TextColor);
+    ObjectSet(cRightText    , OBJPROP_COLOR, Rectangle_TextColor);
+
+    ObjectSet(cCenterText   , OBJPROP_SELECTABLE, false);
+    ObjectSet(cLeftText     , OBJPROP_SELECTABLE, false);
+    ObjectSet(cRightText    , OBJPROP_SELECTABLE, false);
+
+    ObjectSetText(cCenterText, "");
+    ObjectSetText(cLeftText  , "");
+    ObjectSetText(cRightText , "");
+    
+    ObjectSetInteger(ChartID(), cCenterText, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    ObjectSetInteger(ChartID(), cLeftText  , OBJPROP_ANCHOR, ANCHOR_LEFT);
+    ObjectSetInteger(ChartID(), cRightText , OBJPROP_ANCHOR, ANCHOR_RIGHT);
+
     ObjectSetString(ChartID(), cBackground ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cBoder      ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cLeftPoint  ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cRightPoint ,OBJPROP_TOOLTIP,"\n");
+    ObjectSetString(ChartID(), cCenterText ,OBJPROP_TOOLTIP,"\n");
+    ObjectSetString(ChartID(), cLeftText   ,OBJPROP_TOOLTIP,"\n");
+    ObjectSetString(ChartID(), cRightText  ,OBJPROP_TOOLTIP,"\n");
 }
 void Rectangle::updateTypeProperty()
 {
@@ -143,6 +169,9 @@ void Rectangle::activateItem(const string& itemId)
     cBoder      = itemId + "_Boder";
     cLeftPoint  = itemId + "_LeftPoint";
     cRightPoint = itemId + "_RightPoint";
+    cCenterText = itemId + "_cCenterText";
+    cLeftText   = itemId + "_cLeftText";
+    cRightText  = itemId + "_cRightText";
 }
 void Rectangle::updateItemAfterChangeType()
 {
@@ -163,12 +192,22 @@ void Rectangle::refreshData()
     ObjectSet(cBoder        , OBJPROP_PRICE1, price1);
     ObjectSet(cBoder        , OBJPROP_PRICE2, price2);
     //-------------------------------------------------
-    double centerPrice = (price1+price2)/2;
+    double centerPrice;
+    datetime centerTime;
+    getCenterPos(time1, time2, price1, price2, centerTime, centerPrice);
     ObjectSet(cLeftPoint    , OBJPROP_TIME1,  time1);
     ObjectSet(cLeftPoint    , OBJPROP_PRICE1, centerPrice);
     //-------------------------------------------------
     ObjectSet(cRightPoint   , OBJPROP_TIME1,  time2);
     ObjectSet(cRightPoint   , OBJPROP_PRICE1, centerPrice);
+    //-------------------------------------------------
+    ObjectSet(cLeftText     , OBJPROP_TIME1,  time1);
+    ObjectSet(cLeftText     , OBJPROP_PRICE1, centerPrice);
+    ObjectSet(cRightText    , OBJPROP_TIME1,  time2);
+    ObjectSet(cRightText    , OBJPROP_PRICE1, centerPrice);
+    //-------------------------------------------------
+    ObjectSet(cCenterText   , OBJPROP_TIME1,  centerTime);
+    ObjectSet(cCenterText   , OBJPROP_PRICE1, centerPrice);
 }
 void Rectangle::finishedJobDone(){}
 
@@ -211,17 +250,33 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
 }
 void Rectangle::onItemClick(const string &itemId, const string &objId)
 {
+    if (objId == cCenterText || objId == cLeftText || objId == cRightText) return;
     int objSelected = (int)ObjectGet(objId, OBJPROP_SELECTED);
     ObjectSet(cBoder     , OBJPROP_SELECTED, objSelected);
     ObjectSet(cBackground, OBJPROP_SELECTED, objSelected);
     ObjectSet(cLeftPoint , OBJPROP_SELECTED, objSelected);
     ObjectSet(cRightPoint, OBJPROP_SELECTED, objSelected);
+    ObjectSet(cCenterText, OBJPROP_SELECTED, objSelected);
+    ObjectSet(cLeftText  , OBJPROP_SELECTED, objSelected);
+    ObjectSet(cRightText , OBJPROP_SELECTED, objSelected);
 }
-void Rectangle::onItemChange(const string &itemId, const string &objId){}
+void Rectangle::onItemChange(const string &itemId, const string &objId)
+{
+    string targetItem;
+    if (objId == cBoder)            targetItem = cCenterText;
+    else if (objId == cRightPoint)  targetItem = cRightText;
+    else if (objId == cLeftPoint)   targetItem = cLeftText;
+    else                            return;
+    
+    ObjectSetText(targetItem, ObjectDescription(objId));
+}
 void Rectangle::onItemDeleted(const string &itemId, const string &objId)
 {
     ObjectDelete(cBoder     );
     ObjectDelete(cBackground);
     ObjectDelete(cLeftPoint );
     ObjectDelete(cRightPoint);
+    ObjectDelete(cCenterText);
+    ObjectDelete(cLeftText  );
+    ObjectDelete(cRightText );
 }
