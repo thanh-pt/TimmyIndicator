@@ -12,8 +12,6 @@
 #property indicator_minimum 0
 #property indicator_maximum 4
 //--- input parameters
-#define FX_SESSION_TAG "%FX_SESSION"
-
 enum E_SS_TYPE
 {
   YesterdayToToday = 0,
@@ -21,6 +19,7 @@ enum E_SS_TYPE
   TodayToTomorrow  = 2,
 };
 
+input string FX_SESSION_TAG = "FX_SESSION";
 input color Sydney_Color = clrDarkTurquoise;
 input color Tokyo__Color = clrPeru;
 input color London_Color = clrLightGreen;
@@ -61,6 +60,7 @@ string objCurrentTime = FX_SESSION_TAG + "_objCurrentTime";
 string gStrBeginOfToDay = "";
 datetime gToday;
 int gWindowID = 0;
+bool gChartInit = true;
 
 
 void createSessionItem(string sessionName, int pos1, int pos2, color c, int opendHour, int closeHour, E_SS_TYPE sessionType)
@@ -144,7 +144,7 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
   updateCurrentLine();
-  if (DD == TimeDay(Time[0]))
+  if (DD == TimeDay(Time[0]) && gChartInit == false)
   {
     return 0;
   }
@@ -160,6 +160,7 @@ int OnCalculate(const int rates_total,
   objLondon_ = London_Tag + gStrBeginOfToDay;
   objNewYork = NewYorkTag + gStrBeginOfToDay;
   reload();
+  gChartInit = false;
   return(rates_total);
 }
 
@@ -170,6 +171,6 @@ void OnChartEvent(const int id,
 {
   if (id == CHARTEVENT_OBJECT_DELETE)
   {
-    if (StringFind(sparam, FX_SESSION_TAG) != -1) reload();
+    if (StringFind(sparam, FX_SESSION_TAG) != -1) gChartInit = true;
   }
 }
