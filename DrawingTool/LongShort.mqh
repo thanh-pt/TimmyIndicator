@@ -115,7 +115,7 @@ void LongShort::createItem()
     ObjectCreate(cTpText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(cEnText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(cSlText  , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(cBoder   , OBJ_RECTANGLE , 0, 0, 0);
+    ObjectCreate(cBoder   , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(cPointTP , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPointSL , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPointEN , OBJ_ARROW     , 0, 0, 0);
@@ -349,7 +349,7 @@ void LongShort::onItemDrag(const string &itemId, const string &objId)
         double newtpPrice =           ObjectGet(cBoder, OBJPROP_PRICE2);
         double newslPrice =           ObjectGet(cBoder, OBJPROP_PRICE1);
 
-        if (newtime1 == time1 || newtime2 == time2 || newtpPrice == priceTP || newslPrice == priceSL)
+        if ((newtime1 == time1 && newslPrice == priceSL) || (newtime2 == time2 && newtpPrice == priceTP))
         {
             // move edge -> ignore
         }
