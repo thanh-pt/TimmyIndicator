@@ -226,9 +226,9 @@ void HTrend::refreshData()
             break;
     }
     string textString = ObjectGetString(ChartID(), cText, OBJPROP_TEXT);
-    if (StringFind(textString, "#") == -1 && textString != "")
+    if (StringFind(textString, "𓈖") == -1 && textString != "")
     {
-        textString += "#" + getTFString();
+        textString += "𓈖" + getTFString();
         ObjectSetText(cText    , textString);
     }
 }
