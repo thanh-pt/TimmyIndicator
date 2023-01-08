@@ -34,14 +34,12 @@ public:
         ObjectSet(mVCrossHair, OBJPROP_PRICE2, 0);
         ObjectSet(mVCrossHair, OBJPROP_TIME2, 0);
         
-        datetime starTime=D'1999.12.30';
-        datetime endlessTime=D'2030.01.01';
         ObjectSet(mHCrossHair, OBJPROP_PRICE2, 0);
-        ObjectSet(mHCrossHair, OBJPROP_TIME1, endlessTime);
-        ObjectSet(mHCrossHair, OBJPROP_TIME2, starTime);
     }
     void onMouseMove()
     {
+        ObjectSet(mHCrossHair, OBJPROP_TIME1, pCommonData.mMouseTime + 120000*ChartPeriod());
+        ObjectSet(mHCrossHair, OBJPROP_TIME2, pCommonData.mMouseTime - 120000*ChartPeriod());
         ObjectSet(mVCrossHair, OBJPROP_TIME1, pCommonData.mMouseTime);
         ObjectSet(mHCrossHair, OBJPROP_PRICE1, pCommonData.mMousePrice);
     }
