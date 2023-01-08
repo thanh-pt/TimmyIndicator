@@ -108,6 +108,10 @@ void Trend::refreshData()
 
     ObjectSet(cText, OBJPROP_TIME1,  time3);
     ObjectSet(cText, OBJPROP_PRICE1, price3);
+
+    double angle=ObjectGet(cMainTrend, OBJPROP_ANGLE);
+    if (angle > 90 && angle < 270) angle = angle+180;
+    ObjectSet(cText, OBJPROP_ANGLE,  angle);
     if (priceText == price3)
     {
         return;
@@ -124,10 +128,10 @@ void Trend::refreshData()
 
 void Trend::createItem()
 {
-    ObjectCreate(cMainTrend, OBJ_TREND, 0, 0, 0);
-    ObjectCreate(cText     , OBJ_TEXT , 0, 0, 0);
-    ObjectCreate(cPoint1   , OBJ_ARROW, 0, 0, 0);
-    ObjectCreate(cPoint2   , OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cMainTrend, OBJ_TRENDBYANGLE, 0, 0, 0);
+    ObjectCreate(cText     , OBJ_TEXT        , 0, 0, 0);
+    ObjectCreate(cPoint1   , OBJ_ARROW       , 0, 0, 0);
+    ObjectCreate(cPoint2   , OBJ_ARROW       , 0, 0, 0);
 
     updateTypeProperty();
     updateDefaultProperty();
