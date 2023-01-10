@@ -232,6 +232,19 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
     {
         time2 = (datetime)ObjectGet(cRightPoint, OBJPROP_TIME1);
     }
+    if (pCommonData.mCtrlHold)
+    {
+        double oldPrice1 = ObjectGet(cBackground, OBJPROP_PRICE1);
+        double oldPrice2 = ObjectGet(cBackground, OBJPROP_PRICE2);
+        if (price1 == oldPrice1 && price2 != oldPrice2)
+        {
+            price2 = pCommonData.mMousePrice;
+        }
+        else if (price2 == oldPrice2 && price1 != oldPrice1)
+        {
+            price1 = pCommonData.mMousePrice;
+        }
+    }
     refreshData();
 }
 void Rectangle::onItemClick(const string &itemId, const string &objId)

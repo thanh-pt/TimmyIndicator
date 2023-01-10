@@ -253,6 +253,11 @@ void HTrend::onItemDrag(const string &itemId, const string &objId)
     time1 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME1);
     time2 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME2);
     price = ObjectGet(cMainTrend, OBJPROP_PRICE1);
+
+    if (pCommonData.mCtrlHold)
+    {
+        price = pCommonData.mMousePrice;
+    }
     
     if (time1 > time2)
     {

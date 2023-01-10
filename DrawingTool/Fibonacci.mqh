@@ -280,6 +280,20 @@ void Fibonacci::onItemDrag(const string &itemId, const string &objId)
     price0  =           ObjectGet(cMainLine, OBJPROP_PRICE1);
     price1  =           ObjectGet(cMainLine, OBJPROP_PRICE2);
 
+    if (pCommonData.mCtrlHold)
+    {
+        double oldPrice0 = ObjectGet(cText0, OBJPROP_PRICE1);
+        double oldPrice1 = ObjectGet(cText1, OBJPROP_PRICE1);
+        if (price0 == oldPrice0 && price1 != oldPrice1)
+        {
+            price1 = pCommonData.mMousePrice;
+        }
+        else if (price0 != oldPrice0 && price1 == oldPrice1)
+        {
+            price0 = pCommonData.mMousePrice;
+        }
+    }
+
     refreshData();
 }
 void Fibonacci::onItemClick(const string &itemId, const string &objId){}
