@@ -7,6 +7,7 @@
 #include "DrawingTool/CallOut.mqh"
 #include "DrawingTool/LongShort.mqh"
 #include "DrawingTool/Fibonacci.mqh"
+#include "DrawingTool/CandleXray.mqh"
 
 #define CHECK_NOT_ACTIVE_RETURN if(mActive == IDX_NONE){return;}
 #define CHECK_ACTIVE_RETURN if(mActive != IDX_NONE){return;}
@@ -19,6 +20,7 @@
 #define IDX_FIBONACI    4
 #define IDX_CALLOUT     5
 #define IDX_LONGSHORT   6
+#define IDX_CANDLEXRAY  7
 
 #define ITEM_TREND      "Trend"
 #define ITEM_HTREND     "HTrend"
@@ -27,11 +29,12 @@
 #define ITEM_FIBONACI   "Fibonacci"
 #define ITEM_CALLOUT    "CallOut"
 #define ITEM_LONGSHORT  "LongShort"
+#define ITEM_CANDLEXRAY "CandleXray"
 
 class Controller
 {
 private:
-    BaseItem*    mListItem[10];
+    BaseItem*   mListItem[10];
     int         mActive;
     FinishedJob mFinishedJobCb;
     MouseInfo*  pMouseInfo;
@@ -58,13 +61,14 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
 {
     pMouseInfo = mouseInfo;
     mActive = IDX_NONE;
-    mListItem[IDX_TREND    ]    = new Trend     ( ITEM_TREND     , commonData, mouseInfo);
-    mListItem[IDX_HTREND   ]    = new HTrend    ( ITEM_HTREND    , commonData, mouseInfo);
-    mListItem[IDX_ZIGZAG   ]    = new ZigZag    ( ITEM_ZIGZAG    , commonData, mouseInfo);
-    mListItem[IDX_RECTANGLE]    = new Rectangle ( ITEM_RECTANGLE , commonData, mouseInfo);
-    mListItem[IDX_FIBONACI ]    = new Fibonacci ( ITEM_FIBONACI  , commonData, mouseInfo);
-    mListItem[IDX_CALLOUT  ]    = new CallOut   ( ITEM_CALLOUT   , commonData, mouseInfo);
-    mListItem[IDX_LONGSHORT]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
+    mListItem[IDX_TREND     ]    = new Trend     ( ITEM_TREND     , commonData, mouseInfo);
+    mListItem[IDX_HTREND    ]    = new HTrend    ( ITEM_HTREND    , commonData, mouseInfo);
+    mListItem[IDX_ZIGZAG    ]    = new ZigZag    ( ITEM_ZIGZAG    , commonData, mouseInfo);
+    mListItem[IDX_RECTANGLE ]    = new Rectangle ( ITEM_RECTANGLE , commonData, mouseInfo);
+    mListItem[IDX_FIBONACI  ]    = new Fibonacci ( ITEM_FIBONACI  , commonData, mouseInfo);
+    mListItem[IDX_CALLOUT   ]    = new CallOut   ( ITEM_CALLOUT   , commonData, mouseInfo);
+    mListItem[IDX_LONGSHORT ]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
+    mListItem[IDX_CANDLEXRAY]    = new CandleXray( ITEM_CANDLEXRAY, commonData, mouseInfo);
 }
 
 Controller::~Controller()
@@ -100,18 +104,20 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'F') return IDX_FIBONACI ;
     if (key == 'C') return IDX_CALLOUT  ;
     if (key == 'L') return IDX_LONGSHORT;
+    if (key == 'X') return IDX_CANDLEXRAY;
     return IDX_NONE;
 }
 
 int Controller::findItemIdByName(const string& name)
 {
-    if (name == ITEM_TREND    ) return IDX_TREND    ;
-    if (name == ITEM_HTREND   ) return IDX_HTREND   ;
-    if (name == ITEM_ZIGZAG   ) return IDX_ZIGZAG   ;
-    if (name == ITEM_RECTANGLE) return IDX_RECTANGLE;
-    if (name == ITEM_FIBONACI ) return IDX_FIBONACI ;
-    if (name == ITEM_CALLOUT  ) return IDX_CALLOUT  ;
-    if (name == ITEM_LONGSHORT) return IDX_LONGSHORT;
+    if (name == ITEM_TREND     ) return IDX_TREND    ;
+    if (name == ITEM_HTREND    ) return IDX_HTREND   ;
+    if (name == ITEM_ZIGZAG    ) return IDX_ZIGZAG   ;
+    if (name == ITEM_RECTANGLE ) return IDX_RECTANGLE;
+    if (name == ITEM_FIBONACI  ) return IDX_FIBONACI ;
+    if (name == ITEM_CALLOUT   ) return IDX_CALLOUT  ;
+    if (name == ITEM_LONGSHORT ) return IDX_LONGSHORT;
+    if (name == ITEM_CANDLEXRAY) return IDX_CANDLEXRAY;
     return IDX_NONE;
 }
 
