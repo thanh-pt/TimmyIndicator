@@ -200,26 +200,24 @@ void HTrend::updateItemAfterChangeType()
 void HTrend::refreshData()
 {
     setItemPos(cMainTrend, time1, time2, price, price);
-    ObjectSet(cText      , OBJPROP_PRICE1, price);
+    datetime textTime;
     int propAnchor = (int)ObjectGetInteger(ChartID(), cText, OBJPROP_ANCHOR);
     switch (propAnchor)
     {
         case ANCHOR_RIGHT_LOWER:
         case ANCHOR_RIGHT      :
         case ANCHOR_RIGHT_UPPER:
-            ObjectSet(cText, OBJPROP_TIME1, time2);
-            break;
-        case ANCHOR_LOWER :
-        case ANCHOR_CENTER:
-        case ANCHOR_UPPER :
-            ObjectSet(cText, OBJPROP_TIME1, getCenterTime(time1, time2));
+            textTime = time2-ChartPeriod()*60;
             break;
         case ANCHOR_LEFT_LOWER :
         case ANCHOR_LEFT       :
         case ANCHOR_LEFT_UPPER :
-            ObjectSet(cText, OBJPROP_TIME1, time1);
+            textTime = time1+ChartPeriod()*60;
             break;
+        default:
+            textTime = getCenterTime(time1, time2);
     }
+    setItemPos(cText      , textTime, price);
     string textString = ObjectGetString(ChartID(), cText, OBJPROP_TEXT);
     if (StringFind(textString, "𓈖") == -1 && textString != "")
     {
