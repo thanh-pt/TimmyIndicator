@@ -186,7 +186,7 @@ void Rectangle::refreshData()
     datetime centerTime;
     if (time1 == time2)
     {
-        time2 = time1 + ChartPeriod()*120;
+        time2 = time1 + ChartPeriod()*180;
     }
     getCenterPos(time1, time2, price1, price2, centerTime, centerPrice);
     setItemPos(cBackground, time1, time2, price1, price2);

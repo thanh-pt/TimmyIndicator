@@ -77,14 +77,15 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
 
 Controller::~Controller()
 {
-    delete mListItem[IDX_TREND    ];
-    delete mListItem[IDX_HTREND   ];
-    delete mListItem[IDX_ZIGZAG   ];
-    delete mListItem[IDX_RECTANGLE];
-    delete mListItem[IDX_FIBONACI ];
-    delete mListItem[IDX_CALLOUT  ];
-    delete mListItem[IDX_LONGSHORT];
-    delete mListItem[IDX_PIVOT    ];
+    delete mListItem[IDX_TREND     ];
+    delete mListItem[IDX_HTREND    ];
+    delete mListItem[IDX_ZIGZAG    ];
+    delete mListItem[IDX_RECTANGLE ];
+    delete mListItem[IDX_FIBONACI  ];
+    delete mListItem[IDX_CALLOUT   ];
+    delete mListItem[IDX_LONGSHORT ];
+    delete mListItem[IDX_CANDLEXRAY];
+    delete mListItem[IDX_PIVOT     ];
 }
 
 void Controller::setFinishedJobCB(FinishedJob cb)

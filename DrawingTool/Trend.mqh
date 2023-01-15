@@ -103,12 +103,21 @@ void Trend::activateItem(const string& itemId)
 
 void Trend::refreshData()
 {
+    if (ObjectFind(iAngleTrend) < 0)
+    {
+        // TODO: How to optimise this???
+        ObjectCreate(iAngleTrend, OBJ_TRENDBYANGLE, 0, 0, 0);
+        ObjectSet(iAngleTrend, OBJPROP_SELECTABLE, 0);
+        ObjectSet(iAngleTrend, OBJPROP_COLOR,clrNONE);
+        ObjectSetString(ChartID(), iAngleTrend,OBJPROP_TOOLTIP,"\n");
+    }
+    setItemPos(iAngleTrend, time1, time2, price1, price2);
+    setTextPos(iArrow     , time2, price2);
+
     setItemPos(cPoint1    , time1, price1);
     setItemPos(cPoint2    , time2, price2);
     setItemPos(cMainTrend , time1, time2, price1, price2);
     setTextPos(cText      , time3, price3);
-    setItemPos(iAngleTrend, time1, time2, price1, price2);
-    setTextPos(iArrow     , time2, price2);
 
     double angle=ObjectGet(iAngleTrend, OBJPROP_ANGLE);
     ObjectSet(iArrow, OBJPROP_ANGLE,  angle-90);
@@ -151,9 +160,9 @@ void Trend::updateDefaultProperty()
     ObjectSetString(ChartID(), iArrow     ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), iAngleTrend,OBJPROP_TOOLTIP,"\n");
     
-    ObjectSet(iArrow     , OBJPROP_SELECTABLE, false);
-    ObjectSet(iAngleTrend, OBJPROP_SELECTABLE, false);
-    ObjectSet(iAngleTrend, OBJPROP_COLOR,      clrNONE);
+    ObjectSet(iArrow     , OBJPROP_SELECTABLE, 0);
+    ObjectSet(iAngleTrend, OBJPROP_SELECTABLE, 0);
+    ObjectSet(iAngleTrend, OBJPROP_COLOR,clrNONE);
 
     ObjectSetInteger(ChartID(), iArrow, OBJPROP_ANCHOR, ANCHOR_CENTER);
 }
@@ -238,7 +247,7 @@ void Trend::onItemClick(const string &itemId, const string &objId)
     ObjectSet(cMainTrend , OBJPROP_SELECTED, objSelected);
     ObjectSet(cText      , OBJPROP_SELECTED, objSelected);
 
-    ObjectSet(iAngleTrend, OBJPROP_SELECTED, objSelected);
+    // ObjectSet(iAngleTrend, OBJPROP_SELECTED, objSelected);
     ObjectSet(iArrow     , OBJPROP_SELECTED, objSelected);
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
