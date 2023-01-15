@@ -8,6 +8,7 @@
 #include "DrawingTool/LongShort.mqh"
 #include "DrawingTool/Fibonacci.mqh"
 #include "DrawingTool/CandleXray.mqh"
+#include "DrawingTool/Pivot.mqh"
 
 #define CHECK_NOT_ACTIVE_RETURN if(mActive == IDX_NONE){return;}
 #define CHECK_ACTIVE_RETURN if(mActive != IDX_NONE){return;}
@@ -21,6 +22,7 @@
 #define IDX_CALLOUT     5
 #define IDX_LONGSHORT   6
 #define IDX_CANDLEXRAY  7
+#define IDX_PIVOT       8
 
 #define ITEM_TREND      "Trend"
 #define ITEM_HTREND     "HTrend"
@@ -30,6 +32,7 @@
 #define ITEM_CALLOUT    "CallOut"
 #define ITEM_LONGSHORT  "LongShort"
 #define ITEM_CANDLEXRAY "CandleXray"
+#define ITEM_PIVOT      "Pivot"
 
 class Controller
 {
@@ -69,6 +72,7 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     mListItem[IDX_CALLOUT   ]    = new CallOut   ( ITEM_CALLOUT   , commonData, mouseInfo);
     mListItem[IDX_LONGSHORT ]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
     mListItem[IDX_CANDLEXRAY]    = new CandleXray( ITEM_CANDLEXRAY, commonData, mouseInfo);
+    mListItem[IDX_PIVOT]         = new Pivot     ( ITEM_PIVOT     , commonData, mouseInfo);
 }
 
 Controller::~Controller()
@@ -80,6 +84,7 @@ Controller::~Controller()
     delete mListItem[IDX_FIBONACI ];
     delete mListItem[IDX_CALLOUT  ];
     delete mListItem[IDX_LONGSHORT];
+    delete mListItem[IDX_PIVOT    ];
 }
 
 void Controller::setFinishedJobCB(FinishedJob cb)
@@ -97,27 +102,29 @@ void Controller::finishedJob()
 
 int Controller::findItemIdByKey(const int key)
 {
-    if (key == 'T') return IDX_TREND    ;
-    if (key == 'H') return IDX_HTREND   ;
-    if (key == 'Z') return IDX_ZIGZAG   ;
-    if (key == 'R') return IDX_RECTANGLE;
-    if (key == 'F') return IDX_FIBONACI ;
-    if (key == 'C') return IDX_CALLOUT  ;
-    if (key == 'L') return IDX_LONGSHORT;
+    if (key == 'T') return IDX_TREND     ;
+    if (key == 'H') return IDX_HTREND    ;
+    if (key == 'Z') return IDX_ZIGZAG    ;
+    if (key == 'R') return IDX_RECTANGLE ;
+    if (key == 'F') return IDX_FIBONACI  ;
+    if (key == 'C') return IDX_CALLOUT   ;
+    if (key == 'L') return IDX_LONGSHORT ;
     if (key == 'X') return IDX_CANDLEXRAY;
+    if (key == 'P') return IDX_PIVOT     ;
     return IDX_NONE;
 }
 
 int Controller::findItemIdByName(const string& name)
 {
-    if (name == ITEM_TREND     ) return IDX_TREND    ;
-    if (name == ITEM_HTREND    ) return IDX_HTREND   ;
-    if (name == ITEM_ZIGZAG    ) return IDX_ZIGZAG   ;
-    if (name == ITEM_RECTANGLE ) return IDX_RECTANGLE;
-    if (name == ITEM_FIBONACI  ) return IDX_FIBONACI ;
-    if (name == ITEM_CALLOUT   ) return IDX_CALLOUT  ;
-    if (name == ITEM_LONGSHORT ) return IDX_LONGSHORT;
+    if (name == ITEM_TREND     ) return IDX_TREND     ;
+    if (name == ITEM_HTREND    ) return IDX_HTREND    ;
+    if (name == ITEM_ZIGZAG    ) return IDX_ZIGZAG    ;
+    if (name == ITEM_RECTANGLE ) return IDX_RECTANGLE ;
+    if (name == ITEM_FIBONACI  ) return IDX_FIBONACI  ;
+    if (name == ITEM_CALLOUT   ) return IDX_CALLOUT   ;
+    if (name == ITEM_LONGSHORT ) return IDX_LONGSHORT ;
     if (name == ITEM_CANDLEXRAY) return IDX_CANDLEXRAY;
+    if (name == ITEM_PIVOT     ) return IDX_PIVOT     ;
     return IDX_NONE;
 }
 
