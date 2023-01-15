@@ -16,7 +16,7 @@ enum EH_ALIGN
 
 ENUM_ANCHOR_POINT gMatrixAnchorPoint[3][3] = {
     ANCHOR_LEFT_LOWER  , ANCHOR_LOWER  , ANCHOR_RIGHT_LOWER ,
-    ANCHOR_LEFT        , ANCHOR_CENTER , ANCHOR_RIGHT       ,
+    ANCHOR_RIGHT       , ANCHOR_CENTER , ANCHOR_LEFT        ,
     ANCHOR_LEFT_UPPER  , ANCHOR_UPPER  , ANCHOR_RIGHT_UPPER 
 };
 
@@ -205,14 +205,21 @@ void HTrend::refreshData()
     switch (propAnchor)
     {
         case ANCHOR_RIGHT_LOWER:
-        case ANCHOR_RIGHT      :
         case ANCHOR_RIGHT_UPPER:
             textTime = time2-ChartPeriod()*60;
             break;
+        
         case ANCHOR_LEFT_LOWER :
-        case ANCHOR_LEFT       :
         case ANCHOR_LEFT_UPPER :
             textTime = time1+ChartPeriod()*60;
+            break;
+        
+        case ANCHOR_LEFT       :
+            textTime = time2;
+            break;
+        
+        case ANCHOR_RIGHT      :
+            textTime = time1;
             break;
         default:
             textTime = getCenterTime(time1, time2);
@@ -257,12 +264,12 @@ void HTrend::onItemDrag(const string &itemId, const string &objId)
         price = pCommonData.mMousePrice;
     }
     
-    if (time1 > time2)
-    {
-        datetime temp = time1;
-        time1 = time2;
-        time2 = temp;
-    }
+    // if (time1 > time2)
+    // {
+    //     datetime temp = time1;
+    //     time1 = time2;
+    //     time2 = temp;
+    // }
     refreshData();
 }
 void HTrend::onItemClick(const string &itemId, const string &objId)

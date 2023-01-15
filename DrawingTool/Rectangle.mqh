@@ -268,6 +268,7 @@ void Rectangle::onItemChange(const string &itemId, const string &objId)
     else                            return;
     
     ObjectSetText(targetItem, ObjectDescription(objId));
+    ObjectSetText(objId, "");
     onItemDrag(itemId, objId);
 }
 void Rectangle::onItemDeleted(const string &itemId, const string &objId)
