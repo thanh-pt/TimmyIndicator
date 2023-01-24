@@ -23,6 +23,7 @@ ENUM_ANCHOR_POINT gMatrixAnchorPoint[3][3] = {
 input string            HTrend_         = SEPARATE_LINE_BIG;
 input int               HTrend_Width    = 0;
 input string            HTrend_sp       = SEPARATE_LINE;
+input int               HTrend_FontSize = 8;
 //-----------------------------------------------------------
 input string            HTrend_1_NAME   = "bos up";
 input string            HTrend_1_TEXT   = "bos";
@@ -171,7 +172,8 @@ void HTrend::createItem()
 }
 void HTrend::updateDefaultProperty()
 {
-    ObjectSet(cMainTrend, OBJPROP_RAY, false);
+    ObjectSet(cMainTrend, OBJPROP_RAY     , false);
+    ObjectSet(cText     , OBJPROP_FONTSIZE, HTrend_FontSize);
     ObjectSetString(ChartID(), cText      ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cMainTrend ,OBJPROP_TOOLTIP,"\n");
 }
@@ -226,9 +228,9 @@ void HTrend::refreshData()
     }
     setItemPos(cText      , textTime, price);
     string textString = ObjectGetString(ChartID(), cText, OBJPROP_TEXT);
-    if (StringFind(textString, "𓈖") == -1 && textString != "")
+    if (StringFind(textString, ".") == -1 && textString != "")
     {
-        textString += "𓈖" + getTFString();
+        textString += "." + getTFString();
         ObjectSetText(cText    , textString);
     }
 }

@@ -193,65 +193,33 @@ void SetChartScaleFix(bool bFix)
     ChartSetInteger(ChartID(), CHART_SCALEFIX, 0, bFix);
 }
 
-string intToStr(int num)
-{
-    string strResult = "";
-    switch (num)
-    {
-        case 1:
-            strResult = "₁";
-        break;
-        case 2:
-            strResult = "₂";
-        break;
-        case 4:
-            strResult = "₄";
-        break;
-        case 5:
-            strResult = "₅";
-        break;
-        case 15:
-            strResult = "₁₅";
-        break;
-        case 30:
-            strResult = "₃₀";
-        break;
-        default:
-            strResult = IntegerToString(num);
-    }
-    return strResult;
-}
-
 string getTFString()
 {
     string result = "";
     int period = ChartPeriod();
     if (period < PERIOD_H1)
     {
-        result = "𝐦";
-        result += intToStr(period);
+        result = "m";
+        result += IntegerToString(period);
         return result;
     }
     if (period < PERIOD_D1)
     {
-        result = "𝐇";
-        result += intToStr(period/PERIOD_H1);
+        result = "h";
+        result += IntegerToString(period/PERIOD_H1);
         return result;
     }
     if (period < PERIOD_W1)
     {
-        result = "𝑫";
-        result += intToStr(period/PERIOD_D1);
+        result = "d";
         return result;
     }
     if (period < PERIOD_MN1)
     {
-        result = "𝑾";
-        result += intToStr(period/PERIOD_W1);
+        result = "w";
         return result;
     }
-    result = "𝑴𝑵";
-    result += intToStr(period/PERIOD_MN1);
+    result = "mn";
     return result;
 }
 
