@@ -28,7 +28,7 @@
 #define ITEM_HTREND     "HTrend"
 #define ITEM_ZIGZAG     "ZigZag"
 #define ITEM_RECTANGLE  "Rectangle"
-#define ITEM_FIBONACI   "Fibonacci"
+#define ITEM_FIBONACI   ".Fibonacci"
 #define ITEM_CALLOUT    "CallOut"
 #define ITEM_LONGSHORT  "LongShort"
 #define ITEM_CANDLEXRAY "CandleXray"

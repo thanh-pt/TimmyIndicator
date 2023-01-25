@@ -251,3 +251,45 @@ void setTextPos(const string& objName, const datetime& time1, const double price
         ObjectSet(objName, OBJPROP_PRICE1, price1);
     }
 }
+
+void multiObjectSet(int property, int value, string listObj)
+{
+    string sparamItems[];
+    int k=StringSplit(listObj,'.',sparamItems);
+    for (int i = 0; i < k; i++)
+    {
+        if (sparamItems[i] == "") continue;
+        ObjectSet("."+sparamItems[i], property, value);
+    }
+}
+
+void multiObjectSetString(int property, string value, string listObj)
+{
+    string sparamItems[];
+    int k=StringSplit(listObj,'.',sparamItems);
+    for (int i = 0; i < k; i++)
+    {
+        if (sparamItems[i] == "") continue;
+        ObjectSetString(ChartID(), "."+sparamItems[i], property, value);
+    }
+}
+
+void multiObjectSetInteger(int property, int value, string listObj)
+{
+    string sparamItems[];
+    int k=StringSplit(listObj,'.',sparamItems);
+    for (int i = 0; i < k; i++)
+    {
+        if (sparamItems[i] == "") continue;
+        ObjectSetInteger(ChartID(), "."+sparamItems[i], property, value);
+    }
+}
+
+void commonObjectSet(string obj, bool back, color c, int style, int width)
+{
+    ObjectSet(obj, OBJPROP_COLOR, c);
+    ObjectSet(obj, OBJPROP_BACK , back);
+    ObjectSet(obj, OBJPROP_STYLE, style);
+    ObjectSet(obj, OBJPROP_WIDTH, width);
+    ObjectSet(obj, OBJPROP_RAY,   false);
+}
