@@ -38,6 +38,7 @@ private:
     string cTpLine  ;
     string cEnLine  ;
     string cSlLine  ;
+    string cBeLine  ;
     string cTpPrice ;
     string cEnPrice ;
     string cSlPrice ;
@@ -110,6 +111,7 @@ void LongShort::createItem()
     ObjectCreate(cBgndSL  , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cBgndTP  , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cTpLine  , OBJ_TREND     , 0, 0, 0);
+    ObjectCreate(cBeLine  , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(cEnLine  , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(cSlLine  , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(cTpPrice , OBJ_ARROW     , 0, 0, 0);
@@ -162,12 +164,14 @@ void LongShort::updateDefaultProperty()
     ObjectSet(cPointBE, OBJPROP_SELECTED, true);
     //-------------------------------------------------
     ObjectSet(cTpLine, OBJPROP_RAY, false);
+    ObjectSet(cBeLine, OBJPROP_RAY, false);
     ObjectSet(cEnLine, OBJPROP_RAY, false);
     ObjectSet(cSlLine, OBJPROP_RAY, false);
     //-------------------------------------------------
     ObjectSet(cBgndSL  , OBJPROP_SELECTABLE, 0);
     ObjectSet(cBgndTP  , OBJPROP_SELECTABLE, 0);
     ObjectSet(cTpLine  , OBJPROP_SELECTABLE, 0);
+    ObjectSet(cBeLine  , OBJPROP_SELECTABLE, 0);
     ObjectSet(cEnLine  , OBJPROP_SELECTABLE, 0);
     ObjectSet(cSlLine  , OBJPROP_SELECTABLE, 0);
     ObjectSet(cTpPrice , OBJPROP_SELECTABLE, 0);
@@ -181,6 +185,7 @@ void LongShort::updateDefaultProperty()
     ObjectSetString(ChartID(), cBgndSL  ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cBgndTP  ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cTpLine  ,OBJPROP_TOOLTIP,"\n");
+    ObjectSetString(ChartID(), cBeLine  ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cEnLine  ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cSlLine  ,OBJPROP_TOOLTIP,"\n");
     ObjectSetString(ChartID(), cTpPrice ,OBJPROP_TOOLTIP,"\n");
@@ -206,6 +211,7 @@ void LongShort::updateTypeProperty()
     ObjectSet(cBgndSL  , OBJPROP_COLOR, LongShort_SlBkgrdColor);
     ObjectSet(cBgndTP  , OBJPROP_COLOR, LongShort_TpBkgrdColor);
     ObjectSet(cTpLine  , OBJPROP_COLOR, LongShort_TpColor);
+    ObjectSet(cBeLine  , OBJPROP_COLOR, LongShort_TpColor);
     ObjectSet(cPointTP , OBJPROP_COLOR, LongShort_TpColor);
     ObjectSet(cPointBE , OBJPROP_COLOR, LongShort_TpColor);
     ObjectSet(cEnLine  , OBJPROP_COLOR, LongShort_EnColor);
@@ -222,6 +228,7 @@ void LongShort::updateTypeProperty()
     ObjectSet(cTpLine, OBJPROP_WIDTH, LongShort_LineWidth);
     ObjectSet(cEnLine, OBJPROP_WIDTH, LongShort_LineWidth);
     ObjectSet(cSlLine, OBJPROP_WIDTH, LongShort_LineWidth);
+    ObjectSet(cBeLine, OBJPROP_WIDTH, 1);
     //-------------------------------------------------
     ObjectSet(cTpPrice, OBJPROP_FONTSIZE, LongShort_TextSize);
     ObjectSet(cEnPrice, OBJPROP_FONTSIZE, LongShort_TextSize);
@@ -236,6 +243,7 @@ void LongShort::activateItem(const string& itemId)
     cBgndSL  = itemId + "_BgndSL";
     cBgndTP  = itemId + "_BgndTP";
     cTpLine  = itemId + "_TpLine";
+    cBeLine  = itemId + "_BeLine";
     cEnLine  = itemId + "_EnLine";
     cSlLine  = itemId + "_SlLine";
     cTpPrice = itemId + "_TpPrice";
@@ -267,6 +275,7 @@ void LongShort::refreshData()
     setItemPos(cTpLine    , time1, time2, priceTP, priceTP);
     setItemPos(cEnLine    , time1, time2, priceEN, priceEN);
     setItemPos(cSlLine    , time1, time2, priceSL, priceSL);
+    setItemPos(cBeLine    , time1, time2, priceBE, priceBE);
     //-------------------------------------------------
     setItemPos(cPointTP   , time1, priceTP);
     setItemPos(cPointSL   , time1, priceSL);
@@ -280,16 +289,17 @@ void LongShort::refreshData()
     setItemPos(cBeText   , time2, priceBE);
     //-------------------------------------------------
     ObjectSetInteger(0, cEnText, OBJPROP_ANCHOR, ANCHOR_LOWER);
-    ObjectSetInteger(0, cBeText, OBJPROP_ANCHOR, ANCHOR_RIGHT);
     if (priceTP > priceSL)
     {
         ObjectSetInteger(0, cSlText, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSetInteger(0, cTpText, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        ObjectSetInteger(0, cBeText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
     }
     else
     {
         ObjectSetInteger(0, cSlText, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSetInteger(0, cTpText, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSetInteger(0, cBeText, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
     }
     //-------------------------------------------------
     string strTpInfo = ""; // RR + dola
@@ -310,7 +320,7 @@ void LongShort::refreshData()
     if (showStats)
     {
         strTpInfo += DoubleToString(rr,1) + "R";
-        strBeInfo += "------ be:" + DoubleToString(be,1) + "R";
+        strBeInfo += "be:" + DoubleToString(be,1) + "R";
         strSlInfo += DoubleToString(slPip, 1) + "p";
     }
 
@@ -419,6 +429,7 @@ void LongShort::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(cBgndSL );
     ObjectDelete(cBgndTP );
     ObjectDelete(cTpLine );
+    ObjectDelete(cBeLine );
     ObjectDelete(cEnLine );
     ObjectDelete(cSlLine );
     ObjectDelete(cTpPrice);
@@ -475,12 +486,14 @@ void LongShort::showHideHistory()
         ObjectSet(cBgndSL , OBJPROP_PRICE1, 0);
         ObjectSet(cBgndTP , OBJPROP_PRICE1, 0);
         ObjectSet(cTpLine , OBJPROP_PRICE1, 0);
+        ObjectSet(cBeLine , OBJPROP_PRICE1, 0);
         ObjectSet(cEnLine , OBJPROP_PRICE1, 0);
         ObjectSet(cSlLine , OBJPROP_PRICE1, 0);
         ObjectSet(cBoder  , OBJPROP_PRICE1, 0);
         ObjectSet(cBgndSL , OBJPROP_PRICE2, 0);
         ObjectSet(cBgndTP , OBJPROP_PRICE2, 0);
         ObjectSet(cTpLine , OBJPROP_PRICE2, 0);
+        ObjectSet(cBeLine , OBJPROP_PRICE2, 0);
         ObjectSet(cEnLine , OBJPROP_PRICE2, 0);
         ObjectSet(cSlLine , OBJPROP_PRICE2, 0);
         ObjectSet(cBoder  , OBJPROP_PRICE2, 0);
