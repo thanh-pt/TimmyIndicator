@@ -248,7 +248,6 @@ void Rectangle::onItemClick(const string &itemId, const string &objId)
     ObjectSet(iCenterText, OBJPROP_SELECTED, objSelected);
     ObjectSet(iLeftText  , OBJPROP_SELECTED, objSelected);
     ObjectSet(iRightText , OBJPROP_SELECTED, objSelected);
-    if (DEBUG) PrintFormat("%d ", hashString(iBackground));
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
 {

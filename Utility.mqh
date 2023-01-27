@@ -303,6 +303,16 @@ void SetObjectStyle(string obj, color c, int style, int width)
     ObjectSet(obj, OBJPROP_WIDTH, width);
 }
 
+int getObjectTimeId(string objId)
+{
+    int startP = StringFind(objId, "#");
+    if (startP < 0) return hashString(objId);
+    int endP = StringFind(objId, "_", startP);
+    if (endP < 0) return hashString(objId);
+    string timeIdStr = StringSubstr(objId, startP+1, endP-startP-1);
+    return StrToInteger(timeIdStr);
+}
+
 int hashString(string str)
 {
     int hashChk = 0;
@@ -312,7 +322,7 @@ int hashString(string str)
 
 void removeBackgroundOverlap(string target)
 {
-    int targetHash = hashString(target);
+    int targetId = getObjectTimeId(target);
     string bgItem  = "";
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
@@ -322,9 +332,9 @@ void removeBackgroundOverlap(string target)
         if (StringFind(objName, BG_TAG) != -1) continue;
         if (objName == target) continue;
         bgItem = BG_TAG;
-        int objHash = hashString(objName);
-        if (targetHash > objHash) bgItem += (IntegerToString(targetHash) +"."+ IntegerToString(objHash));
-        else bgItem += (IntegerToString(objHash) +"."+ IntegerToString(targetHash));
+        int objId = getObjectTimeId(objName);
+        if (targetId > objId) bgItem += (IntegerToString(targetId) +"."+ IntegerToString(objId));
+        else bgItem += (IntegerToString(objId) +"."+ IntegerToString(targetId));
         ObjectDelete(bgItem);
     }
 }
@@ -385,7 +395,7 @@ void scanBackgroundOverlap(string target)
     double price2  =           ObjectGet(target, OBJPROP_PRICE2);
     datetime time1 = (datetime)ObjectGet(target, OBJPROP_TIME1);
     datetime time2 = (datetime)ObjectGet(target, OBJPROP_TIME2);
-    int targetHash = hashString(target);
+    int targetId = getObjectTimeId(target);
     string bgItem = "";
 
     if (price1 > price2)
@@ -426,16 +436,16 @@ void scanBackgroundOverlap(string target)
             ctime1 = ctime2;
             ctime2 = tempT;
         }
-        int objHash = hashString(objName);
+        int objId = getObjectTimeId(objName);
         bgItem = BG_TAG;
-        if (targetHash > objHash) bgItem += (IntegerToString(targetHash) +"."+ IntegerToString(objHash));
-        else bgItem += (IntegerToString(objHash) +"."+ IntegerToString(targetHash));
+        if (targetId > objId) bgItem += (IntegerToString(targetId) +"."+ IntegerToString(objId));
+        else bgItem += (IntegerToString(objId) +"."+ IntegerToString(targetId));
 
         if (price2 <= cprice1 || cprice2 <= price1 || time2 <= ctime1 || ctime2 <= time1)
         {
             if (ObjectFind(bgItem) >= 0)
             {
-                if (DEBUG) PrintFormat("Delete: %s %d %d", bgItem, targetHash, objHash);
+                if (DEBUG) PrintFormat("Delete: %s %d %d", bgItem, targetId, objId);
                 ObjectDelete(bgItem);
             }
             continue;
