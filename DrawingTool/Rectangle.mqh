@@ -198,6 +198,7 @@ void Rectangle::refreshData()
     setTextPos(cLeftText  , time1,      centerPrice);
     setTextPos(cRightText , time2,      centerPrice);
     setTextPos(cCenterText, centerTime, centerPrice);
+    scanBackgroundOverlap(cBackground);
 }
 void Rectangle::finishedJobDone(){}
 
@@ -284,4 +285,5 @@ void Rectangle::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(cCenterText);
     ObjectDelete(cLeftText  );
     ObjectDelete(cRightText );
+    removeBackgroundOverlap(cBackground);
 }
