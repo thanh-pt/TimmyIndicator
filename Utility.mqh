@@ -134,6 +134,79 @@ string findItemUnderMouse(int posX, int posY)
     return "";
 }
 
+void scanBackgroundOverlap(string target)
+{
+    double price1  =           ObjectGet(target, OBJPROP_PRICE1);
+    double price2  =           ObjectGet(target, OBJPROP_PRICE2);
+    datetime time1 = (datetime)ObjectGet(target, OBJPROP_TIME1);
+    datetime time2 = (datetime)ObjectGet(target, OBJPROP_TIME2);
+
+    if (price1 > price2)
+    {
+        double tempP = price1;
+        price1 = price2;
+        price2 = tempP;
+    }
+    if (time1 > time2)
+    {
+        datetime tempT = time1;
+        time1 = time2;
+        time2 = tempT;
+    }
+
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        static string BG_TAG = "bgOverlapfix";
+        string objName = ObjectName(i);
+
+        if (ObjectType(objName) != OBJ_RECTANGLE) continue;
+        if (ObjectGet (objName, OBJPROP_BACK) == false) continue;
+        if (StringFind(objName, BG_TAG) != -1) continue;
+        if (objName == target) continue;
+
+        double cprice1  =           ObjectGet(objName, OBJPROP_PRICE1);
+        double cprice2  =           ObjectGet(objName, OBJPROP_PRICE2);
+        if (cprice1 > cprice2)
+        {
+            double tempP = cprice1;
+            cprice1 = cprice2;
+            cprice2 = tempP;
+        }
+        if (price2 >= cprice1 || cprice2 >= cprice1) continue;
+        datetime ctime1 = (datetime)ObjectGet(objName, OBJPROP_TIME1);
+        datetime ctime2 = (datetime)ObjectGet(objName, OBJPROP_TIME2);
+        if (ctime1 > ctime2)
+        {
+            datetime tempT = ctime1;
+            ctime1 = ctime2;
+            ctime2 = tempT;
+        }
+        if (time2 >= ctime1 || ctime2 >= ctime1) continue;
+        string bgItem = BG_TAG+target+objName;
+        ObjectCreate(bgItem, OBJ_RECTANGLE , 0, 0, 0);
+        commonObjectSet(bgItem, true, clrRed, 0, 0);
+        // Select price
+        if (cprice1 > price1)
+        {
+            cprice1 = price1;
+        }
+        if (cprice2 < price2)
+        {
+            cprice2 = price2;
+        }
+        // Select time
+        if (ctime1 > time1)
+        {
+            ctime1 = time1;
+        }
+        if (ctime2 < time2)
+        {
+            ctime2 = time2;
+        }
+        setItemPos(bgItem, ctime1, ctime2, cprice1, cprice2);
+    }
+}
+
 void EraseAll()
 {
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
