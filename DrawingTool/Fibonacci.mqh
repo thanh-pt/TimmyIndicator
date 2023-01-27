@@ -157,7 +157,7 @@ void Fibonacci::updateTypeProperty()
     ObjectSetText(cText4, Fib_4_Name + "  ", 7, NULL, Fib_4_Color);
     ObjectSetText(cText5, Fib_5_Name + "  ", 7, NULL, Fib_5_Color);
     //------------------------------------------
-    commonObjectSet(cMainLine, true, FibBackColor, 0, 0);
+    SetRectangleBackground(cMainLine, FibBackColor);
     //------------------------------------------
     ObjectSet(cFib0, OBJPROP_COLOR, Fib_0_Color);
     ObjectSet(cFib1, OBJPROP_COLOR, Fib_1_Color);

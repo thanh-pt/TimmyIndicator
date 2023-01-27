@@ -24,15 +24,15 @@
 #define IDX_CANDLEXRAY  7
 #define IDX_PIVOT       8
 
-#define ITEM_TREND      "Trend"
-#define ITEM_HTREND     "HTrend"
-#define ITEM_ZIGZAG     "ZigZag"
-#define ITEM_RECTANGLE  "Rectangle"
+#define ITEM_TREND      ".Trend"
+#define ITEM_HTREND     ".HTrend"
+#define ITEM_ZIGZAG     ".ZigZag"
+#define ITEM_RECTANGLE  ".Rectangle"
 #define ITEM_FIBONACI   ".Fibonacci"
-#define ITEM_CALLOUT    "CallOut"
-#define ITEM_LONGSHORT  "LongShort"
-#define ITEM_CANDLEXRAY "CandleXray"
-#define ITEM_PIVOT      "Pivot"
+#define ITEM_CALLOUT    ".CallOut"
+#define ITEM_LONGSHORT  ".LongShort"
+#define ITEM_CANDLEXRAY ".CandleXray"
+#define ITEM_PIVOT      ".Pivot"
 
 class Controller
 {

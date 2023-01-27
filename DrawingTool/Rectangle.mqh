@@ -36,12 +36,12 @@ private:
 // Component name
 private:
     string cBoder     ;
-    string cBackground;
     string cLeftPoint ;
     string cRightPoint;
-    string cCenterText;
-    string cLeftText  ;
-    string cRightText ;
+    string iBackground;
+    string iCenterText;
+    string iLeftText  ;
+    string iRightText ;
 
 // Value define for Item
 private:
@@ -107,10 +107,10 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
 void Rectangle::prepareActive(){}
 void Rectangle::createItem()
 {
-    ObjectCreate(cCenterText, OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(cLeftText  , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(cRightText , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(cBackground, OBJ_RECTANGLE , 0, 0, 0);
+    ObjectCreate(iCenterText, OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iLeftText  , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iRightText , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iBackground, OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cBoder     , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cLeftPoint , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cRightPoint, OBJ_ARROW     , 0, 0, 0);
@@ -124,54 +124,38 @@ void Rectangle::createItem()
 void Rectangle::updateDefaultProperty()
 {
     ObjectSet(cBoder        , OBJPROP_BACK , false);
-    ObjectSet(cBackground   , OBJPROP_BACK , true);
 
     ObjectSet(cLeftPoint    , OBJPROP_COLOR, clrNONE);
     ObjectSet(cRightPoint   , OBJPROP_COLOR, clrNONE);
     ObjectSet(cLeftPoint    , OBJPROP_ARROWCODE, 255);
     ObjectSet(cRightPoint   , OBJPROP_ARROWCODE, 255);
 
-    ObjectSet(cCenterText   , OBJPROP_COLOR, Rectangle_TextColor);
-    ObjectSet(cLeftText     , OBJPROP_COLOR, Rectangle_TextColor);
-    ObjectSet(cRightText    , OBJPROP_COLOR, Rectangle_TextColor);
-
-    ObjectSet(cCenterText   , OBJPROP_SELECTABLE, false);
-    ObjectSet(cLeftText     , OBJPROP_SELECTABLE, false);
-    ObjectSet(cRightText    , OBJPROP_SELECTABLE, false);
-
-    ObjectSetText(cCenterText, "");
-    ObjectSetText(cLeftText  , "");
-    ObjectSetText(cRightText , "");
+    ObjectSetText(iCenterText, "");
+    ObjectSetText(iLeftText  , "");
+    ObjectSetText(iRightText , "");
     
-    ObjectSetInteger(ChartID(), cCenterText, OBJPROP_ANCHOR, ANCHOR_CENTER);
-    ObjectSetInteger(ChartID(), cLeftText  , OBJPROP_ANCHOR, ANCHOR_LEFT);
-    ObjectSetInteger(ChartID(), cRightText , OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    ObjectSetInteger(ChartID(), iCenterText, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    ObjectSetInteger(ChartID(), iLeftText  , OBJPROP_ANCHOR, ANCHOR_LEFT);
+    ObjectSetInteger(ChartID(), iRightText , OBJPROP_ANCHOR, ANCHOR_RIGHT);
 
-    ObjectSetString(ChartID(), cBackground ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cBoder      ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cLeftPoint  ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cRightPoint ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cCenterText ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cLeftText   ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cRightText  ,OBJPROP_TOOLTIP,"\n");
+    multiObjectSet(OBJPROP_COLOR     , Rectangle_TextColor, iCenterText+iLeftText+iRightText);
+    multiObjectSet(OBJPROP_SELECTABLE, false              , iCenterText+iLeftText+iRightText);
+    multiObjectSetString(OBJPROP_TOOLTIP, "\n", iBackground+cBoder+cLeftPoint+cRightPoint+iCenterText+iLeftText+iRightText);
 }
 void Rectangle::updateTypeProperty()
 {
-    ObjectSet(cBackground   , OBJPROP_COLOR, mBackGrdClrType[mIndexType]);
-
-    ObjectSet(cBoder        , OBJPROP_COLOR, mBoderColorType[mIndexType]);
-    ObjectSet(cBoder        , OBJPROP_WIDTH, mBoderWidthType[mIndexType]);
-    ObjectSet(cBoder        , OBJPROP_STYLE, mBoderStyleType[mIndexType]);
+    SetRectangleBackground(iBackground, mBackGrdClrType[mIndexType]);
+    SetObjectStyle(cBoder, mBoderColorType[mIndexType], mBoderStyleType[mIndexType], mBoderWidthType[mIndexType]);
 }
 void Rectangle::activateItem(const string& itemId)
 {
-    cBackground = itemId + "_Background";
+    iBackground = itemId + "_Background";
     cBoder      = itemId + "_Boder";
     cLeftPoint  = itemId + "_LeftPoint";
     cRightPoint = itemId + "_RightPoint";
-    cCenterText = itemId + "_cCenterText";
-    cLeftText   = itemId + "_cLeftText";
-    cRightText  = itemId + "_cRightText";
+    iCenterText = itemId + "_iCenterText";
+    iLeftText   = itemId + "_iLeftText";
+    iRightText  = itemId + "_iRightText";
 }
 void Rectangle::updateItemAfterChangeType()
 {
@@ -186,19 +170,20 @@ void Rectangle::refreshData()
     datetime centerTime;
     if (time1 == time2)
     {
-        time2 = time1 + ChartPeriod()*180;
+        time2 = time1 + ChartPeriod()*60*5;
     }
     getCenterPos(time1, time2, price1, price2, centerTime, centerPrice);
-    setItemPos(cBackground, time1, time2, price1, price2);
+    setItemPos(iBackground, time1, time2, price1, price2);
     setItemPos(cBoder     , time1, time2, price1, price2);
     //-------------------------------------------------
     setItemPos(cLeftPoint , time1, centerPrice);
     setItemPos(cRightPoint, time2, centerPrice);
     //-------------------------------------------------
-    setTextPos(cLeftText  , time1,      centerPrice);
-    setTextPos(cRightText , time2,      centerPrice);
-    setTextPos(cCenterText, centerTime, centerPrice);
-    scanBackgroundOverlap(cBackground);
+    setTextPos(iLeftText  , time1,      centerPrice);
+    setTextPos(iRightText , time2,      centerPrice);
+    setTextPos(iCenterText, centerTime, centerPrice);
+    //-------------------------------------------------
+    scanBackgroundOverlap(iBackground);
 }
 void Rectangle::finishedJobDone(){}
 
@@ -239,8 +224,8 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
     }
     if (pCommonData.mCtrlHold)
     {
-        double oldPrice1 = ObjectGet(cBackground, OBJPROP_PRICE1);
-        double oldPrice2 = ObjectGet(cBackground, OBJPROP_PRICE2);
+        double oldPrice1 = ObjectGet(iBackground, OBJPROP_PRICE1);
+        double oldPrice2 = ObjectGet(iBackground, OBJPROP_PRICE2);
         if (price1 == oldPrice1 && price2 != oldPrice2)
         {
             price2 = pCommonData.mMousePrice;
@@ -254,22 +239,23 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
 }
 void Rectangle::onItemClick(const string &itemId, const string &objId)
 {
-    if (objId == cCenterText || objId == cLeftText || objId == cRightText) return;
+    if (objId == iCenterText || objId == iLeftText || objId == iRightText) return;
     int objSelected = (int)ObjectGet(objId, OBJPROP_SELECTED);
     ObjectSet(cBoder     , OBJPROP_SELECTED, objSelected);
-    ObjectSet(cBackground, OBJPROP_SELECTED, objSelected);
+    ObjectSet(iBackground, OBJPROP_SELECTED, objSelected);
     ObjectSet(cLeftPoint , OBJPROP_SELECTED, objSelected);
     ObjectSet(cRightPoint, OBJPROP_SELECTED, objSelected);
-    ObjectSet(cCenterText, OBJPROP_SELECTED, objSelected);
-    ObjectSet(cLeftText  , OBJPROP_SELECTED, objSelected);
-    ObjectSet(cRightText , OBJPROP_SELECTED, objSelected);
+    ObjectSet(iCenterText, OBJPROP_SELECTED, objSelected);
+    ObjectSet(iLeftText  , OBJPROP_SELECTED, objSelected);
+    ObjectSet(iRightText , OBJPROP_SELECTED, objSelected);
+    if (DEBUG) PrintFormat("%d ", hashString(iBackground));
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
 {
     string targetItem;
-    if (objId == cBoder)            targetItem = cCenterText;
-    else if (objId == cRightPoint)  targetItem = cRightText;
-    else if (objId == cLeftPoint)   targetItem = cLeftText;
+    if (objId == cBoder)            targetItem = iCenterText;
+    else if (objId == cRightPoint)  targetItem = iRightText;
+    else if (objId == cLeftPoint)   targetItem = iLeftText;
     else                            return;
     
     ObjectSetText(targetItem, ObjectDescription(objId));
@@ -279,11 +265,11 @@ void Rectangle::onItemChange(const string &itemId, const string &objId)
 void Rectangle::onItemDeleted(const string &itemId, const string &objId)
 {
     ObjectDelete(cBoder     );
-    ObjectDelete(cBackground);
+    ObjectDelete(iBackground);
     ObjectDelete(cLeftPoint );
     ObjectDelete(cRightPoint);
-    ObjectDelete(cCenterText);
-    ObjectDelete(cLeftText  );
-    ObjectDelete(cRightText );
-    removeBackgroundOverlap(cBackground);
+    ObjectDelete(iCenterText);
+    ObjectDelete(iLeftText  );
+    ObjectDelete(iRightText );
+    removeBackgroundOverlap(iBackground);
 }

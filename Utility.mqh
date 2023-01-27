@@ -289,13 +289,18 @@ void multiObjectSetInteger(int property, int value, string listObj)
     }
 }
 
-void commonObjectSet(string obj, bool back, color c, int style, int width)
+void SetRectangleBackground(string obj, color c)
 {
     ObjectSet(obj, OBJPROP_COLOR, c);
-    ObjectSet(obj, OBJPROP_BACK , back);
+    ObjectSet(obj, OBJPROP_BACK , true);
+}
+
+void SetObjectStyle(string obj, color c, int style, int width)
+{
+    ObjectSet(obj, OBJPROP_COLOR, c);
+    ObjectSet(obj, OBJPROP_BACK , false);
     ObjectSet(obj, OBJPROP_STYLE, style);
     ObjectSet(obj, OBJPROP_WIDTH, width);
-    ObjectSet(obj, OBJPROP_RAY,   false);
 }
 
 int hashString(string str)
@@ -440,6 +445,7 @@ void scanBackgroundOverlap(string target)
             ObjectCreate(bgItem, OBJ_RECTANGLE , 0, 0, 0);
             ObjectSet(bgItem   , OBJPROP_SELECTABLE, false);
         }
+        SetRectangleBackground(bgItem, increaseLum((color)ObjectGet(objName, OBJPROP_COLOR)));
         if (cprice1 < price1) cprice1 = price1;
         if (cprice2 > price2) cprice2 = price2;
         if (ctime1 < time1) ctime1 = time1;
