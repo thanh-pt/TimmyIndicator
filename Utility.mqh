@@ -435,8 +435,11 @@ void scanBackgroundOverlap(string target)
             }
             continue;
         }
-        if (ObjectFind(bgItem) < 0) ObjectCreate(bgItem, OBJ_RECTANGLE , 0, 0, 0);
-        commonObjectSet(bgItem, true, increaseLum((color)ObjectGet(objName, OBJPROP_COLOR)), 0, 0);
+        if (ObjectFind(bgItem) < 0)
+        {
+            ObjectCreate(bgItem, OBJ_RECTANGLE , 0, 0, 0);
+            ObjectSet(bgItem   , OBJPROP_SELECTABLE, false);
+        }
         if (cprice1 < price1) cprice1 = price1;
         if (cprice2 > price2) cprice2 = price2;
         if (ctime1 < time1) ctime1 = time1;
