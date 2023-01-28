@@ -93,24 +93,16 @@ void Trend::prepareActive(){}
 
 void Trend::activateItem(const string& itemId)
 {
-    cPoint1 = itemId + "_cPoint1";
-    cPoint2 = itemId + "_cPoint2";
-    cMTrend = itemId + "_cMTrend";
-    iAngle0 = itemId + "_iAngle0";
-    cLbText = itemId + "_cLbText";
-    iArrowT = itemId + "_iArrowT";
+    cPoint1 = itemId + "_c2Point1";
+    cPoint2 = itemId + "_c2Point2";
+    cMTrend = itemId + "_c1MTrend";
+    cLbText = itemId + "_c0LbText";
+    iAngle0 = itemId + "_0iAngle0";
+    iArrowT = itemId + "_0iArrowT";
 }
 
 void Trend::refreshData()
 {
-    if (ObjectFind(iAngle0) < 0)
-    {
-        // TODO: How to optimise this???
-        ObjectCreate(iAngle0, OBJ_TRENDBYANGLE, 0, 0, 0);
-        ObjectSet(iAngle0, OBJPROP_SELECTABLE, 0);
-        ObjectSet(iAngle0, OBJPROP_COLOR,clrNONE);
-        ObjectSetString(ChartID(), iAngle0,OBJPROP_TOOLTIP,"\n");
-    }
     setItemPos(iAngle0, time1, time2, price1, price2);
     setTextPos(iArrowT, time2, price2);
     setItemPos(cPoint1, time1, price1);
@@ -230,21 +222,14 @@ void Trend::onItemClick(const string &itemId, const string &objId)
 {
     if (objId == iAngle0) return;
     if (objId == iArrowT) return;
-    int objSelected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    ObjectSet(cPoint1 , OBJPROP_SELECTED, objSelected);
-    ObjectSet(cPoint2 , OBJPROP_SELECTED, objSelected);
-    ObjectSet(cMTrend , OBJPROP_SELECTED, objSelected);
-    ObjectSet(cLbText , OBJPROP_SELECTED, objSelected);
-    ObjectSet(iArrowT , OBJPROP_SELECTED, objSelected);
-    // ObjectSet(iAngle0 , OBJPROP_SELECTED, objSelected);
+    multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(objId, OBJPROP_SELECTED), cPoint1+cPoint2+cMTrend+iAngle0+cLbText+iArrowT);
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
 {
     if (objId == cMTrend)
     {
         color c = (color)ObjectGet(objId, OBJPROP_COLOR);
-        ObjectSet(cMTrend, OBJPROP_COLOR, c);
-        ObjectSet(cLbText, OBJPROP_COLOR, c);
+        multiSetProp(OBJPROP_COLOR, c, cMTrend+cLbText);
         string lineDescription = ObjectDescription(cMTrend);
         if (lineDescription != "")
         {
@@ -266,10 +251,7 @@ void Trend::onMouseClick()
 }
 void Trend::onMouseMove()
 {
-    if (mFirstPoint == false)
-    {
-        return;
-    }
+    if (mFirstPoint == false) return;
     if (pCommonData.mShiftHold)
     {
         price2 = price1;

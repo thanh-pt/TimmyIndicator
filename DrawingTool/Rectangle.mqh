@@ -147,13 +147,13 @@ void Rectangle::updateTypeProperty()
 }
 void Rectangle::activateItem(const string& itemId)
 {
-    cBoder = itemId + "_cBoder";
-    cLPtr0 = itemId + "_cLPtr0";
-    cRPtr0 = itemId + "_cRPtr0";
-    iBkgnd = itemId + "_iBkgnd";
-    iCText = itemId + "_iCText";
-    iLText = itemId + "_iLText";
-    iRText = itemId + "_iRText";
+    cBoder = itemId + "_c0Boder";
+    cLPtr0 = itemId + "_c1LPtr0";
+    cRPtr0 = itemId + "_c1RPtr0";
+    iBkgnd = itemId + "_0iBkgnd";
+    iCText = itemId + "_0iCText";
+    iLText = itemId + "_0iLText";
+    iRText = itemId + "_0iRText";
 }
 void Rectangle::updateItemAfterChangeType()
 {
