@@ -299,6 +299,7 @@ void SetObjectStyle(string obj, color c, int style, int width)
 {
     ObjectSet(obj, OBJPROP_COLOR, c);
     ObjectSet(obj, OBJPROP_BACK , false);
+    ObjectSet(obj, OBJPROP_RAY  , false);
     ObjectSet(obj, OBJPROP_STYLE, style);
     ObjectSet(obj, OBJPROP_WIDTH, width);
 }
