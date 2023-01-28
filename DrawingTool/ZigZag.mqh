@@ -75,7 +75,7 @@ void ZigZag::updateDefaultProperty()
 void ZigZag::updateTypeProperty(){}
 void ZigZag::activateItem(const string& itemId)
 {
-    cline = itemId + "_line";
+    cline = itemId + "_cline";
 }
 void ZigZag::updateItemAfterChangeType(){}
 void ZigZag::refreshData(){}

@@ -217,6 +217,9 @@ void Controller::handleSparamEvent(const int id, const string& sparam)
 {
     CHECK_ACTIVE_RETURN
 
+    // Only handle for control object
+    if (StringFind(sparam, "_c") == -1) return;
+
     string sparamItems[];
     int k=StringSplit(sparam,'_',sparamItems);
     if (k != 3)

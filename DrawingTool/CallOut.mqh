@@ -13,9 +13,9 @@ private:
 
 // Component name
 private:
-    string cText        ;
-    string cPointerLine ;
-    string cUnderLine   ;
+    string cLbText;
+    string cPtLine;
+    string iUdLine;
 
 // Value define for Item
 private:
@@ -64,9 +64,9 @@ CallOut::CallOut(const string name, CommonData* commonData, MouseInfo* mouseInfo
 void CallOut::prepareActive(){}
 void CallOut::createItem()
 {
-    ObjectCreate(cPointerLine, OBJ_TREND, 0, 0, 0);
-    ObjectCreate(cUnderLine  , OBJ_TREND, 0, 0, 0);
-    ObjectCreate(cText       , OBJ_TEXT , 0, 0, 0);
+    ObjectCreate(cPtLine, OBJ_TREND, 0, 0, 0);
+    ObjectCreate(iUdLine, OBJ_TREND, 0, 0, 0);
+    ObjectCreate(cLbText, OBJ_TEXT , 0, 0, 0);
     updateTypeProperty();
     updateDefaultProperty();
     time1  = pCommonData.mMouseTime;
@@ -74,48 +74,38 @@ void CallOut::createItem()
 }
 void CallOut::updateDefaultProperty()
 {
-    ObjectSet(cUnderLine, OBJPROP_SELECTABLE, false);
-
-    ObjectSet(cPointerLine, OBJPROP_RAY, 0);
-    ObjectSet(cUnderLine  , OBJPROP_RAY, 0);
-
-    ObjectSetString(ChartID(), cText        ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cPointerLine ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cUnderLine   ,OBJPROP_TOOLTIP,"\n");
+    ObjectSet(iUdLine, OBJPROP_SELECTABLE, false);
+    multiObjectSetString(OBJPROP_TOOLTIP, "\n",cLbText+cPtLine+iUdLine);
 }
 void CallOut::updateTypeProperty()
 {
-    ObjectSet(cPointerLine, OBJPROP_COLOR, CallOut_Color);
-    ObjectSet(cPointerLine, OBJPROP_WIDTH, CallOut_Width);
+    SetObjectStyle(cPtLine, CallOut_Color, 0, CallOut_Width);
+    SetObjectStyle(iUdLine, CallOut_Color, 0, CallOut_Width+1);
     //-------------------------------------------------------------
-    ObjectSet(cUnderLine  , OBJPROP_COLOR, CallOut_Color);
-    ObjectSet(cUnderLine  , OBJPROP_WIDTH, CallOut_Width+1);
-    //-------------------------------------------------------------
-    ObjectSet(cText       , OBJPROP_COLOR   , CallOut_Color);
-    ObjectSet(cText       , OBJPROP_FONTSIZE, CallOut_TextSize);
-    ObjectSet(cText       , OBJPROP_SELECTED, true);
+    ObjectSetText(cLbText, "Msg!", CallOut_TextSize, NULL, CallOut_Color);
+    ObjectSet(cLbText, OBJPROP_SELECTED, true);
 }
 void CallOut::activateItem(const string& itemId)
 {
-    cText        = itemId + "_" + "cText";
-    cPointerLine = itemId + "_" + "cPointerLine";
-    cUnderLine   = itemId + "_" + "cUnderLine";
+    cLbText = itemId + "_cLbText";
+    cPtLine = itemId + "_cPtLine";
+    iUdLine = itemId + "_iUdLine";
 }
 void CallOut::updateItemAfterChangeType(){}
 void CallOut::refreshData()
 {
-    setItemPos(cPointerLine, time1, time2, price1, price2);
-    setItemPos(cText, time2, price2);
+    setItemPos(cPtLine, time1, time2, price1, price2);
+    setItemPos(cLbText, time2, price2);
     //-------------------------------------------------------------
     int x, y, offset = 100;
     if (time1 > time2)
     {
-        ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
         offset = -100;
     }
     else
     {
-        ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
         offset = 100;
     }
     datetime time3;
@@ -123,7 +113,7 @@ void CallOut::refreshData()
     ChartTimePriceToXY(ChartID(), 0, time2, price2, x, y);
     ChartXYToTimePrice(ChartID(), x + offset, y, offset, time3, price3);
     //-------------------------------------------------------------
-    setItemPos(cUnderLine, time2, time3, price2, price2);
+    setItemPos(iUdLine, time2, time3, price2, price2);
 }
 void CallOut::finishedJobDone(){}
 
@@ -150,15 +140,15 @@ void CallOut::onMouseClick()
 }
 void CallOut::onItemDrag(const string &itemId, const string &objId)
 {
-    time1   = (datetime)ObjectGet(cPointerLine, OBJPROP_TIME1);
-    time2   = (datetime)ObjectGet(cPointerLine, OBJPROP_TIME2);
-    price1  =           ObjectGet(cPointerLine, OBJPROP_PRICE1);
-    price2  =           ObjectGet(cPointerLine, OBJPROP_PRICE2);
+    time1   = (datetime)ObjectGet(cPtLine, OBJPROP_TIME1);
+    time2   = (datetime)ObjectGet(cPtLine, OBJPROP_TIME2);
+    price1  =           ObjectGet(cPtLine, OBJPROP_PRICE1);
+    price2  =           ObjectGet(cPtLine, OBJPROP_PRICE2);
 
-    if (objId == cText)
+    if (objId == cLbText)
     {
-        time2   = (datetime)ObjectGet(cText, OBJPROP_TIME1);
-        price2  =           ObjectGet(cText, OBJPROP_PRICE1);
+        time2   = (datetime)ObjectGet(cLbText, OBJPROP_TIME1);
+        price2  =           ObjectGet(cLbText, OBJPROP_PRICE1);
     }
 
     refreshData();
@@ -166,14 +156,11 @@ void CallOut::onItemDrag(const string &itemId, const string &objId)
 void CallOut::onItemClick(const string &itemId, const string &objId){}
 void CallOut::onItemChange(const string &itemId, const string &objId)
 {
-    double c = ObjectGet(objId, OBJPROP_COLOR);
-    ObjectSet(cText       , OBJPROP_COLOR, c);
-    ObjectSet(cPointerLine, OBJPROP_COLOR, c);
-    ObjectSet(cUnderLine  , OBJPROP_COLOR, c);
+    multiObjectSet(OBJPROP_COLOR, (color)ObjectGet(objId, OBJPROP_COLOR), cLbText+cPtLine+iUdLine);
 }
 void CallOut::onItemDeleted(const string &itemId, const string &objId)
 {
-    ObjectDelete(cText       );
-    ObjectDelete(cPointerLine);
-    ObjectDelete(cUnderLine  );
+    ObjectDelete(cLbText);
+    ObjectDelete(cPtLine);
+    ObjectDelete(iUdLine);
 }

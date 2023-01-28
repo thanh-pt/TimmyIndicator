@@ -17,12 +17,12 @@ input int               Rectangle_2_BoderWidth  = 0;
 input ENUM_LINE_STYLE   Rectangle_2_BoderStyle  = 2;
 input color             Rectangle_2_BackGrdClr  = C'21,43,37';
 input string            Rectangle_2_sp          = SEPARATE_LINE;
-//-----------------------------------------------------------
-input string            Rectangle_3_NAME        = "Boder";
-input color             Rectangle_3_BoderColor  = clrDarkGray;
-input int               Rectangle_3_BoderWidth  = 0;
-input ENUM_LINE_STYLE   Rectangle_3_BoderStyle  = 2;
-input color             Rectangle_3_BackGrdClr  = clrNONE;
+// //-----------------------------------------------------------
+// input string            Rectangle_3_NAME        = "Boder";
+// input color             Rectangle_3_BoderColor  = clrDarkGray;
+// input int               Rectangle_3_BoderWidth  = 0;
+// input ENUM_LINE_STYLE   Rectangle_3_BoderStyle  = 2;
+// input color             Rectangle_3_BackGrdClr  = clrNONE;
 
 class Rectangle : public BaseItem
 {
@@ -93,14 +93,14 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
     mBoderStyleType[1] = Rectangle_2_BoderStyle;
     mBackGrdClrType[1] = Rectangle_2_BackGrdClr;
     //------------------------------------------
-    mNameType      [2] = Rectangle_3_NAME      ;
-    mBoderColorType[2] = Rectangle_3_BoderColor;
-    mBoderWidthType[2] = Rectangle_3_BoderWidth;
-    mBoderStyleType[2] = Rectangle_3_BoderStyle;
-    mBackGrdClrType[2] = Rectangle_3_BackGrdClr;
+    // mNameType      [2] = Rectangle_3_NAME      ;
+    // mBoderColorType[2] = Rectangle_3_BoderColor;
+    // mBoderWidthType[2] = Rectangle_3_BoderWidth;
+    // mBoderStyleType[2] = Rectangle_3_BoderStyle;
+    // mBackGrdClrType[2] = Rectangle_3_BackGrdClr;
     //------------------------------------------
     mIndexType = 0;
-    mTypeNum = 3;
+    mTypeNum = 2;
 }
 
 // Internal Event
@@ -123,8 +123,6 @@ void Rectangle::createItem()
 }
 void Rectangle::updateDefaultProperty()
 {
-    ObjectSet(cBoder        , OBJPROP_BACK , false);
-
     ObjectSet(cLeftPoint    , OBJPROP_COLOR, clrNONE);
     ObjectSet(cRightPoint   , OBJPROP_COLOR, clrNONE);
     ObjectSet(cLeftPoint    , OBJPROP_ARROWCODE, 255);
@@ -149,13 +147,13 @@ void Rectangle::updateTypeProperty()
 }
 void Rectangle::activateItem(const string& itemId)
 {
-    iBackground = itemId + "_Background";
-    cBoder      = itemId + "_Boder";
-    cLeftPoint  = itemId + "_LeftPoint";
-    cRightPoint = itemId + "_RightPoint";
+    cBoder      = itemId + "_cBoder00000";
+    cLeftPoint  = itemId + "_cLeftPoint0";
+    cRightPoint = itemId + "_cRightPoint";
+    iBackground = itemId + "_iBackground";
     iCenterText = itemId + "_iCenterText";
-    iLeftText   = itemId + "_iLeftText";
-    iRightText  = itemId + "_iRightText";
+    iLeftText   = itemId + "_iLeftText00";
+    iRightText  = itemId + "_iRightText0";
 }
 void Rectangle::updateItemAfterChangeType()
 {

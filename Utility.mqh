@@ -41,39 +41,11 @@ string findItemUnderMouse(int posX, int posY)
         string objName = ObjectName(i);
         if (ObjectGet(objName, OBJPROP_SELECTED) == false) continue;
         if (ObjectGet(objName, OBJPROP_SELECTABLE) == false) continue;
+        if (StringFind(objName, "_c") == -1) continue;
 
         int objType = ObjectType(objName);
 
-        if (objType == OBJ_TREND)
-        {
-            int x1, y1, x2, y2;
-            ChartTimePriceToXY(0, 0, (datetime)ObjectGet(objName, OBJPROP_TIME1), ObjectGet(objName, OBJPROP_PRICE1), x1, y1);
-            ChartTimePriceToXY(0, 0, (datetime)ObjectGet(objName, OBJPROP_TIME2), ObjectGet(objName, OBJPROP_PRICE2), x2, y2);
-
-            int offset = 10;
-            if (x1 > x2)
-            {
-                int temp = x1;
-                x1 = x2;
-                x2 = temp;
-            }
-            if (posX < (x1 - offset) || posX > (x2 + offset))
-            {
-                continue;
-            }
-            if (y1 > y2)
-            {
-                int temp = y1;
-                y1 = y2;
-                y2 = temp;
-            }
-            if (posY >= (y1 - offset) && posY < (y2 + offset))
-            {
-                return objName;
-            }
-            continue;
-        }
-        if (objType == OBJ_RECTANGLE)
+        if (objType == OBJ_TREND || objType == OBJ_RECTANGLE)
         {
             int x1, y1, x2, y2;
             ChartTimePriceToXY(0, 0, (datetime)ObjectGet(objName, OBJPROP_TIME1), ObjectGet(objName, OBJPROP_PRICE1), x1, y1);
@@ -429,7 +401,7 @@ void scanBackgroundOverlap(string target)
         if (ObjectType(objName) != OBJ_RECTANGLE) continue;
         if (ObjectGet (objName, OBJPROP_BACK) == false) continue;
         if (StringFind(objName, BG_TAG) != -1) continue;
-        if (StringFind(objName, "Rectangle") == -1) continue;
+        //if (StringFind(objName, "Rectangle") == -1) continue;
         if (objName == target) continue;
 
         double cprice1  =           ObjectGet(objName, OBJPROP_PRICE1);

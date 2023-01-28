@@ -26,12 +26,12 @@ private:
 
 // Component name
 private:
-    string cPoint1   ;
-    string cPoint2   ;
-    string cMainTrend;
-    string iAngleTrend;
-    string cText     ;
-    string iArrow    ;
+    string cPoint1;
+    string cPoint2;
+    string cMTrend;
+    string iAngle0;
+    string cLbText;
+    string iArrowT;
 
 // Value define for Item
 private:
@@ -93,51 +93,50 @@ void Trend::prepareActive(){}
 
 void Trend::activateItem(const string& itemId)
 {
-    cPoint1    = itemId + "_Point1";
-    cPoint2    = itemId + "_Point2";
-    cMainTrend = itemId + "_MainTrend";
-    iAngleTrend= itemId + "_iAngleTrend";
-    cText      = itemId + "_Text";
-    iArrow     = itemId + "_Arrow";
+    cPoint1 = itemId + "_cPoint1";
+    cPoint2 = itemId + "_cPoint2";
+    cMTrend = itemId + "_cMTrend";
+    iAngle0 = itemId + "_iAngle0";
+    cLbText = itemId + "_cLbText";
+    iArrowT = itemId + "_iArrowT";
 }
 
 void Trend::refreshData()
 {
-    if (ObjectFind(iAngleTrend) < 0)
+    if (ObjectFind(iAngle0) < 0)
     {
         // TODO: How to optimise this???
-        ObjectCreate(iAngleTrend, OBJ_TRENDBYANGLE, 0, 0, 0);
-        ObjectSet(iAngleTrend, OBJPROP_SELECTABLE, 0);
-        ObjectSet(iAngleTrend, OBJPROP_COLOR,clrNONE);
-        ObjectSetString(ChartID(), iAngleTrend,OBJPROP_TOOLTIP,"\n");
+        ObjectCreate(iAngle0, OBJ_TRENDBYANGLE, 0, 0, 0);
+        ObjectSet(iAngle0, OBJPROP_SELECTABLE, 0);
+        ObjectSet(iAngle0, OBJPROP_COLOR,clrNONE);
+        ObjectSetString(ChartID(), iAngle0,OBJPROP_TOOLTIP,"\n");
     }
-    setItemPos(iAngleTrend, time1, time2, price1, price2);
-    setTextPos(iArrow     , time2, price2);
+    setItemPos(iAngle0, time1, time2, price1, price2);
+    setTextPos(iArrowT, time2, price2);
+    setItemPos(cPoint1, time1, price1);
+    setItemPos(cPoint2, time2, price2);
+    setItemPos(cMTrend, time1, time2, price1, price2);
+    setTextPos(cLbText, time3, price3);
 
-    setItemPos(cPoint1    , time1, price1);
-    setItemPos(cPoint2    , time2, price2);
-    setItemPos(cMainTrend , time1, time2, price1, price2);
-    setTextPos(cText      , time3, price3);
-
-    double angle=ObjectGet(iAngleTrend, OBJPROP_ANGLE);
-    ObjectSet(iArrow, OBJPROP_ANGLE,  angle-90);
+    double angle=ObjectGet(iAngle0, OBJPROP_ANGLE);
+    ObjectSet(iArrowT, OBJPROP_ANGLE,  angle-90);
     if (angle > 90 && angle < 270) angle = angle+180;
-    ObjectSet(cText, OBJPROP_ANGLE,  angle);
+    ObjectSet(cLbText, OBJPROP_ANGLE,  angle);
     if (priceText == price3)
     {
         return;
     }
-    ObjectSetInteger(0, cText, OBJPROP_ANCHOR, (priceText > price3) ? ANCHOR_LOWER : ANCHOR_UPPER);
+    ObjectSetInteger(0, cLbText, OBJPROP_ANCHOR, (priceText > price3) ? ANCHOR_LOWER : ANCHOR_UPPER);
 }
 
 void Trend::createItem()
 {
-    ObjectCreate(iAngleTrend, OBJ_TRENDBYANGLE, 0, 0, 0);
-    ObjectCreate(iArrow     , OBJ_TEXT        , 0, 0, 0);
-    ObjectCreate(cMainTrend , OBJ_TREND       , 0, 0, 0);
-    ObjectCreate(cText      , OBJ_TEXT        , 0, 0, 0);
-    ObjectCreate(cPoint1    , OBJ_ARROW       , 0, 0, 0);
-    ObjectCreate(cPoint2    , OBJ_ARROW       , 0, 0, 0);
+    ObjectCreate(iAngle0, OBJ_TRENDBYANGLE, 0, 0, 0);
+    ObjectCreate(iArrowT, OBJ_TEXT        , 0, 0, 0);
+    ObjectCreate(cMTrend, OBJ_TREND       , 0, 0, 0);
+    ObjectCreate(cLbText, OBJ_TEXT        , 0, 0, 0);
+    ObjectCreate(cPoint1, OBJ_ARROW       , 0, 0, 0);
+    ObjectCreate(cPoint2, OBJ_ARROW       , 0, 0, 0);
 
     updateTypeProperty();
     updateDefaultProperty();
@@ -146,37 +145,27 @@ void Trend::createItem()
 }
 void Trend::updateDefaultProperty()
 {
-    ObjectSet(cMainTrend, OBJPROP_RAY      , false);
-    ObjectSet(cPoint1   , OBJPROP_ARROWCODE, 4);
-    ObjectSet(cPoint2   , OBJPROP_ARROWCODE, 4);
+    ObjectSet(cMTrend, OBJPROP_RAY      , false);
+    ObjectSet(cPoint1, OBJPROP_ARROWCODE, 4);
+    ObjectSet(cPoint2, OBJPROP_ARROWCODE, 4);
 
-    ObjectSet(cPoint1   , OBJPROP_WIDTH, 0);
-    ObjectSet(cPoint2   , OBJPROP_WIDTH, 0);
-    ObjectSetText(cText, "");
-    ObjectSetString(ChartID(), cPoint1    ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cPoint2    ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cText      ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), cMainTrend ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), iArrow     ,OBJPROP_TOOLTIP,"\n");
-    ObjectSetString(ChartID(), iAngleTrend,OBJPROP_TOOLTIP,"\n");
-    
-    ObjectSet(iArrow     , OBJPROP_SELECTABLE, 0);
-    ObjectSet(iAngleTrend, OBJPROP_SELECTABLE, 0);
-    ObjectSet(iAngleTrend, OBJPROP_COLOR,clrNONE);
+    ObjectSet(cPoint1, OBJPROP_WIDTH, 0);
+    ObjectSet(cPoint2, OBJPROP_WIDTH, 0);
+    ObjectSetText(cLbText, "");
+    multiObjectSetString(OBJPROP_TOOLTIP, "\n", cPoint1+cPoint2+cMTrend+iAngle0+cLbText+iArrowT);
+    multiObjectSet(OBJPROP_SELECTABLE, false, iArrowT+iAngle0);
+    ObjectSet(iAngle0, OBJPROP_COLOR,clrNONE);
 
-    ObjectSetInteger(ChartID(), iArrow, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    ObjectSetInteger(ChartID(), iArrowT, OBJPROP_ANCHOR, ANCHOR_CENTER);
 }
 void Trend::updateTypeProperty()
 {
     ObjectSet(cPoint1   , OBJPROP_COLOR, clrNONE);
     ObjectSet(cPoint2   , OBJPROP_COLOR, clrNONE);
-
-    ObjectSet(cMainTrend, OBJPROP_COLOR, mColorType[mIndexType]);
-    ObjectSet(cMainTrend, OBJPROP_WIDTH, mWidthType[mIndexType]);
-    ObjectSet(cMainTrend, OBJPROP_STYLE, mStyleType[mIndexType]);
-    ObjectSet(cText,      OBJPROP_COLOR, mColorType[mIndexType]);
-    ObjectSet(iArrow,     OBJPROP_COLOR, mColorType[mIndexType]);
-    ObjectSetText(iArrow, mArrowDisp[mIndexType] ? "▲" : "");
+    SetObjectStyle(cMTrend, mColorType[mIndexType], mStyleType[mIndexType], mWidthType[mIndexType]);
+    ObjectSet(cLbText, OBJPROP_COLOR, mColorType[mIndexType]);
+    ObjectSet(iArrowT, OBJPROP_COLOR, mColorType[mIndexType]);
+    ObjectSetText(iArrowT, mArrowDisp[mIndexType] ? "▲" : "");
 }
 void Trend::updateItemAfterChangeType()
 {
@@ -189,10 +178,10 @@ void Trend::updateItemAfterChangeType()
 //Chart Event
 void Trend::onItemDrag(const string &itemId, const string &objId)
 {
-    time1 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME1);
-    time2 = (datetime)ObjectGet(cMainTrend, OBJPROP_TIME2);
-    price1 = ObjectGet(cMainTrend, OBJPROP_PRICE1);
-    price2 = ObjectGet(cMainTrend, OBJPROP_PRICE2);
+    time1 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME1);
+    time2 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME2);
+    price1 = ObjectGet(cMTrend, OBJPROP_PRICE1);
+    price2 = ObjectGet(cMTrend, OBJPROP_PRICE2);
     
     if (objId == cPoint1)
     {
@@ -230,38 +219,37 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
     getCenterPos(time1, time2, price1, price2, time3, price3);
     priceText = price3;
 
-    if (objId == cText)
+    if (objId == cLbText)
     {
-        priceText = ObjectGet(cText, OBJPROP_PRICE1);
+        priceText = ObjectGet(cLbText, OBJPROP_PRICE1);
     }
 
     refreshData();
 }
 void Trend::onItemClick(const string &itemId, const string &objId)
 {
-    if (objId == iAngleTrend) return;
-    if (objId == iArrow     ) return;
+    if (objId == iAngle0) return;
+    if (objId == iArrowT) return;
     int objSelected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    ObjectSet(cPoint1    , OBJPROP_SELECTED, objSelected);
-    ObjectSet(cPoint2    , OBJPROP_SELECTED, objSelected);
-    ObjectSet(cMainTrend , OBJPROP_SELECTED, objSelected);
-    ObjectSet(cText      , OBJPROP_SELECTED, objSelected);
-
-    // ObjectSet(iAngleTrend, OBJPROP_SELECTED, objSelected);
-    ObjectSet(iArrow     , OBJPROP_SELECTED, objSelected);
+    ObjectSet(cPoint1 , OBJPROP_SELECTED, objSelected);
+    ObjectSet(cPoint2 , OBJPROP_SELECTED, objSelected);
+    ObjectSet(cMTrend , OBJPROP_SELECTED, objSelected);
+    ObjectSet(cLbText , OBJPROP_SELECTED, objSelected);
+    ObjectSet(iArrowT , OBJPROP_SELECTED, objSelected);
+    // ObjectSet(iAngle0 , OBJPROP_SELECTED, objSelected);
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
 {
-    if (objId == cMainTrend)
+    if (objId == cMTrend)
     {
         color c = (color)ObjectGet(objId, OBJPROP_COLOR);
-        ObjectSet(cMainTrend, OBJPROP_COLOR, c);
-        ObjectSet(cText     , OBJPROP_COLOR, c);
-        string lineDescription = ObjectDescription(cMainTrend);
+        ObjectSet(cMTrend, OBJPROP_COLOR, c);
+        ObjectSet(cLbText, OBJPROP_COLOR, c);
+        string lineDescription = ObjectDescription(cMTrend);
         if (lineDescription != "")
         {
-            ObjectSetText(cText    , lineDescription);
-            ObjectSetText(cMainTrend, "");
+            ObjectSetText(cLbText, lineDescription);
+            ObjectSetText(cMTrend, "");
         }
         onItemDrag(itemId, objId);
     }
@@ -295,10 +283,10 @@ void Trend::onMouseMove()
 }
 void Trend::onItemDeleted(const string &itemId, const string &objId)
 {
-    ObjectDelete(cPoint1    );
-    ObjectDelete(cPoint2    );
-    ObjectDelete(cMainTrend );
-    ObjectDelete(cText      );
-    ObjectDelete(iAngleTrend);
-    ObjectDelete(iArrow     );
+    ObjectDelete(cPoint1);
+    ObjectDelete(cPoint2);
+    ObjectDelete(cMTrend);
+    ObjectDelete(cLbText);
+    ObjectDelete(iAngle0);
+    ObjectDelete(iArrowT);
 }
