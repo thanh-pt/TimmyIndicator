@@ -75,7 +75,7 @@ void CallOut::createItem()
 void CallOut::updateDefaultProperty()
 {
     ObjectSet(iUdLine, OBJPROP_SELECTABLE, false);
-    multiObjectSetString(OBJPROP_TOOLTIP, "\n",cLbText+cPtLine+iUdLine);
+    multiSetStrs(OBJPROP_TOOLTIP, "\n",cLbText+cPtLine+iUdLine);
 }
 void CallOut::updateTypeProperty()
 {
@@ -156,7 +156,7 @@ void CallOut::onItemDrag(const string &itemId, const string &objId)
 void CallOut::onItemClick(const string &itemId, const string &objId){}
 void CallOut::onItemChange(const string &itemId, const string &objId)
 {
-    multiObjectSet(OBJPROP_COLOR, (color)ObjectGet(objId, OBJPROP_COLOR), cLbText+cPtLine+iUdLine);
+    multiSetProp(OBJPROP_COLOR, (color)ObjectGet(objId, OBJPROP_COLOR), cLbText+cPtLine+iUdLine);
 }
 void CallOut::onItemDeleted(const string &itemId, const string &objId)
 {

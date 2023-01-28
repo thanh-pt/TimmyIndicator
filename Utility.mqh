@@ -15,6 +15,7 @@ void getCenterPos(const datetime& time1, const datetime& time2, double price1, d
     x1 = (x1+x2)/2;
     y1 = (y1+y2)/2;
     ChartXYToTimePrice(ChartID(), x1, y1, window, outTime, outPrice);
+    outPrice = (price1+price2)/2;
 }
 
 datetime getCenterTime(const datetime& time1, const datetime& time2)
@@ -228,7 +229,7 @@ void setTextPos(const string& objName, const datetime& time1, const double price
     }
 }
 
-void multiObjectSet(int property, int value, string listObj)
+void multiSetProp(int property, int value, string listObj)
 {
     string sparamItems[];
     int k=StringSplit(listObj,'.',sparamItems);
@@ -239,7 +240,7 @@ void multiObjectSet(int property, int value, string listObj)
     }
 }
 
-void multiObjectSetString(int property, string value, string listObj)
+void multiSetStrs(int property, string value, string listObj)
 {
     string sparamItems[];
     int k=StringSplit(listObj,'.',sparamItems);
@@ -250,7 +251,7 @@ void multiObjectSetString(int property, string value, string listObj)
     }
 }
 
-void multiObjectSetInteger(int property, int value, string listObj)
+void multiSetInts(int property, int value, string listObj)
 {
     string sparamItems[];
     int k=StringSplit(listObj,'.',sparamItems);

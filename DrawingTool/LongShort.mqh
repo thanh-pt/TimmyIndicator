@@ -456,7 +456,7 @@ void LongShort::showHideHistory()
     for (int i = ObjectsTotal() - 1; i >= 0; i--)
     {
         string objName = ObjectName(i);
-        if (StringFind(objName, "PointWDSpecialLongShort") == -1)
+        if (StringFind(objName, "cPointWD") == -1)
         {
             continue;
         }

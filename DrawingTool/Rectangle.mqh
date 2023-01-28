@@ -136,9 +136,9 @@ void Rectangle::updateDefaultProperty()
     ObjectSetInteger(ChartID(), iLText, OBJPROP_ANCHOR, ANCHOR_LEFT);
     ObjectSetInteger(ChartID(), iRText, OBJPROP_ANCHOR, ANCHOR_RIGHT);
 
-    multiObjectSet(OBJPROP_COLOR     , Rectangle_TextColor, iCText+iLText+iRText);
-    multiObjectSet(OBJPROP_SELECTABLE, false              , iCText+iLText+iRText+iBkgnd);
-    multiObjectSetString(OBJPROP_TOOLTIP, "\n", iBkgnd+cBoder+cLPtr0+cRPtr0+iCText+iLText+iRText);
+    multiSetProp(OBJPROP_COLOR     , Rectangle_TextColor, iCText+iLText+iRText);
+    multiSetProp(OBJPROP_SELECTABLE, false              , iCText+iLText+iRText+iBkgnd);
+    multiSetStrs(OBJPROP_TOOLTIP, "\n", cBoder+cLPtr0+cRPtr0+iBkgnd+iCText+iLText+iRText);
 }
 void Rectangle::updateTypeProperty()
 {
@@ -234,12 +234,11 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
         }
     }
     refreshData();
-    PrintFormat("%d -> %d", time1, time2);
 }
 void Rectangle::onItemClick(const string &itemId, const string &objId)
 {
     if (objId == iCText || objId == iLText || objId == iRText) return;
-    multiObjectSet(OBJPROP_SELECTED, (int)ObjectGet(objId, OBJPROP_SELECTED), iBkgnd+cBoder+cLPtr0+cRPtr0+iCText+iLText+iRText);
+    multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(objId, OBJPROP_SELECTED), iBkgnd+cBoder+cLPtr0+cRPtr0+iCText+iLText+iRText);
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
 {

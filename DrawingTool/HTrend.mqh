@@ -250,7 +250,7 @@ void HTrend::onItemClick(const string &itemId, const string &objId)
     if (objId == cText)
     {
         ObjectSet(cMainTrend, OBJPROP_SELECTED, ObjectGet(cText, OBJPROP_SELECTED));
-        multiObjectSet(OBJPROP_SELECTED, (int)ObjectGet(cText, OBJPROP_SELECTED), cMainTrend+sHPos);
+        multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(cText, OBJPROP_SELECTED), cMainTrend+sHPos);
     }
 }
 void HTrend::onItemChange(const string &itemId, const string &objId)

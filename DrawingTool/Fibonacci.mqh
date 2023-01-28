@@ -136,14 +136,14 @@ void Fibonacci::createItem()
 }
 void Fibonacci::updateDefaultProperty()
 {
-    multiObjectSet(OBJPROP_RAY          , false         , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
-    multiObjectSet(OBJPROP_WIDTH        , FibLevelWidth , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
-    multiObjectSet(OBJPROP_STYLE        , FibLevelStyle , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
-    multiObjectSet(OBJPROP_SELECTABLE   , false         , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
+    multiSetProp(OBJPROP_RAY          , false         , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
+    multiSetProp(OBJPROP_WIDTH        , FibLevelWidth , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
+    multiSetProp(OBJPROP_STYLE        , FibLevelStyle , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
+    multiSetProp(OBJPROP_SELECTABLE   , false         , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
                                                          +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
-    multiObjectSetInteger(OBJPROP_ANCHOR, ANCHOR_RIGHT  , iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
+    multiSetInts(OBJPROP_ANCHOR, ANCHOR_RIGHT  , iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
     
-    multiObjectSetString(OBJPROP_TOOLTIP, "\n",
+    multiSetStrs(OBJPROP_TOOLTIP, "\n",
                             cMLne
                             +iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
                             +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
