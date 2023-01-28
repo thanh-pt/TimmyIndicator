@@ -327,6 +327,7 @@ void removeBackgroundOverlap(string target)
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
+        if (ObjectFind(ChartID(), objName) != 0) continue;
         if (ObjectType(objName) != OBJ_RECTANGLE) continue;
         if (ObjectGet (objName, OBJPROP_BACK) == false) continue;
         if (StringFind(objName, BG_TAG) != -1) continue;
@@ -336,6 +337,15 @@ void removeBackgroundOverlap(string target)
         if (targetId > objId) bgItem += (IntegerToString(targetId) +"."+ IntegerToString(objId));
         else bgItem += (IntegerToString(objId) +"."+ IntegerToString(targetId));
         ObjectDelete(bgItem);
+    }
+}
+
+void EraseBgOverlap()
+{
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        string objName = ObjectName(i);
+        if (StringFind(objName, BG_TAG) != -1) ObjectDelete(objName);
     }
 }
 
@@ -414,7 +424,7 @@ void scanBackgroundOverlap(string target)
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
-
+        if (ObjectFind(ChartID(), objName) != 0) continue;
         if (ObjectType(objName) != OBJ_RECTANGLE) continue;
         if (ObjectGet (objName, OBJPROP_BACK) == false) continue;
         if (StringFind(objName, BG_TAG) != -1) continue;

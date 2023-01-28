@@ -151,6 +151,9 @@ void Controller::handleKeyEvent(const long &key)
     case '3':
         if (mbStartErase) EraseLowerTF();
         break;
+    case '4':
+        if (mbStartErase) EraseBgOverlap();
+        break;
     case 'S':
         ((LongShort*)mListItem[IDX_LONGSHORT]).showHideHistory();
         break;
@@ -162,7 +165,7 @@ void Controller::handleKeyEvent(const long &key)
         if (key == 'E')
         {
             mbStartErase = true;
-            pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF");
+            pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF | 4-BgOverlap");
         }
         else if (key == 'M')
         {
