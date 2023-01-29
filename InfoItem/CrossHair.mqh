@@ -9,39 +9,43 @@ private:
     CommonData* pCommonData;
     string mVCrossHair;
     string mHCrossHair;
+    uint mTimeOffset;
 public:
     CrossHair(CommonData* commonData)
     {
         mVCrossHair = STATIC_TAG + "VCrossHair";
         mHCrossHair = STATIC_TAG + "HCrossHair";
         pCommonData = commonData;
+
+        if (ChartPeriod() == PERIOD_MN1) mTimeOffset = ChartPeriod()*60*100;
+        else mTimeOffset = 120000*ChartPeriod();
+
         initDrawing();
     }
     void initDrawing()
     {
         ObjectCreate(mVCrossHair, OBJ_RECTANGLE, 0, 0, 0);
         ObjectCreate(mHCrossHair, OBJ_RECTANGLE, 0, 0, 0);
-        ObjectSet(mVCrossHair, OBJPROP_COLOR, CrossHairColor);
-        ObjectSet(mHCrossHair, OBJPROP_COLOR, CrossHairColor);
-        ObjectSet(mVCrossHair, OBJPROP_STYLE, STYLE_DOT);
-        ObjectSet(mHCrossHair, OBJPROP_STYLE, STYLE_DOT);
+        SetObjectStyle(mVCrossHair, CrossHairColor, STYLE_DOT, 0);
+        SetObjectStyle(mHCrossHair, CrossHairColor, STYLE_DOT, 0);
         ObjectSet(mVCrossHair, OBJPROP_SELECTABLE, false);
         ObjectSet(mHCrossHair, OBJPROP_SELECTABLE, false);
-        ObjectSet(mVCrossHair, OBJPROP_BACK, false);
-        ObjectSet(mHCrossHair, OBJPROP_BACK, false);
 
-        ObjectSet(mVCrossHair, OBJPROP_PRICE1, 10);
-        ObjectSet(mVCrossHair, OBJPROP_PRICE2, 0);
         ObjectSet(mVCrossHair, OBJPROP_TIME2, 0);
         
+        ObjectSet(mHCrossHair, OBJPROP_TIME2, 0);
         ObjectSet(mHCrossHair, OBJPROP_PRICE2, 0);
     }
     void onMouseMove()
     {
-        ObjectSet(mHCrossHair, OBJPROP_TIME1, pCommonData.mMouseTime + 120000*ChartPeriod());
-        ObjectSet(mHCrossHair, OBJPROP_TIME2, pCommonData.mMouseTime - 120000*ChartPeriod());
-        ObjectSet(mVCrossHair, OBJPROP_TIME1, pCommonData.mMouseTime);
+        ObjectSet(mHCrossHair, OBJPROP_TIME1, pCommonData.mMouseTime + mTimeOffset);
+        ObjectSet(mHCrossHair, OBJPROP_TIME2, pCommonData.mMouseTime - mTimeOffset);
+
+        ObjectSet(mVCrossHair, OBJPROP_PRICE1, ChartGetDouble(ChartID(),CHART_FIXED_MIN)-10);
+        ObjectSet(mVCrossHair, OBJPROP_PRICE2, ChartGetDouble(ChartID(),CHART_FIXED_MAX)+10);
+
         ObjectSet(mHCrossHair, OBJPROP_PRICE1, pCommonData.mMousePrice);
+        ObjectSet(mVCrossHair, OBJPROP_TIME1, pCommonData.mMouseTime);
     }
     void onObjectDeleted(const string& objectName)
     {
