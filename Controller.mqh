@@ -157,6 +157,14 @@ void Controller::handleKeyEvent(const long &key)
     case 'S':
         ((LongShort*)mListItem[IDX_LONGSHORT]).showHideHistory();
         break;
+    // Short cut for Chart fix [S]
+    case 'Q':
+        SetChartScaleFix(true);
+        break;
+    case 'W':
+        SetChartScaleFix(false);
+        break;
+    // Short cut for Chart fix [E]
     default:
         break;
     }
