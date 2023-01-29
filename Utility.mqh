@@ -375,6 +375,8 @@ color increaseLum(color c)
 
 void scanBackgroundOverlap(string target)
 {
+    if ((color)ObjectGet(target, OBJPROP_COLOR) == clrNONE) return;
+
     double price1  =           ObjectGet(target, OBJPROP_PRICE1);
     double price2  =           ObjectGet(target, OBJPROP_PRICE2);
     datetime time1 = (datetime)ObjectGet(target, OBJPROP_TIME1);
@@ -401,6 +403,7 @@ void scanBackgroundOverlap(string target)
         if (ObjectFind(ChartID(), objName) != 0) continue;
         if (ObjectType(objName) != OBJ_RECTANGLE) continue;
         if (ObjectGet (objName, OBJPROP_BACK) == false) continue;
+        if (ObjectGet (objName, OBJPROP_COLOR) == clrNONE) continue;
         if (StringFind(objName, BG_TAG) != -1) continue;
         //if (StringFind(objName, "Rectangle") == -1) continue;
         if (objName == target) continue;
