@@ -97,16 +97,16 @@ void CallOut::refreshData()
     setItemPos(cPtLine, time1, time2, price1, price2);
     setItemPos(cLbText, time2, price2);
     //-------------------------------------------------------------
-    int x, y, offset = 100;
+    int x, y, offset;
+    offset = (int)((double)(StringLen(ObjectDescription(cLbText))*CallOut_TextSize) * 2/3);
     if (time1 > time2)
     {
         ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-        offset = -100;
+        offset *= (-1);
     }
     else
     {
         ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
-        offset = 100;
     }
     datetime time3;
     double price3;
@@ -157,6 +157,7 @@ void CallOut::onItemClick(const string &itemId, const string &objId){}
 void CallOut::onItemChange(const string &itemId, const string &objId)
 {
     multiSetProp(OBJPROP_COLOR, (color)ObjectGet(objId, OBJPROP_COLOR), cLbText+cPtLine+iUdLine);
+    onItemDrag(itemId, objId);
 }
 void CallOut::onItemDeleted(const string &itemId, const string &objId)
 {
