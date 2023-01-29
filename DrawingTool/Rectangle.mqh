@@ -166,10 +166,7 @@ void Rectangle::refreshData()
 {
     double centerPrice;
     datetime centerTime;
-    if (time1 == time2)
-    {
-        time2 = time1 + ChartPeriod()*60*5;
-    }
+    if (time1 == time2) time2 = time1 + ChartPeriod()*60*5;
     getCenterPos(time1, time2, price1, price2, centerTime, centerPrice);
     setItemPos(iBkgnd, time1, time2, price1, price2);
     setItemPos(cBoder, time1, time2, price1, price2);
@@ -177,8 +174,8 @@ void Rectangle::refreshData()
     setItemPos(cLPtr0, time1, centerPrice);
     setItemPos(cRPtr0, time2, centerPrice);
     //-------------------------------------------------
-    setTextPos(iLText, time1     , centerPrice);
-    setTextPos(iRText, time2     , centerPrice);
+    setTextPos(iLText, time1 + ChartPeriod()*60, centerPrice);
+    setTextPos(iRText, time2 - ChartPeriod()*60, centerPrice);
     setTextPos(iCText, centerTime, centerPrice);
     //-------------------------------------------------
     scanBackgroundOverlap(iBkgnd);
@@ -237,7 +234,7 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
 }
 void Rectangle::onItemClick(const string &itemId, const string &objId)
 {
-    if (objId == iCText || objId == iLText || objId == iRText) return;
+    if (objId == iCText || objId == iLText || objId == iRText || objId == iBkgnd) return;
     multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(objId, OBJPROP_SELECTED), iBkgnd+cBoder+cLPtr0+cRPtr0+iCText+iLText+iRText);
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
@@ -248,6 +245,9 @@ void Rectangle::onItemChange(const string &itemId, const string &objId)
     else if (objId == cLPtr0) targetItem = iLText;
     else                      return;
     
+    string txtContent = ObjectDescription(objId);
+    if (txtContent == "" ) return;
+    if (txtContent == ".") txtContent = "";
     ObjectSetText(targetItem, ObjectDescription(objId));
     ObjectSetText(objId, "");
     onItemDrag(itemId, objId);

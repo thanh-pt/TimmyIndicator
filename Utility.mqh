@@ -200,7 +200,7 @@ string getTFString()
     return result;
 }
 
-void setItemPos(const string& objName, const datetime& time1, const datetime& time2, const double price1, const double price2)
+void setItemPos(const string& objName, datetime time1, datetime time2, const double price1, const double price2)
 {
     ObjectSet(objName, OBJPROP_TIME1 , time1);
     ObjectSet(objName, OBJPROP_PRICE1, price1);
@@ -208,13 +208,13 @@ void setItemPos(const string& objName, const datetime& time1, const datetime& ti
     ObjectSet(objName, OBJPROP_PRICE2, price2);
 }
 
-void setItemPos(const string& objName, const datetime& time1, const double price1)
+void setItemPos(const string& objName, datetime time1, const double price1)
 {
     ObjectSet(objName, OBJPROP_TIME1 , time1);
     ObjectSet(objName, OBJPROP_PRICE1, price1);
 }
 
-void setTextPos(const string& objName, const datetime& time1, const double price1)
+void setTextPos(const string& objName, datetime time1, const double price1)
 {
     ObjectSet(objName, OBJPROP_TIME1,  time1);
 

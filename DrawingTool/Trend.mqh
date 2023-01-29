@@ -146,7 +146,7 @@ void Trend::updateDefaultProperty()
     ObjectSetText(cLbText, "");
     multiSetStrs(OBJPROP_TOOLTIP, "\n", cPoint1+cPoint2+cMTrend+iAngle0+cLbText+iArrowT);
     multiSetProp(OBJPROP_SELECTABLE, false, iArrowT+iAngle0);
-    ObjectSet(iAngle0, OBJPROP_COLOR,clrNONE);
+    SetObjectStyle(iAngle0, clrNONE, 0, 0);
 
     ObjectSetInteger(ChartID(), iArrowT, OBJPROP_ANCHOR, ANCHOR_CENTER);
 }

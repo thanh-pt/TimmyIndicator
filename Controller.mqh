@@ -217,9 +217,6 @@ void Controller::handleSparamEvent(const int id, const string& sparam)
 {
     CHECK_ACTIVE_RETURN
 
-    // Only handle for control object
-    if (StringFind(sparam, "_c") == -1) return;
-
     string sparamItems[];
     int k=StringSplit(sparam,'_',sparamItems);
     if (k != 3)
@@ -240,9 +237,11 @@ void Controller::handleSparamEvent(const int id, const string& sparam)
         mListItem[receiverItem].onItemDeleted(itemId, sparam);
         break;
     case CHARTEVENT_OBJECT_DRAG:
+        if (StringFind(sparam, "_c") == -1) return;
         mListItem[receiverItem].onItemDrag(itemId, sparam);
         break;
     case CHARTEVENT_OBJECT_CHANGE:
+        if (StringFind(sparam, "_c") == -1) return;
         mListItem[receiverItem].onItemChange(itemId, sparam);
         break;
     case CHARTEVENT_OBJECT_CLICK:
