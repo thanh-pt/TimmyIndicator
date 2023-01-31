@@ -47,9 +47,10 @@ Pivot::Pivot(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [0] = "Pivot1";
+    mNameType [0] = "Pivot";
+    mNameType [1] = "Pivot Cont.";
     mIndexType = 0;
-    mTypeNum = 0;
+    mTypeNum = 2;
 }
 
 // Internal Event
@@ -104,7 +105,12 @@ void Pivot::onMouseMove()
 void Pivot::onMouseClick()
 {
     createItem();
-    mFinishedJobCb();
+    if (mIndexType == 0)
+    {
+        mFinishedJobCb();
+        return;
+    }
+    startActivate(mFinishedJobCb);
 }
 void Pivot::onItemDrag(const string &itemId, const string &objId)
 {
