@@ -4,8 +4,8 @@
 enum E_HTREND_POS
 {
     RIGH_AUTO   = 0,
-    LEFT        = 1,
-    CENTER      = 2,
+    CENTER_AUTO = 1,
+    LEFT        = 2,
 };
 
 input string            HTrend_         = SEPARATE_LINE_BIG;
@@ -13,8 +13,8 @@ input int               HTrend_Width    = 0;
 input int               HTrend_FontSize = 8;
 input string            HTrend_sp       = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_1_NAME   = "bos";
-input string            HTrend_1_TEXT   = "*";
+input string            HTrend_1_NAME   = "BoS";
+input string            HTrend_1_TEXT   = "bos";
 input E_HTREND_POS      HTrend_1_Pos    = E_HTREND_POS::RIGH_AUTO;
 input ENUM_LINE_STYLE   HTrend_1_Style  = STYLE_DOT;
 input color             HTrend_1_Color  = clrDarkGray;
@@ -27,26 +27,12 @@ input ENUM_LINE_STYLE   HTrend_2_Style  = STYLE_DOT;
 input color             HTrend_2_Color  = clrDarkGray;
 input string            HTrend_2_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
-input string            HTrend_3_NAME   = "Target";
-input string            HTrend_3_TEXT   = "  target";
+input string            HTrend_3_NAME   = "Sweep!";
+input string            HTrend_3_TEXT   = "x";
 input E_HTREND_POS      HTrend_3_Pos    = E_HTREND_POS::LEFT;
 input ENUM_LINE_STYLE   HTrend_3_Style  = STYLE_SOLID;
 input color             HTrend_3_Color  = clrSilver;
 input string            HTrend_3_sp     = SEPARATE_LINE;
-//-----------------------------------------------------------
-input string            HTrend_4_NAME   = "Protected";
-input string            HTrend_4_TEXT   = "   protected";
-input E_HTREND_POS      HTrend_4_Pos    = E_HTREND_POS::LEFT;
-input ENUM_LINE_STYLE   HTrend_4_Style  = STYLE_SOLID;
-input color             HTrend_4_Color  = clrSilver;
-input string            HTrend_4_sp     = SEPARATE_LINE;
-//-----------------------------------------------------------
-input string            HTrend_5_NAME   = "mid";
-input string            HTrend_5_TEXT   = " *";
-input E_HTREND_POS      HTrend_5_Pos    = E_HTREND_POS::LEFT;
-input ENUM_LINE_STYLE   HTrend_5_Style  = STYLE_DOT;
-input color             HTrend_5_Color  = clrRed;
-input string            HTrend_5_sp     = SEPARATE_LINE;
 
 class HTrend : public BaseItem
 {
@@ -116,20 +102,8 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mPropStyle [2] = HTrend_3_Style ;
     mPropColor [2] = HTrend_3_Color ;
     //-----------------------------
-    mNameType  [3] = HTrend_4_NAME  ;
-    mPropText  [3] = HTrend_4_TEXT  ;
-    mPropPos   [3] = HTrend_4_Pos;
-    mPropStyle [3] = HTrend_4_Style ;
-    mPropColor [3] = HTrend_4_Color ;
-    //-----------------------------
-    mNameType  [4] = HTrend_5_NAME  ;
-    mPropText  [4] = HTrend_5_TEXT  ;
-    mPropPos   [4] = HTrend_5_Pos;
-    mPropStyle [4] = HTrend_5_Style ;
-    mPropColor [4] = HTrend_5_Color ;
-    //-----------------------------
     mIndexType = 0;
-    mTypeNum   = 5;
+    mTypeNum   = 3;
 }
 
 // Internal Event
@@ -176,34 +150,19 @@ void HTrend::updateItemAfterChangeType()
 void HTrend::refreshData()
 {
     setItemPos(cMainTrend, time1, time2, price, price);
-    datetime textTime;
+    datetime textTime = time1;
     int hPos = StrToInteger(ObjectDescription(sHPos));
-    if (hPos == RIGH_AUTO)
-    {
-        textTime = time1+ChartPeriod()*60;
-        int shift = iBarShift(ChartSymbol(), ChartPeriod(), time1);
-        if (shift <= 0)
-        {
-            shift = 0;
-        }
-        if (price >= Close[shift])
-        {
-            ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
-        }
-        else
-        {
-            ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
-        }
-    }
-    else if (hPos == LEFT)
-    {
-        textTime = time2;
-        ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT);
-    }
-    else
-    {
-        textTime = getCenterTime(time1, time2);
-    }
+    // Left/right/auto pos
+    if   (hPos == RIGH_AUTO  ) textTime = time1+ChartPeriod()*60;
+    else (hPos == CENTER_AUTO) textTime = getCenterTime(time1, time2);
+    else (hPos == LEFT       ) textTime = time2;
+
+    // Up or down the line
+    int shift = iBarShift(ChartSymbol(), ChartPeriod(), time1);
+    bool isUpper = false;
+    if   (hPos == RIGH_AUTO  ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
+    else (hPos == CENTER_AUTO) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LOWER : ANCHOR_UPPER);
+    else (hPos == LEFT       ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT);
     setItemPos(cText      , textTime, price);
     string textString = ObjectGetString(ChartID(), cText, OBJPROP_TEXT);
     if (StringFind(textString, ".") == -1 && textString != "")
