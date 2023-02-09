@@ -33,6 +33,10 @@ input E_HTREND_POS      HTrend_3_Pos    = E_HTREND_POS::LEFT;
 input ENUM_LINE_STYLE   HTrend_3_Style  = STYLE_SOLID;
 input color             HTrend_3_Color  = clrSilver;
 input string            HTrend_3_sp     = SEPARATE_LINE;
+//-----------------------------------------------------------
+input bool              HTrend_Recently = true;
+input string            HTrend_x_sp     = SEPARATE_LINE;
+
 
 class HTrend : public BaseItem
 {
@@ -104,6 +108,13 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     //-----------------------------
     mIndexType = 0;
     mTypeNum   = 3;
+    //-----------------------------
+    if (HTrend_Recently == true) mTypeNum += 1;
+    mNameType  [mTypeNum-1] = "R:"  ;
+    mPropText  [mTypeNum-1] = "";
+    mPropPos   [mTypeNum-1] = E_HTREND_POS::CENTER_AUTO;
+    mPropStyle [mTypeNum-1] = STYLE_DOT ;
+    mPropColor [mTypeNum-1] = clrDarkGray ;
 }
 
 // Internal Event
@@ -153,23 +164,25 @@ void HTrend::refreshData()
     datetime textTime = time1;
     int hPos = StrToInteger(ObjectDescription(sHPos));
     // Left/right/auto pos
-    if   (hPos == RIGH_AUTO  ) textTime = time1+ChartPeriod()*60;
-    else (hPos == CENTER_AUTO) textTime = getCenterTime(time1, time2);
-    else (hPos == LEFT       ) textTime = time2;
+    if      (hPos == RIGH_AUTO  ) textTime = time1+ChartPeriod()*60;
+    else if (hPos == CENTER_AUTO) textTime = getCenterTime(time1, time2);
+    else if (hPos == LEFT       ) textTime = time2;
 
     // Up or down the line
     int shift = iBarShift(ChartSymbol(), ChartPeriod(), time1);
     bool isUpper = false;
-    if   (hPos == RIGH_AUTO  ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
-    else (hPos == CENTER_AUTO) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LOWER : ANCHOR_UPPER);
-    else (hPos == LEFT       ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT);
+    if      (hPos == RIGH_AUTO  ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LEFT_UPPER : ANCHOR_LEFT_LOWER);
+    else if (hPos == CENTER_AUTO) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_UPPER : ANCHOR_LOWER);
+    else if (hPos == LEFT       ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT);
     setItemPos(cText      , textTime, price);
+    /*
     string textString = ObjectGetString(ChartID(), cText, OBJPROP_TEXT);
     if (StringFind(textString, ".") == -1 && textString != "")
     {
         textString += "." + getTFString();
         ObjectSetText(cText    , textString);
     }
+    */
 }
 
 // Chart Event
@@ -226,6 +239,11 @@ void HTrend::onItemChange(const string &itemId, const string &objId)
             ObjectSetText(cMainTrend, "");
         }
     }
+    mPropText  [mTypeNum-1] = ObjectDescription(cText);
+    mNameType  [mTypeNum-1] = "R:"+mPropText[mTypeNum-1];
+    mPropPos   [mTypeNum-1] = E_HTREND_POS::CENTER_AUTO;
+    mPropStyle [mTypeNum-1] = (ENUM_LINE_STYLE)ObjectGet(cMainTrend, OBJPROP_STYLE);
+    mPropColor [mTypeNum-1] = c ;
 }
 void HTrend::onItemDeleted(const string &itemId, const string &objId)
 {
