@@ -171,8 +171,9 @@ void HTrend::refreshData()
     // Up or down the line
     int shift = iBarShift(ChartSymbol(), ChartPeriod(), time1);
     bool isUpper = false;
-    if      (hPos == RIGH_AUTO  ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LEFT_UPPER : ANCHOR_LEFT_LOWER);
-    else if (hPos == CENTER_AUTO) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_UPPER : ANCHOR_LOWER);
+    if (price > Low[shift]) isUpper = true;
+    if      (hPos == RIGH_AUTO  ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
+    else if (hPos == CENTER_AUTO) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LOWER : ANCHOR_UPPER);
     else if (hPos == LEFT       ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT);
     setItemPos(cText      , textTime, price);
     /*
