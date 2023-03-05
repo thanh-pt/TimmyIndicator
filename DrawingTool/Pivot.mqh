@@ -7,9 +7,12 @@ class Pivot : public BaseItem
 {
 // Internal Value
 private:
+    string IconList[2];
+
 // Component name
 private:
     string cPivot;
+    string sType0;
 
 // Value define for Item
 private:
@@ -48,9 +51,11 @@ Pivot::Pivot(const string name, CommonData* commonData, MouseInfo* mouseInfo)
 
     // Init variable type
     mNameType [0] = "Pivot";
-    mNameType [1] = "Pivot Cont.";
+    mNameType [1] = "React";
     mIndexType = 0;
     mTypeNum = 2;
+    IconList[0] = "⚫";
+    IconList[1] = "▼";
 }
 
 // Internal Event
@@ -58,17 +63,26 @@ void Pivot::prepareActive(){}
 void Pivot::createItem()
 {
     ObjectCreate(cPivot, OBJ_TEXT , 0, 0, 0);
-    // updateTypeProperty();
-    // updateDefaultProperty();
+    ObjectCreate(sType0, OBJ_TEXT , 0, 0, 0);
+    updateTypeProperty();
+    updateDefaultProperty();
     time  = pCommonData.mMouseTime;
     price = pCommonData.mMousePrice;
     refreshData();
 }
-void Pivot::updateDefaultProperty(){}
-void Pivot::updateTypeProperty(){}
+void Pivot::updateDefaultProperty()
+{
+    ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, ANCHOR_LOWER);
+}
+void Pivot::updateTypeProperty()
+{
+    ObjectSetText(sType0, IntegerToString(mIndexType));
+    ObjectSetText(cPivot, IconList[mIndexType]);
+}
 void Pivot::activateItem(const string& itemId)
 {
     cPivot = itemId + "_cPivot";
+    sType0 = itemId + "_sType0";
 }
 void Pivot::updateItemAfterChangeType(){}
 void Pivot::refreshData()
@@ -76,21 +90,16 @@ void Pivot::refreshData()
     int shift = iBarShift(ChartSymbol(), ChartPeriod(), time);
     if (price <= Low[shift])
     {
-        ObjectSetText(cPivot, "▲");
-        ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(cPivot, OBJPROP_ANGLE,  180);
         ObjectSet(cPivot     , OBJPROP_COLOR, clrGreen);
-    }
-    else if (price >= High[shift])
-    {
-        ObjectSetText(cPivot, "▼");
-        ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        ObjectSet(cPivot     , OBJPROP_COLOR, clrRed);
     }
     else
     {
-        ObjectSetText(cPivot, "▼");
-        ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, ANCHOR_CENTER);
+        ObjectSet(cPivot, OBJPROP_ANGLE,  0);
+        
+        ObjectSet(cPivot     , OBJPROP_COLOR, clrRed);
     }
+    ObjectSetString(ChartID(), cPivot, OBJPROP_TOOLTIP, DoubleToString(price, 5));
     setItemPos(cPivot, time, price);
 }
 void Pivot::finishedJobDone(){}
@@ -105,12 +114,7 @@ void Pivot::onMouseMove()
 void Pivot::onMouseClick()
 {
     createItem();
-    if (mIndexType == 0)
-    {
-        mFinishedJobCb();
-        return;
-    }
-    startActivate(mFinishedJobCb);
+    mFinishedJobCb();
 }
 void Pivot::onItemDrag(const string &itemId, const string &objId)
 {
@@ -125,4 +129,8 @@ void Pivot::onItemDrag(const string &itemId, const string &objId)
 }
 void Pivot::onItemClick(const string &itemId, const string &objId){}
 void Pivot::onItemChange(const string &itemId, const string &objId){}
-void Pivot::onItemDeleted(const string &itemId, const string &objId){}
+void Pivot::onItemDeleted(const string &itemId, const string &objId)
+{
+    ObjectDelete(cPivot);
+    ObjectDelete(sType0);
+}
