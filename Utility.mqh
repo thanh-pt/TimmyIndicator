@@ -116,7 +116,7 @@ void EraseAll()
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
-        if (StringFind(objName, "LongShort") != -1) continue;
+        // if (StringFind(objName, "LongShort") != -1) continue;
         if (StringFind(objName, STATIC_TAG) != -1) continue;
         ObjectDelete(objName);
     }

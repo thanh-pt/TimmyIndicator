@@ -1,10 +1,11 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          CallOut_ = SEPARATE_LINE_BIG;
-input color           CallOut_Color = clrWhite;
-input int             CallOut_Width = 1;
-input int             CallOut_TextSize = 10;
+input string CallOut_ = SEPARATE_LINE_BIG;
+input color  CallOut_Color = clrWhite;
+input int    CallOut_Width = 1;
+input int    CallOut_FontSize = 10;
+input string CallOut_FontName = "Calibri";
 
 class CallOut : public BaseItem
 {
@@ -82,7 +83,7 @@ void CallOut::updateTypeProperty()
     SetObjectStyle(cPtLine, CallOut_Color, 0, CallOut_Width);
     SetObjectStyle(iUdLine, CallOut_Color, 0, CallOut_Width+1);
     //-------------------------------------------------------------
-    ObjectSetText(cLbText, "Msg!", CallOut_TextSize, NULL, CallOut_Color);
+    ObjectSetText(cLbText, "Text", CallOut_FontSize, CallOut_FontName, CallOut_Color);
     ObjectSet(cLbText, OBJPROP_SELECTED, true);
 }
 void CallOut::activateItem(const string& itemId)
@@ -98,7 +99,7 @@ void CallOut::refreshData()
     setItemPos(cLbText, time2, price2);
     //-------------------------------------------------------------
     int x, y, offset;
-    offset = (int)((double)(StringLen(ObjectDescription(cLbText))*CallOut_TextSize) * 2/3);
+    offset = (int)((double)(StringLen(ObjectDescription(cLbText))*CallOut_FontSize) * 1/2);
     if (time1 > time2)
     {
         ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
