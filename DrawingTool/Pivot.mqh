@@ -54,7 +54,7 @@ Pivot::Pivot(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mNameType [1] = "React";
     mIndexType = 0;
     mTypeNum = 2;
-    IconList[0] = "⚫";
+    IconList[0] = "●";
     IconList[1] = "▼";
 }
 

@@ -104,14 +104,14 @@ void Controller::finishedJob()
 int Controller::findItemIdByKey(const int key)
 {
     if (key == 'T') return IDX_TREND     ;
-    if (key == 'H') return IDX_HTREND    ;
+    if (key == 'G') return IDX_HTREND    ;
     if (key == 'Z') return IDX_ZIGZAG    ;
     if (key == 'R') return IDX_RECTANGLE ;
     if (key == 'F') return IDX_FIBONACI  ;
     if (key == 'C') return IDX_CALLOUT   ;
-    if (key == 'L') return IDX_LONGSHORT ;
+    if (key == 'D') return IDX_LONGSHORT ;
     if (key == 'X') return IDX_CANDLEXRAY;
-    if (key == 'P') return IDX_PIVOT     ;
+    if (key == 'A') return IDX_PIVOT     ;
     return IDX_NONE;
 }
 
