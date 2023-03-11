@@ -451,3 +451,20 @@ void scanBackgroundOverlap(string target)
         setItemPos(bgItem, ctime1, ctime2, cprice1, cprice2);
     }
 }
+
+string strDayOfWeek(datetime date)
+{
+    int dayOfWeek = TimeDayOfWeek(date);
+    string retDayOfW = "";
+    switch (dayOfWeek)
+    {
+        case 0: retDayOfW = "Sun"; break;
+        case 1: retDayOfW = "Mon"; break;
+        case 2: retDayOfW = "Tue"; break;
+        case 3: retDayOfW = "Wed"; break;
+        case 4: retDayOfW = "Thu"; break;
+        case 5: retDayOfW = "Fri"; break;
+        case 6: retDayOfW = "Sat"; break;
+    }
+    return retDayOfW;
+}

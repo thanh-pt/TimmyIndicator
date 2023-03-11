@@ -46,9 +46,11 @@ CandleXray::CandleXray(const string name, CommonData* commonData, MouseInfo* mou
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [0] = "CandleXray";
+    mNameType [0] = "H/L View";
+    mNameType [1] = "DateInfo";
+    mNameType [2] = "BodyScan";
+    mTypeNum = 3;
     mIndexType = 0;
-    mTypeNum = 0;
 }
 
 // Internal Event
@@ -64,14 +66,40 @@ void CandleXray::finishedJobDone(){}
 // Chart Event
 void CandleXray::onMouseMove()
 {
-    mCandleIndex = iBarShift(ChartSymbol(), ChartPeriod(), pCommonData.mMouseTime);
-    if (mCandleIndex <= 0)
+    // Does not need candle info
+    if (mIndexType == 1)
     {
-        pMouseInfo.setText(mItemName);
+        pMouseInfo.setText( strDayOfWeek(pCommonData.mMouseTime) + " - CW:" + IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7+1));
         return;
     }
-    mBodyPercentage = MathAbs(Close[mCandleIndex]-Open[mCandleIndex])/(High[mCandleIndex] - Low[mCandleIndex])*100;
-    pMouseInfo.setText("Body(%): " + DoubleToStr(mBodyPercentage,1));
+
+    // Need candle info
+    mCandleIndex = iBarShift(ChartSymbol(), ChartPeriod(), pCommonData.mMouseTime);
+    if (mCandleIndex <= 0 && mIndexType != 2)
+    {
+        pMouseInfo.setText(createMouseInfo());
+        return;
+    }
+
+    if (mIndexType == 0)
+    {
+        if (pCommonData.mMousePrice > High[mCandleIndex])
+        {
+            pMouseInfo.setText("High: " + DoubleToStr(High[mCandleIndex],5));
+        }
+        else
+        {
+            pMouseInfo.setText("Low: " + DoubleToStr(Low[mCandleIndex],5));
+        }
+        return;
+    }
+
+    if (mIndexType == 2)
+    {
+        mBodyPercentage = MathAbs(Close[mCandleIndex]-Open[mCandleIndex])/(High[mCandleIndex] - Low[mCandleIndex])*100;
+        pMouseInfo.setText("Body(%): " + DoubleToStr(mBodyPercentage,1));
+        return;
+    }
 }
 void CandleXray::onMouseClick()
 {
