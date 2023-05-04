@@ -175,7 +175,7 @@ void HTrend::refreshData()
     if      (hPos == RIGH_AUTO  ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
     else if (hPos == CENTER_AUTO) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, isUpper ? ANCHOR_LOWER : ANCHOR_UPPER);
     else if (hPos == LEFT       ) ObjectSetInteger(ChartID(), cText, OBJPROP_ANCHOR, ANCHOR_LEFT);
-    setItemPos(cText      , textTime, price);
+    setTextPos(cText, textTime, price);
     /*
     string textString = ObjectGetString(ChartID(), cText, OBJPROP_TEXT);
     if (StringFind(textString, ".") == -1 && textString != "")

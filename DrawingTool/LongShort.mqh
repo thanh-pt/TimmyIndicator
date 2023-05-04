@@ -310,7 +310,7 @@ void LongShort::refreshData()
     double slPip     = 10000*MathAbs(priceEN-priceSL);
     double rr        = (priceTP-priceEN) / (priceEN-priceSL);
     double be        = (priceBE-priceEN) / (priceEN-priceSL);
-    double lot       = (double)((int)(LongShort_Cost/slPip*10))/100;
+    double lot       = NormalizeDouble((LongShort_Cost/slPip/10),2);
     double realCost  = lot*slPip*10;
     bool selectState = (bool)ObjectGet(cPointWD, OBJPROP_SELECTED);
     bool showStats  = (LongShort_ShowStats  == SHOW) || (LongShort_ShowStats  == SHOW_WHEN_SELECTED && selectState);
@@ -354,8 +354,8 @@ void LongShort::refreshData()
     ObjectSetText(iEnText, strEnInfo);
     ObjectSetText(iSlText, strSlInfo);
     ObjectSetText(iBeText, strBeInfo);
-    scanBackgroundOverlap(iBgndSL);
-    scanBackgroundOverlap(iBgndTP);
+    //scanBackgroundOverlap(iBgndSL);
+    //scanBackgroundOverlap(iBgndTP);
 
 }
 void LongShort::finishedJobDone(){}
@@ -513,8 +513,8 @@ void LongShort::showHideHistory()
         ObjectSet(cPointWD, OBJPROP_TIME1, 0);
         ObjectSet(cPointBE, OBJPROP_TIME1, 0);
         
-        removeBackgroundOverlap(iBgndSL);
-        removeBackgroundOverlap(iBgndTP);
+        //removeBackgroundOverlap(iBgndSL);
+        //removeBackgroundOverlap(iBgndTP);
     }
     isShow = !isShow;
 }

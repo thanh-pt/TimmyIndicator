@@ -198,12 +198,12 @@ void Fibonacci::refreshData()
     setItemPos(iFib4, time0, time1, price4, price4);
     setItemPos(iFib5, time0, time1, price5, price5);
     //-------------------------------------------------
-    setItemPos(iTxt0, time0, price0);
-    setItemPos(iTxt1, time0, price1);
-    setItemPos(iTxt2, time0, price2);
-    setItemPos(iTxt3, time0, price3);
-    setItemPos(iTxt4, time0, price4);
-    setItemPos(iTxt5, time0, price5);
+    setTextPos(iTxt0, time0, price0);
+    setTextPos(iTxt1, time0, price1);
+    setTextPos(iTxt2, time0, price2);
+    setTextPos(iTxt3, time0, price3);
+    setTextPos(iTxt4, time0, price4);
+    setTextPos(iTxt5, time0, price5);
 }
 void Fibonacci::finishedJobDone(){}
 
@@ -237,8 +237,8 @@ void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 
     if (pCommonData.mCtrlHold)
     {
-        double oldPrice0 = ObjectGet(iTxt0, OBJPROP_PRICE1);
-        double oldPrice1 = ObjectGet(iTxt1, OBJPROP_PRICE1);
+        double oldPrice0 = ObjectGet(iFib0, OBJPROP_PRICE1);
+        double oldPrice1 = ObjectGet(iFib1, OBJPROP_PRICE1);
         if (price0 == oldPrice0 && price1 != oldPrice1)
         {
             price1 = pCommonData.mMousePrice;

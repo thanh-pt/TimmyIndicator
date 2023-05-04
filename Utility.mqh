@@ -405,7 +405,7 @@ void scanBackgroundOverlap(string target)
         if (ObjectGet (objName, OBJPROP_BACK) == false) continue;
         if (ObjectGet (objName, OBJPROP_COLOR) == clrNONE) continue;
         if (StringFind(objName, BG_TAG) != -1) continue;
-        //if (StringFind(objName, "Rectangle") == -1) continue;
+        if (StringFind(objName, "Rectangle") == -1) continue;
         if (objName == target) continue;
 
         double cprice1  =           ObjectGet(objName, OBJPROP_PRICE1);
