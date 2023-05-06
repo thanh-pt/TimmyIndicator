@@ -9,7 +9,7 @@ enum ChartUtilType
 {
     HILO_VIEW,
     LONDON_BODER,
-    TYPE_NUM,
+    CUTIL_NUM,
 };
 
 class ChartUtil : public BaseItem
@@ -57,7 +57,7 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
     // Init variable type
     mNameType [HILO_VIEW   ] = "Hi/Lo View";
     mNameType [LONDON_BODER] = "London Boder";
-    mTypeNum = TYPE_NUM;
+    mTypeNum = CUTIL_NUM;
     mIndexType = 0;
 }
 

@@ -3,6 +3,11 @@
 
 input string          ItemTemplate_ = "ItemTemplate Config";
 
+enum ItemTemplateType
+{
+    TYPE_NUM,
+};
+
 class ItemTemplate : public BaseItem
 {
 // Internal Value
@@ -44,8 +49,8 @@ ItemTemplate::ItemTemplate(const string name, CommonData* commonData, MouseInfo*
 
     // Init variable type
     mNameType [0] = "ItemTemplate1";
+    mTypeNum = TYPE_NUM;
     mIndexType = 0;
-    mTypeNum = 0;
 }
 
 // Internal Event

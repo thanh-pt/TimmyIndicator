@@ -6,14 +6,21 @@ input string          Trend_ = SEPARATE_LINE_BIG;
 input color           Trend1_Color = clrWhite;
 input int             Trend1_Width = 1;
 input ENUM_LINE_STYLE Trend1_Style = 0;
-input string          Trend1_sp    = SEPARATE_LINE;
 input bool            Trend1_Arrow = false;
+input string          Trend1_sp    = SEPARATE_LINE;
 //--------------------------------------------
 input color           Trend2_Color = clrRed;
 input int             Trend2_Width = 1;
 input ENUM_LINE_STYLE Trend2_Style = 2;
 input bool            Trend2_Arrow = true;
 //--------------------------------------------
+
+enum TrendType
+{
+    TREND1,
+    TREND2,
+    TREND_NUM,
+};
 
 class Trend : public BaseItem
 {
@@ -72,20 +79,20 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pCommonData = commonData;
     pMouseInfo = mouseInfo;
 
-    mNameType [0] = "Trend1";
-    mColorType[0] = Trend1_Color;
-    mWidthType[0] = Trend1_Width;
-    mStyleType[0] = Trend1_Style;
-    mArrowDisp[0] = Trend1_Arrow;
+    mNameType [TREND1] = "Trend1";
+    mColorType[TREND1] = Trend1_Color;
+    mWidthType[TREND1] = Trend1_Width;
+    mStyleType[TREND1] = Trend1_Style;
+    mArrowDisp[TREND1] = Trend1_Arrow;
     //--------------------------------
-    mNameType [1] = "Trend2";
-    mColorType[1] = Trend2_Color;
-    mWidthType[1] = Trend2_Width;
-    mStyleType[1] = Trend2_Style;
-    mArrowDisp[1] = Trend2_Arrow;
+    mNameType [TREND2] = "Trend2";
+    mColorType[TREND2] = Trend2_Color;
+    mWidthType[TREND2] = Trend2_Width;
+    mStyleType[TREND2] = Trend2_Style;
+    mArrowDisp[TREND2] = Trend2_Arrow;
 
+    mTypeNum = TREND_NUM;
     mIndexType = 0;
-    mTypeNum = 2;
 }
 
 // Internal Event

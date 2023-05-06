@@ -120,12 +120,12 @@ void Fibonacci::createItem()
     if (Fib_4_Show) ObjectCreate(iFib4, OBJ_TREND, 0, 0, 0);
     if (Fib_5_Show) ObjectCreate(iFib5, OBJ_TREND, 0, 0, 0);
     //------------------------------------------
-    if (Fib_0_Show) ObjectCreate(iTxt0, OBJ_TEXT, 0, 0, 0);
-    if (Fib_1_Show) ObjectCreate(iTxt1, OBJ_TEXT, 0, 0, 0);
-    if (Fib_2_Show) ObjectCreate(iTxt2, OBJ_TEXT, 0, 0, 0);
-    if (Fib_3_Show) ObjectCreate(iTxt3, OBJ_TEXT, 0, 0, 0);
-    if (Fib_4_Show) ObjectCreate(iTxt4, OBJ_TEXT, 0, 0, 0);
-    if (Fib_5_Show) ObjectCreate(iTxt5, OBJ_TEXT, 0, 0, 0);
+    if (Fib_0_Show && Fib_0_Name != "") ObjectCreate(iTxt0, OBJ_TEXT, 0, 0, 0);
+    if (Fib_1_Show && Fib_1_Name != "") ObjectCreate(iTxt1, OBJ_TEXT, 0, 0, 0);
+    if (Fib_2_Show && Fib_2_Name != "") ObjectCreate(iTxt2, OBJ_TEXT, 0, 0, 0);
+    if (Fib_3_Show && Fib_3_Name != "") ObjectCreate(iTxt3, OBJ_TEXT, 0, 0, 0);
+    if (Fib_4_Show && Fib_4_Name != "") ObjectCreate(iTxt4, OBJ_TEXT, 0, 0, 0);
+    if (Fib_5_Show && Fib_5_Name != "") ObjectCreate(iTxt5, OBJ_TEXT, 0, 0, 0);
     ObjectCreate(cMLne, OBJ_RECTANGLE, 0, 0, 0);
 
     updateTypeProperty();

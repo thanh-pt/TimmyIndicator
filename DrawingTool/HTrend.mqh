@@ -8,6 +8,15 @@ enum E_HTREND_POS
     LEFT        = 2,
 };
 
+enum HTrendType
+{
+    HTREND1,
+    HTREND2,
+    HTREND3,
+    HTREND_RECENT,
+    HTREND_NUM,
+};
+
 input string            HTrend_         = SEPARATE_LINE_BIG;
 input int               HTrend_Width    = 0;
 input int               HTrend_FontSize = 8;
@@ -34,8 +43,6 @@ input ENUM_LINE_STYLE   HTrend_3_Style  = STYLE_SOLID;
 input color             HTrend_3_Color  = clrSilver;
 input string            HTrend_3_sp     = SEPARATE_LINE;
 //-----------------------------------------------------------
-input bool              HTrend_Recently = true;
-input string            HTrend_x_sp     = SEPARATE_LINE;
 
 
 class HTrend : public BaseItem
@@ -49,8 +56,8 @@ private:
 // Component name
 private:
     string cMainTrend;
-    string cText    ;
-    string sHPos    ;
+    string cText     ;
+    string sHPos     ;
 
 // Value define for Item
 private:
@@ -88,33 +95,32 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType  [0] = HTrend_1_NAME  ;
-    mPropText  [0] = HTrend_1_TEXT  ;
-    mPropPos   [0] = HTrend_1_Pos;
-    mPropStyle [0] = HTrend_1_Style ;
-    mPropColor [0] = HTrend_1_Color ;
+    mNameType  [HTREND1] = HTrend_1_NAME  ;
+    mPropText  [HTREND1] = HTrend_1_TEXT  ;
+    mPropPos   [HTREND1] = HTrend_1_Pos;
+    mPropStyle [HTREND1] = HTrend_1_Style ;
+    mPropColor [HTREND1] = HTrend_1_Color ;
     //-----------------------------
-    mNameType  [1] = HTrend_2_NAME  ;
-    mPropText  [1] = HTrend_2_TEXT  ;
-    mPropPos   [1] = HTrend_2_Pos;
-    mPropStyle [1] = HTrend_2_Style ;
-    mPropColor [1] = HTrend_2_Color ;
+    mNameType  [HTREND2] = HTrend_2_NAME  ;
+    mPropText  [HTREND2] = HTrend_2_TEXT  ;
+    mPropPos   [HTREND2] = HTrend_2_Pos;
+    mPropStyle [HTREND2] = HTrend_2_Style ;
+    mPropColor [HTREND2] = HTrend_2_Color ;
     //-----------------------------
-    mNameType  [2] = HTrend_3_NAME  ;
-    mPropText  [2] = HTrend_3_TEXT  ;
-    mPropPos   [2] = HTrend_3_Pos;
-    mPropStyle [2] = HTrend_3_Style ;
-    mPropColor [2] = HTrend_3_Color ;
+    mNameType  [HTREND3] = HTrend_3_NAME  ;
+    mPropText  [HTREND3] = HTrend_3_TEXT  ;
+    mPropPos   [HTREND3] = HTrend_3_Pos;
+    mPropStyle [HTREND3] = HTrend_3_Style ;
+    mPropColor [HTREND3] = HTrend_3_Color ;
+    //-----------------------------
+    mNameType  [HTREND_RECENT] = "R:";
+    mPropText  [HTREND_RECENT] = "";
+    mPropPos   [HTREND_RECENT] = E_HTREND_POS::CENTER_AUTO;
+    mPropStyle [HTREND_RECENT] = STYLE_DOT;
+    mPropColor [HTREND_RECENT] = clrDarkGray;
     //-----------------------------
     mIndexType = 0;
-    mTypeNum   = 3;
-    //-----------------------------
-    if (HTrend_Recently == true) mTypeNum += 1;
-    mNameType  [mTypeNum-1] = "R:"  ;
-    mPropText  [mTypeNum-1] = "";
-    mPropPos   [mTypeNum-1] = E_HTREND_POS::CENTER_AUTO;
-    mPropStyle [mTypeNum-1] = STYLE_DOT ;
-    mPropColor [mTypeNum-1] = clrDarkGray ;
+    mTypeNum   = HTREND_NUM;
 }
 
 // Internal Event
@@ -240,11 +246,11 @@ void HTrend::onItemChange(const string &itemId, const string &objId)
             ObjectSetText(cMainTrend, "");
         }
     }
-    mPropText  [mTypeNum-1] = ObjectDescription(cText);
-    mNameType  [mTypeNum-1] = "R:"+mPropText[mTypeNum-1];
-    mPropPos   [mTypeNum-1] = E_HTREND_POS::CENTER_AUTO;
-    mPropStyle [mTypeNum-1] = (ENUM_LINE_STYLE)ObjectGet(cMainTrend, OBJPROP_STYLE);
-    mPropColor [mTypeNum-1] = c ;
+    mPropText  [HTREND_RECENT] = ObjectDescription(cText);
+    mNameType  [HTREND_RECENT] = "R:"+mPropText[HTREND_RECENT];
+    mPropPos   [HTREND_RECENT] = E_HTREND_POS::CENTER_AUTO;
+    mPropStyle [HTREND_RECENT] = (ENUM_LINE_STYLE)ObjectGet(cMainTrend, OBJPROP_STYLE);
+    mPropColor [HTREND_RECENT] = c ;
 }
 void HTrend::onItemDeleted(const string &itemId, const string &objId)
 {
