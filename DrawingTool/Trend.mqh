@@ -3,47 +3,7 @@
 
 #define LINE_STYLE ENUM_LINE_STYLE
 
-input string          Trend_Configuration   = SEPARATE_LINE_BIG;
-//--------------------------------------------
-input string     Trend_MainBos_cf      = SEPARATE_LINE;
-      string     Trend_MainBos_Name    = "bos";
-      string     Trend_MainBos_Text    = "";
-input color      Trend_MainBos_Color   = clrOlive;
-input LINE_STYLE Trend_MainBos_Style   = STYLE_SOLID;
-      int        Trend_MainBos_Width   = 1;
-      bool       Trend_MainBos_Arrow   = false;
-//--------------------------------------------
-input string     Trend_SubBos_cf       = SEPARATE_LINE;
-      string     Trend_SubBos_Name     = "sbos";
-      string     Trend_SubBos_Text     = "";
-input color      Trend_SubBos_Color    = clrDarkSlateGray;
-input LINE_STYLE Trend_SubBos_Style    = STYLE_SOLID;
-      int        Trend_SubBos_Width    = 1;
-      bool       Trend_SubBos_Arrow    = false;
-//--------------------------------------------
-input string     Trend_LqGrap_cf       = SEPARATE_LINE;
-      string     Trend_LqGrap_Name     = "lg";
-      string     Trend_LqGrap_Text     = "";
-input color      Trend_LqGrap_Color    = clrCrimson;
-input LINE_STYLE Trend_LqGrap_Style    = STYLE_SOLID;
-      int        Trend_LqGrap_Width    = 1;
-      bool       Trend_LqGrap_Arrow    = false;
-//--------------------------------------------
-input string     Trend_BosLG_cf        = SEPARATE_LINE;
-      string     Trend_BosLG_Name      = "bos/lg";
-      string     Trend_BosLG_Text      = "bos-lg";
-input color      Trend_BosLG_Color     = clrCrimson;
-input LINE_STYLE Trend_BosLG_Style     = STYLE_DASHDOT;
-      int        Trend_BosLG_Width     = 1;
-      bool       Trend_BosLG_Arrow     = false;
-//--------------------------------------------
-input string     Trend_Target_cf       = SEPARATE_LINE;
-      string     Trend_Target_Name     = "target";
-      string     Trend_Target_Text     = "target";
-input color      Trend_Target_Color    = clrGreen;
-input LINE_STYLE Trend_Target_Style    = STYLE_SOLID;
-      int        Trend_Target_Width    = 1;
-      bool       Trend_Target_Arrow    = false;
+input string     Trend_Configuration   = SEPARATE_LINE_BIG;
 //--------------------------------------------
 input string     Trend_Liquidity_cf    = SEPARATE_LINE;
       string     Trend_Liquidity_Name  = "lq";
@@ -70,11 +30,6 @@ TODO:
 
 enum TrendType
 {
-    TREND_MBOS,
-    TREND_SBOS,
-    TREND_LQGP,
-    TREND_BOSLG,
-    TREND_TARGT,
     TREND_LQ,
     TREND_EOF,
     TREND_NUM,
@@ -138,41 +93,7 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pCommonData = commonData;
     pMouseInfo = mouseInfo;
 
-    mNameType [TREND_MBOS ] = Trend_MainBos_Name ;
-    mDispText [TREND_MBOS ] = Trend_MainBos_Text ;
-    mColorType[TREND_MBOS ] = Trend_MainBos_Color;
-    mStyleType[TREND_MBOS ] = Trend_MainBos_Style;
-    mWidthType[TREND_MBOS ] = Trend_MainBos_Width;
-    mShowArrow[TREND_MBOS ] = Trend_MainBos_Arrow;
-    //--------------------------------------------
-    mNameType [TREND_SBOS ] = Trend_SubBos_Name ;
-    mDispText [TREND_SBOS ] = Trend_SubBos_Text ;
-    mColorType[TREND_SBOS ] = Trend_SubBos_Color;
-    mStyleType[TREND_SBOS ] = Trend_SubBos_Style;
-    mWidthType[TREND_SBOS ] = Trend_SubBos_Width;
-    mShowArrow[TREND_SBOS ] = Trend_SubBos_Arrow;
-    //--------------------------------------------
-    mNameType [TREND_LQGP ] = Trend_LqGrap_Name ;
-    mDispText [TREND_LQGP ] = Trend_LqGrap_Text ;
-    mColorType[TREND_LQGP ] = Trend_LqGrap_Color;
-    mStyleType[TREND_LQGP ] = Trend_LqGrap_Style;
-    mWidthType[TREND_LQGP ] = Trend_LqGrap_Width;
-    mShowArrow[TREND_LQGP ] = Trend_LqGrap_Arrow;
-    //--------------------------------------------
-    mNameType [TREND_BOSLG] = Trend_BosLG_Name ;
-    mDispText [TREND_BOSLG] = Trend_BosLG_Text ;
-    mColorType[TREND_BOSLG] = Trend_BosLG_Color;
-    mStyleType[TREND_BOSLG] = Trend_BosLG_Style;
-    mWidthType[TREND_BOSLG] = Trend_BosLG_Width;
-    mShowArrow[TREND_BOSLG] = Trend_BosLG_Arrow;
-    //--------------------------------------------
-    mNameType [TREND_TARGT] = Trend_Target_Name ;
-    mDispText [TREND_TARGT] = Trend_Target_Text ;
-    mColorType[TREND_TARGT] = Trend_Target_Color;
-    mStyleType[TREND_TARGT] = Trend_Target_Style;
-    mWidthType[TREND_TARGT] = Trend_Target_Width;
-    mShowArrow[TREND_TARGT] = Trend_Target_Arrow;
-    //--------------------------------------------
+    // Init variable type
     mNameType [TREND_LQ   ] = Trend_Liquidity_Name ;
     mDispText [TREND_LQ   ] = Trend_Liquidity_Text ;
     mColorType[TREND_LQ   ] = Trend_Liquidity_Color;
