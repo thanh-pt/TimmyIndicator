@@ -127,6 +127,7 @@ void Rectangle::updateTypeProperty()
 }
 void Rectangle::activateItem(const string& itemId)
 {
+    sOldPr = itemId + "_sOldPr0";
     cBkgnd = itemId + "_c0Boder";
     cLPtr0 = itemId + "_c1LPtr0";
     cRPtr0 = itemId + "_c1RPtr0";
@@ -147,8 +148,8 @@ void Rectangle::refreshData()
     datetime centerTime;
     if (time1 == time2) time2 = time1 + ChartPeriod()*60*5;
     getCenterPos(time1, time2, price1, price2, centerTime, centerPrice);
+    setItemPos(sOldPr,     0,     0, price1, price2);
     setItemPos(cBkgnd, time1, time2, price1, price2);
-    setItemPos(sOldPr, time1, time2, 0     , 0     );
     //-------------------------------------------------
     setItemPos(cLPtr0, time1, centerPrice);
     setItemPos(cRPtr0, time2, centerPrice);
