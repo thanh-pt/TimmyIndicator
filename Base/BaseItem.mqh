@@ -87,6 +87,7 @@ void BaseItem::changeActiveType()
         return;
     }
 
+    /* disable hold shift feature
     if (pCommonData.mShiftHold)
     {
         if((--mIndexType) < 0)
@@ -95,6 +96,7 @@ void BaseItem::changeActiveType()
         }
     }
     else
+    */
     {
         if((++mIndexType) >= mTypeNum)
         {
