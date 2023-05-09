@@ -172,10 +172,9 @@ void Trend::updateDefaultProperty()
 }
 void Trend::updateTypeProperty()
 {
-    ObjectSetText(cLbText, mDispText[mIndexType]);
-    ObjectSetText(iArrowT, mShowArrow[mIndexType] ? "▲" : "");
-    SetObjectStyle(cMTrend, mColorType[mIndexType], mStyleType[mIndexType], mWidthType[mIndexType]);
-    multiSetProp(OBJPROP_COLOR, mColorType[mIndexType], cLbText+iArrowT);
+    ObjectSetText (cLbText,  mDispText[mIndexType], 8, NULL, mColorType[mIndexType]);
+    ObjectSetText (iArrowT,  mShowArrow[mIndexType] ? "▲" : "", 8, NULL, mShowArrow[mIndexType] ? mColorType[mIndexType] : clrNONE);
+    SetObjectStyle(cMTrend, mColorType[mIndexType],          mStyleType[mIndexType],  mWidthType[mIndexType]);
 }
 void Trend::updateItemAfterChangeType()
 {

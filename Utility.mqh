@@ -442,6 +442,7 @@ void scanBackgroundOverlap(string target)
         {
             ObjectCreate(bgItem, OBJ_RECTANGLE , 0, 0, 0);
             ObjectSet(bgItem   , OBJPROP_SELECTABLE, false);
+            ObjectSetString(ChartID(), bgItem, OBJPROP_TOOLTIP, "\n");
         }
         SetRectangleBackground(bgItem, increaseLum((color)ObjectGet(objName, OBJPROP_COLOR)));
         if (cprice1 < price1) cprice1 = price1;

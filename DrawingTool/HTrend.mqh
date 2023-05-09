@@ -156,7 +156,7 @@ void HTrend::updateDefaultProperty()
 void HTrend::updateTypeProperty()
 {
     SetObjectStyle(cMainTrend, mPropColor[mIndexType], mPropStyle[mIndexType], mPropWidth[mIndexType]);
-    ObjectSetText( cText     ,  mPropText[mIndexType], 8, NULL, mPropColor[mIndexType]);
+    ObjectSetText( cText     , mPropText [mIndexType], 8, NULL, mPropColor[mIndexType]);
 }
 void HTrend::activateItem(const string& itemId)
 {

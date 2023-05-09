@@ -119,7 +119,7 @@ void Rectangle::updateDefaultProperty()
 
     multiSetProp(OBJPROP_COLOR     , Rectangle_TextColor, iCText+iLText+iRText);
     multiSetProp(OBJPROP_SELECTABLE, false              , iCText+iLText+iRText);
-    multiSetStrs(OBJPROP_TOOLTIP   , "\n"               , cBkgnd+cLPtr0+cRPtr0+iCText+iLText+iRText);
+    // multiSetStrs(OBJPROP_TOOLTIP   , "\n"               , cBkgnd+cLPtr0+cRPtr0+iCText+iLText+iRText);
 }
 void Rectangle::updateTypeProperty()
 {
@@ -159,6 +159,13 @@ void Rectangle::refreshData()
     setTextPos(iCText, centerTime, centerPrice);
     //-------------------------------------------------
     scanBackgroundOverlap(cBkgnd);
+    //-------------------------------------------------
+    double pip =  10000*MathAbs(price2 - price1);
+    double pip20 = pip*1.2;
+    string tooltip = "";
+    tooltip += "Pip: "  +DoubleToString(pip,2)+"\n";
+    tooltip += "Pip20%:"+DoubleToString(pip20,2);
+    multiSetStrs(OBJPROP_TOOLTIP, tooltip, cBkgnd+cLPtr0+cRPtr0+iCText+iLText+iRText);
 }
 void Rectangle::finishedJobDone(){}
 
@@ -240,5 +247,6 @@ void Rectangle::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(iCText);
     ObjectDelete(iLText);
     ObjectDelete(iRText);
+    ObjectDelete(sOldPr);
     removeBackgroundOverlap(cBkgnd);
 }
