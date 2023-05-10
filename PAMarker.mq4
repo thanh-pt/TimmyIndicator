@@ -13,7 +13,7 @@ CrossHair  gCrossHair(&gCommonData);
 MouseInfo  gMouseInfo(&gCommonData);
 Controller gController(&gCommonData, &gMouseInfo);
 
-input bool DEBUG = false;
+bool DEBUG = false;
 
 int OnInit()
 {
