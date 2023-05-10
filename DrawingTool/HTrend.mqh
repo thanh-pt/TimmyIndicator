@@ -18,7 +18,7 @@ input LINE_STYLE __H_SubBos_Style    = STYLE_SOLID;
 //--------------------------------------------
 input string     H_T_r_e_n_d___L_q_G_r_a_p___Cfg = SEPARATE_LINE;
       string     __H_LqGrap_Name     = "lg";
-      string     __H_LqGrap_Text     = "";
+      string     __H_LqGrap_Text     = "x";
 input color      __H_LqGrap_Color    = clrCrimson;
 input LINE_STYLE __H_LqGrap_Style    = STYLE_SOLID;
       int        __H_LqGrap_Width    = 1;
