@@ -29,9 +29,25 @@ datetime getCenterTime(const datetime& time1, const datetime& time2)
 
 void unSelectAll()
 {
+    string currentItemId;
+    string sparamItems[];
+    int k;
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
-        ObjectSet(ObjectName(i), OBJPROP_SELECTED, 0);
+        string objName = ObjectName(i);
+        if (ObjectGet(objName, OBJPROP_SELECTED) == false) continue;
+        ObjectSet(objName, OBJPROP_SELECTED, 0);
+
+        if (StringFind(objName, "_c") == -1) continue;
+        k=StringSplit(objName,'_',sparamItems);
+        
+        if (k != 3) continue;
+        string itemId = sparamItems[0] + "_" + sparamItems[1];
+        
+        if (itemId == currentItemId) continue;
+        currentItemId = itemId;
+        gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, objName);
+        
     }
 }
 
