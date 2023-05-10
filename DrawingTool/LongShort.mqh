@@ -115,9 +115,9 @@ void LongShort::createItem()
     ObjectCreate(iBeLine  , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(iEnLine  , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(iSlLine  , OBJ_TREND     , 0, 0, 0);
-    ObjectCreate(iTpPrice , OBJ_ARROW     , 0, 0, 0);
-    ObjectCreate(iEnPrice , OBJ_ARROW     , 0, 0, 0);
-    ObjectCreate(iSlPrice , OBJ_ARROW     , 0, 0, 0);
+    ObjectCreate(iTpPrice , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iEnPrice , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iSlPrice , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iTpText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iEnText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iSlText  , OBJ_TEXT      , 0, 0, 0);
@@ -149,9 +149,7 @@ void LongShort::updateDefaultProperty()
     ObjectSet(cBoder, OBJPROP_BACK, false);
     ObjectSet(cBoder, OBJPROP_COLOR, clrNONE);
     //-------------------------------------------------
-    multiSetProp(OBJPROP_ARROWCODE , 3    , cPointBE);
-    multiSetProp(OBJPROP_ARROWCODE , 4    , cPointTP+cPointSL+cPointEN+cPointWD);
-    multiSetProp(OBJPROP_ARROWCODE , 6    , iTpPrice+iEnPrice+iSlPrice);
+    multiSetProp(OBJPROP_ARROWCODE , 4    , cPointTP+cPointSL+cPointEN+cPointWD+cPointBE);
     multiSetProp(OBJPROP_SELECTED  , true , cPointTP+cPointSL+cPointEN+cPointWD+cPointBE);
     multiSetProp(OBJPROP_RAY       , false, iTpLine+iBeLine+iEnLine+iSlLine);
     multiSetProp(OBJPROP_SELECTABLE, false, iBgndSL+iBgndTP+iTpLine+iBeLine+iEnLine+iSlLine+iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText);
@@ -164,13 +162,13 @@ void LongShort::updateTypeProperty()
     ObjectSet(iBgndTP, OBJPROP_COLOR, __LS_TpBkgrdColor);
     ObjectSet(iBeLine, OBJPROP_WIDTH, 1);
     //-------------------------------------------------
-    multiSetProp(OBJPROP_COLOR, __LS_TpColor  , iTpPrice+iTpLine+iBeLine+cPointTP+cPointBE);
-    multiSetProp(OBJPROP_COLOR, __LS_EnColor  , iEnPrice+iEnLine+cPointEN+cPointWD);
-    multiSetProp(OBJPROP_COLOR, __LS_SlColor  , iSlLine+cPointSL+iSlPrice);
-    multiSetProp(OBJPROP_COLOR, __LS_TextColor, iTpText+iEnText+iSlText+iBeText);
+    multiSetProp(OBJPROP_COLOR, __LS_TpColor  , iTpLine+iBeLine+cPointTP+cPointBE);
+    multiSetProp(OBJPROP_COLOR, __LS_EnColor  , iEnLine+cPointEN+cPointWD);
+    multiSetProp(OBJPROP_COLOR, __LS_SlColor  , iSlLine+cPointSL);
+    multiSetProp(OBJPROP_COLOR, __LS_TextColor, iTpText+iEnText+iSlText+iBeText+iTpPrice+iEnPrice+iSlPrice);
     //-------------------------------------------------
     multiSetProp(OBJPROP_WIDTH   , __LS_LineWidth, iTpLine+iEnLine+iSlLine);
-    multiSetProp(OBJPROP_FONTSIZE, __LS_TextSize , iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText);
+    multiSetProp(OBJPROP_FONTSIZE, __LS_TextSize , iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText+iTpPrice+iEnPrice+iSlPrice);
 }
 void LongShort::activateItem(const string& itemId)
 {
@@ -228,12 +226,18 @@ void LongShort::refreshData()
         ObjectSetInteger(0, iSlText, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSetInteger(0, iTpText, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSetInteger(0, iBeText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        ObjectSetInteger(0,iTpPrice, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSetInteger(0,iEnPrice, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSetInteger(0,iSlPrice, OBJPROP_ANCHOR, ANCHOR_LOWER);
     }
     else
     {
         ObjectSetInteger(0, iSlText, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSetInteger(0, iTpText, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSetInteger(0, iBeText, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        ObjectSetInteger(0,iTpPrice, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        ObjectSetInteger(0,iEnPrice, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSetInteger(0,iSlPrice, OBJPROP_ANCHOR, ANCHOR_UPPER);
     }
     //-------------------------------------------------
     if (priceEN == priceSL) return;
@@ -254,7 +258,7 @@ void LongShort::refreshData()
     if (showStats)
     {
         strTpInfo += DoubleToString(rr,1) + "R";
-        strBeInfo += "be:" + DoubleToString(be,1) + "R";
+        strBeInfo += DoubleToString(be,1) + "R  ";
         strSlInfo += DoubleToString(slPip, 1) + "p";
     }
     //-------------------------------------------------
@@ -271,17 +275,21 @@ void LongShort::refreshData()
     //-------------------------------------------------
     if (showPrice)
     {
-        setItemPos(iTpPrice, time2, priceTP);
-        setItemPos(iEnPrice, time2, priceEN);
-        setItemPos(iSlPrice, time2, priceSL);
+        ObjectSetText(iTpPrice, DoubleToString(priceTP,5));
+        ObjectSetText(iEnPrice, DoubleToString(priceEN,5));
+        ObjectSetText(iSlPrice, DoubleToString(priceSL,5));
         strEnInfo += DoubleToString(lot,2) + "lot";
     }
     else
     {
-        setItemPos(iTpPrice, time2, 0);
-        setItemPos(iEnPrice, time2, 0);
-        setItemPos(iSlPrice, time2, 0);
+        ObjectSetText(iTpPrice, "");
+        ObjectSetText(iEnPrice, "");
+        ObjectSetText(iSlPrice, "");
     }
+    
+    setTextPos(iTpPrice, centerTime, priceTP);
+    setTextPos(iEnPrice, centerTime, priceEN);
+    setTextPos(iSlPrice, centerTime, priceSL);
     //-------------------------------------------------
     ObjectSetText(iTpText, strTpInfo);
     ObjectSetText(iEnText, strEnInfo);
@@ -338,18 +346,6 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
     if (objId == cPointTP || objId == cPointSL || objId == cPointEN || objId == cPointWD || objId == cPointBE)
     {
         int selectState = (int)ObjectGet(objId, OBJPROP_SELECTED);
-        // ObjectSet(iBgndSL , OBJPROP_SELECTED, selectState);
-        // ObjectSet(iBgndTP , OBJPROP_SELECTED, selectState);
-        // ObjectSet(iTpLine , OBJPROP_SELECTED, selectState);
-        // ObjectSet(iEnLine , OBJPROP_SELECTED, selectState);
-        // ObjectSet(iSlLine , OBJPROP_SELECTED, selectState);
-        // ObjectSet(iTpPrice, OBJPROP_SELECTED, selectState);
-        // ObjectSet(iEnPrice, OBJPROP_SELECTED, selectState);
-        // ObjectSet(iSlPrice, OBJPROP_SELECTED, selectState);
-        // ObjectSet(iTpText , OBJPROP_SELECTED, selectState);
-        // ObjectSet(iEnText , OBJPROP_SELECTED, selectState);
-        // ObjectSet(iSlText , OBJPROP_SELECTED, selectState);
-        // ObjectSet(cBoder  , OBJPROP_SELECTED, selectState);
         ObjectSet(cPointTP, OBJPROP_SELECTED, selectState);
         ObjectSet(cPointSL, OBJPROP_SELECTED, selectState);
         ObjectSet(cPointEN, OBJPROP_SELECTED, selectState);
