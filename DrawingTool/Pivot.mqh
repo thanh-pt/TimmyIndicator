@@ -1,7 +1,7 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          Pivot_ = "Pivot Config";
+// input string          Pivot_ = "Pivot Config";
 
 class Pivot : public BaseItem
 {

@@ -1,16 +1,16 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string            Rectangle_ = SEPARATE_LINE_BIG;
-input color             Rectangle_TextColor = clrDarkGray;
+input string            R_e_c_t_a_n_g_l_e___Cfg = SEPARATE_LINE;
+input color             __R_Text_Color  = clrDarkGray;
 //-----------------------------------------------------------
-input string            Rectangle_1_NAME        = "Supply";
-input color             Rectangle_1_BackGrdClr  = C'39,24,34';
-input string            Rectangle_1_sp          = SEPARATE_LINE;
+input string            R_e_c_t_a_n_g_l_e___S_z___Cfg = SEPARATE_LINE;
+input string            __R_Sz_Name     = "Sz";
+input color             __R_Sz_Color    = C'64,0,32';
 //-----------------------------------------------------------
-input string            Rectangle_2_NAME        = "Demand";
-input color             Rectangle_2_BackGrdClr  = C'21,43,37';
-input string            Rectangle_2_sp          = SEPARATE_LINE;
+input string            R_e_c_t_a_n_g_l_e___D_z___Cfg = SEPARATE_LINE;
+input string            __R_Dz_Name     = "Dz";
+input color             __R_Dz_Color    = C'21,43,37';
 //-----------------------------------------------------------
 
 enum RectangleType
@@ -24,7 +24,7 @@ class Rectangle : public BaseItem
 {
 // Internal Value
 private:
-    color mBackGrdClrType[MAX_TYPE];
+    color mPropColor[MAX_TYPE];
 
 // Component name
 private:
@@ -74,11 +74,11 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType      [SYPPLY_TYPE] = Rectangle_1_NAME      ;
-    mBackGrdClrType[SYPPLY_TYPE] = Rectangle_1_BackGrdClr;
+    mNameType [SYPPLY_TYPE] = __R_Sz_Name ;
+    mPropColor[SYPPLY_TYPE] = __R_Sz_Color;
     //------------------------------------------
-    mNameType      [DEMAND_TYPE] = Rectangle_2_NAME      ;
-    mBackGrdClrType[DEMAND_TYPE] = Rectangle_2_BackGrdClr;
+    mNameType [DEMAND_TYPE] = __R_Dz_Name ;
+    mPropColor[DEMAND_TYPE] = __R_Dz_Color;
     //------------------------------------------
     mTypeNum = RECT_NUM;
     mIndexType = 0;
@@ -117,13 +117,13 @@ void Rectangle::updateDefaultProperty()
     ObjectSetInteger(ChartID(), iLText, OBJPROP_ANCHOR, ANCHOR_LEFT);
     ObjectSetInteger(ChartID(), iRText, OBJPROP_ANCHOR, ANCHOR_RIGHT);
 
-    multiSetProp(OBJPROP_COLOR     , Rectangle_TextColor, iCText+iLText+iRText);
-    multiSetProp(OBJPROP_SELECTABLE, false              , iCText+iLText+iRText);
-    // multiSetStrs(OBJPROP_TOOLTIP   , "\n"               , cBkgnd+cLPtr0+cRPtr0+iCText+iLText+iRText);
+    multiSetProp(OBJPROP_COLOR     , __R_Text_Color, iCText+iLText+iRText);
+    multiSetProp(OBJPROP_SELECTABLE, false        , iCText+iLText+iRText);
+    // multiSetStrs(OBJPROP_TOOLTIP   , "\n"         , cBkgnd+cLPtr0+cRPtr0+iCText+iLText+iRText);
 }
 void Rectangle::updateTypeProperty()
 {
-    SetRectangleBackground(cBkgnd, mBackGrdClrType[mIndexType]);
+    SetRectangleBackground(cBkgnd, mPropColor[mIndexType]);
 }
 void Rectangle::activateItem(const string& itemId)
 {

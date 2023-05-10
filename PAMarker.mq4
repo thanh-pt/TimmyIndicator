@@ -1,9 +1,9 @@
 #property strict
 
-#include "Controller.mqh"
-#include "CommonData.mqh"
 #include "InfoItem/CrossHair.mqh"
 #include "InfoItem/MouseInfo.mqh"
+#include "Controller.mqh"
+#include "CommonData.mqh"
 
 void FinishedJobFunc();
 void detectMouseDraging(const string &sparam);

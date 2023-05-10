@@ -1,10 +1,10 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          ZigZag_ = SEPARATE_LINE_BIG;
-input color           ZigZag_Color = clrWhite;
-input int             ZigZag_Width = 1;
-input ENUM_LINE_STYLE ZigZag_Style = 0;
+input string          Z_i_g_Z_a_g___Cfg = SEPARATE_LINE;
+input color           __Z_Color = clrWhite;
+input LINE_STYLE      __Z_Style = STYLE_SOLID;
+input int             __Z_Width = 1;
 
 class ZigZag : public BaseItem
 {
@@ -66,10 +66,7 @@ void ZigZag::createItem()
 }
 void ZigZag::updateDefaultProperty()
 {
-    ObjectSet(mTempLine, OBJPROP_RAY, false);
-    ObjectSet(mTempLine, OBJPROP_COLOR, ZigZag_Color);
-    ObjectSet(mTempLine, OBJPROP_WIDTH, ZigZag_Width);
-    ObjectSet(mTempLine, OBJPROP_STYLE, ZigZag_Style);
+    SetObjectStyle(mTempLine, __Z_Color, __Z_Style, __Z_Width);
     ObjectSetString(ChartID(), mTempLine ,OBJPROP_TOOLTIP,"\n");
 }
 void ZigZag::updateTypeProperty(){}
@@ -145,9 +142,7 @@ void ZigZag::onItemChange(const string &itemId, const string &objId)
     do
     {
         objName = cline + "#" + IntegerToString(i);
-        ObjectSet(objName, OBJPROP_COLOR, propColor);
-        ObjectSet(objName, OBJPROP_WIDTH, propWidth);
-        ObjectSet(objName, OBJPROP_STYLE, propStyle);
+        SetObjectStyle(objName, propColor, propStyle, propWidth);
         ObjectSet(objName, OBJPROP_BACK,  propBkgrd);
         i++;
     }

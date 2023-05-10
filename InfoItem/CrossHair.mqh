@@ -1,7 +1,7 @@
 #include "../CommonData.mqh"
 #include "../Utility.mqh"
 
-input color CrossHairColor = clrLightGray;
+input color CrossHair_Color = clrDarkSlateGray;
 
 class CrossHair
 {
@@ -26,8 +26,8 @@ public:
     {
         ObjectCreate(mVCrossHair, OBJ_RECTANGLE, 0, 0, 0);
         ObjectCreate(mHCrossHair, OBJ_RECTANGLE, 0, 0, 0);
-        SetObjectStyle(mVCrossHair, CrossHairColor, STYLE_DOT, 0);
-        SetObjectStyle(mHCrossHair, CrossHairColor, STYLE_DOT, 0);
+        SetObjectStyle(mVCrossHair, CrossHair_Color, STYLE_DOT, 0);
+        SetObjectStyle(mHCrossHair, CrossHair_Color, STYLE_DOT, 0);
         ObjectSet(mVCrossHair, OBJPROP_SELECTABLE, false);
         ObjectSet(mHCrossHair, OBJPROP_SELECTABLE, false);
 

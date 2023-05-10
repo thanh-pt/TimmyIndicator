@@ -1,49 +1,42 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          Fibonacci_  = SEPARATE_LINE_BIG;
 //--------------------------------------------
-input color           FibBackColor  = clrGray;
-input string          Fib_sp_trend  = SEPARATE_LINE;
+input string          F_i_b___C_o_m_m_o_n___Cfg = SEPARATE_LINE;
+input color           __F_Bkgrd_Color = C'31,31,31';
+input LINE_STYLE      __F_Style     = STYLE_SOLID;
+input int             __F_Width     = 1;
 //--------------------------------------------
-input int             FibLevelWidth = 1;
-input ENUM_LINE_STYLE FibLevelStyle = 0;
-input string          Fib_sp_level  = SEPARATE_LINE;
+input string          F_i_b___0___Cfg = SEPARATE_LINE;
+input string          __F_0_Text  = "0";
+input double          __F_0_Ratio = 0;
+input color           __F_0_Color = clrGray;
 //--------------------------------------------
-input string          Fib_0_Name  = "0";
-input bool            Fib_0_Show  = true;
-input double          Fib_0_Ratio = 0;
-input color           Fib_0_Color = clrGray;
-input string          Fib_0_sp    = SEPARATE_LINE;
+input string          F_i_b___1___Cfg = SEPARATE_LINE;
+input string          __F_1_Text  = "1";
+input double          __F_1_Ratio = 1;
+input color           __F_1_Color = clrGray;
 //--------------------------------------------
-input string          Fib_1_Name  = "1";
-input bool            Fib_1_Show  = true;
-input double          Fib_1_Ratio = 1;
-input color           Fib_1_Color = clrGray;
-input string          Fib_1_sp    = SEPARATE_LINE;
+input string          F_i_b___2___Cfg = SEPARATE_LINE;
+input string          __F_2_Text  = "0.5";
+input double          __F_2_Ratio = 0.5;
+input color           __F_2_Color = clrYellow;
 //--------------------------------------------
-input string          Fib_2_Name  = "0.5";
-input bool            Fib_2_Show  = true;
-input double          Fib_2_Ratio = 0.5;
-input color           Fib_2_Color = clrYellow;
-input string          Fib_2_sp    = SEPARATE_LINE;
+input string          F_i_b___3___Cfg = SEPARATE_LINE;
+input string          __F_3_Text  = "0.618";
+input double          __F_3_Ratio = 0.618;
+input color           __F_3_Color = clrYellow;
 //--------------------------------------------
-input string          Fib_3_Name  = "0.618";
-input bool            Fib_3_Show  = true;
-input double          Fib_3_Ratio = 0.618;
-input color           Fib_3_Color = clrYellow;
-input string          Fib_3_sp    = SEPARATE_LINE;
+input string          F_i_b___4___Cfg = SEPARATE_LINE;
+input string          __F_4_Text  = "-0.27";
+input bool            __F_4_Show  = true;
+input double          __F_4_Ratio = -0.27;
+input color           __F_4_Color = clrGold;
 //--------------------------------------------
-input string          Fib_4_Name  = "-0.27";
-input bool            Fib_4_Show  = true;
-input double          Fib_4_Ratio = -0.27;
-input color           Fib_4_Color = clrGold;
-input string          Fib_4_sp    = SEPARATE_LINE;
-//--------------------------------------------
-input string          Fib_5_Name  = "-0.62";
-input bool            Fib_5_Show  = true;
-input double          Fib_5_Ratio = -0.62;
-input color           Fib_5_Color = clrRed;
+input string          F_i_b___5___Cfg = SEPARATE_LINE;
+input string          __F_5_Text  = "-0.62";
+input double          __F_5_Ratio = -0.62;
+input color           __F_5_Color = clrRed;
 
 class Fibonacci : public BaseItem
 {
@@ -113,19 +106,19 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
 void Fibonacci::prepareActive(){}
 void Fibonacci::createItem()
 {
-    if (Fib_0_Show) ObjectCreate(iFib0, OBJ_TREND, 0, 0, 0);
-    if (Fib_1_Show) ObjectCreate(iFib1, OBJ_TREND, 0, 0, 0);
-    if (Fib_2_Show) ObjectCreate(iFib2, OBJ_TREND, 0, 0, 0);
-    if (Fib_3_Show) ObjectCreate(iFib3, OBJ_TREND, 0, 0, 0);
-    if (Fib_4_Show) ObjectCreate(iFib4, OBJ_TREND, 0, 0, 0);
-    if (Fib_5_Show) ObjectCreate(iFib5, OBJ_TREND, 0, 0, 0);
+    if (__F_0_Color != clrNONE) ObjectCreate(iFib0, OBJ_TREND, 0, 0, 0);
+    if (__F_1_Color != clrNONE) ObjectCreate(iFib1, OBJ_TREND, 0, 0, 0);
+    if (__F_2_Color != clrNONE) ObjectCreate(iFib2, OBJ_TREND, 0, 0, 0);
+    if (__F_3_Color != clrNONE) ObjectCreate(iFib3, OBJ_TREND, 0, 0, 0);
+    if (__F_4_Color != clrNONE) ObjectCreate(iFib4, OBJ_TREND, 0, 0, 0);
+    if (__F_5_Color != clrNONE) ObjectCreate(iFib5, OBJ_TREND, 0, 0, 0);
     //------------------------------------------
-    if (Fib_0_Show && Fib_0_Name != "") ObjectCreate(iTxt0, OBJ_TEXT, 0, 0, 0);
-    if (Fib_1_Show && Fib_1_Name != "") ObjectCreate(iTxt1, OBJ_TEXT, 0, 0, 0);
-    if (Fib_2_Show && Fib_2_Name != "") ObjectCreate(iTxt2, OBJ_TEXT, 0, 0, 0);
-    if (Fib_3_Show && Fib_3_Name != "") ObjectCreate(iTxt3, OBJ_TEXT, 0, 0, 0);
-    if (Fib_4_Show && Fib_4_Name != "") ObjectCreate(iTxt4, OBJ_TEXT, 0, 0, 0);
-    if (Fib_5_Show && Fib_5_Name != "") ObjectCreate(iTxt5, OBJ_TEXT, 0, 0, 0);
+    if (__F_0_Color != clrNONE && __F_0_Text != "") ObjectCreate(iTxt0, OBJ_TEXT, 0, 0, 0);
+    if (__F_1_Color != clrNONE && __F_1_Text != "") ObjectCreate(iTxt1, OBJ_TEXT, 0, 0, 0);
+    if (__F_2_Color != clrNONE && __F_2_Text != "") ObjectCreate(iTxt2, OBJ_TEXT, 0, 0, 0);
+    if (__F_3_Color != clrNONE && __F_3_Text != "") ObjectCreate(iTxt3, OBJ_TEXT, 0, 0, 0);
+    if (__F_4_Color != clrNONE && __F_4_Text != "") ObjectCreate(iTxt4, OBJ_TEXT, 0, 0, 0);
+    if (__F_5_Color != clrNONE && __F_5_Text != "") ObjectCreate(iTxt5, OBJ_TEXT, 0, 0, 0);
     ObjectCreate(cMLne, OBJ_RECTANGLE, 0, 0, 0);
 
     updateTypeProperty();
@@ -136,12 +129,12 @@ void Fibonacci::createItem()
 }
 void Fibonacci::updateDefaultProperty()
 {
-    multiSetProp(OBJPROP_RAY          , false         , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
-    multiSetProp(OBJPROP_WIDTH        , FibLevelWidth , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
-    multiSetProp(OBJPROP_STYLE        , FibLevelStyle , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
-    multiSetProp(OBJPROP_SELECTABLE   , false         , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
-                                                         +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
-    multiSetInts(OBJPROP_ANCHOR, ANCHOR_RIGHT  , iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
+    multiSetProp(OBJPROP_RAY          , false     , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
+    multiSetProp(OBJPROP_WIDTH        , __F_Width , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
+    multiSetProp(OBJPROP_STYLE        , __F_Style , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
+    multiSetProp(OBJPROP_SELECTABLE   , false     , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
+                                                   +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
+    multiSetInts(OBJPROP_ANCHOR, ANCHOR_RIGHT     , iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
     
     multiSetStrs(OBJPROP_TOOLTIP, "\n",
                             cMLne
@@ -150,21 +143,21 @@ void Fibonacci::updateDefaultProperty()
 }
 void Fibonacci::updateTypeProperty()
 {
-    ObjectSetText(iTxt0, Fib_0_Name + "  ", 7, NULL, Fib_0_Color);
-    ObjectSetText(iTxt1, Fib_1_Name + "  ", 7, NULL, Fib_1_Color);
-    ObjectSetText(iTxt2, Fib_2_Name + "  ", 7, NULL, Fib_2_Color);
-    ObjectSetText(iTxt3, Fib_3_Name + "  ", 7, NULL, Fib_3_Color);
-    ObjectSetText(iTxt4, Fib_4_Name + "  ", 7, NULL, Fib_4_Color);
-    ObjectSetText(iTxt5, Fib_5_Name + "  ", 7, NULL, Fib_5_Color);
+    ObjectSetText(iTxt0, __F_0_Text + "  ", 7, NULL, __F_0_Color);
+    ObjectSetText(iTxt1, __F_1_Text + "  ", 7, NULL, __F_1_Color);
+    ObjectSetText(iTxt2, __F_2_Text + "  ", 7, NULL, __F_2_Color);
+    ObjectSetText(iTxt3, __F_3_Text + "  ", 7, NULL, __F_3_Color);
+    ObjectSetText(iTxt4, __F_4_Text + "  ", 7, NULL, __F_4_Color);
+    ObjectSetText(iTxt5, __F_5_Text + "  ", 7, NULL, __F_5_Color);
     //------------------------------------------
-    SetRectangleBackground(cMLne, FibBackColor);
+    SetRectangleBackground(cMLne, __F_Bkgrd_Color);
     //------------------------------------------
-    ObjectSet(iFib0, OBJPROP_COLOR, Fib_0_Color);
-    ObjectSet(iFib1, OBJPROP_COLOR, Fib_1_Color);
-    ObjectSet(iFib2, OBJPROP_COLOR, Fib_2_Color);
-    ObjectSet(iFib3, OBJPROP_COLOR, Fib_3_Color);
-    ObjectSet(iFib4, OBJPROP_COLOR, Fib_4_Color);
-    ObjectSet(iFib5, OBJPROP_COLOR, Fib_5_Color);
+    ObjectSet(iFib0, OBJPROP_COLOR, __F_0_Color);
+    ObjectSet(iFib1, OBJPROP_COLOR, __F_1_Color);
+    ObjectSet(iFib2, OBJPROP_COLOR, __F_2_Color);
+    ObjectSet(iFib3, OBJPROP_COLOR, __F_3_Color);
+    ObjectSet(iFib4, OBJPROP_COLOR, __F_4_Color);
+    ObjectSet(iFib5, OBJPROP_COLOR, __F_5_Color);
 }
 void Fibonacci::activateItem(const string& itemId)
 {
@@ -185,10 +178,10 @@ void Fibonacci::activateItem(const string& itemId)
 void Fibonacci::updateItemAfterChangeType(){}
 void Fibonacci::refreshData()
 {
-    double price2 = price1-Fib_2_Ratio*(price1-price0);
-    double price3 = price1-Fib_3_Ratio*(price1-price0);
-    double price4 = price1-Fib_4_Ratio*(price1-price0);
-    double price5 = price1-Fib_5_Ratio*(price1-price0);
+    double price2 = price1-__F_2_Ratio*(price1-price0);
+    double price3 = price1-__F_3_Ratio*(price1-price0);
+    double price4 = price1-__F_4_Ratio*(price1-price0);
+    double price5 = price1-__F_5_Ratio*(price1-price0);
     //-------------------------------------------------
     setItemPos(cMLne, time0, time1, price0, price1);
     setItemPos(iFib0, time0, time1, price0, price0);

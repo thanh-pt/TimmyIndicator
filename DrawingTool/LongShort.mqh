@@ -7,24 +7,25 @@ enum e_display
 {
     HIDE,
     SHOW,
-    SHOW_WHEN_SELECTED,
+    SELECTED_SHOW,
 };
 
-input string          LongShort_ = SEPARATE_LINE_BIG;
-input color           LongShort_TextColor = clrWhite;
-input int             LongShort_TextSize  = 8;
-input color           LongShort_TpColor   = clrYellowGreen;
-input color           LongShort_SlColor   = clrRed;
-input color           LongShort_EnColor   = clrOrange;
-input int             LongShort_LineWidth = 1;
-input color           LongShort_SlBkgrdColor = C'80,50,70';
-input color           LongShort_TpBkgrdColor = C'40,80,70';
-input string          LongShort_sp           = SEPARATE_LINE;
 //-------------------------------------------------
-input double          LongShort_Cost       = 50;
-input e_display       LongShort_ShowStats  = SHOW;
-input e_display       LongShort_ShowPrice  = SHOW;
-input e_display       LongShort_ShowDollar = SHOW;
+input string          L_o_n_g_S_h_o_r_t___Cfg = SEPARATE_LINE;
+input color           __LS_TextColor     = clrWhite;
+input int             __LS_TextSize      = 8;
+input color           __LS_TpColor       = clrYellowGreen;
+input color           __LS_SlColor       = clrRed;
+input color           __LS_EnColor       = clrOrange;
+input int             __LS_LineWidth     = 1;
+input color           __LS_SlBkgrdColor  = C'80,50,70';
+input color           __LS_TpBkgrdColor  = C'40,80,70';
+//-------------------------------------------------
+input string          L_o_n_g_S_h_o_r_t___T_r_a_d_e___Cfg = SEPARATE_LINE;
+input double          __LS_Cost          = 50;
+input e_display       __LS_ShowStats     = SHOW;
+input e_display       __LS_ShowPrice     = SHOW;
+input e_display       __LS_ShowDollar    = SHOW;
 
 class LongShort : public BaseItem
 {
@@ -159,17 +160,17 @@ void LongShort::updateDefaultProperty()
 }
 void LongShort::updateTypeProperty()
 {
-    ObjectSet(iBgndSL, OBJPROP_COLOR, LongShort_SlBkgrdColor);
-    ObjectSet(iBgndTP, OBJPROP_COLOR, LongShort_TpBkgrdColor);
+    ObjectSet(iBgndSL, OBJPROP_COLOR, __LS_SlBkgrdColor);
+    ObjectSet(iBgndTP, OBJPROP_COLOR, __LS_TpBkgrdColor);
     ObjectSet(iBeLine, OBJPROP_WIDTH, 1);
     //-------------------------------------------------
-    multiSetProp(OBJPROP_COLOR, LongShort_TpColor  , iTpPrice+iTpLine+iBeLine+cPointTP+cPointBE);
-    multiSetProp(OBJPROP_COLOR, LongShort_EnColor  , iEnPrice+iEnLine+cPointEN+cPointWD);
-    multiSetProp(OBJPROP_COLOR, LongShort_SlColor  , iSlLine+cPointSL+iSlPrice);
-    multiSetProp(OBJPROP_COLOR, LongShort_TextColor, iTpText+iEnText+iSlText+iBeText);
+    multiSetProp(OBJPROP_COLOR, __LS_TpColor  , iTpPrice+iTpLine+iBeLine+cPointTP+cPointBE);
+    multiSetProp(OBJPROP_COLOR, __LS_EnColor  , iEnPrice+iEnLine+cPointEN+cPointWD);
+    multiSetProp(OBJPROP_COLOR, __LS_SlColor  , iSlLine+cPointSL+iSlPrice);
+    multiSetProp(OBJPROP_COLOR, __LS_TextColor, iTpText+iEnText+iSlText+iBeText);
     //-------------------------------------------------
-    multiSetProp(OBJPROP_WIDTH   , LongShort_LineWidth, iTpLine+iEnLine+iSlLine);
-    multiSetProp(OBJPROP_FONTSIZE, LongShort_TextSize , iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText);
+    multiSetProp(OBJPROP_WIDTH   , __LS_LineWidth, iTpLine+iEnLine+iSlLine);
+    multiSetProp(OBJPROP_FONTSIZE, __LS_TextSize , iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText);
 }
 void LongShort::activateItem(const string& itemId)
 {
@@ -243,12 +244,12 @@ void LongShort::refreshData()
     double slPip       = 10000*MathAbs(priceEN-priceSL);
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
-    double lot         = NormalizeDouble((LongShort_Cost/slPip/10),2);
+    double lot         = NormalizeDouble((__LS_Cost/slPip/10),2);
     double realCost    = lot*slPip*10;
     bool   selectState = (bool)ObjectGet(cPointWD, OBJPROP_SELECTED);
-    bool   showStats   = (LongShort_ShowStats  == SHOW) || (LongShort_ShowStats  == SHOW_WHEN_SELECTED && selectState);
-    bool   showPrice   = (LongShort_ShowPrice  == SHOW) || (LongShort_ShowPrice  == SHOW_WHEN_SELECTED && selectState);
-    bool   showDollar  = (LongShort_ShowDollar == SHOW) || (LongShort_ShowDollar == SHOW_WHEN_SELECTED && selectState);
+    bool   showStats   = (__LS_ShowStats  == SHOW) || (__LS_ShowStats  == SELECTED_SHOW && selectState);
+    bool   showPrice   = (__LS_ShowPrice  == SHOW) || (__LS_ShowPrice  == SELECTED_SHOW && selectState);
+    bool   showDollar  = (__LS_ShowDollar == SHOW) || (__LS_ShowDollar == SELECTED_SHOW && selectState);
 
     if (showStats)
     {

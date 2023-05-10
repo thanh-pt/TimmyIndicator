@@ -1,25 +1,22 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-#define LINE_STYLE ENUM_LINE_STYLE
-
-input string     Trend_Configuration   = SEPARATE_LINE_BIG;
 //--------------------------------------------
-input string     Trend_Liquidity_cf    = SEPARATE_LINE;
-      string     Trend_Liquidity_Name  = "lq";
-      string     Trend_Liquidity_Text  = "$$$";
-input color      Trend_Liquidity_Color = clrGold;
-input LINE_STYLE Trend_Liquidity_Style = STYLE_SOLID;
-      int        Trend_Liquidity_Width = 1;
-      bool       Trend_Liquidity_Arrow = false;
+input string     T_r_e_n_d___L_i_q_u_i_d_i_t_y___Cfg = SEPARATE_LINE;
+      string     __T_Liquidity_Name  = "Liquidity";
+      string     __T_Liquidity_Text  = "$$$";
+input color      __T_Liquidity_Color = clrGold;
+input LINE_STYLE __T_Liquidity_Style = STYLE_SOLID;
+      int        __T_Liquidity_Width = 1;
+      bool       __T_Liquidity_Arrow = false;
 //--------------------------------------------
-input string     Trend_EptOdrFlw_cf    = SEPARATE_LINE;
-      string     Trend_EptOdrFlw_Name  = "EOF";
-      string     Trend_EptOdrFlw_Text  = "EOF";
-input color      Trend_EptOdrFlw_Color = clrGold;
-input LINE_STYLE Trend_EptOdrFlw_Style = STYLE_DOT;
-      int        Trend_EptOdrFlw_Width = 1;
-      bool       Trend_EptOdrFlw_Arrow = true;
+input string     T_r_e_n_d___E_x_p_e_c_t_O_d_r_F_l_w___Cfg = SEPARATE_LINE;
+      string     __T_EptOdrFlw_Name  = "EOF";
+      string     __T_EptOdrFlw_Text  = "EOF";
+input color      __T_EptOdrFlw_Color = clrGold;
+input LINE_STYLE __T_EptOdrFlw_Style = STYLE_DOT;
+      int        __T_EptOdrFlw_Width = 1;
+      bool       __T_EptOdrFlw_Arrow = true;
 //--------------------------------------------
 
 /*
@@ -94,19 +91,19 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [TREND_LQ   ] = Trend_Liquidity_Name ;
-    mDispText [TREND_LQ   ] = Trend_Liquidity_Text ;
-    mColorType[TREND_LQ   ] = Trend_Liquidity_Color;
-    mStyleType[TREND_LQ   ] = Trend_Liquidity_Style;
-    mWidthType[TREND_LQ   ] = Trend_Liquidity_Width;
-    mShowArrow[TREND_LQ   ] = Trend_Liquidity_Arrow;
+    mNameType [TREND_LQ   ] = __T_Liquidity_Name ;
+    mDispText [TREND_LQ   ] = __T_Liquidity_Text ;
+    mColorType[TREND_LQ   ] = __T_Liquidity_Color;
+    mStyleType[TREND_LQ   ] = __T_Liquidity_Style;
+    mWidthType[TREND_LQ   ] = __T_Liquidity_Width;
+    mShowArrow[TREND_LQ   ] = __T_Liquidity_Arrow;
     //--------------------------------------------
-    mNameType [TREND_EOF  ] = Trend_EptOdrFlw_Name ;
-    mDispText [TREND_EOF  ] = Trend_EptOdrFlw_Text ;
-    mColorType[TREND_EOF  ] = Trend_EptOdrFlw_Color;
-    mStyleType[TREND_EOF  ] = Trend_EptOdrFlw_Style;
-    mWidthType[TREND_EOF  ] = Trend_EptOdrFlw_Width;
-    mShowArrow[TREND_EOF  ] = Trend_EptOdrFlw_Arrow;
+    mNameType [TREND_EOF  ] = __T_EptOdrFlw_Name ;
+    mDispText [TREND_EOF  ] = __T_EptOdrFlw_Text ;
+    mColorType[TREND_EOF  ] = __T_EptOdrFlw_Color;
+    mStyleType[TREND_EOF  ] = __T_EptOdrFlw_Style;
+    mWidthType[TREND_EOF  ] = __T_EptOdrFlw_Width;
+    mShowArrow[TREND_EOF  ] = __T_EptOdrFlw_Arrow;
     //--------------------------------------------
     mTypeNum = TREND_NUM;
     mIndexType = 0;

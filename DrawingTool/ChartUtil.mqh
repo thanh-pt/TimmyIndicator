@@ -1,9 +1,9 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string  ChartUtil_ = SEPARATE_LINE_BIG;
-input int     ChartUtil_LONDON_BODER_StartSession = 10;
-input int     ChartUtil_LONDON_BODER_EndOfSession = 19;
+input string  C_h_a_r_t_U_t_i_l___Cfg = SEPARATE_LINE;
+input int     __U_LondonSession_Start = 7;
+input int     __U_LondonSession_Finsh = 16;
 
 enum ChartUtilType
 {
@@ -104,8 +104,8 @@ void ChartUtil::onMouseClick()
         if (ObjectFind(rectLondon) < 0)
         {
             datetime dtToday = StrToTime(strBeginOfDay);
-            datetime openTime  = dtToday + 3600*ChartUtil_LONDON_BODER_StartSession;
-            datetime closeTime = dtToday + 3600*ChartUtil_LONDON_BODER_EndOfSession;
+            datetime openTime  = dtToday + 3600*__U_LondonSession_Start;
+            datetime closeTime = dtToday + 3600*__U_LondonSession_Finsh;
             int beginBar = iBarShift(ChartSymbol(), ChartPeriod(), openTime );
             int endBar   = iBarShift(ChartSymbol(), ChartPeriod(), closeTime);
             if (endBar > 0)

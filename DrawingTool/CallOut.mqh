@@ -1,11 +1,9 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string CallOut_ = SEPARATE_LINE_BIG;
-input color  CallOut_Color = clrWhite;
-input int    CallOut_Width = 1;
-input int    CallOut_FontSize = 10;
-input string CallOut_FontName = "Calibri";
+input string C_a_l_l_O_u_t___Cfg = SEPARATE_LINE;
+input color  __C_Color    = clrWhite;
+input int    __C_FontSize = 10;
 
 class CallOut : public BaseItem
 {
@@ -80,10 +78,10 @@ void CallOut::updateDefaultProperty()
 }
 void CallOut::updateTypeProperty()
 {
-    SetObjectStyle(cPtLine, CallOut_Color, 0, CallOut_Width);
-    SetObjectStyle(iUdLine, CallOut_Color, 0, CallOut_Width+1);
+    SetObjectStyle(cPtLine, __C_Color, 0, 1);
+    SetObjectStyle(iUdLine, __C_Color, 0, 2);
     //-------------------------------------------------------------
-    ObjectSetText(cLbText, "Text", CallOut_FontSize, CallOut_FontName, CallOut_Color);
+    ObjectSetText(cLbText, "Text", __C_FontSize, NULL, __C_Color);
     ObjectSet(cLbText, OBJPROP_SELECTED, true);
 }
 void CallOut::activateItem(const string& itemId)
@@ -99,7 +97,7 @@ void CallOut::refreshData()
     setItemPos(cLbText, time2, price2);
     //-------------------------------------------------------------
     int x, y, offset;
-    offset = (int)((double)(StringLen(ObjectDescription(cLbText))*CallOut_FontSize) * 1/2);
+    offset = (int)((double)(StringLen(ObjectDescription(cLbText))*__C_FontSize) * 1/2);
     if (time1 > time2)
     {
         ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);

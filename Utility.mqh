@@ -1,7 +1,7 @@
 #define SEPARATE_LINE       "------------------------------------------------------------------------------------------------------------------------"
-#define SEPARATE_LINE_BIG   "████████████████████████████████████"
 #define STATIC_TAG          "%"
 #define BG_TAG              "BgOverlapFix"
+#define LINE_STYLE          ENUM_LINE_STYLE
 
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define MAX(a,b) ((a)>(b)?(a):(b))
