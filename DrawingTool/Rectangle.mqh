@@ -4,12 +4,12 @@
 input string            R_e_c_t_a_n_g_l_e___Cfg = SEPARATE_LINE;
 input color             __R_Text_Color  = clrDarkGray;
 //-----------------------------------------------------------
-input string            R_e_c_t_a_n_g_l_e___S_z___Cfg = SEPARATE_LINE;
-input string            __R_Sz_Name     = "Sz";
+      string            R_e_c_t_a_n_g_l_e___S_z___Cfg = SEPARATE_LINE;
+      string            __R_Sz_Name     = "Sz";
 input color             __R_Sz_Color    = C'64,0,32';
 //-----------------------------------------------------------
-input string            R_e_c_t_a_n_g_l_e___D_z___Cfg = SEPARATE_LINE;
-input string            __R_Dz_Name     = "Dz";
+      string            R_e_c_t_a_n_g_l_e___D_z___Cfg = SEPARATE_LINE;
+      string            __R_Dz_Name     = "Dz";
 input color             __R_Dz_Color    = C'21,43,37';
 //-----------------------------------------------------------
 
