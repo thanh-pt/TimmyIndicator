@@ -16,8 +16,6 @@ class ChartUtil : public BaseItem
 {
 // Internal Value
 private:
-    int mCandleIndex;
-    string mCandleInfo;
 
 // Component name
 private:
@@ -76,19 +74,19 @@ void ChartUtil::onMouseMove()
 {
     if (mIndexType == HILO_VIEW)
     {
-        mCandleInfo  = strDayOfWeek(pCommonData.mMouseTime);
-        mCandleInfo += "_w" + IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7+1);
+        string barInfo  = strDayOfWeek(pCommonData.mMouseTime);
+        barInfo += "_w" + IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7+1);
 
-        mCandleIndex = iBarShift(ChartSymbol(), ChartPeriod(), pCommonData.mMouseTime);
-        if (pCommonData.mMousePrice > High[mCandleIndex])
+        int barIndex = iBarShift(ChartSymbol(), ChartPeriod(), pCommonData.mMouseTime);
+        if (pCommonData.mMousePrice > High[barIndex])
         {
-            mCandleInfo += "_Hi:" + DoubleToStr(High[mCandleIndex],5);
+            barInfo += "_Hi:" + DoubleToStr(High[barIndex],5);
         }
         else
         {
-            mCandleInfo += "_Lo:" + DoubleToStr(Low [mCandleIndex],5);
+            barInfo += "_Lo:" + DoubleToStr(Low [barIndex],5);
         }
-        pMouseInfo.setText(mCandleInfo);
+        pMouseInfo.setText(barInfo);
         return;
     }
 }

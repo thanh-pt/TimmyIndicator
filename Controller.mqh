@@ -42,7 +42,6 @@ private:
     FinishedJob mFinishedJobCb;
     MouseInfo*  pMouseInfo;
     bool        mbStartErase;
-    bool        mbFreeMove;
 
 private:
     int findItemIdByKey(const int key);
@@ -142,11 +141,9 @@ void Controller::handleKeyEvent(const long &key)
         break;
     case '1':
         if (mbStartErase) EraseAll();
-        if (mbFreeMove) SetChartScaleFix(true);
         break;
     case '2':
         if (mbStartErase) EraseThisTF();
-        if (mbFreeMove) SetChartScaleFix(false);
         break;
     case '3':
         if (mbStartErase) EraseLowerTF();
@@ -175,14 +172,8 @@ void Controller::handleKeyEvent(const long &key)
             mbStartErase = true;
             pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF | 4-BgOverlap");
         }
-        else if (key == 'M')
-        {
-            mbFreeMove = true;
-            pMouseInfo.setText("Free Move: 1-True | 2-False");
-        }
         else
         {
-            mbFreeMove = false;
             mbStartErase = false;
             pMouseInfo.setText("");
         }

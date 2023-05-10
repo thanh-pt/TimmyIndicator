@@ -13,7 +13,7 @@ CrossHair  gCrossHair(&gCommonData);
 MouseInfo  gMouseInfo(&gCommonData);
 Controller gController(&gCommonData, &gMouseInfo);
 
-input bool DEBUG = true;
+input bool DEBUG = false;
 
 int OnInit()
 {
@@ -97,7 +97,6 @@ void detectMouseDraging(const string &sparam)
     // Press and draging
     if (gIsPress && (option & 0x01) != 0)
     {
-        // if (DEBUG) PrintFormat("Draging %s", gTargetItem);
         gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, gTargetItem);
     }
 

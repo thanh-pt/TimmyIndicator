@@ -433,7 +433,6 @@ void scanBackgroundOverlap(string target)
         {
             if (ObjectFind(bgItem) >= 0)
             {
-                if (DEBUG) PrintFormat("Delete: %s %d %d", bgItem, targetId, objId);
                 ObjectDelete(bgItem);
             }
             continue;
