@@ -162,6 +162,12 @@ void Controller::handleKeyEvent(const long &key)
         SetChartScaleFix(false);
         break;
     // Short cut for Chart fix [E]
+    case 'V':
+        syncSelectedItem();
+        break;
+    case 'B':
+        syncDeleteSelectedItem();
+        break;
     default:
         break;
     }
