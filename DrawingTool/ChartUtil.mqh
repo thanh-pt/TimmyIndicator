@@ -9,6 +9,7 @@ enum ChartUtilType
 {
     HILO_VIEW,
     LONDON_BODER,
+    CREATE_ALERT,
     CUTIL_NUM,
 };
 
@@ -19,6 +20,7 @@ private:
 
 // Component name
 private:
+    string cAlert;
 // Value define for Item
 private:
 
@@ -55,6 +57,7 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
     // Init variable type
     mNameType [HILO_VIEW   ] = "Hi/Lo View";
     mNameType [LONDON_BODER] = "London Boder";
+    mNameType [CREATE_ALERT] = "Create Alert";
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
 }
@@ -64,7 +67,10 @@ void ChartUtil::prepareActive(){}
 void ChartUtil::createItem(){}
 void ChartUtil::updateDefaultProperty(){}
 void ChartUtil::updateTypeProperty(){}
-void ChartUtil::activateItem(const string& itemId){}
+void ChartUtil::activateItem(const string& itemId)
+{
+    cAlert = itemId + "_cAlert";
+}
 void ChartUtil::updateItemAfterChangeType(){}
 void ChartUtil::refreshData(){}
 void ChartUtil::finishedJobDone(){}
@@ -126,9 +132,21 @@ void ChartUtil::onMouseClick()
             }
         }
     }
+    else if (mIndexType == CREATE_ALERT)
+    {
+        ObjectCreate(cAlert, OBJ_HLINE, 0, 0, pCommonData.mMousePrice);
+        SetObjectStyle(cAlert, clrDarkSlateGray, STYLE_DASHDOT, 0);
+        ObjectSetText(cAlert, pCommonData.mMousePrice > Bid ? "Upper Ring" : "Lower Ring");
+    }
     mFinishedJobCb();
 }
-void ChartUtil::onItemDrag(const string &itemId, const string &objId){}
+void ChartUtil::onItemDrag(const string &itemId, const string &objId)
+{
+    if (objId == cAlert)
+    {
+        ObjectSetText(cAlert, ObjectGet(cAlert, OBJPROP_PRICE1) > Bid ? "Upper Ring" : "Lower Ring");
+    }
+}
 void ChartUtil::onItemClick(const string &itemId, const string &objId){}
 void ChartUtil::onItemChange(const string &itemId, const string &objId){}
 void ChartUtil::onItemDeleted(const string &itemId, const string &objId){}

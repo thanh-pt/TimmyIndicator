@@ -15,12 +15,48 @@ Controller gController(&gCommonData, &gMouseInfo);
 
 bool DEBUG = false;
 
+int timerInterval = 30;
+
+void OnTimer()
+{
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        string alertLine = ObjectName(i);
+        if (ObjectType(alertLine) == OBJ_HLINE) {
+            bool notified = false;
+            double alertPrice = ObjectGet(alertLine, OBJPROP_PRICE1);
+            if (ObjectGetString(ChartID(), alertLine, OBJPROP_TEXT) == "Upper Ring")
+            {
+                if (alertPrice <= High[0])
+                {
+                    notified = true;
+                    SendNotification("Chart Reached " + DoubleToString(alertPrice, 5) + " Upper Alert!!!");
+                }
+            }
+            else
+            {
+                if (alertPrice >= Low[0])
+                {
+                    notified = true;
+                    SendNotification("Chart Reached " + DoubleToString(alertPrice, 5) + " Lower Alert!!!");
+                }
+            }
+            if (notified == true)
+            {
+                ObjectDelete(alertLine);
+            }
+        }
+    }
+}
+
 int OnInit()
 {
     ChartSetInteger(ChartID(), CHART_EVENT_MOUSE_MOVE, true);
     ChartSetInteger(ChartID(), CHART_EVENT_OBJECT_DELETE, true);
     
     gController.setFinishedJobCB(FinishedJobFunc);
+
+    EventSetTimer(timerInterval);
     return (INIT_SUCCEEDED);
 }
 
