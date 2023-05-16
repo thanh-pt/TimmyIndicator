@@ -33,7 +33,7 @@ void OnTimer()
                     SendNotification("Chart Reached " + DoubleToString(alertPrice, 5) + " Upper Alert!!!");
                 }
             }
-            else
+            else if (ObjectGetString(ChartID(), alertLine, OBJPROP_TEXT) == "Lower Ring")
             {
                 if (alertPrice >= Low[0])
                 {
