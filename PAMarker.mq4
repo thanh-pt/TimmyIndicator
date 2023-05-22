@@ -15,38 +15,59 @@ Controller gController(&gCommonData, &gMouseInfo);
 
 bool DEBUG = false;
 
-int timerInterval = 30;
+string gListAlert= "";
+string gAlertArr[];
+int    gAlertTotal  = 0;
+bool   gAlertReach  = false;
+double gAlertPrice  = 0;
+string gAlertText   = "";
+string gAlertRemain = "";
 
-void OnTimer()
+void initAlarm()
 {
+    string alertLine = "";
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
-        string alertLine = ObjectName(i);
-        if (ObjectType(alertLine) == OBJ_HLINE) {
-            bool notified = false;
-            double alertPrice = ObjectGet(alertLine, OBJPROP_PRICE1);
-            if (ObjectGetString(ChartID(), alertLine, OBJPROP_TEXT) == "Upper Ring")
-            {
-                if (alertPrice <= High[0])
-                {
-                    notified = true;
-                    SendNotification("Chart Reached " + DoubleToString(alertPrice, 5) + " Upper Alert!!!");
-                }
-            }
-            else if (ObjectGetString(ChartID(), alertLine, OBJPROP_TEXT) == "Lower Ring")
-            {
-                if (alertPrice >= Low[0])
-                {
-                    notified = true;
-                    SendNotification("Chart Reached " + DoubleToString(alertPrice, 5) + " Lower Alert!!!");
-                }
-            }
-            if (notified == true)
-            {
-                ObjectDelete(alertLine);
-            }
+        alertLine = ObjectName(i);
+        if (ObjectType(alertLine) != OBJ_HLINE) continue;
+
+        gAlertText = ObjectGetString(ChartID(), alertLine, OBJPROP_TEXT);
+        if (StringFind(gAlertText, "Ring") == -1) continue;
+
+        // Add Alert to the list
+        if (gListAlert != "") gListAlert += ",";
+        gListAlert += alertLine;
+    }
+}
+
+void checkAlert()
+{
+    gAlertTotal  = StringSplit(gListAlert,',',gAlertArr);
+    gAlertRemain = "";
+    for (int i = 0; i < gAlertTotal; i++)
+    {
+        // Check valid Alert
+        if (ObjectFind(gAlertArr[i]) < 0) continue;
+        gAlertText = ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TEXT);
+        if (StringFind(gAlertText, "Ring") == -1) continue;
+        // Get Alert information
+        gAlertReach = false;
+        gAlertPrice  = ObjectGet(gAlertArr[i], OBJPROP_PRICE1);
+        // Check Alert Price
+        if (StringFind(gAlertText, "Upper") != -1) gAlertReach = (gAlertPrice <= Bid);
+        else gAlertReach = (gAlertPrice >= Bid);
+        // Send notification or save remain Alert
+        if (gAlertReach == true)
+        {
+            SendNotification("Reached:" + DoubleToString(gAlertPrice, 5) + " " + gAlertText);
+            ObjectDelete(gAlertArr[i]);
+        }
+        else
+        {
+            gAlertRemain += gAlertArr[i] + ",";
         }
     }
+    gListAlert = gAlertRemain;
 }
 
 int OnInit()
@@ -56,7 +77,7 @@ int OnInit()
     
     gController.setFinishedJobCB(FinishedJobFunc);
 
-    EventSetTimer(timerInterval);
+    initAlarm();
     return (INIT_SUCCEEDED);
 }
 
@@ -71,6 +92,7 @@ int OnCalculate(const int rates_total,
                 const long &volume[],
                 const int &spread[])
 {
+    checkAlert();
     return (rates_total);
 }
 

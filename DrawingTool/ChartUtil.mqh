@@ -137,6 +137,8 @@ void ChartUtil::onMouseClick()
         ObjectCreate(cAlert, OBJ_HLINE, 0, 0, pCommonData.mMousePrice);
         SetObjectStyle(cAlert, clrDarkSlateGray, STYLE_DASHDOT, 0);
         ObjectSetText(cAlert, pCommonData.mMousePrice > Bid ? "Upper Ring" : "Lower Ring");
+        // Add Alert to gListAlert
+        gListAlert += cAlert + ",";
     }
     mFinishedJobCb();
 }
