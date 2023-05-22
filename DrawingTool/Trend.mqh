@@ -139,6 +139,19 @@ void Trend::refreshData()
     {
         ObjectSetInteger(0, cLbText, OBJPROP_ANCHOR, (priceText > price3) ? ANCHOR_LOWER : ANCHOR_UPPER);
     }
+    else
+    {
+        int barT1 = iBarShift(ChartSymbol(), ChartPeriod(), time1);
+        int barT2 = iBarShift(ChartSymbol(), ChartPeriod(), time2);
+        if (price1 >= High[barT1] && price2 >= High[barT2])
+        {
+            ObjectSetInteger(0, cLbText, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        }
+        else if (price1 <= Low[barT1] && price2 <= Low[barT2])
+        {
+            ObjectSetInteger(0, cLbText, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        }
+    }
 }
 
 void Trend::createItem()
