@@ -1,5 +1,6 @@
 #property strict
 
+input bool AlertActive = false;
 #include "InfoItem/CrossHair.mqh"
 #include "InfoItem/MouseInfo.mqh"
 #include "Controller.mqh"
@@ -92,7 +93,7 @@ int OnCalculate(const int rates_total,
                 const long &volume[],
                 const int &spread[])
 {
-    checkAlert();
+    if (AlertActive) checkAlert();
     return (rates_total);
 }
 

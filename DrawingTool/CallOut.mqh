@@ -81,7 +81,7 @@ void CallOut::updateTypeProperty()
     SetObjectStyle(cPtLine, __C_Color, 0, 1);
     SetObjectStyle(iUdLine, __C_Color, 0, 2);
     //-------------------------------------------------------------
-    ObjectSetText(cLbText, "Text", __C_FontSize, NULL, __C_Color);
+    ObjectSetText(cLbText, DoubleToString(pCommonData.mMousePrice, 5), __C_FontSize, NULL, __C_Color);
     ObjectSet(cLbText, OBJPROP_SELECTED, true);
 }
 void CallOut::activateItem(const string& itemId)
@@ -132,6 +132,7 @@ void CallOut::onMouseClick()
     if (mFirstPoint == false)
     {
         createItem();
+        pMouseInfo.setText("");
         mFirstPoint = true;
         return;
     }
