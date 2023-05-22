@@ -66,7 +66,7 @@ void BaseItem::startActivate(FinishedJob cb)
     prepareActive();
     string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(TimeLocal());
     activateItem(itemId);
-    if (DEBUG) PrintFormat("NewItem: %s", itemId);
+    // PrintFormat("NewItem: %s", itemId);
 }
 
 void BaseItem::finishedDeactivate()

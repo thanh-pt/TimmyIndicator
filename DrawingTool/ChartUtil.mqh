@@ -7,9 +7,8 @@ input int     __U_LondonSession_Finsh = 16;
 
 enum ChartUtilType
 {
-    HILO_VIEW,
-    LONDON_BODER,
     CREATE_ALERT,
+    LONDON_BODER,
     CUTIL_NUM,
 };
 
@@ -17,6 +16,7 @@ class ChartUtil : public BaseItem
 {
 // Internal Value
 private:
+bool mIsHighAlert;
 
 // Component name
 private:
@@ -55,9 +55,8 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [HILO_VIEW   ] = "Hi/Lo View";
-    mNameType [LONDON_BODER] = "London Boder";
     mNameType [CREATE_ALERT] = "Create Alert";
+    mNameType [LONDON_BODER] = "London Boder";
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
 }
@@ -78,23 +77,6 @@ void ChartUtil::finishedJobDone(){}
 // Chart Event
 void ChartUtil::onMouseMove()
 {
-    if (mIndexType == HILO_VIEW)
-    {
-        string barInfo  = strDayOfWeek(pCommonData.mMouseTime);
-        barInfo += "_w" + IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7+1);
-
-        int barIndex = iBarShift(ChartSymbol(), ChartPeriod(), pCommonData.mMouseTime);
-        if (pCommonData.mMousePrice > High[barIndex])
-        {
-            barInfo += "_Hi:" + DoubleToStr(High[barIndex],5);
-        }
-        else
-        {
-            barInfo += "_Lo:" + DoubleToStr(Low [barIndex],5);
-        }
-        pMouseInfo.setText(barInfo);
-        return;
-    }
 }
 void ChartUtil::onMouseClick()
 {
@@ -136,7 +118,9 @@ void ChartUtil::onMouseClick()
     {
         ObjectCreate(cAlert, OBJ_HLINE, 0, 0, pCommonData.mMousePrice);
         SetObjectStyle(cAlert, clrDarkSlateGray, STYLE_DASHDOT, 0);
-        ObjectSetText(cAlert, pCommonData.mMousePrice > Bid ? "Upper Ring" : "Lower Ring");
+        mIsHighAlert = (pCommonData.mMousePrice > Bid);
+        ObjectSetString(ChartID(), cAlert, OBJPROP_TOOLTIP, mIsHighAlert ? "H" : "L");
+        ObjectSetText(cAlert, mIsHighAlert ? "Ring Up!" : "Ring Down!");
         // Add Alert to gListAlert
         gListAlert += cAlert + ",";
     }
@@ -146,7 +130,8 @@ void ChartUtil::onItemDrag(const string &itemId, const string &objId)
 {
     if (objId == cAlert)
     {
-        ObjectSetText(cAlert, ObjectGet(cAlert, OBJPROP_PRICE1) > Bid ? "Upper Ring" : "Lower Ring");
+        mIsHighAlert = (pCommonData.mMousePrice > Bid);
+        ObjectSetString(ChartID(), cAlert, OBJPROP_TOOLTIP, mIsHighAlert ? "H" : "L");
     }
 }
 void ChartUtil::onItemClick(const string &itemId, const string &objId){}

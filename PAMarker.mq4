@@ -14,14 +14,11 @@ CrossHair  gCrossHair(&gCommonData);
 MouseInfo  gMouseInfo(&gCommonData);
 Controller gController(&gCommonData, &gMouseInfo);
 
-bool DEBUG = false;
-
 string gListAlert= "";
 string gAlertArr[];
 int    gAlertTotal  = 0;
 bool   gAlertReach  = false;
 double gAlertPrice  = 0;
-string gAlertText   = "";
 string gAlertRemain = "";
 
 void initAlarm()
@@ -30,11 +27,7 @@ void initAlarm()
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         alertLine = ObjectName(i);
-        if (ObjectType(alertLine) != OBJ_HLINE) continue;
-
-        gAlertText = ObjectGetString(ChartID(), alertLine, OBJPROP_TEXT);
-        if (StringFind(gAlertText, "Ring") == -1) continue;
-
+        if (StringFind(alertLine, "cAlert") == -1) continue;
         // Add Alert to the list
         if (gListAlert != "") gListAlert += ",";
         gListAlert += alertLine;
@@ -49,18 +42,28 @@ void checkAlert()
     {
         // Check valid Alert
         if (ObjectFind(gAlertArr[i]) < 0) continue;
-        gAlertText = ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TEXT);
-        if (StringFind(gAlertText, "Ring") == -1) continue;
+        if (StringFind(gAlertArr[i], "cAlert") == -1) continue;
+
         // Get Alert information
         gAlertReach = false;
-        gAlertPrice  = ObjectGet(gAlertArr[i], OBJPROP_PRICE1);
+        gAlertPrice = ObjectGet(gAlertArr[i], OBJPROP_PRICE1);
+
         // Check Alert Price
-        if (StringFind(gAlertText, "Upper") != -1) gAlertReach = (gAlertPrice <= Bid);
-        else gAlertReach = (gAlertPrice >= Bid);
+        if (ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TOOLTIP) == "H")
+        {
+            gAlertReach = (gAlertPrice <= Bid);
+        }
+        else
+        {
+            gAlertReach = (gAlertPrice >= Bid);
+        }
+
         // Send notification or save remain Alert
         if (gAlertReach == true)
         {
-            SendNotification("Reached:" + DoubleToString(gAlertPrice, 5) + " " + gAlertText);
+            SendNotification(
+                "["+ DoubleToString(gAlertPrice, 5) + "] "
+                   + ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TEXT));
             ObjectDelete(gAlertArr[i]);
         }
         else
