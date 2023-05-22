@@ -55,7 +55,7 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [CREATE_ALERT] = "Create Alert";
+    mNameType [CREATE_ALERT] = (AlertActive ? "Create Alert" : "Draft Alert");
     mNameType [LONDON_BODER] = "London Boder";
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
@@ -130,7 +130,7 @@ void ChartUtil::onItemDrag(const string &itemId, const string &objId)
 {
     if (objId == cAlert)
     {
-        mIsHighAlert = (pCommonData.mMousePrice > Bid);
+        mIsHighAlert = (ObjectGet(cAlert, OBJPROP_PRICE1) > Bid);
         ObjectSetString(ChartID(), cAlert, OBJPROP_TOOLTIP, mIsHighAlert ? "H" : "L");
     }
 }

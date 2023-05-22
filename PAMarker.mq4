@@ -56,6 +56,8 @@ void checkAlert()
         else
         {
             gAlertReach = (gAlertPrice >= Bid);
+            if (gAlertReach)
+                PrintFormat("gAlertArr OBJPROP_TOOLTIP Low. Text = [" + ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TOOLTIP) + "]");
         }
 
         // Send notification or save remain Alert
