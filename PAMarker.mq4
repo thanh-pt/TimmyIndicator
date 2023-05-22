@@ -51,13 +51,13 @@ void checkAlert()
         // Check Alert Price
         if (ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TOOLTIP) == "H")
         {
-            gAlertReach = (gAlertPrice <= Bid);
+            gAlertReach = (Bid >= gAlertPrice);
         }
         else
         {
-            gAlertReach = (gAlertPrice >= Bid);
+            gAlertReach = (Bid <= gAlertPrice);
             if (gAlertReach)
-                PrintFormat("gAlertArr OBJPROP_TOOLTIP Low. Text = [" + ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TOOLTIP) + "]");
+                PrintFormat("%s OBJPROP_TOOLTIP Low. Text = [%s]", gAlertArr[i], ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TOOLTIP));
         }
 
         // Send notification or save remain Alert
