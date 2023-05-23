@@ -14,7 +14,8 @@ CrossHair  gCrossHair(&gCommonData);
 MouseInfo  gMouseInfo(&gCommonData);
 Controller gController(&gCommonData, &gMouseInfo);
 
-string gListAlert= "";
+string gListAlert = "";
+string gAlertText = "";
 string gAlertArr[];
 int    gAlertTotal  = 0;
 bool   gAlertReach  = false;
@@ -47,25 +48,21 @@ void checkAlert()
         // Get Alert information
         gAlertReach = false;
         gAlertPrice = ObjectGet(gAlertArr[i], OBJPROP_PRICE1);
-
+        gAlertText  = ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TEXT);
         // Check Alert Price
-        if (ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TOOLTIP) == "H")
+        if (StringFind(gAlertText,"[H]") != -1)
         {
             gAlertReach = (Bid >= gAlertPrice);
         }
-        else
+        else if (StringFind(gAlertText,"[L]") != -1)
         {
             gAlertReach = (Bid <= gAlertPrice);
-            if (gAlertReach)
-                PrintFormat("%s OBJPROP_TOOLTIP Low. Text = [%s]", gAlertArr[i], ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TOOLTIP));
         }
 
         // Send notification or save remain Alert
         if (gAlertReach == true)
         {
-            SendNotification(
-                "["+ DoubleToString(gAlertPrice, 5) + "] "
-                   + ObjectGetString(ChartID(), gAlertArr[i], OBJPROP_TEXT));
+            SendNotification("["+ DoubleToString(gAlertPrice, 5) + "] " + gAlertText);
             ObjectDelete(gAlertArr[i]);
         }
         else

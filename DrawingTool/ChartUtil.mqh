@@ -16,7 +16,8 @@ class ChartUtil : public BaseItem
 {
 // Internal Value
 private:
-bool mIsHighAlert;
+string mAlertIndi;
+string mAlertText;
 
 // Component name
 private:
@@ -118,9 +119,8 @@ void ChartUtil::onMouseClick()
     {
         ObjectCreate(cAlert, OBJ_HLINE, 0, 0, pCommonData.mMousePrice);
         SetObjectStyle(cAlert, clrDarkSlateGray, STYLE_DASHDOT, 0);
-        mIsHighAlert = (pCommonData.mMousePrice > Bid);
-        ObjectSetString(ChartID(), cAlert, OBJPROP_TOOLTIP, mIsHighAlert ? "H" : "L");
-        ObjectSetText(cAlert, mIsHighAlert ? "Ring Up!" : "Ring Down!");
+        mAlertIndi = (ObjectGet(cAlert, OBJPROP_PRICE1) > Bid ? "[H]" : "[L]");
+        ObjectSetText(cAlert, mAlertIndi + " Alert!");
         // Add Alert to gListAlert
         gListAlert += cAlert + ",";
     }
@@ -130,10 +130,32 @@ void ChartUtil::onItemDrag(const string &itemId, const string &objId)
 {
     if (objId == cAlert)
     {
-        mIsHighAlert = (ObjectGet(cAlert, OBJPROP_PRICE1) > Bid);
-        ObjectSetString(ChartID(), cAlert, OBJPROP_TOOLTIP, mIsHighAlert ? "H" : "L");
+        mAlertText = ObjectGetString(ChartID(), cAlert, OBJPROP_TEXT);
+        mAlertIndi = (ObjectGet(cAlert, OBJPROP_PRICE1) > Bid ? "[H]" : "[L]");
+
+        if (StringFind(mAlertText, "[H]") == -1 && StringFind(mAlertText, "[L]") == -1 )
+        {
+            // Cannot found Indi => Add Indi
+            mAlertText = mAlertIndi + " " + mAlertText;
+            ObjectSetText(cAlert, mAlertText);
+        }
+        else if (StringFind(mAlertText, mAlertIndi) == -1)
+        {
+            // Indi not correct, remove old indi and replate new indi
+            StringSetCharacter(mAlertText, 1, 'x');
+            StringReplace(mAlertText, "[x]", mAlertIndi);
+            ObjectSetText(cAlert, mAlertText);
+        }
+
+        if (StringFind(gListAlert, cAlert) == -1)
+        {
+            gListAlert += cAlert + ",";
+        }
     }
 }
 void ChartUtil::onItemClick(const string &itemId, const string &objId){}
-void ChartUtil::onItemChange(const string &itemId, const string &objId){}
+void ChartUtil::onItemChange(const string &itemId, const string &objId)
+{
+    if (objId == cAlert) onItemDrag(itemId, objId);
+}
 void ChartUtil::onItemDeleted(const string &itemId, const string &objId){}
