@@ -5,18 +5,28 @@ input string            R_e_c_t_a_n_g_l_e___Cfg = SEPARATE_LINE;
 input color             __R_Text_Color  = clrDarkGray;
 //-----------------------------------------------------------
       string            R_e_c_t_a_n_g_l_e___S_z___Cfg = SEPARATE_LINE;
-      string            __R_Sz_Name     = "Sz";
-input color             __R_Sz_Color    = C'64,0,32';
+      string            __R_Sz_Name       = "Sz";
+input color             __R_Sz_Color      = C'64,0,32';
 //-----------------------------------------------------------
       string            R_e_c_t_a_n_g_l_e___D_z___Cfg = SEPARATE_LINE;
-      string            __R_Dz_Name     = "Dz";
-input color             __R_Dz_Color    = C'21,43,37';
+      string            __R_Dz_Name       = "Dz";
+input color             __R_Dz_Color      = C'21,43,37';
+//-----------------------------------------------------------
+      string            R_e_c_t_a_n_g_l_e___S_z1__Cfg = SEPARATE_LINE;
+      string            __R_SzLight_Name  = "SzLight";
+input color             __R_SzLight_Color = C'40,0,21';
+//-----------------------------------------------------------
+      string            R_e_c_t_a_n_g_l_e___D_z2__Cfg = SEPARATE_LINE;
+      string            __R_DzLight_Name  = "DzLight";
+input color             __R_DzLight_Color = C'14,29,24';
 //-----------------------------------------------------------
 
 enum RectangleType
 {
     SYPPLY_TYPE,
     DEMAND_TYPE,
+    SZ_LIGHT_TYPE,
+    DZ_LIGHT_TYPE,
     RECT_NUM,
 };
 
@@ -28,13 +38,17 @@ private:
 
 // Component name
 private:
-    string sOldPr;
-    string cBkgnd;
-    string cLPtr0;
-    string cRPtr0;
+    string iBkgnd;
     string iCText;
     string iLText;
     string iRText;
+
+    string cPointL1;
+    string cPointL2;
+    string cPointR1;
+    string cPointR2;
+    string cPointC1;
+    string cPointC2;
 
 // Value define for Item
 private:
@@ -42,6 +56,9 @@ private:
     datetime time2;
     double   price1;
     double   price2;
+
+    double   centerPrice;
+    datetime centerTime;
 
 public:
     Rectangle(const string name, CommonData* commonData, MouseInfo* mouseInfo);
@@ -74,11 +91,17 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [SYPPLY_TYPE] = __R_Sz_Name ;
-    mPropColor[SYPPLY_TYPE] = __R_Sz_Color;
+    mNameType [SYPPLY_TYPE]   = __R_Sz_Name      ;
+    mPropColor[SYPPLY_TYPE]   = __R_Sz_Color     ;
     //------------------------------------------
-    mNameType [DEMAND_TYPE] = __R_Dz_Name ;
-    mPropColor[DEMAND_TYPE] = __R_Dz_Color;
+    mNameType [DEMAND_TYPE]   = __R_Dz_Name      ;
+    mPropColor[DEMAND_TYPE]   = __R_Dz_Color     ;
+    //------------------------------------------
+    mNameType [SZ_LIGHT_TYPE] = __R_SzLight_Name ;
+    mPropColor[SZ_LIGHT_TYPE] = __R_SzLight_Color;
+    //------------------------------------------
+    mNameType [DZ_LIGHT_TYPE] = __R_DzLight_Name ;
+    mPropColor[DZ_LIGHT_TYPE] = __R_DzLight_Color;
     //------------------------------------------
     mTypeNum = RECT_NUM;
     mIndexType = 0;
@@ -88,13 +111,17 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
 void Rectangle::prepareActive(){}
 void Rectangle::createItem()
 {
-    ObjectCreate(sOldPr, OBJ_TREND     , 0, 0, 0);
+    ObjectCreate(cPointL1, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointL2, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointR1, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointR2, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointC1, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointC2, OBJ_ARROW, 0, 0, 0);
+
     ObjectCreate(iCText, OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iLText, OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iRText, OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(cBkgnd, OBJ_RECTANGLE , 0, 0, 0);
-    ObjectCreate(cLPtr0, OBJ_ARROW     , 0, 0, 0);
-    ObjectCreate(cRPtr0, OBJ_ARROW     , 0, 0, 0);
+    ObjectCreate(iBkgnd, OBJ_RECTANGLE , 0, 0, 0);
 
     updateTypeProperty();
     updateDefaultProperty();
@@ -104,10 +131,8 @@ void Rectangle::createItem()
 }
 void Rectangle::updateDefaultProperty()
 {
-    ObjectSet(cLPtr0, OBJPROP_COLOR, clrNONE);
-    ObjectSet(cRPtr0, OBJPROP_COLOR, clrNONE);
-    ObjectSet(cLPtr0, OBJPROP_ARROWCODE, 255);
-    ObjectSet(cRPtr0, OBJPROP_ARROWCODE, 255);
+    multiSetProp(OBJPROP_ARROWCODE,       4, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    multiSetProp(OBJPROP_COLOR    , clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
 
     ObjectSetText(iCText, "");
     ObjectSetText(iLText, "");
@@ -118,22 +143,26 @@ void Rectangle::updateDefaultProperty()
     ObjectSetInteger(ChartID(), iRText, OBJPROP_ANCHOR, ANCHOR_RIGHT);
 
     multiSetProp(OBJPROP_COLOR     , __R_Text_Color, iCText+iLText+iRText);
-    multiSetProp(OBJPROP_SELECTABLE, false        , iCText+iLText+iRText);
-    // multiSetStrs(OBJPROP_TOOLTIP   , "\n"         , cBkgnd+cLPtr0+cRPtr0+iCText+iLText+iRText);
+    multiSetProp(OBJPROP_SELECTABLE, false         , iCText+iLText+iRText);
+    multiSetStrs(OBJPROP_TOOLTIP   , "\n"          , cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+iBkgnd+iCText+iLText+iRText);
 }
 void Rectangle::updateTypeProperty()
 {
-    SetRectangleBackground(cBkgnd, mPropColor[mIndexType]);
+    SetRectangleBackground(iBkgnd, mPropColor[mIndexType]);
 }
 void Rectangle::activateItem(const string& itemId)
 {
-    sOldPr = itemId + "_sOldPr0";
-    cBkgnd = itemId + "_c0Boder";
-    cLPtr0 = itemId + "_c1LPtr0";
-    cRPtr0 = itemId + "_c1RPtr0";
+    iBkgnd = itemId + "_c0Bkgnd";
     iCText = itemId + "_0iCText";
     iLText = itemId + "_0iLText";
     iRText = itemId + "_0iRText";
+
+    cPointL1 = itemId + "_cPointL1";
+    cPointL2 = itemId + "_cPointL2";
+    cPointR1 = itemId + "_cPointR1";
+    cPointR2 = itemId + "_cPointR2";
+    cPointC1 = itemId + "_cPointC1";
+    cPointC2 = itemId + "_cPointC2";
 }
 void Rectangle::updateItemAfterChangeType()
 {
@@ -144,28 +173,22 @@ void Rectangle::updateItemAfterChangeType()
 }
 void Rectangle::refreshData()
 {
-    double centerPrice;
-    datetime centerTime;
-    if (time1 == time2) time2 = time1 + ChartPeriod()*60*5;
     getCenterPos(time1, time2, price1, price2, centerTime, centerPrice);
-    setItemPos(sOldPr,     0,     0, price1, price2);
-    setItemPos(cBkgnd, time1, time2, price1, price2);
-    //-------------------------------------------------
-    setItemPos(cLPtr0, time1, centerPrice);
-    setItemPos(cRPtr0, time2, centerPrice);
+
+    setItemPos(cPointL1, time1, price1);
+    setItemPos(cPointL2, time1, price2);
+    setItemPos(cPointR1, time2, price1);
+    setItemPos(cPointR2, time2, price2);
+    setItemPos(cPointC1, time1, centerPrice);
+    setItemPos(cPointC2, time2, centerPrice);
+
+    setItemPos(iBkgnd, time1, time2, price1, price2);
     //-------------------------------------------------
     setTextPos(iLText, time1 + ChartPeriod()*60, centerPrice);
     setTextPos(iRText, time2 - ChartPeriod()*60, centerPrice);
     setTextPos(iCText, centerTime, centerPrice);
     //-------------------------------------------------
-    scanBackgroundOverlap(cBkgnd);
-    //-------------------------------------------------
-    double pip =  10000*MathAbs(price2 - price1);
-    double pip20 = pip*1.2;
-    string tooltip = "";
-    tooltip += "Pip: "  +DoubleToString(pip,2)+"\n";
-    tooltip += "Pip20%:"+DoubleToString(pip20,2);
-    multiSetStrs(OBJPROP_TOOLTIP, tooltip, cBkgnd+cLPtr0+cRPtr0+iCText+iLText+iRText);
+    scanBackgroundOverlap(iBkgnd);
 }
 void Rectangle::finishedJobDone(){}
 
@@ -192,29 +215,38 @@ void Rectangle::onMouseClick()
 }
 void Rectangle::onItemDrag(const string &itemId, const string &objId)
 {
-    time1  = (datetime)ObjectGet(cBkgnd, OBJPROP_TIME1);
-    time2  = (datetime)ObjectGet(cBkgnd, OBJPROP_TIME2);
-    price1 =           ObjectGet(cBkgnd, OBJPROP_PRICE1);
-    price2 =           ObjectGet(cBkgnd, OBJPROP_PRICE2);
-    if (objId == cLPtr0)
-    {
-        time1 = (datetime)ObjectGet(cLPtr0, OBJPROP_TIME1);
-    }
-    else if (objId == cRPtr0)
-    {
-        time2 = (datetime)ObjectGet(cRPtr0, OBJPROP_TIME1);
-    }
     if (pCommonData.mCtrlHold)
     {
-        double oldPrice1 = ObjectGet(sOldPr, OBJPROP_PRICE1);
-        double oldPrice2 = ObjectGet(sOldPr, OBJPROP_PRICE2);
-        if (price1 == oldPrice1 && price2 != oldPrice2)
+        if (objId == cPointL1 || objId == cPointR2 || objId == cPointL2 || objId == cPointR1) ObjectSet(objId, OBJPROP_PRICE1, pCommonData.mMousePrice);
+    }
+
+    if (objId == cPointL1 || objId == cPointR2 )
+    {
+        time1  = (datetime)ObjectGet(cPointL1, OBJPROP_TIME1);
+        price1 =           ObjectGet(cPointL1, OBJPROP_PRICE1);
+        time2  = (datetime)ObjectGet(cPointR2, OBJPROP_TIME1);
+        price2 =           ObjectGet(cPointR2, OBJPROP_PRICE1);
+    }
+    else if (objId == cPointL2 || objId == cPointR1)
+    {
+        time1  = (datetime)ObjectGet(cPointL2, OBJPROP_TIME1);
+        price2 =           ObjectGet(cPointL2, OBJPROP_PRICE1);
+        time2  = (datetime)ObjectGet(cPointR1, OBJPROP_TIME1);
+        price1 =           ObjectGet(cPointR1, OBJPROP_PRICE1);
+    }
+    else
+    {
+        time1  = (datetime)ObjectGet(cPointL1, OBJPROP_TIME1);
+        price1 =           ObjectGet(cPointL1, OBJPROP_PRICE1);
+        time2  = (datetime)ObjectGet(cPointR2, OBJPROP_TIME1);
+        price2 =           ObjectGet(cPointR2, OBJPROP_PRICE1);
+        if (objId == cPointC1)
         {
-            price2 = pCommonData.mMousePrice;
+            time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
         }
-        else if (price2 == oldPrice2 && price1 != oldPrice1)
+        else if (objId == cPointC2)
         {
-            price1 = pCommonData.mMousePrice;
+            time2 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
         }
     }
     refreshData();
@@ -222,14 +254,17 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
 void Rectangle::onItemClick(const string &itemId, const string &objId)
 {
     if (objId == iCText || objId == iLText || objId == iRText) return;
-    multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(objId, OBJPROP_SELECTED), cBkgnd+cLPtr0+cRPtr0+iCText+iLText+iRText+sOldPr);
+    int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
+    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+iBkgnd+iCText+iLText+iRText);
+    if (selected) multiSetProp(OBJPROP_COLOR    ,  MidnightBlue, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    else          multiSetProp(OBJPROP_COLOR    ,       clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
 {
     string targetItem;
-    if (objId == cBkgnd)      targetItem = iCText;
-    else if (objId == cRPtr0) targetItem = iRText;
-    else if (objId == cLPtr0) targetItem = iLText;
+    if (objId == iBkgnd)      targetItem = iCText;
+    else if (objId == cPointC2) targetItem = iRText;
+    else if (objId == cPointC1) targetItem = iLText;
     else                      return;
     
     string txtContent = ObjectDescription(objId);
@@ -241,12 +276,6 @@ void Rectangle::onItemChange(const string &itemId, const string &objId)
 }
 void Rectangle::onItemDeleted(const string &itemId, const string &objId)
 {
-    ObjectDelete(cBkgnd);
-    ObjectDelete(cLPtr0);
-    ObjectDelete(cRPtr0);
-    ObjectDelete(iCText);
-    ObjectDelete(iLText);
-    ObjectDelete(iRText);
-    ObjectDelete(sOldPr);
-    removeBackgroundOverlap(cBkgnd);
+    ObjectDelete(iBkgnd);
+    removeBackgroundOverlap(iBkgnd);
 }

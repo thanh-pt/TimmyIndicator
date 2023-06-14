@@ -47,7 +47,7 @@ void unSelectAll()
         if (itemId == currentItemId) continue;
         currentItemId = itemId;
         gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, objName);
-        
+        gController.handleSparamEvent(CHARTEVENT_OBJECT_CLICK, objName);
     }
 }
 
@@ -510,7 +510,7 @@ struct ObjectProperty
 
 void syncItem(ObjectProperty &objProperty, long currChart)
 {
-    ENUM_OBJECT objType = (ENUM_OBJECT)ObjectGetInteger(ChartID(), objProperty.objName, OBJPROP_TYPE);
+    ENUM_OBJECT objType = objProperty.objType;
     if(ObjectFind(currChart, objProperty.objName) < 0)
     {
         ObjectCreate(currChart,
@@ -538,13 +538,21 @@ void syncItem(ObjectProperty &objProperty, long currChart)
     ObjectSetInteger(currChart, objProperty.objName, OBJPROP_WIDTH      , objProperty.objWidth      );
     ObjectSetInteger(currChart, objProperty.objName, OBJPROP_BACK       , objProperty.objBack       );
     ObjectSetInteger(currChart, objProperty.objName, OBJPROP_SELECTABLE , objProperty.objSelectable );
+    if (objType == OBJ_TEXT || objType == OBJ_LABEL)
+    {
     ObjectSetInteger(currChart, objProperty.objName, OBJPROP_FONTSIZE   , objProperty.objFontSize   );
-    ObjectSetInteger(currChart, objProperty.objName, OBJPROP_RAY        , objProperty.objRay        );
-    ObjectSetInteger(currChart, objProperty.objName, OBJPROP_ARROWCODE  , objProperty.objArrowCode  );
     ObjectSetInteger(currChart, objProperty.objName, OBJPROP_ANCHOR     , objProperty.objAnchorPoint);
     ObjectSetString(currChart , objProperty.objName, OBJPROP_TEXT       , objProperty.objText       );
+    }
+    if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE)
+    {
+    ObjectSetInteger(currChart, objProperty.objName, OBJPROP_RAY        , objProperty.objRay        );
+    }
+    if (objType == OBJ_ARROW)
+    {
+    ObjectSetInteger(currChart, objProperty.objName, OBJPROP_ARROWCODE  , objProperty.objArrowCode  );
+    }
     ObjectSetString(currChart , objProperty.objName, OBJPROP_TOOLTIP    , objProperty.objTooltip    );
-    ChartRedraw(currChart);
 }
 
 ObjectProperty gListSelectedObjProp[20];
@@ -563,7 +571,8 @@ void syncSelectedItem()
         if (ObjectGet(objName, OBJPROP_SELECTED) != 0)
         {
             gListSelectedObjProp[selectedItemNum].objName       = objName;
-            gListSelectedObjProp[selectedItemNum].objType       = (ENUM_OBJECT)ObjectGetInteger(ChartID(), objName, OBJPROP_TYPE);
+            ENUM_OBJECT objType = (ENUM_OBJECT)ObjectGetInteger(ChartID(), objName, OBJPROP_TYPE);
+            gListSelectedObjProp[selectedItemNum].objType       = objType;
             gListSelectedObjProp[selectedItemNum].objTime       = (datetime)ObjectGetInteger(ChartID(), objName, OBJPROP_TIME, 0);
             gListSelectedObjProp[selectedItemNum].objTime1      = (datetime)ObjectGetInteger(ChartID(), objName, OBJPROP_TIME, 1);
             gListSelectedObjProp[selectedItemNum].objTime2      = (datetime)ObjectGetInteger(ChartID(), objName, OBJPROP_TIME, 2);
@@ -575,11 +584,20 @@ void syncSelectedItem()
             gListSelectedObjProp[selectedItemNum].objWidth      = (int)ObjectGet(objName, OBJPROP_WIDTH     );
             gListSelectedObjProp[selectedItemNum].objBack       = (int)ObjectGet(objName, OBJPROP_BACK      );
             gListSelectedObjProp[selectedItemNum].objSelectable = (int)ObjectGet(objName, OBJPROP_SELECTABLE);
+            if (objType == OBJ_TEXT || objType == OBJ_LABEL)
+            {
             gListSelectedObjProp[selectedItemNum].objFontSize   = (int)ObjectGet(objName, OBJPROP_FONTSIZE  );
-            gListSelectedObjProp[selectedItemNum].objRay        = (int)ObjectGet(objName, OBJPROP_RAY       );
-            gListSelectedObjProp[selectedItemNum].objArrowCode  = (int)ObjectGet(objName, OBJPROP_ARROWCODE );
             gListSelectedObjProp[selectedItemNum].objAnchorPoint= (int)ObjectGet(objName, OBJPROP_ANCHOR    );
             gListSelectedObjProp[selectedItemNum].objText       = ObjectGetString(ChartID(), objName, OBJPROP_TEXT   );
+            }
+            if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE)
+            {
+            gListSelectedObjProp[selectedItemNum].objRay        = (int)ObjectGet(objName, OBJPROP_RAY       );
+            }
+            if (objType == OBJ_ARROW)
+            {
+            gListSelectedObjProp[selectedItemNum].objArrowCode  = (int)ObjectGet(objName, OBJPROP_ARROWCODE );
+            }
             gListSelectedObjProp[selectedItemNum].objTooltip    = ObjectGetString(ChartID(), objName, OBJPROP_TOOLTIP);
 
             selectedItemNum++;
