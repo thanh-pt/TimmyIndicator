@@ -88,6 +88,7 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
+    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -127,6 +128,7 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mPropStyle[HTREND_TARGT] = __H_Target_Style;
     mPropWidth[HTREND_TARGT] = __H_Target_Width;
     //-----------------------------
+    mTemplateTypes = __H_MainBos_Name + "," + __H_SubBos_Name + "," + __H_LqGrap_Name + "," + __H_BosLG_Name + "," + __H_Target_Name;
     mIndexType = 0;
     mTypeNum   = HTREND_NUM;
 }
@@ -219,6 +221,10 @@ void HTrend::onItemClick(const string &itemId, const string &objId)
     {
         ObjectSet(cMainTrend, OBJPROP_SELECTED, ObjectGet(cText, OBJPROP_SELECTED));
     }
+
+    if ((bool)ObjectGet(cMainTrend, OBJPROP_SELECTED) == true){
+        gTemplates.openTemplates(objId, mTemplateTypes, -1);
+    }
 }
 void HTrend::onItemChange(const string &itemId, const string &objId)
 {
@@ -239,4 +245,10 @@ void HTrend::onItemDeleted(const string &itemId, const string &objId)
 {
     ObjectDelete(cMainTrend);
     ObjectDelete(cText    );
+}
+void HTrend::onUserRequest(const string &itemId, const string &objId)
+{
+    activateItem(itemId);
+    mIndexType = gTemplates.mActivePos;
+    updateTypeProperty();
 }

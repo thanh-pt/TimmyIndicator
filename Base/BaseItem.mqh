@@ -19,6 +19,7 @@ protected:
     int         mIndexType;
     int         mTypeNum;
     string      mNameType[MAX_TYPE];
+    string      mTemplateTypes;
 
 protected:
     string createMouseInfo();

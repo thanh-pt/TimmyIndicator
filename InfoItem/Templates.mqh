@@ -45,6 +45,7 @@ public:
 public:
     void openTemplates(const string objId, const string data, const int activePos)
     {
+        if (mActiveObjectId != "") clearTemplates();
         mActiveObjectId = objId;
         mActivePos = activePos;
         mSize = StringSplit(data,',',mTemplates);

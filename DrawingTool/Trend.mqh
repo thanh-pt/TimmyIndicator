@@ -23,7 +23,7 @@ input string     T_r_e_n_d___E_x_p_e_c_t_O_d_r_F_l_w___Cfg = SEPARATE_LINE;
       string     __T_EptOdrFlw_Name  = "Mitigate";
       string     __T_EptOdrFlw_Text  = "mtg";
 input color      __T_EptOdrFlw_Color = clrGold;
-input LINE_STYLE __T_EptOdrFlw_Style = STYLE_DOT;
+input LINE_STYLE __T_EptOdrFlw_Style = STYLE_SOLID;
       int        __T_EptOdrFlw_Width = 1;
       bool       __T_EptOdrFlw_Arrow = true;
 //--------------------------------------------
@@ -92,6 +92,7 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
+    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -122,6 +123,7 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_EOF  ] = __T_EptOdrFlw_Width;
     mShowArrow[TREND_EOF  ] = __T_EptOdrFlw_Arrow;
     //--------------------------------------------
+    mTemplateTypes = __T_Normal_Name + "," + __T_Liquidity_Name + "," + __T_EptOdrFlw_Name;
     mTypeNum = TREND_NUM;
     mIndexType = 0;
 }
@@ -268,6 +270,9 @@ void Trend::onItemClick(const string &itemId, const string &objId)
     if (objId == iAngle0) return;
     if (objId == iArrowT) return;
     multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(objId, OBJPROP_SELECTED), cPoint1+cPoint2+cMTrend+cLbText);
+    if ((bool)ObjectGet(cMTrend, OBJPROP_SELECTED) == true){
+    gTemplates.openTemplates(objId, mTemplateTypes, -1);
+    }
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
 {
@@ -318,4 +323,10 @@ void Trend::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(cLbText);
     ObjectDelete(iAngle0);
     ObjectDelete(iArrowT);
+}
+void Trend::onUserRequest(const string &itemId, const string &objId)
+{
+    activateItem(itemId);
+    mIndexType = gTemplates.mActivePos;
+    updateTypeProperty();
 }
