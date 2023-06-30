@@ -1,6 +1,15 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
+
+//--------------------------------------------
+input string     T_r_e_n_d___N_o_r_m_a_l___Cfg = SEPARATE_LINE;
+      string     __T_Normal_Name  = "Normal";
+      string     __T_Normal_Text  = "";
+input color      __T_Normal_Color = clrLightGray;
+input LINE_STYLE __T_Normal_Style = STYLE_SOLID;
+      int        __T_Normal_Width = 1;
+      bool       __T_Normal_Arrow = false;
 //--------------------------------------------
 input string     T_r_e_n_d___L_i_q_u_i_d_i_t_y___Cfg = SEPARATE_LINE;
       string     __T_Liquidity_Name  = "Liquidity";
@@ -11,8 +20,8 @@ input LINE_STYLE __T_Liquidity_Style = STYLE_SOLID;
       bool       __T_Liquidity_Arrow = false;
 //--------------------------------------------
 input string     T_r_e_n_d___E_x_p_e_c_t_O_d_r_F_l_w___Cfg = SEPARATE_LINE;
-      string     __T_EptOdrFlw_Name  = "EOF";
-      string     __T_EptOdrFlw_Text  = "EOF";
+      string     __T_EptOdrFlw_Name  = "Mitigate";
+      string     __T_EptOdrFlw_Text  = "mtg";
 input color      __T_EptOdrFlw_Color = clrGold;
 input LINE_STYLE __T_EptOdrFlw_Style = STYLE_DOT;
       int        __T_EptOdrFlw_Width = 1;
@@ -27,6 +36,7 @@ TODO:
 
 enum TrendType
 {
+    TREND_NML,
     TREND_LQ,
     TREND_EOF,
     TREND_NUM,
@@ -91,6 +101,13 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
+    mNameType [TREND_NML  ] = __T_Normal_Name ;
+    mDispText [TREND_NML  ] = __T_Normal_Text ;
+    mColorType[TREND_NML  ] = __T_Normal_Color;
+    mStyleType[TREND_NML  ] = __T_Normal_Style;
+    mWidthType[TREND_NML  ] = __T_Normal_Width;
+    mShowArrow[TREND_NML  ] = __T_Normal_Arrow;
+    //--------------------------------------------
     mNameType [TREND_LQ   ] = __T_Liquidity_Name ;
     mDispText [TREND_LQ   ] = __T_Liquidity_Text ;
     mColorType[TREND_LQ   ] = __T_Liquidity_Color;

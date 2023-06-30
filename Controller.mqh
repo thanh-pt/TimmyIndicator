@@ -196,8 +196,8 @@ void Controller::handleKeyEvent(const long &key)
         return;
     }
     CHECK_ACTIVE_RETURN
-    mActive = activeTarget;
     unSelectAll();
+    mActive = activeTarget;
     mListItem[mActive].startActivate(mFinishedJobCb);
 }
 

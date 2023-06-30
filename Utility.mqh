@@ -154,8 +154,8 @@ void EraseLowerTF()
             {
                 continue;
             }
+            ObjectDelete(objName);
         }
-        ObjectDelete(objName);
     }
 }
 
@@ -373,7 +373,7 @@ color increaseLum(color c)
         h /= 6;
     }
     // 2. Increase lum
-    l += 0.1;
+    l -= 0.1;
     // 3. HSL -> RGB
     if (0 == s) r = g = b = l; // achromatic
     else
@@ -424,8 +424,8 @@ void scanBackgroundOverlap(string target)
         if (StringFind(objName, "Rectangle") == -1) continue;
         if (objName == target) continue;
 
-        double cprice1  =           ObjectGet(objName, OBJPROP_PRICE1);
-        double cprice2  =           ObjectGet(objName, OBJPROP_PRICE2);
+        double cprice1  = ObjectGet(objName, OBJPROP_PRICE1);
+        double cprice2  = ObjectGet(objName, OBJPROP_PRICE2);
         if (cprice1 > cprice2)
         {
             double tempP = cprice1;
@@ -459,7 +459,7 @@ void scanBackgroundOverlap(string target)
             ObjectSet(bgItem   , OBJPROP_SELECTABLE, false);
             ObjectSetString(ChartID(), bgItem, OBJPROP_TOOLTIP, "\n");
         }
-        SetRectangleBackground(bgItem, increaseLum((color)ObjectGet(objName, OBJPROP_COLOR)));
+        SetRectangleBackground(bgItem, increaseLum((color)ObjectGet(target, OBJPROP_COLOR)));
         if (cprice1 < price1) cprice1 = price1;
         if (cprice2 > price2) cprice2 = price2;
         if (ctime1 < time1) ctime1 = time1;
@@ -579,7 +579,14 @@ void syncSelectedItem()
             gListSelectedObjProp[selectedItemNum].objPrice      = ObjectGetDouble(ChartID(), objName, OBJPROP_PRICE, 0);
             gListSelectedObjProp[selectedItemNum].objPrice1     = ObjectGetDouble(ChartID(), objName, OBJPROP_PRICE, 1);
             gListSelectedObjProp[selectedItemNum].objPrice2     = ObjectGetDouble(ChartID(), objName, OBJPROP_PRICE, 2);
-            gListSelectedObjProp[selectedItemNum].objColor      = (color)ObjectGet(objName, OBJPROP_COLOR     );
+            if (StringFind(objName, "_cPoint") != -1)
+            {
+                gListSelectedObjProp[selectedItemNum].objColor = clrNONE;
+            }
+            else
+            {
+                gListSelectedObjProp[selectedItemNum].objColor  = (color)ObjectGet(objName, OBJPROP_COLOR);
+            }
             gListSelectedObjProp[selectedItemNum].objStyle      = (int)ObjectGet(objName, OBJPROP_STYLE     );
             gListSelectedObjProp[selectedItemNum].objWidth      = (int)ObjectGet(objName, OBJPROP_WIDTH     );
             gListSelectedObjProp[selectedItemNum].objBack       = (int)ObjectGet(objName, OBJPROP_BACK      );

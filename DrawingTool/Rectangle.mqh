@@ -38,7 +38,7 @@ private:
 
 // Component name
 private:
-    string iBkgnd;
+    string cBkgnd;
     string iCText;
     string iLText;
     string iRText;
@@ -121,7 +121,7 @@ void Rectangle::createItem()
     ObjectCreate(iCText, OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iLText, OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iRText, OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(iBkgnd, OBJ_RECTANGLE , 0, 0, 0);
+    ObjectCreate(cBkgnd, OBJ_RECTANGLE , 0, 0, 0);
 
     updateTypeProperty();
     updateDefaultProperty();
@@ -144,15 +144,15 @@ void Rectangle::updateDefaultProperty()
 
     multiSetProp(OBJPROP_COLOR     , __R_Text_Color, iCText+iLText+iRText);
     multiSetProp(OBJPROP_SELECTABLE, false         , iCText+iLText+iRText);
-    multiSetStrs(OBJPROP_TOOLTIP   , "\n"          , cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+iBkgnd+iCText+iLText+iRText);
+    multiSetStrs(OBJPROP_TOOLTIP   , "\n"          , cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cBkgnd+iCText+iLText+iRText);
 }
 void Rectangle::updateTypeProperty()
 {
-    SetRectangleBackground(iBkgnd, mPropColor[mIndexType]);
+    SetRectangleBackground(cBkgnd, mPropColor[mIndexType]);
 }
 void Rectangle::activateItem(const string& itemId)
 {
-    iBkgnd = itemId + "_c0Bkgnd";
+    cBkgnd = itemId + "_c0Bkgnd";
     iCText = itemId + "_0iCText";
     iLText = itemId + "_0iLText";
     iRText = itemId + "_0iRText";
@@ -182,13 +182,13 @@ void Rectangle::refreshData()
     setItemPos(cPointC1, time1, centerPrice);
     setItemPos(cPointC2, time2, centerPrice);
 
-    setItemPos(iBkgnd, time1, time2, price1, price2);
+    setItemPos(cBkgnd, time1, time2, price1, price2);
     //-------------------------------------------------
     setTextPos(iLText, time1 + ChartPeriod()*60, centerPrice);
     setTextPos(iRText, time2 - ChartPeriod()*60, centerPrice);
     setTextPos(iCText, centerTime, centerPrice);
     //-------------------------------------------------
-    scanBackgroundOverlap(iBkgnd);
+    scanBackgroundOverlap(cBkgnd);
 }
 void Rectangle::finishedJobDone(){}
 
@@ -249,20 +249,30 @@ void Rectangle::onItemDrag(const string &itemId, const string &objId)
             time2 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
         }
     }
+    if (objId == cBkgnd)
+    {
+        if (MathAbs(time2-time1)/ChartPeriod()/60 > 15)
+        {
+            time1  = (datetime)ObjectGet(cBkgnd, OBJPROP_TIME1);
+            time2  = (datetime)ObjectGet(cBkgnd, OBJPROP_TIME2);
+            price1 =           ObjectGet(cBkgnd, OBJPROP_PRICE1);
+            price2 =           ObjectGet(cBkgnd, OBJPROP_PRICE2);
+        }
+    }
     refreshData();
 }
 void Rectangle::onItemClick(const string &itemId, const string &objId)
 {
     if (objId == iCText || objId == iLText || objId == iRText) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+iBkgnd+iCText+iLText+iRText);
-    if (selected) multiSetProp(OBJPROP_COLOR    ,  MidnightBlue, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
-    else          multiSetProp(OBJPROP_COLOR    ,       clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    if (selected) unSelectAll();
+    multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cBkgnd+iCText+iLText+iRText);
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
 {
     string targetItem;
-    if (objId == iBkgnd)      targetItem = iCText;
+    if (objId == cBkgnd)      targetItem = iCText;
     else if (objId == cPointC2) targetItem = iRText;
     else if (objId == cPointC1) targetItem = iLText;
     else                      return;
@@ -276,6 +286,8 @@ void Rectangle::onItemChange(const string &itemId, const string &objId)
 }
 void Rectangle::onItemDeleted(const string &itemId, const string &objId)
 {
-    ObjectDelete(iBkgnd);
-    removeBackgroundOverlap(iBkgnd);
+    ObjectDelete(iCText);
+    ObjectDelete(iLText);
+    ObjectDelete(iRText);
+    removeBackgroundOverlap(cBkgnd);
 }

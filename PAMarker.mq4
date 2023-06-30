@@ -1,6 +1,7 @@
 #property strict
 
-input bool AlertActive = false;
+input bool  AlertActive = false;
+input color gColorMousePoint = clrGray;
 #include "InfoItem/CrossHair.mqh"
 #include "InfoItem/MouseInfo.mqh"
 #include "Controller.mqh"

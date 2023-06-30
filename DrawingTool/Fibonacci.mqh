@@ -59,12 +59,22 @@ private:
     string iTxt4;
     string iTxt5;
 
+    string cPointL1;
+    string cPointL2;
+    string cPointR1;
+    string cPointR2;
+    string cPointC1;
+    string cPointC2;
+
 // Value define for Item
 private:
     datetime time0;
     datetime time1;
     double price0;
     double price1;
+
+    double   centerPrice;
+    datetime centerTime;
 
 public:
     Fibonacci(const string name, CommonData* commonData, MouseInfo* mouseInfo);
@@ -121,6 +131,13 @@ void Fibonacci::createItem()
     if (__F_5_Color != clrNONE && __F_5_Text != "") ObjectCreate(iTxt5, OBJ_TEXT, 0, 0, 0);
     ObjectCreate(cMLne, OBJ_RECTANGLE, 0, 0, 0);
 
+    ObjectCreate(cPointL1, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointL2, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointR1, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointR2, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointC1, OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(cPointC2, OBJ_ARROW, 0, 0, 0);
+
     updateTypeProperty();
     updateDefaultProperty();
 
@@ -135,11 +152,17 @@ void Fibonacci::updateDefaultProperty()
     multiSetProp(OBJPROP_SELECTABLE   , false     , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
                                                    +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
     multiSetInts(OBJPROP_ANCHOR, ANCHOR_RIGHT     , iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
+
+    multiSetProp(OBJPROP_ARROWCODE,       4, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    multiSetProp(OBJPROP_COLOR    , clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     
     multiSetStrs(OBJPROP_TOOLTIP, "\n",
                             cMLne
                             +iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
                             +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
+    
+    multiSetStrs(OBJPROP_TOOLTIP   , "\n",
+                            cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
 }
 void Fibonacci::updateTypeProperty()
 {
@@ -174,6 +197,13 @@ void Fibonacci::activateItem(const string& itemId)
     iTxt3 = itemId + "_iTxt3";
     iTxt4 = itemId + "_iTxt4";
     iTxt5 = itemId + "_iTxt5";
+
+    cPointL1 = itemId + "_cPointL1";
+    cPointL2 = itemId + "_cPointL2";
+    cPointR1 = itemId + "_cPointR1";
+    cPointR2 = itemId + "_cPointR2";
+    cPointC1 = itemId + "_cPointC1";
+    cPointC2 = itemId + "_cPointC2";
 }
 void Fibonacci::updateItemAfterChangeType(){}
 void Fibonacci::refreshData()
@@ -197,6 +227,15 @@ void Fibonacci::refreshData()
     setTextPos(iTxt3, time0, price3);
     setTextPos(iTxt4, time0, price4);
     setTextPos(iTxt5, time0, price5);
+    //-------------------------------------------------
+    getCenterPos(time0, time1, price0, price1, centerTime, centerPrice);
+
+    setItemPos(cPointL1, time0, price0);
+    setItemPos(cPointL2, time0, price1);
+    setItemPos(cPointR1, time1, price0);
+    setItemPos(cPointR2, time1, price1);
+    setItemPos(cPointC1, time0, centerPrice);
+    setItemPos(cPointC2, time1, centerPrice);
 }
 void Fibonacci::finishedJobDone(){}
 
@@ -223,28 +262,62 @@ void Fibonacci::onMouseClick()
 }
 void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 {
-    time0   = (datetime)ObjectGet(cMLne, OBJPROP_TIME1);
-    time1   = (datetime)ObjectGet(cMLne, OBJPROP_TIME2);
-    price0  =           ObjectGet(cMLne, OBJPROP_PRICE1);
-    price1  =           ObjectGet(cMLne, OBJPROP_PRICE2);
-
-    if (pCommonData.mCtrlHold)
+    if (objId == cMLne)
     {
-        double oldPrice0 = ObjectGet(iFib0, OBJPROP_PRICE1);
-        double oldPrice1 = ObjectGet(iFib1, OBJPROP_PRICE1);
-        if (price0 == oldPrice0 && price1 != oldPrice1)
+        time0   = (datetime)ObjectGet(cMLne, OBJPROP_TIME1);
+        time1   = (datetime)ObjectGet(cMLne, OBJPROP_TIME2);
+        price0  =           ObjectGet(cMLne, OBJPROP_PRICE1);
+        price1  =           ObjectGet(cMLne, OBJPROP_PRICE2);
+    }
+    else
+    {
+        if (pCommonData.mCtrlHold)
         {
-            price1 = pCommonData.mMousePrice;
+            if (objId == cPointL1 || objId == cPointR2 || objId == cPointL2 || objId == cPointR1) ObjectSet(objId, OBJPROP_PRICE1, pCommonData.mMousePrice);
         }
-        else if (price0 != oldPrice0 && price1 == oldPrice1)
+
+        if (objId == cPointL1 || objId == cPointR2 )
         {
-            price0 = pCommonData.mMousePrice;
+            time0  = (datetime)ObjectGet(cPointL1, OBJPROP_TIME1);
+            price0 =           ObjectGet(cPointL1, OBJPROP_PRICE1);
+            time1  = (datetime)ObjectGet(cPointR2, OBJPROP_TIME1);
+            price1 =           ObjectGet(cPointR2, OBJPROP_PRICE1);
+        }
+        else if (objId == cPointL2 || objId == cPointR1)
+        {
+            time0  = (datetime)ObjectGet(cPointL2, OBJPROP_TIME1);
+            price1 =           ObjectGet(cPointL2, OBJPROP_PRICE1);
+            time1  = (datetime)ObjectGet(cPointR1, OBJPROP_TIME1);
+            price0 =           ObjectGet(cPointR1, OBJPROP_PRICE1);
+        }
+        else
+        {
+            time0  = (datetime)ObjectGet(cPointL1, OBJPROP_TIME1);
+            price0 =           ObjectGet(cPointL1, OBJPROP_PRICE1);
+            time1  = (datetime)ObjectGet(cPointR2, OBJPROP_TIME1);
+            price1 =           ObjectGet(cPointR2, OBJPROP_PRICE1);
+            if (objId == cPointC1)
+            {
+                time0 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
+            }
+            else if (objId == cPointC2)
+            {
+                time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
+            }
         }
     }
 
     refreshData();
 }
-void Fibonacci::onItemClick(const string &itemId, const string &objId){}
+void Fibonacci::onItemClick(const string &itemId, const string &objId)
+{
+    if (StringFind(objId, "_c") == -1) return;
+
+    int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
+    if (selected) unSelectAll();
+    multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cMLne);
+}
 void Fibonacci::onItemChange(const string &itemId, const string &objId){}
 void Fibonacci::onItemDeleted(const string &itemId, const string &objId)
 {

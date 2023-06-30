@@ -4,14 +4,14 @@
 //--------------------------------------------
 input string     H_T_r_e_n_d___M_a_i_n_B_o_s___Cfg = SEPARATE_LINE;
       string     __H_MainBos_Name    = "bos";
-      string     __H_MainBos_Text    = "";
+      string     __H_MainBos_Text    = "bos";
 input color      __H_MainBos_Color   = clrOlive;
 input LINE_STYLE __H_MainBos_Style   = STYLE_SOLID;
-      int        __H_MainBos_Width   = 1;
+      int        __H_MainBos_Width   = 2;
 //--------------------------------------------
 input string     H_T_r_e_n_d___S_u_b_B_o_s___Cfg = SEPARATE_LINE;
       string     __H_SubBos_Name     = "sbos";
-      string     __H_SubBos_Text     = "";
+      string     __H_SubBos_Text     = "sbos";
 input color      __H_SubBos_Color    = clrDarkSlateGray;
 input LINE_STYLE __H_SubBos_Style    = STYLE_SOLID;
       int        __H_SubBos_Width    = 1;

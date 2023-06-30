@@ -5,6 +5,9 @@ input string C_a_l_l_O_u_t___Cfg = SEPARATE_LINE;
 input color  __C_Color    = clrWhite;
 input int    __C_FontSize = 10;
 
+
+string UNDER_LINE = "________________________________________________________________________________________";
+
 class CallOut : public BaseItem
 {
 // Internal Value
@@ -54,7 +57,7 @@ CallOut::CallOut(const string name, CommonData* commonData, MouseInfo* mouseInfo
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [0] = "CallOut1";
+    mNameType [0] = "CallOut";
     mIndexType = 0;
     mTypeNum = 0;
 }
@@ -64,7 +67,7 @@ void CallOut::prepareActive(){}
 void CallOut::createItem()
 {
     ObjectCreate(cPtLine, OBJ_TREND, 0, 0, 0);
-    ObjectCreate(iUdLine, OBJ_TREND, 0, 0, 0);
+    ObjectCreate(iUdLine, OBJ_TEXT , 0, 0, 0);
     ObjectCreate(cLbText, OBJ_TEXT , 0, 0, 0);
     updateTypeProperty();
     updateDefaultProperty();
@@ -79,9 +82,9 @@ void CallOut::updateDefaultProperty()
 void CallOut::updateTypeProperty()
 {
     SetObjectStyle(cPtLine, __C_Color, 0, 1);
-    SetObjectStyle(iUdLine, __C_Color, 0, 2);
     //-------------------------------------------------------------
     ObjectSetText(cLbText, DoubleToString(pCommonData.mMousePrice, 5), __C_FontSize, NULL, __C_Color);
+    ObjectSetText(iUdLine,                                    "_____", __C_FontSize, NULL, __C_Color);
     ObjectSet(cLbText, OBJPROP_SELECTED, true);
 }
 void CallOut::activateItem(const string& itemId)
@@ -95,24 +98,19 @@ void CallOut::refreshData()
 {
     setItemPos(cPtLine, time1, time2, price1, price2);
     setItemPos(cLbText, time2, price2);
+    setItemPos(iUdLine, time2, price2);
     //-------------------------------------------------------------
-    int x, y, offset;
-    offset = (int)((double)(StringLen(ObjectDescription(cLbText))*__C_FontSize) * 1/2);
     if (time1 > time2)
     {
         ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-        offset *= (-1);
+        ObjectSetInteger(ChartID(), iUdLine, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
     }
     else
     {
         ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        ObjectSetInteger(ChartID(), iUdLine, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
     }
-    datetime time3;
-    double price3;
-    ChartTimePriceToXY(ChartID(), 0, time2, price2, x, y);
-    ChartXYToTimePrice(ChartID(), x + offset, y, offset, time3, price3);
-    //-------------------------------------------------------------
-    setItemPos(iUdLine, time2, time3, price2, price2);
+    ObjectSetText(iUdLine, StringSubstr(UNDER_LINE, 0, StringLen(ObjectDescription(cLbText))));
 }
 void CallOut::finishedJobDone(){}
 
