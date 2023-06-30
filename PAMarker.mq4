@@ -125,6 +125,7 @@ void OnChartEvent(const int id,
     // event need sparam
     case CHARTEVENT_OBJECT_CLICK:
     case CHARTEVENT_OBJECT_DELETE:
+        gTemplates.onItemClick(sparam);
         gCrossHair.onObjectDeleted(sparam);
         gMouseInfo.onObjectDeleted(sparam);
     case CHARTEVENT_OBJECT_DRAG:
