@@ -50,6 +50,7 @@ void unSelectAll()
         currentItemId = itemId;
         gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, objName);
     }
+    gTemplates.clearTemplates();
 }
 
 void unSelectAllExcept(string objId)
@@ -75,6 +76,7 @@ void unSelectAllExcept(string objId)
         currentItemId = itemId;
         gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, objName);
     }
+    gTemplates.clearTemplates();
 }
 
 string findItemUnderMouse(int posX, int posY)

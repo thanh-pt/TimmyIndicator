@@ -13,11 +13,11 @@ input color             __R_Sz_Color      = C'64,0,32';
 input color             __R_Dz_Color      = C'21,43,37';
 //-----------------------------------------------------------
       string            R_e_c_t_a_n_g_l_e___S_z1__Cfg = SEPARATE_LINE;
-      string            __R_SzLight_Name  = "SzLight";
+      string            __R_SzLight_Name  = "l.Sz";
 input color             __R_SzLight_Color = C'40,0,21';
 //-----------------------------------------------------------
       string            R_e_c_t_a_n_g_l_e___D_z2__Cfg = SEPARATE_LINE;
-      string            __R_DzLight_Name  = "DzLight";
+      string            __R_DzLight_Name  = "l.Dz";
 input color             __R_DzLight_Color = C'14,29,24';
 //-----------------------------------------------------------
 
@@ -35,6 +35,8 @@ class Rectangle : public BaseItem
 // Internal Value
 private:
     color mPropColor[MAX_TYPE];
+
+    string mTypeTemplates;
 
 // Component name
 private:
@@ -82,6 +84,7 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
+    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -103,6 +106,7 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
     mNameType [DZ_LIGHT_TYPE] = __R_DzLight_Name ;
     mPropColor[DZ_LIGHT_TYPE] = __R_DzLight_Color;
     //------------------------------------------
+    mTypeTemplates = __R_Sz_Name + "," + __R_Dz_Name + "," + __R_SzLight_Name + "," + __R_DzLight_Name;
     mTypeNum = RECT_NUM;
     mIndexType = 0;
 }
@@ -271,7 +275,10 @@ void Rectangle::onItemClick(const string &itemId, const string &objId)
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
     multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cBkgnd+iCText+iLText+iRText);
     multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
-    if (selected) unSelectAllExcept(itemId);
+    if (selected) {
+        unSelectAllExcept(itemId);
+        gTemplates.openTemplates(objId, mTypeTemplates, -1);
+    }
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
 {
@@ -294,4 +301,10 @@ void Rectangle::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(iLText);
     ObjectDelete(iRText);
     removeBackgroundOverlap(cBkgnd);
+}
+void Rectangle::onUserRequest(const string &itemId, const string &objId)
+{
+    activateItem(itemId);
+    mIndexType = gTemplates.mActivePos;
+    updateTypeProperty();
 }

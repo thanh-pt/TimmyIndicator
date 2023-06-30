@@ -12,6 +12,7 @@ private:
     string mActiveObjectId;
     string mTemplates[];
     int mSize;
+public:
     int mActivePos;
 
 public:
@@ -27,27 +28,23 @@ public:
         int k=StringSplit(objId,'_',sparamItems);
         if (k != 2) return;
 
-        int selectedItemIdx = StrToInteger(sparamItems[1]);
+        mActivePos = StrToInteger(sparamItems[1]);
         string itemBgnd;
         for (int i = 0; i < mSize; i++)
         {
             itemBgnd = "TemplatesBgnd_"+IntegerToString(i);
-            if (i == selectedItemIdx){
+            if (i == mActivePos){
                 ObjectSet(itemBgnd, OBJPROP_COLOR, Templates_BgColor2);
             }
             else {
                 ObjectSet(itemBgnd, OBJPROP_COLOR, Templates_BgColor1);
             }
         }
-        gController.handleSparamEvent(CHART_EVENT_SELECT_TEMPLATES, sparamItems[1]);
+        gController.handleSparamEvent(CHART_EVENT_SELECT_TEMPLATES, mActiveObjectId);
     }
 public:
     void openTemplates(const string objId, const string data, const int activePos)
     {
-        for (int i = 0; i < 10; i++)
-        {
-            deleteItem(i);
-        }
         mActiveObjectId = objId;
         mActivePos = activePos;
         mSize = StringSplit(data,',',mTemplates);
@@ -59,6 +56,10 @@ public:
     void clearTemplates()
     {
         mActiveObjectId = "";
+        for (int i = 0; i < 10; i++)
+        {
+            deleteItem(i);
+        }
     }
 private:
     void drawItem(const string& name, int pos)
