@@ -189,7 +189,7 @@ void LongShort::activateItem(const string& itemId)
     cPointTP = itemId + "_cPointTP";
     cPointSL = itemId + "_cPointSL";
     cPointEN = itemId + "_cPointEN";
-    cPointWD = itemId + "_cPointWD";
+    cPointWD = itemId + "_ckPointWD";
     cPointBE = itemId + "_cPointBE";
 }
 void LongShort::updateItemAfterChangeType(){}
@@ -385,7 +385,7 @@ void LongShort::showHideHistory()
     for (int i = ObjectsTotal() - 1; i >= 0; i--)
     {
         string objName = ObjectName(i);
-        if (StringFind(objName, "cPointWD") == -1)
+        if (StringFind(objName, "ckPointWD") == -1)
         {
             continue;
         }

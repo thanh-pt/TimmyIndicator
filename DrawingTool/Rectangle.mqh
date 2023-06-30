@@ -189,6 +189,10 @@ void Rectangle::refreshData()
     setTextPos(iCText, centerTime, centerPrice);
     //-------------------------------------------------
     scanBackgroundOverlap(cBkgnd);
+    //-------------------------------------------------
+    int selected = (int)ObjectGet(cBkgnd, OBJPROP_SELECTED);
+    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cBkgnd+iCText+iLText+iRText);
+    multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
 }
 void Rectangle::finishedJobDone(){}
 
@@ -265,9 +269,9 @@ void Rectangle::onItemClick(const string &itemId, const string &objId)
 {
     if (objId == iCText || objId == iLText || objId == iRText) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    if (selected) unSelectAll();
-    multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cBkgnd+iCText+iLText+iRText);
+    multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    if (selected) unSelectAllExcept(itemId);
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
 {

@@ -31,8 +31,8 @@ input LINE_STYLE __H_BosLG_Style     = STYLE_DASHDOT;
       int        __H_BosLG_Width     = 1;
 //--------------------------------------------
 input string     H_T_r_e_n_d___T_a_r_g_e_t___Cfg = SEPARATE_LINE;
-      string     __H_Target_Name     = "target";
-      string     __H_Target_Text     = "target";
+      string     __H_Target_Name     = "eof";
+      string     __H_Target_Text     = "eof";
 input color      __H_Target_Color    = clrGreen;
 input LINE_STYLE __H_Target_Style    = STYLE_SOLID;
       int        __H_Target_Width    = 1;

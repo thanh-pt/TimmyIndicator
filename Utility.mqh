@@ -38,7 +38,7 @@ void unSelectAll()
         if (ObjectGet(objName, OBJPROP_SELECTED) == false) continue;
         ObjectSet(objName, OBJPROP_SELECTED, 0);
 
-        if (StringFind(objName, "_c") == -1) continue;
+        if (StringFind(objName, "_c0") == -1) continue;
         k=StringSplit(objName,'_',sparamItems);
         
         if (k != 3) continue;
@@ -47,7 +47,31 @@ void unSelectAll()
         if (itemId == currentItemId) continue;
         currentItemId = itemId;
         gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, objName);
-        gController.handleSparamEvent(CHARTEVENT_OBJECT_CLICK, objName);
+    }
+}
+
+void unSelectAllExcept(string objId)
+{
+    string currentItemId;
+    string sparamItems[];
+    int k;
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
+    {
+        string objName = ObjectName(i);
+        if (StringFind(objName, objId) != -1) continue;
+
+        if (ObjectGet(objName, OBJPROP_SELECTED) == false) continue;
+        ObjectSet(objName, OBJPROP_SELECTED, 0);
+
+        if (StringFind(objName, "_c0") == -1) continue;
+        k=StringSplit(objName,'_',sparamItems);
+        
+        if (k != 3) continue;
+        string itemId = sparamItems[0] + "_" + sparamItems[1];
+        
+        if (itemId == currentItemId) continue;
+        currentItemId = itemId;
+        gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, objName);
     }
 }
 

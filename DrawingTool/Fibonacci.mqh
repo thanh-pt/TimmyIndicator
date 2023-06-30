@@ -45,7 +45,7 @@ private:
 
 // Component name
 private:
-    string cMLne;
+    string ckLne;
     string iFib0;
     string iFib1;
     string iFib2;
@@ -129,7 +129,7 @@ void Fibonacci::createItem()
     if (__F_3_Color != clrNONE && __F_3_Text != "") ObjectCreate(iTxt3, OBJ_TEXT, 0, 0, 0);
     if (__F_4_Color != clrNONE && __F_4_Text != "") ObjectCreate(iTxt4, OBJ_TEXT, 0, 0, 0);
     if (__F_5_Color != clrNONE && __F_5_Text != "") ObjectCreate(iTxt5, OBJ_TEXT, 0, 0, 0);
-    ObjectCreate(cMLne, OBJ_RECTANGLE, 0, 0, 0);
+    ObjectCreate(ckLne, OBJ_RECTANGLE, 0, 0, 0);
 
     ObjectCreate(cPointL1, OBJ_ARROW, 0, 0, 0);
     ObjectCreate(cPointL2, OBJ_ARROW, 0, 0, 0);
@@ -157,7 +157,7 @@ void Fibonacci::updateDefaultProperty()
     multiSetProp(OBJPROP_COLOR    , clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     
     multiSetStrs(OBJPROP_TOOLTIP, "\n",
-                            cMLne
+                            ckLne
                             +iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
                             +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
     
@@ -173,7 +173,7 @@ void Fibonacci::updateTypeProperty()
     ObjectSetText(iTxt4, __F_4_Text + "  ", 7, NULL, __F_4_Color);
     ObjectSetText(iTxt5, __F_5_Text + "  ", 7, NULL, __F_5_Color);
     //------------------------------------------
-    SetRectangleBackground(cMLne, __F_Bkgrd_Color);
+    SetRectangleBackground(ckLne, __F_Bkgrd_Color);
     //------------------------------------------
     ObjectSet(iFib0, OBJPROP_COLOR, __F_0_Color);
     ObjectSet(iFib1, OBJPROP_COLOR, __F_1_Color);
@@ -184,7 +184,7 @@ void Fibonacci::updateTypeProperty()
 }
 void Fibonacci::activateItem(const string& itemId)
 {
-    cMLne = itemId + "_cMLne";
+    ckLne = itemId + "_c0Lne";
     iFib0 = itemId + "_iFib0";
     iFib1 = itemId + "_iFib1";
     iFib2 = itemId + "_iFib2";
@@ -213,7 +213,7 @@ void Fibonacci::refreshData()
     double price4 = price1-__F_4_Ratio*(price1-price0);
     double price5 = price1-__F_5_Ratio*(price1-price0);
     //-------------------------------------------------
-    setItemPos(cMLne, time0, time1, price0, price1);
+    setItemPos(ckLne, time0, time1, price0, price1);
     setItemPos(iFib0, time0, time1, price0, price0);
     setItemPos(iFib1, time0, time1, price1, price1);
     setItemPos(iFib2, time0, time1, price2, price2);
@@ -236,6 +236,10 @@ void Fibonacci::refreshData()
     setItemPos(cPointR2, time1, price1);
     setItemPos(cPointC1, time0, centerPrice);
     setItemPos(cPointC2, time1, centerPrice);
+    //-------------------------------------------------
+    int selected = (int)ObjectGet(ckLne, OBJPROP_SELECTED);
+    multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+ckLne);
 }
 void Fibonacci::finishedJobDone(){}
 
@@ -262,12 +266,12 @@ void Fibonacci::onMouseClick()
 }
 void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 {
-    if (objId == cMLne)
+    if (objId == ckLne)
     {
-        time0   = (datetime)ObjectGet(cMLne, OBJPROP_TIME1);
-        time1   = (datetime)ObjectGet(cMLne, OBJPROP_TIME2);
-        price0  =           ObjectGet(cMLne, OBJPROP_PRICE1);
-        price1  =           ObjectGet(cMLne, OBJPROP_PRICE2);
+        time0   = (datetime)ObjectGet(ckLne, OBJPROP_TIME1);
+        time1   = (datetime)ObjectGet(ckLne, OBJPROP_TIME2);
+        price0  =           ObjectGet(ckLne, OBJPROP_PRICE1);
+        price1  =           ObjectGet(ckLne, OBJPROP_PRICE2);
     }
     else
     {
@@ -314,14 +318,14 @@ void Fibonacci::onItemClick(const string &itemId, const string &objId)
     if (StringFind(objId, "_c") == -1) return;
 
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    if (selected) unSelectAll();
     multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
-    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cMLne);
+    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+ckLne);
+    if (selected) unSelectAllExcept(itemId);
 }
 void Fibonacci::onItemChange(const string &itemId, const string &objId){}
 void Fibonacci::onItemDeleted(const string &itemId, const string &objId)
 {
-    ObjectDelete(cMLne);
+    ObjectDelete(ckLne);
     ObjectDelete(iFib0);
     ObjectDelete(iFib1);
     ObjectDelete(iFib2);
