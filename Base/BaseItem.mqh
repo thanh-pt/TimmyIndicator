@@ -42,6 +42,7 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId){};
     virtual void onItemChange(const string &itemId, const string &objId){};
     virtual void onItemDeleted(const string &itemId, const string &objId){};
+    virtual void onUserRequest(const string &itemId, const string &objId){};
 
 public:
     void startActivate(FinishedJob cb);

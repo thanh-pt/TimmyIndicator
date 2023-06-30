@@ -3,6 +3,8 @@
 #define BG_TAG              "BgOverlapFix"
 #define LINE_STYLE          ENUM_LINE_STYLE
 
+#define CHART_EVENT_SELECT_TEMPLATES CHARTEVENT_CUSTOM+1
+
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define MAX(a,b) ((a)>(b)?(a):(b))
 

@@ -4,6 +4,7 @@ input bool  AlertActive = false;
 input color gColorMousePoint = clrGray;
 #include "InfoItem/CrossHair.mqh"
 #include "InfoItem/MouseInfo.mqh"
+#include "InfoItem/Templates.mqh"
 #include "Controller.mqh"
 #include "CommonData.mqh"
 
@@ -13,6 +14,7 @@ void detectMouseDraging(const string &sparam);
 CommonData gCommonData;
 CrossHair  gCrossHair(&gCommonData);
 MouseInfo  gMouseInfo(&gCommonData);
+Templates  gTemplates();
 Controller gController(&gCommonData, &gMouseInfo);
 
 string gListAlert = "";
