@@ -3,29 +3,33 @@
 
 
 //--------------------------------------------
-input string     T_r_e_n_d___N_o_r_m_a_l___Cfg = SEPARATE_LINE;
       string     __T_Normal_Name  = "Normal";
       string     __T_Normal_Text  = "";
-input color      __T_Normal_Color = clrLightGray;
+input color      __T_Normal_Color = clrMidnightBlue;
 input LINE_STYLE __T_Normal_Style = STYLE_SOLID;
       int        __T_Normal_Width = 1;
       bool       __T_Normal_Arrow = false;
 //--------------------------------------------
-input string     T_r_e_n_d___L_i_q_u_i_d_i_t_y___Cfg = SEPARATE_LINE;
-      string     __T_Liquidity_Name  = "Liquidity";
-      string     __T_Liquidity_Text  = "$$$";
-input color      __T_Liquidity_Color = clrGold;
-input LINE_STYLE __T_Liquidity_Style = STYLE_SOLID;
-      int        __T_Liquidity_Width = 1;
-      bool       __T_Liquidity_Arrow = false;
+      string     __T_Lq_Name  = "Liquidity";
+      string     __T_Lq_Text  = "$$$";
+input color      __T_Lq_Color = clrBlack;
+input LINE_STYLE __T_Lq_Style = STYLE_SOLID;
+      int        __T_Lq_Width = 1;
+      bool       __T_Lq_Arrow = false;
 //--------------------------------------------
-input string     T_r_e_n_d___E_x_p_e_c_t_O_d_r_F_l_w___Cfg = SEPARATE_LINE;
-      string     __T_EptOdrFlw_Name  = "Mitigate";
-      string     __T_EptOdrFlw_Text  = "mtg";
-input color      __T_EptOdrFlw_Color = clrGold;
-input LINE_STYLE __T_EptOdrFlw_Style = STYLE_SOLID;
-      int        __T_EptOdrFlw_Width = 1;
-      bool       __T_EptOdrFlw_Arrow = true;
+      string     __T_LG_Name  = "Liquidation";
+      string     __T_LG_Text  = "";
+input color      __T_LG_Color = clrCrimson;
+input LINE_STYLE __T_LG_Style = STYLE_SOLID;
+      int        __T_LG_Width = 1;
+      bool       __T_LG_Arrow = true;
+//--------------------------------------------
+      string     __T_Mtg_Name  = "Mitigation";
+      string     __T_Mtg_Text  = "mtg";
+input color      __T_Mtg_Color = clrGreen;
+input LINE_STYLE __T_Mtg_Style = STYLE_SOLID;
+      int        __T_Mtg_Width = 1;
+      bool       __T_Mtg_Arrow = true;
 //--------------------------------------------
 
 /*
@@ -38,7 +42,8 @@ enum TrendType
 {
     TREND_NML,
     TREND_LQ,
-    TREND_EOF,
+    TREND_LG,
+    TREND_MTG,
     TREND_NUM,
 };
 
@@ -109,21 +114,32 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_NML  ] = __T_Normal_Width;
     mShowArrow[TREND_NML  ] = __T_Normal_Arrow;
     //--------------------------------------------
-    mNameType [TREND_LQ   ] = __T_Liquidity_Name ;
-    mDispText [TREND_LQ   ] = __T_Liquidity_Text ;
-    mColorType[TREND_LQ   ] = __T_Liquidity_Color;
-    mStyleType[TREND_LQ   ] = __T_Liquidity_Style;
-    mWidthType[TREND_LQ   ] = __T_Liquidity_Width;
-    mShowArrow[TREND_LQ   ] = __T_Liquidity_Arrow;
+    mNameType [TREND_LQ   ] = __T_Lq_Name ;
+    mDispText [TREND_LQ   ] = __T_Lq_Text ;
+    mColorType[TREND_LQ   ] = __T_Lq_Color;
+    mStyleType[TREND_LQ   ] = __T_Lq_Style;
+    mWidthType[TREND_LQ   ] = __T_Lq_Width;
+    mShowArrow[TREND_LQ   ] = __T_Lq_Arrow;
     //--------------------------------------------
-    mNameType [TREND_EOF  ] = __T_EptOdrFlw_Name ;
-    mDispText [TREND_EOF  ] = __T_EptOdrFlw_Text ;
-    mColorType[TREND_EOF  ] = __T_EptOdrFlw_Color;
-    mStyleType[TREND_EOF  ] = __T_EptOdrFlw_Style;
-    mWidthType[TREND_EOF  ] = __T_EptOdrFlw_Width;
-    mShowArrow[TREND_EOF  ] = __T_EptOdrFlw_Arrow;
+    mNameType [TREND_LG   ] = __T_LG_Name ;
+    mDispText [TREND_LG   ] = __T_LG_Text ;
+    mColorType[TREND_LG   ] = __T_LG_Color;
+    mStyleType[TREND_LG   ] = __T_LG_Style;
+    mWidthType[TREND_LG   ] = __T_LG_Width;
+    mShowArrow[TREND_LG   ] = __T_LG_Arrow;
     //--------------------------------------------
-    mTemplateTypes = __T_Normal_Name + "," + __T_Liquidity_Name + "," + __T_EptOdrFlw_Name;
+    mNameType [TREND_MTG  ] = __T_Mtg_Name ;
+    mDispText [TREND_MTG  ] = __T_Mtg_Text ;
+    mColorType[TREND_MTG  ] = __T_Mtg_Color;
+    mStyleType[TREND_MTG  ] = __T_Mtg_Style;
+    mWidthType[TREND_MTG  ] = __T_Mtg_Width;
+    mShowArrow[TREND_MTG  ] = __T_Mtg_Arrow;
+    //--------------------------------------------
+    for (int i = 0; i < TREND_NUM; i++)
+    {
+        mTemplateTypes += mNameType[i];
+        if (i < TREND_NUM-1) mTemplateTypes += ",";
+    }
     mTypeNum = TREND_NUM;
     mIndexType = 0;
 }
@@ -191,7 +207,7 @@ void Trend::updateDefaultProperty()
 {
     multiSetProp(OBJPROP_ARROWCODE , 4      , cPoint1+cPoint2);
     multiSetProp(OBJPROP_WIDTH     , 0      , cPoint1+cPoint2);
-    multiSetProp(OBJPROP_SELECTABLE, false  , iArrowT+iAngle0);
+    multiSetProp(OBJPROP_SELECTABLE, false  , iArrowT+iAngle0+cLbText);
     multiSetProp(OBJPROP_COLOR     , clrNONE, cPoint1+cPoint2+iAngle0);
     multiSetStrs(OBJPROP_TOOLTIP   , "\n"   , cPoint1+cPoint2+cMTrend+iAngle0+cLbText+iArrowT);
 
@@ -202,7 +218,7 @@ void Trend::updateDefaultProperty()
 void Trend::updateTypeProperty()
 {
     ObjectSetText (cLbText,  mDispText[mIndexType], 8, NULL, mColorType[mIndexType]);
-    ObjectSetText (iArrowT,  mShowArrow[mIndexType] ? "▲" : "", 8, NULL, mShowArrow[mIndexType] ? mColorType[mIndexType] : clrNONE);
+    ObjectSetText (iArrowT,  mShowArrow[mIndexType] ? "▲" : "", 9, NULL, mShowArrow[mIndexType] ? mColorType[mIndexType] : clrNONE);
     SetObjectStyle(cMTrend, mColorType[mIndexType],          mStyleType[mIndexType],  mWidthType[mIndexType]);
 }
 void Trend::updateItemAfterChangeType()

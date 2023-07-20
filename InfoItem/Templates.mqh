@@ -12,12 +12,14 @@ private:
     string mActiveObjectId;
     string mTemplates[];
     int mSize;
+    bool mIsOpen;
 public:
     int mActivePos;
 
 public:
     Templates()
     {
+        mIsOpen = false;
     }
     virtual void onItemClick(const string &objId)
     {
@@ -45,7 +47,7 @@ public:
 public:
     void openTemplates(const string objId, const string data, const int activePos)
     {
-        if (mActiveObjectId != "") clearTemplates();
+        if (mIsOpen == true) clearTemplates();
         mActiveObjectId = objId;
         mActivePos = activePos;
         mSize = StringSplit(data,',',mTemplates);
@@ -53,14 +55,17 @@ public:
         {
             drawItem(mTemplates[i], i);
         }
+        mIsOpen = true;
     }
     void clearTemplates()
     {
+        if (mIsOpen == false) return;
         mActiveObjectId = "";
         for (int i = 0; i < 10; i++)
         {
             deleteItem(i);
         }
+        mIsOpen = false;
     }
 private:
     void drawItem(const string& name, int pos)
@@ -76,8 +81,8 @@ private:
         ObjectSetInteger(0, itemName, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
         ObjectSetInteger(0, itemBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
 
-        int topOffset = 20;
-        int leftOffset = 5;
+        int topOffset = gCommonData.mMouseY + 10;
+        int leftOffset = gCommonData.mMouseX + 20;
         int textSpace = 17;
 
         ObjectSet(itemName, OBJPROP_XDISTANCE, leftOffset);

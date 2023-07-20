@@ -2,49 +2,79 @@
 #include "../Utility.mqh"
 
 //--------------------------------------------
-input string     H_T_r_e_n_d___M_a_i_n_B_o_s___Cfg = SEPARATE_LINE;
       string     __H_MainBos_Name    = "bos";
       string     __H_MainBos_Text    = "bos";
 input color      __H_MainBos_Color   = clrOlive;
 input LINE_STYLE __H_MainBos_Style   = STYLE_SOLID;
       int        __H_MainBos_Width   = 2;
 //--------------------------------------------
-input string     H_T_r_e_n_d___S_u_b_B_o_s___Cfg = SEPARATE_LINE;
       string     __H_SubBos_Name     = "sbos";
       string     __H_SubBos_Text     = "sbos";
 input color      __H_SubBos_Color    = clrDarkSlateGray;
 input LINE_STYLE __H_SubBos_Style    = STYLE_SOLID;
       int        __H_SubBos_Width    = 1;
 //--------------------------------------------
-input string     H_T_r_e_n_d___L_q_G_r_a_p___Cfg = SEPARATE_LINE;
-      string     __H_LqGrap_Name     = "lg";
-      string     __H_LqGrap_Text     = "x";
+      string     __H_MinorBos_Name     = "mbos";
+      string     __H_MinorBos_Text     = "mbos";
+input color      __H_MinorBos_Color    = clrDarkSlateGray;
+input LINE_STYLE __H_MinorBos_Style    = STYLE_SOLID;
+      int        __H_MinorBos_Width    = 1;
+//--------------------------------------------
+      string     __H_LqGrap_Name     = "LG";
+      string     __H_LqGrap_Text     = "LG";
 input color      __H_LqGrap_Color    = clrCrimson;
 input LINE_STYLE __H_LqGrap_Style    = STYLE_SOLID;
       int        __H_LqGrap_Width    = 1;
 //--------------------------------------------
-input string     H_T_r_e_n_d___B_o_s_L_G___Cfg = SEPARATE_LINE;
+//       string     __H_FailSDz_Name    = "Fail";
+//       string     __H_FailSDz_Text    = "fail";
+// input color      __H_FailSDz_Color   = clrCrimson;
+// input LINE_STYLE __H_FailSDz_Style   = STYLE_SOLID;
+//       int        __H_FailSDz_Width   = 1;
+//--------------------------------------------
       string     __H_BosLG_Name      = "bos/lg";
       string     __H_BosLG_Text      = "bos-lg";
 input color      __H_BosLG_Color     = clrCrimson;
-input LINE_STYLE __H_BosLG_Style     = STYLE_DASHDOT;
-      int        __H_BosLG_Width     = 1;
+input LINE_STYLE __H_BosLG_Style     = STYLE_SOLID;
+      int        __H_BosLG_Width     = 2;
 //--------------------------------------------
-input string     H_T_r_e_n_d___T_a_r_g_e_t___Cfg = SEPARATE_LINE;
       string     __H_Target_Name     = "eof";
       string     __H_Target_Text     = "eof";
 input color      __H_Target_Color    = clrGreen;
 input LINE_STYLE __H_Target_Style    = STYLE_SOLID;
       int        __H_Target_Width    = 1;
 //--------------------------------------------
+      string     __H_BreakEvent_Name     = "be";
+      string     __H_BreakEvent_Text     = "be";
+input color      __H_BreakEvent_Color    = clrGreen;
+input LINE_STYLE __H_BreakEvent_Style    = STYLE_SOLID;
+      int        __H_BreakEvent_Width    = 1;
+//--------------------------------------------
+      string     __H_Pb_Sig_Name    = "PbSig";
+      string     __H_Pb_Sig_Text    = "pb";
+input color      __H_Pb_Sig_Color   = clrCrimson;
+input LINE_STYLE __H_Pb_Sig_Style   = STYLE_DOT;
+      int        __H_Pb_Sig_Width   = 1;
+//--------------------------------------------
+      string     __H_Mn_Sig_Name    = "MinorSig";
+      string     __H_Mn_Sig_Text    = "mn";
+input color      __H_Mn_Sig_Color   = clrGreen;
+input LINE_STYLE __H_Mn_Sig_Style   = STYLE_DOT;
+      int        __H_Mn_Sig_Width   = 1;
+//--------------------------------------------
 
 enum HTrendType
 {
-    HTREND_MBOS,
+    HTREND_BOS,
     HTREND_SBOS,
+    HTREND_MBOS,
     HTREND_LQGP,
     HTREND_BOSLG,
-    HTREND_TARGT,
+    // HTREND_FAIL,
+    HTREND_PB_SIG,
+    HTREND_MN_SIG,
+    HTREND_EOF,
+    HTREND_BE,
     HTREND_NUM,
 };
 
@@ -98,11 +128,11 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [HTREND_MBOS ] = __H_MainBos_Name ;
-    mPropText [HTREND_MBOS ] = __H_MainBos_Text ;
-    mPropColor[HTREND_MBOS ] = __H_MainBos_Color;
-    mPropStyle[HTREND_MBOS ] = __H_MainBos_Style;
-    mPropWidth[HTREND_MBOS ] = __H_MainBos_Width;
+    mNameType [HTREND_BOS  ] = __H_MainBos_Name ;
+    mPropText [HTREND_BOS  ] = __H_MainBos_Text ;
+    mPropColor[HTREND_BOS  ] = __H_MainBos_Color;
+    mPropStyle[HTREND_BOS  ] = __H_MainBos_Style;
+    mPropWidth[HTREND_BOS  ] = __H_MainBos_Width;
     //--------------------------------------------
     mNameType [HTREND_SBOS ] = __H_SubBos_Name ;
     mPropText [HTREND_SBOS ] = __H_SubBos_Text ;
@@ -110,11 +140,23 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mPropStyle[HTREND_SBOS ] = __H_SubBos_Style;
     mPropWidth[HTREND_SBOS ] = __H_SubBos_Width;
     //--------------------------------------------
+    mNameType [HTREND_MBOS ] = __H_MinorBos_Name ;
+    mPropText [HTREND_MBOS ] = __H_MinorBos_Text ;
+    mPropColor[HTREND_MBOS ] = __H_MinorBos_Color;
+    mPropStyle[HTREND_MBOS ] = __H_MinorBos_Style;
+    mPropWidth[HTREND_MBOS ] = __H_MinorBos_Width;
+    //--------------------------------------------
     mNameType [HTREND_LQGP ] = __H_LqGrap_Name ;
     mPropText [HTREND_LQGP ] = __H_LqGrap_Text ;
     mPropColor[HTREND_LQGP ] = __H_LqGrap_Color;
     mPropStyle[HTREND_LQGP ] = __H_LqGrap_Style;
     mPropWidth[HTREND_LQGP ] = __H_LqGrap_Width;
+    //--------------------------------------------
+    // mNameType [HTREND_FAIL ] = __H_FailSDz_Name ;
+    // mPropText [HTREND_FAIL ] = __H_FailSDz_Text ;
+    // mPropColor[HTREND_FAIL ] = __H_FailSDz_Color;
+    // mPropStyle[HTREND_FAIL ] = __H_FailSDz_Style;
+    // mPropWidth[HTREND_FAIL ] = __H_FailSDz_Width;
     //--------------------------------------------
     mNameType [HTREND_BOSLG] = __H_BosLG_Name ;
     mPropText [HTREND_BOSLG] = __H_BosLG_Text ;
@@ -122,13 +164,36 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mPropStyle[HTREND_BOSLG] = __H_BosLG_Style;
     mPropWidth[HTREND_BOSLG] = __H_BosLG_Width;
     //--------------------------------------------
-    mNameType [HTREND_TARGT] = __H_Target_Name ;
-    mPropText [HTREND_TARGT] = __H_Target_Text ;
-    mPropColor[HTREND_TARGT] = __H_Target_Color;
-    mPropStyle[HTREND_TARGT] = __H_Target_Style;
-    mPropWidth[HTREND_TARGT] = __H_Target_Width;
+    mNameType [HTREND_EOF] = __H_Target_Name ;
+    mPropText [HTREND_EOF] = __H_Target_Text ;
+    mPropColor[HTREND_EOF] = __H_Target_Color;
+    mPropStyle[HTREND_EOF] = __H_Target_Style;
+    mPropWidth[HTREND_EOF] = __H_Target_Width;
+    mPropWidth[HTREND_EOF] = __H_Target_Width;
+    //--------------------------------------------
+    mNameType [HTREND_BE] = __H_BreakEvent_Name ;
+    mPropText [HTREND_BE] = __H_BreakEvent_Text ;
+    mPropColor[HTREND_BE] = __H_BreakEvent_Color;
+    mPropStyle[HTREND_BE] = __H_BreakEvent_Style;
+    mPropWidth[HTREND_BE] = __H_BreakEvent_Width;
+    //--------------------------------------------
+    mNameType [HTREND_PB_SIG] = __H_Pb_Sig_Name ;
+    mPropText [HTREND_PB_SIG] = __H_Pb_Sig_Text ;
+    mPropColor[HTREND_PB_SIG] = __H_Pb_Sig_Color;
+    mPropStyle[HTREND_PB_SIG] = __H_Pb_Sig_Style;
+    mPropWidth[HTREND_PB_SIG] = __H_Pb_Sig_Width;
+    //--------------------------------------------
+    mNameType [HTREND_MN_SIG] = __H_Mn_Sig_Name ;
+    mPropText [HTREND_MN_SIG] = __H_Mn_Sig_Text ;
+    mPropColor[HTREND_MN_SIG] = __H_Mn_Sig_Color;
+    mPropStyle[HTREND_MN_SIG] = __H_Mn_Sig_Style;
+    mPropWidth[HTREND_MN_SIG] = __H_Mn_Sig_Width;
     //-----------------------------
-    mTemplateTypes = __H_MainBos_Name + "," + __H_SubBos_Name + "," + __H_LqGrap_Name + "," + __H_BosLG_Name + "," + __H_Target_Name;
+    for (int i = 0; i < HTREND_NUM; i++)
+    {
+        mTemplateTypes += mNameType[i];
+        if (i < HTREND_NUM-1) mTemplateTypes += ",";
+    }
     mIndexType = 0;
     mTypeNum   = HTREND_NUM;
 }

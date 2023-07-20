@@ -128,9 +128,16 @@ void OnChartEvent(const int id,
         gTemplates.onItemClick(sparam);
         gCrossHair.onObjectDeleted(sparam);
         gMouseInfo.onObjectDeleted(sparam);
+        gTemplates.clearTemplates();
     case CHARTEVENT_OBJECT_DRAG:
     case CHARTEVENT_OBJECT_CHANGE:
         gController.handleSparamEvent(id, sparam);
+    break;
+    case CHARTEVENT_CHART_CHANGE:
+        gTemplates.clearTemplates();
+    break;
+    default:
+        // PrintFormat("%d", id);
     break;
     }
 }
