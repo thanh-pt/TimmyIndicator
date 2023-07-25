@@ -17,12 +17,12 @@ input LINE_STYLE __T_Lq_Style = STYLE_SOLID;
       int        __T_Lq_Width = 1;
       bool       __T_Lq_Arrow = false;
 //--------------------------------------------
-      string     __T_LG_Name  = "Liquidation";
-      string     __T_LG_Text  = "";
-input color      __T_LG_Color = clrCrimson;
-input LINE_STYLE __T_LG_Style = STYLE_SOLID;
-      int        __T_LG_Width = 1;
-      bool       __T_LG_Arrow = true;
+//       string     __T_LG_Name  = "Liquidation";
+//       string     __T_LG_Text  = "";
+// input color      __T_LG_Color = clrCrimson;
+// input LINE_STYLE __T_LG_Style = STYLE_SOLID;
+//       int        __T_LG_Width = 1;
+//       bool       __T_LG_Arrow = true;
 //--------------------------------------------
       string     __T_Mtg_Name  = "Mitigation";
       string     __T_Mtg_Text  = "mtg";
@@ -42,7 +42,7 @@ enum TrendType
 {
     TREND_NML,
     TREND_LQ,
-    TREND_LG,
+    // TREND_LG,
     TREND_MTG,
     TREND_NUM,
 };
@@ -121,12 +121,12 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_LQ   ] = __T_Lq_Width;
     mShowArrow[TREND_LQ   ] = __T_Lq_Arrow;
     //--------------------------------------------
-    mNameType [TREND_LG   ] = __T_LG_Name ;
-    mDispText [TREND_LG   ] = __T_LG_Text ;
-    mColorType[TREND_LG   ] = __T_LG_Color;
-    mStyleType[TREND_LG   ] = __T_LG_Style;
-    mWidthType[TREND_LG   ] = __T_LG_Width;
-    mShowArrow[TREND_LG   ] = __T_LG_Arrow;
+    // mNameType [TREND_LG   ] = __T_LG_Name ;
+    // mDispText [TREND_LG   ] = __T_LG_Text ;
+    // mColorType[TREND_LG   ] = __T_LG_Color;
+    // mStyleType[TREND_LG   ] = __T_LG_Style;
+    // mWidthType[TREND_LG   ] = __T_LG_Width;
+    // mShowArrow[TREND_LG   ] = __T_LG_Arrow;
     //--------------------------------------------
     mNameType [TREND_MTG  ] = __T_Mtg_Name ;
     mDispText [TREND_MTG  ] = __T_Mtg_Text ;
