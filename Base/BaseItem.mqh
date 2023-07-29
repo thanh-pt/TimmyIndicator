@@ -117,7 +117,7 @@ string BaseItem::createMouseInfo()
     {
         if (mouseInfo != "")
         {
-            mouseInfo += " - ";
+            mouseInfo += "·";
         }
         if (i == mIndexType)
         {

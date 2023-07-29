@@ -18,7 +18,7 @@ public:
     void initDrawing()
     {
         ObjectCreate(mObjMouseInfo, OBJ_LABEL, 0, 0, 0);
-        ObjectSetText(mObjMouseInfo, "", 10);
+        ObjectSetText(mObjMouseInfo, "", 10, "Consolas");
         ObjectSet(mObjMouseInfo, OBJPROP_SELECTABLE, false);
         ObjectSet(mObjMouseInfo, OBJPROP_COLOR, MouseInfo_Color);
         ObjectSetString( 0, mObjMouseInfo, OBJPROP_TOOLTIP,"\n");

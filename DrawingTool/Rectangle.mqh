@@ -13,11 +13,11 @@ input color             __R_Sz_Color      = C'64,0,32';
 input color             __R_Dz_Color      = C'21,43,37';
 //-----------------------------------------------------------
       string            R_e_c_t_a_n_g_l_e___S_z1__Cfg = SEPARATE_LINE;
-      string            __R_SzLight_Name  = "l.Sz";
+      string            __R_SzLight_Name  = "lSz";
 input color             __R_SzLight_Color = C'40,0,21';
 //-----------------------------------------------------------
       string            R_e_c_t_a_n_g_l_e___D_z2__Cfg = SEPARATE_LINE;
-      string            __R_DzLight_Name  = "l.Dz";
+      string            __R_DzLight_Name  = "lDz";
 input color             __R_DzLight_Color = C'14,29,24';
 //-----------------------------------------------------------
 
@@ -107,7 +107,7 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
     for (int i = 0; i < RECT_NUM; i++)
     {
         mTemplateTypes += mNameType[i];
-        if (i < TREND_NUM-1) mTemplateTypes += ",";
+        if (i < RECT_NUM-1) mTemplateTypes += ",";
     }
     mTypeNum = RECT_NUM;
     mIndexType = 0;

@@ -76,14 +76,14 @@ private:
         ObjectCreate(itemName, OBJ_LABEL, 0, 0, 0);
         ObjectSet(itemBgnd, OBJPROP_SELECTABLE, false);
         ObjectSet(itemName, OBJPROP_SELECTABLE, false);
-        ObjectSetText(itemBgnd, StringSubstr(TEXT_FULL_BLOCK, 0, StringLen(name)+2), 10, "Courier New", Templates_BgColor1);
-        ObjectSetText(itemName,                                            " "+name, 10, "Courier New", Templates_TextColor);
+        ObjectSetText(itemBgnd, StringSubstr(TEXT_FULL_BLOCK, 0, StringLen(name)+2), 10, "Consolas", Templates_BgColor1);
+        ObjectSetText(itemName,                                            " "+name, 10, "Consolas", Templates_TextColor);
         ObjectSetInteger(0, itemName, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
         ObjectSetInteger(0, itemBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
 
         int topOffset = gCommonData.mMouseY + 10;
         int leftOffset = gCommonData.mMouseX + 20;
-        int textSpace = 17;
+        int textSpace = 16;
 
         ObjectSet(itemName, OBJPROP_XDISTANCE, leftOffset);
         ObjectSet(itemName, OBJPROP_YDISTANCE, topOffset+pos*textSpace);

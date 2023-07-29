@@ -32,8 +32,8 @@ input color      __H_FailSDz_Color   = clrCrimson;
 input LINE_STYLE __H_FailSDz_Style   = STYLE_DOT;
       int        __H_FailSDz_Width   = 1;
 //--------------------------------------------
-      string     __H_BosLG_Name      = "bos/lg";
-      string     __H_BosLG_Text      = "bos-lg";
+      string     __H_BosLG_Name      = "b/lg";
+      string     __H_BosLG_Text      = "b/lg?";
 input color      __H_BosLG_Color     = clrCrimson;
 input LINE_STYLE __H_BosLG_Style     = STYLE_SOLID;
       int        __H_BosLG_Width     = 2;
@@ -235,7 +235,7 @@ void HTrend::updateDefaultProperty()
 void HTrend::updateTypeProperty()
 {
     SetObjectStyle(cMainTrend, mPropColor[mIndexType], mPropStyle[mIndexType], mPropWidth[mIndexType]);
-    ObjectSetText( cText     , mPropText [mIndexType], 8, NULL, mPropColor[mIndexType]);
+    ObjectSetText( cText     , mPropText [mIndexType], 8, "Consolas", mPropColor[mIndexType]);
 }
 void HTrend::activateItem(const string& itemId)
 {

@@ -83,8 +83,8 @@ void CallOut::updateTypeProperty()
 {
     SetObjectStyle(cPtLine, __C_Color, 0, 1);
     //-------------------------------------------------------------
-    ObjectSetText(cLbText, DoubleToString(pCommonData.mMousePrice, 5), __C_FontSize, NULL, __C_Color);
-    ObjectSetText(iUdLine,                                    "_____", __C_FontSize, NULL, __C_Color);
+    ObjectSetText(cLbText, DoubleToString(pCommonData.mMousePrice, 5), __C_FontSize, "Consolas", __C_Color);
+    ObjectSetText(iUdLine,                                    "_____", __C_FontSize, "Consolas", __C_Color);
     ObjectSet(cLbText, OBJPROP_SELECTED, true);
 }
 void CallOut::activateItem(const string& itemId)
