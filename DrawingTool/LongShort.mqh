@@ -47,6 +47,7 @@ private:
     string iEnText  ;
     string iSlText  ;
     string iBeText  ;
+    string iMdlTxt  ;
     string cBoder   ;
     string cPointTP ;
     string cPointSL ;
@@ -122,6 +123,7 @@ void LongShort::createItem()
     ObjectCreate(iEnText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iSlText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iBeText  , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iMdlTxt  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(cBoder   , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cPointTP , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPointSL , OBJ_ARROW     , 0, 0, 0);
@@ -143,6 +145,8 @@ void LongShort::initData()
 }
 void LongShort::updateDefaultProperty()
 {
+    ObjectSetText(iMdlTxt, "Model-??", __LS_TextSize+1, "Consolas", __C_Color);
+    //-------------------------------------------------
     ObjectSet(iBgndSL, OBJPROP_BACK, true);
     ObjectSet(iBgndTP, OBJPROP_BACK, true);
     //-------------------------------------------------
@@ -154,7 +158,7 @@ void LongShort::updateDefaultProperty()
     multiSetProp(OBJPROP_RAY       , false, iTpLine+iBeLine+iEnLine+iSlLine);
     multiSetProp(OBJPROP_SELECTABLE, false, iBgndSL+iBgndTP+iTpLine+iBeLine+iEnLine+iSlLine+iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText);
     //-------------------------------------------------
-    multiSetStrs(OBJPROP_TOOLTIP, "\n", iBgndSL+iBgndTP+iTpLine+iBeLine+iEnLine+iSlLine+iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText+cBoder+cPointTP+cPointSL+cPointEN+cPointWD+cPointBE);
+    multiSetStrs(OBJPROP_TOOLTIP, "\n", iBgndSL+iBgndTP+iTpLine+iBeLine+iEnLine+iSlLine+iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText+iMdlTxt+cBoder+cPointTP+cPointSL+cPointEN+cPointWD+cPointBE);
 }
 void LongShort::updateTypeProperty()
 {
@@ -185,6 +189,7 @@ void LongShort::activateItem(const string& itemId)
     iEnText  = itemId + "_iEnText";
     iSlText  = itemId + "_iSlText";
     iBeText  = itemId + "_iBeText";
+    iMdlTxt  = itemId + "_iMdlTxt";
     cBoder   = itemId + "_cBoder";
     cPointTP = itemId + "_cPointTP";
     cPointSL = itemId + "_cPointSL";
@@ -219,6 +224,9 @@ void LongShort::refreshData()
     setItemPos(iEnText  , centerTime, priceEN);
     setItemPos(iSlText  , centerTime, priceSL);
     setItemPos(iBeText  , time2, priceBE);
+    //-------------------------------------------------
+    ObjectSetInteger(0,iMdlTxt, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    setItemPos(iMdlTxt  , centerTime, (priceSL+priceEN)/2);
     //-------------------------------------------------
     ObjectSetInteger(0, iEnText, OBJPROP_ANCHOR, ANCHOR_LOWER);
     if (priceTP > priceSL)
@@ -370,6 +378,7 @@ void LongShort::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(iEnText );
     ObjectDelete(iSlText );
     ObjectDelete(iBeText );
+    ObjectDelete(iMdlTxt );
     ObjectDelete(cBoder  );
     ObjectDelete(cPointTP);
     ObjectDelete(cPointSL);
@@ -436,6 +445,7 @@ void LongShort::showHideHistory()
         ObjectSet(iEnText , OBJPROP_TIME1, 0);
         ObjectSet(iSlText , OBJPROP_TIME1, 0);
         ObjectSet(iBeText , OBJPROP_TIME1, 0);
+        ObjectSet(iMdlTxt , OBJPROP_TIME1, 0);
         ObjectSet(cPointTP, OBJPROP_TIME1, 0);
         ObjectSet(cPointSL, OBJPROP_TIME1, 0);
         ObjectSet(cPointEN, OBJPROP_TIME1, 0);

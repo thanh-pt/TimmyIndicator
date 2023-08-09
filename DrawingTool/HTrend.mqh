@@ -3,16 +3,16 @@
 
 //--------------------------------------------
       string     __H_MainBos_Name    = "bos";
-      string     __H_MainBos_Text    = "bos";
+input string     __H_MainBos_Text    = "bos";
 input color      __H_MainBos_Color   = clrOlive;
 input LINE_STYLE __H_MainBos_Style   = STYLE_SOLID;
-      int        __H_MainBos_Width   = 2;
+input int        __H_MainBos_Width   = 2;
 //--------------------------------------------
       string     __H_SubBos_Name     = "sbos";
-      string     __H_SubBos_Text     = "sbos";
+input string     __H_SubBos_Text     = "sbos";
 input color      __H_SubBos_Color    = clrDarkSlateGray;
 input LINE_STYLE __H_SubBos_Style    = STYLE_SOLID;
-      int        __H_SubBos_Width    = 1;
+input int        __H_SubBos_Width    = 1;
 //--------------------------------------------
 //       string     __H_MinorBos_Name     = "mbos";
 //       string     __H_MinorBos_Text     = "mbos";
