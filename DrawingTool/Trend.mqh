@@ -24,8 +24,8 @@ input LINE_STYLE __T_Lq_Style = STYLE_SOLID;
 //       int        __T_LG_Width = 1;
 //       bool       __T_LG_Arrow = true;
 //--------------------------------------------
-      string     __T_Mtg_Name  = "Mitigation";
-      string     __T_Mtg_Text  = "mtg";
+      string     __T_Mtg_Name  = "OrderFlow";
+      string     __T_Mtg_Text  = "OF";
 input color      __T_Mtg_Color = clrGreen;
 input LINE_STYLE __T_Mtg_Style = STYLE_SOLID;
       int        __T_Mtg_Width = 1;

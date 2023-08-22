@@ -26,8 +26,8 @@ input color      __H_LqGrap_Color    = clrCrimson;
 input LINE_STYLE __H_LqGrap_Style    = STYLE_SOLID;
       int        __H_LqGrap_Width    = 1;
 //--------------------------------------------
-      string     __H_FailSDz_Name    = "fa";
-      string     __H_FailSDz_Text    = "fa";
+      string     __H_FailSDz_Name    = "fail";
+      string     __H_FailSDz_Text    = "";
 input color      __H_FailSDz_Color   = clrCrimson;
 input LINE_STYLE __H_FailSDz_Style   = STYLE_DOT;
       int        __H_FailSDz_Width   = 1;

@@ -1,6 +1,7 @@
 #include "Base/BaseItem.mqh"
 #include "InfoItem/MouseInfo.mqh"
 #include "DrawingTool/Trend.mqh"
+#include "DrawingTool/ImbTool.mqh"
 #include "DrawingTool/HTrend.mqh"
 #include "DrawingTool/ZigZag.mqh"
 #include "DrawingTool/Rectangle.mqh"
@@ -23,6 +24,7 @@
 #define IDX_LONGSHORT   6
 #define IDX_CHARTUTIL   7
 #define IDX_PIVOT       8
+#define IDX_IMBTOOL     9
 
 #define ITEM_TREND      ".Trend"
 #define ITEM_HTREND     ".HTrend"
@@ -33,6 +35,7 @@
 #define ITEM_LONGSHORT  ".LongShort"
 #define ITEM_CHARTUTIL  ".ChartUtil"
 #define ITEM_PIVOT      ".Pivot"
+#define ITEM_IMBTOOL    ".ImbTool"
 
 class Controller
 {
@@ -72,6 +75,7 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     mListItem[IDX_LONGSHORT ]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
     mListItem[IDX_CHARTUTIL ]    = new ChartUtil ( ITEM_CHARTUTIL , commonData, mouseInfo);
     mListItem[IDX_PIVOT]         = new Pivot     ( ITEM_PIVOT     , commonData, mouseInfo);
+    mListItem[IDX_IMBTOOL]       = new ImbTool   ( ITEM_IMBTOOL   , commonData, mouseInfo);
 }
 
 Controller::~Controller()
@@ -85,6 +89,7 @@ Controller::~Controller()
     delete mListItem[IDX_LONGSHORT ];
     delete mListItem[IDX_CHARTUTIL ];
     delete mListItem[IDX_PIVOT     ];
+    delete mListItem[IDX_IMBTOOL   ];
 }
 
 void Controller::setFinishedJobCB(FinishedJob cb)
@@ -111,6 +116,7 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'D') return IDX_LONGSHORT ;
     if (key == 'X') return IDX_CHARTUTIL ;
     if (key == 'A') return IDX_PIVOT     ;
+    if (key == 'H') return IDX_IMBTOOL   ;
     return IDX_NONE;
 }
 
@@ -125,6 +131,7 @@ int Controller::findItemIdByName(const string& name)
     if (name == ITEM_LONGSHORT ) return IDX_LONGSHORT ;
     if (name == ITEM_CHARTUTIL ) return IDX_CHARTUTIL ;
     if (name == ITEM_PIVOT     ) return IDX_PIVOT     ;
+    if (name == ITEM_IMBTOOL   ) return IDX_IMBTOOL   ;
     return IDX_NONE;
 }
 
@@ -238,6 +245,7 @@ void Controller::handleSparamEvent(const int id, const string& sparam)
     switch (id)
     {
     case CHARTEVENT_OBJECT_DELETE:
+        if (StringFind(sparam, "_c") == -1) return;
         mListItem[receiverItem].onItemDeleted(itemId, sparam);
         break;
     case CHARTEVENT_OBJECT_DRAG:
