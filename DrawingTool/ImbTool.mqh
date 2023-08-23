@@ -18,6 +18,7 @@ private:
     string cPoint2;
     string cMLine0;
     string iIbmPnt;
+    string iCenter;
 
 // Value define for Item
 private:
@@ -67,6 +68,7 @@ void ImbTool::activateItem(const string& itemId)
     cPoint2 = itemId + "_c2Point2";
     cMLine0 = itemId + "_c0MLine0";
     iIbmPnt = itemId + "_iIbmPnt";
+    iCenter = itemId + "_iCenter";
 }
 
 void ImbTool::refreshData()
@@ -141,11 +143,15 @@ void ImbTool::refreshData()
             idx++;
         }
     }
+    // 50% separate line
+    double priceCenter = (price1+price2)/2;
+    setItemPos(iCenter, Time[(3*startIdx+endIdx)/4], Time[(startIdx+3*endIdx)/4+1], priceCenter, priceCenter);
 
 }
 
 void ImbTool::createItem()
 {
+    ObjectCreate(iCenter, OBJ_TREND , 0, 0, 0);
     ObjectCreate(cMLine0, OBJ_TREND , 0, 0, 0);
     ObjectCreate(cPoint1, OBJ_TEXT  , 0, 0, 0);
     ObjectCreate(cPoint2, OBJ_TEXT  , 0, 0, 0);
@@ -157,17 +163,19 @@ void ImbTool::createItem()
 }
 void ImbTool::updateDefaultProperty()
 {
+    ObjectSet(iCenter   , OBJPROP_SELECTABLE, false);
     ObjectSetText (cPoint1,"●", 9, "Consolas", clrGreen);
     ObjectSetText (cPoint2,"●", 9, "Consolas", clrRed);
     ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, ANCHOR_CENTER);
     ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, ANCHOR_CENTER);
-    ObjectSet(cMLine0, OBJPROP_RAY  , false);
-    ObjectSet(cMLine0, OBJPROP_BACK , true);
-    multiSetStrs(OBJPROP_TOOLTIP   , "\n", cPoint1+cPoint2+cMLine0);
+    multiSetStrs(OBJPROP_TOOLTIP   , "\n", cPoint1+cPoint2+cMLine0+iCenter);
 }
 void ImbTool::updateTypeProperty()
 {
     SetObjectStyle(cMLine0, __Imb_Color, __Imb_Style,  __Imb_Width);
+    SetObjectStyle(iCenter, __Imb_Color, __Imb_Style,  __Imb_Width);
+    ObjectSet(cMLine0, OBJPROP_BACK , true);
+    ObjectSet(iCenter, OBJPROP_BACK , true);
 }
 void ImbTool::updateItemAfterChangeType()
 {

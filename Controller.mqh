@@ -116,7 +116,7 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'D') return IDX_LONGSHORT ;
     if (key == 'X') return IDX_CHARTUTIL ;
     if (key == 'A') return IDX_PIVOT     ;
-    if (key == 'H') return IDX_IMBTOOL   ;
+    if (key == 'S') return IDX_IMBTOOL   ;
     return IDX_NONE;
 }
 
@@ -157,7 +157,7 @@ void Controller::handleKeyEvent(const long &key)
     case '4':
         if (mbStartErase) EraseBgOverlap();
         break;
-    case 'S':
+    case 'H':
         ((LongShort*)mListItem[IDX_LONGSHORT]).showHideHistory();
         break;
     // Short cut for Chart fix [S]
