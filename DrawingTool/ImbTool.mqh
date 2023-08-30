@@ -26,6 +26,8 @@ private:
     datetime time2;
     double price1;
     double price2;
+    double cPoint1Price;
+    double cPoint2Price;
 
 public:
     ImbTool(const string name, CommonData* commonData, MouseInfo* mouseInfo);
@@ -88,6 +90,10 @@ void ImbTool::refreshData()
         ObjectSet(cPoint1, OBJPROP_COLOR, clrGreen);
         ObjectSet(cPoint2, OBJPROP_COLOR, clrRed);
     }
+    if (StringLen(ObjectDescription(cPoint1)) > 1) ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, ANCHOR_LEFT);
+    else ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    if (StringLen(ObjectDescription(cPoint2)) > 1) ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, ANCHOR_LEFT);
+    else ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, ANCHOR_CENTER);
 
     // Remove old IMB draw
     int idx = 0;
@@ -104,40 +110,29 @@ void ImbTool::refreshData()
     int endIdx   = iBarShift(ChartSymbol(), ChartPeriod(), time2);
 
     bool hasImb = false;
-    double centerPrice = 0;
     double p1 = 0;
     double p2 = 0;
-    for (int i = startIdx+1; i >= endIdx+2; i--)
+    for (int i = startIdx; i >= endIdx && i > 1; i--)
     {
-
         if (isUp)
         {
-            hasImb = (High[i] < Low[i-2]);
-            centerPrice = (High[i]+Low[i-2])/2;
-            p1 = High[i];
-            p2 = Low[i-2];
+            hasImb = (High[i+1] < Low[i-1]);
+            p1 = High[i+1];
+            p2 = Low[i-1];
         }
         else
         {
-            hasImb = (Low[i] > High[i-2]);
-            centerPrice = (Low[i]+High[i-2])/2;
-            p1 = Low[i];
-            p2 = High[i-2];
+            hasImb = (Low[i+1] > High[i-1]);
+            p1 = Low[i+1];
+            p2 = High[i-1];
         }
 
         if (hasImb)
         {
             objName = iIbmPnt + "#" + IntegerToString(idx);
-            // Ver1: Arrow
-            // ObjectCreate(objName, OBJ_ARROW , 0, 0, 0);
-            // ObjectSet(objName, OBJPROP_ARROWCODE, 3);
-            // ObjectSet(objName, OBJPROP_WIDTH    , 0);
-            // ObjectSet(objName, OBJPROP_COLOR    , isUp ? clrGreen : clrRed);
-            // setItemPos(objName, Time[i-1], centerPrice);
-            // Ver2: Rect
             ObjectCreate(objName, OBJ_RECTANGLE , 0, 0, 0);
             ObjectSet(objName   , OBJPROP_SELECTABLE, false);
-            setItemPos(objName, Time[i-1], Time[i-2], p1, p2);
+            setItemPos(objName, Time[i], Time[i-1], p1, p2);
             SetRectangleBackground(objName, isUp ? clrGreen : clrRed);
             ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
             idx++;
@@ -145,7 +140,7 @@ void ImbTool::refreshData()
     }
     // 50% separate line
     double priceCenter = (price1+price2)/2;
-    setItemPos(iCenter, Time[(3*startIdx+endIdx)/4], Time[(startIdx+3*endIdx)/4+1], priceCenter, priceCenter);
+    setItemPos(iCenter, Time[(startIdx+endIdx)/2], Time[(startIdx+3*endIdx)/4+1], priceCenter, priceCenter);
 
 }
 
@@ -193,6 +188,8 @@ void ImbTool::onItemDrag(const string &itemId, const string &objId)
     time2 = (datetime)ObjectGet(cMLine0, OBJPROP_TIME2);
     price1 =          ObjectGet(cMLine0, OBJPROP_PRICE1);
     price2 =          ObjectGet(cMLine0, OBJPROP_PRICE2);
+    cPoint1Price =    ObjectGet(cPoint1, OBJPROP_PRICE1);
+    cPoint2Price =    ObjectGet(cPoint2, OBJPROP_PRICE1);
     
     if (objId == cPoint1)
     {
@@ -224,6 +221,17 @@ void ImbTool::onItemDrag(const string &itemId, const string &objId)
         else
         {
             price2 = ObjectGet(objId, OBJPROP_PRICE1);
+        }
+    }
+    else if (objId == cMLine0)
+    {
+        if (price1 == cPoint1Price) // Case move point 2
+        {
+            if (pCommonData.mCtrlHold) price2 = pCommonData.mMousePrice;
+        }
+        else if (price2 == cPoint2Price) // Case move point 1
+        {
+            if (pCommonData.mCtrlHold) price1 = pCommonData.mMousePrice;
         }
     }
 
@@ -267,6 +275,7 @@ void ImbTool::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(cPoint1);
     ObjectDelete(cPoint2);
     ObjectDelete(cMLine0);
+    ObjectDelete(iCenter);
     // Remove old IMB draw
     int idx = 0;
     string objName = "";

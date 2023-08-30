@@ -193,7 +193,7 @@ void LongShort::activateItem(const string& itemId)
     cBoder   = itemId + "_cBoder";
     cPointTP = itemId + "_cPointTP";
     cPointSL = itemId + "_cPointSL";
-    cPointEN = itemId + "_cPointEN";
+    cPointEN = itemId + "_c0PointEN";
     cPointWD = itemId + "_ckPointWD";
     cPointBE = itemId + "_cPointBE";
 }
