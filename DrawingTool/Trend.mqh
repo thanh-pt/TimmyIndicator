@@ -287,7 +287,7 @@ void Trend::onItemClick(const string &itemId, const string &objId)
     if (objId == iArrowT) return;
     multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(objId, OBJPROP_SELECTED), cPoint1+cPoint2+cMTrend+cLbText);
     if ((bool)ObjectGet(cMTrend, OBJPROP_SELECTED) == true){
-    gTemplates.openTemplates(objId, mTemplateTypes, -1);
+        gTemplates.openTemplates(objId, mTemplateTypes, -1);
     }
 }
 void Trend::onItemChange(const string &itemId, const string &objId)

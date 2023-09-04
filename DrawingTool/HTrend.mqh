@@ -309,14 +309,13 @@ void HTrend::onItemDrag(const string &itemId, const string &objId)
 }
 void HTrend::onItemClick(const string &itemId, const string &objId)
 {
-    if (objId == cText)
+    bool selected = (bool)ObjectGet(objId, OBJPROP_SELECTED);
+    multiSetProp(OBJPROP_SELECTED, selected, cMainTrend+cText);
+    if (objId == cText && selected == true)
     {
-        ObjectSet(cMainTrend, OBJPROP_SELECTED, ObjectGet(cText, OBJPROP_SELECTED));
-    }
-
-    if ((bool)ObjectGet(cMainTrend, OBJPROP_SELECTED) == true){
         gTemplates.openTemplates(objId, mTemplateTypes, -1);
     }
+
 }
 void HTrend::onItemChange(const string &itemId, const string &objId)
 {
