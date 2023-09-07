@@ -26,6 +26,7 @@ input double          __LS_Cost          = 50;
 input e_display       __LS_ShowStats     = SHOW;
 input e_display       __LS_ShowPrice     = SHOW;
 input e_display       __LS_ShowDollar    = SHOW;
+input bool            __LS_ShowModel     = false;
 
 class LongShort : public BaseItem
 {
@@ -123,7 +124,7 @@ void LongShort::createItem()
     ObjectCreate(iEnText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iSlText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iBeText  , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(iMdlTxt  , OBJ_TEXT      , 0, 0, 0);
+    if (__LS_ShowModel) ObjectCreate(iMdlTxt  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(cBoder   , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cPointTP , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPointSL , OBJ_ARROW     , 0, 0, 0);
@@ -351,9 +352,9 @@ void LongShort::onItemDrag(const string &itemId, const string &objId)
 }
 void LongShort::onItemClick(const string &itemId, const string &objId)
 {
+    int selectState = (int)ObjectGet(objId, OBJPROP_SELECTED);
     if (objId == cPointTP || objId == cPointSL || objId == cPointEN || objId == cPointWD || objId == cPointBE)
     {
-        int selectState = (int)ObjectGet(objId, OBJPROP_SELECTED);
         ObjectSet(cPointTP, OBJPROP_SELECTED, selectState);
         ObjectSet(cPointSL, OBJPROP_SELECTED, selectState);
         ObjectSet(cPointEN, OBJPROP_SELECTED, selectState);
@@ -361,6 +362,10 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
         ObjectSet(cPointBE, OBJPROP_SELECTED, selectState);
     }
     onItemDrag(itemId, objId);
+    if (objId == cPointWD && selectState == true && (int)ObjectGet(cBoder, OBJPROP_SELECTED) == true && __LS_ShowPrice  != HIDE)
+    {
+        Alert("En:" + DoubleToString(priceEN,5) + "\nSL:" + DoubleToString(priceSL,5) + "\nTP:" + DoubleToString(priceTP,5));
+    }
 }
 void LongShort::onItemChange(const string &itemId, const string &objId){}
 void LongShort::onItemDeleted(const string &itemId, const string &objId)
