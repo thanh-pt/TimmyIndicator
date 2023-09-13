@@ -3,7 +3,7 @@
 
 //--------------------------------------------
 input string          F_i_b___C_o_m_m_o_n___Cfg = SEPARATE_LINE;
-input color           __F_Bkgrd_Color = C'31,31,31';
+input color           __F_Bkgrd_Color = clrNONE;
 input LINE_STYLE      __F_Style     = STYLE_SOLID;
 input int             __F_Width     = 1;
 //--------------------------------------------
@@ -20,23 +20,31 @@ input color           __F_1_Color = clrGray;
 input string          F_i_b___2___Cfg = SEPARATE_LINE;
 input string          __F_2_Text  = "0.5";
 input double          __F_2_Ratio = 0.5;
-input color           __F_2_Color = clrYellow;
+input color           __F_2_Color = clrGold;
 //--------------------------------------------
-input string          F_i_b___3___Cfg = SEPARATE_LINE;
-input string          __F_3_Text  = "0.618";
-input double          __F_3_Ratio = 0.618;
-input color           __F_3_Color = clrYellow;
+      string          F_i_b___3___Cfg = SEPARATE_LINE;
+      string          __F_3_Text  = "0.618";
+      double          __F_3_Ratio = 0.618;
+      color           __F_3_Color = clrNONE;
 //--------------------------------------------
-input string          F_i_b___4___Cfg = SEPARATE_LINE;
-input string          __F_4_Text  = "-0.27";
-input bool            __F_4_Show  = true;
-input double          __F_4_Ratio = -0.27;
-input color           __F_4_Color = clrGold;
+      string          F_i_b___4___Cfg = SEPARATE_LINE;
+      string          __F_4_Text  = "-0.27";
+      double          __F_4_Ratio = -0.27;
+      color           __F_4_Color = clrDarkOrange;
 //--------------------------------------------
-input string          F_i_b___5___Cfg = SEPARATE_LINE;
-input string          __F_5_Text  = "-0.62";
-input double          __F_5_Ratio = -0.62;
-input color           __F_5_Color = clrRed;
+      string          F_i_b___5___Cfg = SEPARATE_LINE;
+      string          __F_5_Text  = "-0.62";
+      double          __F_5_Ratio = -0.62;
+      color           __F_5_Color = clrRed;
+
+enum FibType
+{
+    FIB_FULL,
+    // FIB_5000,
+    FIB_BUY0,
+    FIB_SELL,
+    FIB_NUM,
+};
 
 class Fibonacci : public BaseItem
 {
@@ -98,6 +106,7 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
+    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -107,9 +116,17 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [0] = "Fibonacci";
     mIndexType = 0;
-    mTypeNum = 0;
+    mNameType[FIB_FULL] = "Fib Full";
+    // mNameType[FIB_5000] = "Fib 50";
+    mNameType[FIB_BUY0] = "BUY Block";
+    mNameType[FIB_SELL] = "SELL Block";
+    mTypeNum = FIB_NUM;
+    for (int i = 0; i < FIB_NUM; i++)
+    {
+        mTemplateTypes += mNameType[i];
+        if (i < FIB_NUM-1) mTemplateTypes += ",";
+    }
 }
 
 // Internal Event
@@ -181,6 +198,23 @@ void Fibonacci::updateTypeProperty()
     ObjectSet(iFib3, OBJPROP_COLOR, __F_3_Color);
     ObjectSet(iFib4, OBJPROP_COLOR, __F_4_Color);
     ObjectSet(iFib5, OBJPROP_COLOR, __F_5_Color);
+
+    if (mIndexType != FIB_FULL)
+    {
+        multiSetProp(OBJPROP_COLOR, clrNONE, iFib3+iFib4+iFib5 + iTxt3+iTxt4+iTxt5);
+    }
+    if (mIndexType == FIB_BUY0 || mIndexType == FIB_SELL)
+    {
+        multiSetProp(OBJPROP_COLOR, clrNONE, iTxt0+iTxt1+iTxt2);
+    }
+    if (mIndexType == FIB_BUY0)
+    {
+        SetRectangleBackground(ckLne, __R_Dz_Color);
+    }
+    if (mIndexType == FIB_SELL)
+    {
+        SetRectangleBackground(ckLne, __R_Sz_Color);
+    }
 }
 void Fibonacci::activateItem(const string& itemId)
 {
@@ -205,7 +239,10 @@ void Fibonacci::activateItem(const string& itemId)
     cPointC1 = itemId + "_cPointC1";
     cPointC2 = itemId + "_cPointC2";
 }
-void Fibonacci::updateItemAfterChangeType(){}
+void Fibonacci::updateItemAfterChangeType()
+{
+    updateTypeProperty();
+}
 void Fibonacci::refreshData()
 {
     double price2 = price1-__F_2_Ratio*(price1-price0);
@@ -320,7 +357,12 @@ void Fibonacci::onItemClick(const string &itemId, const string &objId)
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
     multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+ckLne);
-    if (selected) unSelectAllExcept(itemId);
+    if (selected)
+    {
+        unSelectAllExcept(itemId);
+        if (objId == cPointC1 || objId == cPointC2)
+            gTemplates.openTemplates(objId, mTemplateTypes, -1);
+    }
 }
 void Fibonacci::onItemChange(const string &itemId, const string &objId){}
 void Fibonacci::onItemDeleted(const string &itemId, const string &objId)
@@ -338,4 +380,10 @@ void Fibonacci::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(iTxt3);
     ObjectDelete(iTxt4);
     ObjectDelete(iTxt5);
+}
+void Fibonacci::onUserRequest(const string &itemId, const string &objId)
+{
+    activateItem(itemId);
+    mIndexType = gTemplates.mActivePos;
+    updateTypeProperty();
 }

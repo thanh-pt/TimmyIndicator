@@ -32,6 +32,7 @@ class LongShort : public BaseItem
 {
 // Internal Value
 private:
+double mTradeLot;
 
 // Component name
 private:
@@ -154,7 +155,10 @@ void LongShort::updateDefaultProperty()
     ObjectSet(cBoder, OBJPROP_BACK, false);
     ObjectSet(cBoder, OBJPROP_COLOR, clrNONE);
     //-------------------------------------------------
-    multiSetProp(OBJPROP_ARROWCODE , 4    , cPointTP+cPointSL+cPointEN+cPointWD+cPointBE);
+    multiSetProp(OBJPROP_ARROWCODE , 4    , cPointWD+cPointBE);
+    multiSetProp(OBJPROP_ARROWCODE , 3    , cPointTP+cPointSL);
+    ObjectSet(cPointEN, OBJPROP_ARROWCODE, 2);
+    
     multiSetProp(OBJPROP_SELECTED  , true , cPointTP+cPointSL+cPointEN+cPointWD+cPointBE);
     multiSetProp(OBJPROP_RAY       , false, iTpLine+iBeLine+iEnLine+iSlLine);
     multiSetProp(OBJPROP_SELECTABLE, false, iBgndSL+iBgndTP+iTpLine+iBeLine+iEnLine+iSlLine+iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText);
@@ -166,6 +170,7 @@ void LongShort::updateTypeProperty()
     ObjectSet(iBgndSL, OBJPROP_COLOR, __LS_SlBkgrdColor);
     ObjectSet(iBgndTP, OBJPROP_COLOR, __LS_TpBkgrdColor);
     ObjectSet(iBeLine, OBJPROP_WIDTH, 1);
+    ObjectSet(iBeLine, OBJPROP_STYLE, 2);
     //-------------------------------------------------
     multiSetProp(OBJPROP_COLOR, __LS_TpColor  , iTpLine+iBeLine+cPointTP+cPointBE);
     multiSetProp(OBJPROP_COLOR, __LS_EnColor  , iEnLine+cPointEN+cPointWD);
@@ -215,8 +220,8 @@ void LongShort::refreshData()
     setItemPos(iSlLine  , time1, time2, priceSL, priceSL);
     setItemPos(iBeLine  , time1, time2, priceBE, priceBE);
     //-------------------------------------------------
-    setItemPos(cPointTP , time1, priceTP);
-    setItemPos(cPointSL , time1, priceSL);
+    setItemPos(cPointTP , time2, priceTP);
+    setItemPos(cPointSL , time2, priceSL);
     setItemPos(cPointEN , time1, priceEN);
     setItemPos(cPointWD , time2, priceEN);
     setItemPos(cPointBE , time2, priceBE);
@@ -257,8 +262,8 @@ void LongShort::refreshData()
     double slPip       = 10000*MathAbs(priceEN-priceSL);
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
-    double lot         = NormalizeDouble((__LS_Cost/slPip/10),2);
-    double realCost    = lot*slPip*10;
+    mTradeLot          = NormalizeDouble((__LS_Cost/slPip/10),2);
+    double realCost    = mTradeLot*slPip*10;
     bool   selectState = (bool)ObjectGet(cPointWD, OBJPROP_SELECTED);
     bool   showStats   = (__LS_ShowStats  == SHOW) || (__LS_ShowStats  == SELECTED_SHOW && selectState);
     bool   showPrice   = (__LS_ShowPrice  == SHOW) || (__LS_ShowPrice  == SELECTED_SHOW && selectState);
@@ -266,9 +271,9 @@ void LongShort::refreshData()
 
     if (showStats)
     {
-        strTpInfo += DoubleToString(rr,1) + "R";
-        strBeInfo += DoubleToString(be,1) + "R  ";
-        strSlInfo += DoubleToString(slPip, 1) + "p";
+        strTpInfo += DoubleToString(rr,1) + "ʀ";
+        strBeInfo += DoubleToString(be,1) + "ʀ  ";
+        strSlInfo += DoubleToString(slPip, 1) + "ᖰ";
     }
     //-------------------------------------------------
     if (showDollar)
@@ -287,7 +292,7 @@ void LongShort::refreshData()
         ObjectSetText(iTpPrice, DoubleToString(priceTP,5));
         ObjectSetText(iEnPrice, DoubleToString(priceEN,5));
         ObjectSetText(iSlPrice, DoubleToString(priceSL,5));
-        strEnInfo += DoubleToString(lot,2) + "lot";
+        strEnInfo += DoubleToString(mTradeLot,2) + "lot";
     }
     else
     {
@@ -364,7 +369,9 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
     onItemDrag(itemId, objId);
     if (objId == cPointWD && selectState == true && (int)ObjectGet(cBoder, OBJPROP_SELECTED) == true && __LS_ShowPrice  != HIDE)
     {
-        Alert("En:" + DoubleToString(priceEN,5) + "\nSL:" + DoubleToString(priceSL,5) + "\nTP:" + DoubleToString(priceTP,5));
+        string buySell = "Sell";
+        if (priceTP > priceEN) buySell = "Buy";
+        Alert(buySell + ": " + DoubleToString(mTradeLot,2) + "\nEn: " + DoubleToString(priceEN,5) + "\nSL: " + DoubleToString(priceSL,5) + "\nTP: " + DoubleToString(priceTP,5));
     }
 }
 void LongShort::onItemChange(const string &itemId, const string &objId){}

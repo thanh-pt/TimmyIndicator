@@ -417,9 +417,51 @@ color increaseLum(color c)
     return c;
 }
 
+color decreaseLum(color c)
+{
+    // 0x00BBGGRR
+    double r = (double)((c&0x000000FF)    );
+    double g = (double)((c&0x0000FF00)>>8 );
+    double b = (double)((c&0x00FF0000)>>16);
+    double h,s,l;
+    // 1. RGB -> HSL
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    double max = MAX(MAX(r,g),b);
+    double min = MIN(MIN(r,g),b);
+    h = s = l = (max + min) / 2;
+    if (max == min) h = s = 0; // achromatic
+    else
+    {
+        double d = max - min;
+        s = (l > 0.5) ? d / (2 - max - min) : d / (max + min);
+        if      (max == r) h = (g - b) / d + (g < b ? 6 : 0);
+        else if (max == g) h = (b - r) / d + 2;
+        else if (max == b) h = (r - g) / d + 4;
+        h /= 6;
+    }
+    // 2. Increase lum
+    l += 0.1;
+    // 3. HSL -> RGB
+    if (0 == s) r = g = b = l; // achromatic
+    else
+    {
+        double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        double p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1./3) * 255;
+        g = hue2rgb(p, q, h) * 255;
+        b = hue2rgb(p, q, h - 1./3) * 255;
+    }
+    // 4. Combine RGB to color
+    c = (color)((int)r|((int)g<<8)|((int)b<<16));
+    return c;
+}
+
 void scanBackgroundOverlap(string target)
 {
-    if ((color)ObjectGet(target, OBJPROP_COLOR) == clrNONE) return;
+    color targetColor = (color)ObjectGet(target, OBJPROP_COLOR);
+    if (targetColor == clrNONE) return;
 
     double price1  =           ObjectGet(target, OBJPROP_PRICE1);
     double price2  =           ObjectGet(target, OBJPROP_PRICE2);
@@ -473,6 +515,7 @@ void scanBackgroundOverlap(string target)
         if (targetId > objId) bgItem += (IntegerToString(targetId) +"."+ IntegerToString(objId));
         else bgItem += (IntegerToString(objId) +"."+ IntegerToString(targetId));
 
+        // Case 2 rectangle does not touch
         if (price2 <= cprice1 || cprice2 <= price1 || time2 <= ctime1 || ctime2 <= time1)
         {
             if (ObjectFind(bgItem) >= 0)
@@ -487,7 +530,18 @@ void scanBackgroundOverlap(string target)
             ObjectSet(bgItem   , OBJPROP_SELECTABLE, false);
             ObjectSetString(ChartID(), bgItem, OBJPROP_TOOLTIP, "\n");
         }
-        SetRectangleBackground(bgItem, increaseLum((color)ObjectGet(target, OBJPROP_COLOR)));
+
+        color colorBgColor = (color)ObjectGet(objName, OBJPROP_COLOR);
+        
+        if (colorBgColor == targetColor)
+        {
+            SetRectangleBackground(bgItem, increaseLum(targetColor));
+        }
+        else
+        {
+            SetRectangleBackground(bgItem, decreaseLum(targetColor));
+        }
+
         if (cprice1 < price1) cprice1 = price1;
         if (cprice2 > price2) cprice2 = price2;
         if (ctime1 < time1) ctime1 = time1;

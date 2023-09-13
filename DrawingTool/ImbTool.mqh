@@ -1,11 +1,20 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
+#define STR_HIGH " ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ HIGH"
+#define STR_LOW  " ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ LOW"
+
 //--------------------------------------------
 input color      __Imb_Color = clrMidnightBlue;
-input LINE_STYLE __Imb_Style = STYLE_DOT;
-      int        __Imb_Width = 1;
+input LINE_STYLE __Imb_MainLine0_Style = STYLE_DOT;
+input LINE_STYLE __Imb_RangeLine_Style = STYLE_SOLID;
 
+enum ImbToolType
+{
+    IMB_RANGE,
+    IMB_WAVE ,
+    IMB_NUM,
+};
 
 class ImbTool : public BaseItem
 {
@@ -19,6 +28,8 @@ private:
     string cMLine0;
     string iIbmPnt;
     string iCenter;
+    string iLine01;
+    string iLine02;
 
 // Value define for Item
 private:
@@ -59,6 +70,14 @@ ImbTool::ImbTool(const string name, CommonData* commonData, MouseInfo* mouseInfo
     pCommonData = commonData;
     pMouseInfo = mouseInfo;
     mIndexType = 0;
+    mNameType[IMB_RANGE] = "Imb Range";
+    mNameType[IMB_WAVE ] = "Imb Wave";
+    mTypeNum = IMB_NUM;
+    for (int i = 0; i < IMB_NUM; i++)
+    {
+        mTemplateTypes += mNameType[i];
+        if (i < IMB_NUM-1) mTemplateTypes += ",";
+    }
 }
 
 // Internal Event
@@ -71,6 +90,8 @@ void ImbTool::activateItem(const string& itemId)
     cMLine0 = itemId + "_c0MLine0";
     iIbmPnt = itemId + "_iIbmPnt";
     iCenter = itemId + "_iCenter";
+    iLine01 = itemId + "_iLine01";
+    iLine02 = itemId + "_iLine02";
 }
 
 void ImbTool::refreshData()
@@ -80,19 +101,30 @@ void ImbTool::refreshData()
     setItemPos(cPoint2, time2, price2);
 
     bool isUp = false;
+    bool isRange = false;
     if (price1 > price2)
     {
-        ObjectSet(cPoint1, OBJPROP_COLOR, clrRed);
-        ObjectSet(cPoint2, OBJPROP_COLOR, clrGreen);
+        multiSetProp(OBJPROP_COLOR, clrRed, cPoint1+iLine01);
+        multiSetProp(OBJPROP_COLOR, clrGreen, cPoint2+iLine02);
     } else
     {
         isUp = true;
-        ObjectSet(cPoint1, OBJPROP_COLOR, clrGreen);
-        ObjectSet(cPoint2, OBJPROP_COLOR, clrRed);
+        multiSetProp(OBJPROP_COLOR, clrGreen, cPoint1+iLine01);
+        multiSetProp(OBJPROP_COLOR, clrRed, cPoint2+iLine02);
     }
-    if (StringLen(ObjectDescription(cPoint1)) > 1) ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, ANCHOR_LEFT);
+    if (StringLen(ObjectDescription(cPoint1)) > 3)
+    {
+        ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_UPPER : ANCHOR_LEFT_LOWER);
+        ObjectSetText(cPoint1, isUp ? STR_LOW : STR_HIGH);
+        isRange = true;
+    }
     else ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, ANCHOR_CENTER);
-    if (StringLen(ObjectDescription(cPoint2)) > 1) ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, ANCHOR_LEFT);
+    if (StringLen(ObjectDescription(cPoint2)) > 3)
+    {
+        ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
+        ObjectSetText(cPoint2, isUp ? STR_HIGH : STR_LOW);
+        isRange = true;
+    }
     else ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, ANCHOR_CENTER);
 
     // Remove old IMB draw
@@ -108,6 +140,19 @@ void ImbTool::refreshData()
     idx = 0;
     int startIdx = iBarShift(ChartSymbol(), ChartPeriod(), time1);
     int endIdx   = iBarShift(ChartSymbol(), ChartPeriod(), time2);
+    
+    setItemPos(iLine01, time1, time1+ChartPeriod()*60*4, price1, price1);
+    setItemPos(iLine02, time2, time2+ChartPeriod()*60*4, price2, price2);
+
+    if (startIdx > 0) setItemPos(iLine01, time1, Time[startIdx-1], price1, price1);
+    if (endIdx > 0) setItemPos(iLine02, time2, Time[endIdx-1], price2, price2);
+
+    if (startIdx < endIdx)
+    {
+        startIdx = startIdx +endIdx;
+        endIdx = startIdx - endIdx;
+        startIdx = startIdx - endIdx;
+    }
 
     bool hasImb = false;
     double p1 = 0;
@@ -138,39 +183,59 @@ void ImbTool::refreshData()
             idx++;
         }
     }
-    // 50% separate line
+    // 50% separate line and Range
     double priceCenter = (price1+price2)/2;
-    setItemPos(iCenter, Time[(startIdx+endIdx)/2], Time[(startIdx+3*endIdx)/4+1], priceCenter, priceCenter);
-
+    if (isRange == true)
+    {
+        setItemPos(iCenter, Time[(startIdx+endIdx)/2], Time[endIdx], priceCenter, priceCenter);
+    }
+    else
+    {
+        setItemPos(iCenter, Time[(startIdx+endIdx)/2], Time[(startIdx+3*endIdx)/4+1], priceCenter, priceCenter);
+        multiSetProp(OBJPROP_COLOR, clrNONE, iLine01+iLine02);
+    }
 }
 
 void ImbTool::createItem()
 {
+    ObjectCreate(iLine01, OBJ_TREND , 0, 0, 0);
+    ObjectCreate(iLine02, OBJ_TREND , 0, 0, 0);
     ObjectCreate(iCenter, OBJ_TREND , 0, 0, 0);
     ObjectCreate(cMLine0, OBJ_TREND , 0, 0, 0);
     ObjectCreate(cPoint1, OBJ_TEXT  , 0, 0, 0);
     ObjectCreate(cPoint2, OBJ_TEXT  , 0, 0, 0);
 
-    updateTypeProperty();
     updateDefaultProperty();
+    updateTypeProperty();
     time1  = pCommonData.mMouseTime;
     price1 = pCommonData.mMousePrice;
 }
 void ImbTool::updateDefaultProperty()
 {
-    ObjectSet(iCenter   , OBJPROP_SELECTABLE, false);
-    ObjectSetText (cPoint1,"●", 9, "Consolas", clrGreen);
-    ObjectSetText (cPoint2,"●", 9, "Consolas", clrRed);
     ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, ANCHOR_CENTER);
     ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, ANCHOR_CENTER);
-    multiSetStrs(OBJPROP_TOOLTIP   , "\n", cPoint1+cPoint2+cMLine0+iCenter);
+    multiSetStrs(OBJPROP_TOOLTIP   , "\n", cPoint1+cPoint2+cMLine0+iCenter+iLine01+iLine02);
+    SetObjectStyle(cMLine0, __Imb_Color, __Imb_MainLine0_Style,  0);
+    SetObjectStyle(iCenter, __Imb_Color, __Imb_MainLine0_Style,  0);
+    SetObjectStyle(iLine01, __Imb_Color, __Imb_RangeLine_Style,  0);
+    SetObjectStyle(iLine02, __Imb_Color, __Imb_RangeLine_Style,  0);
+    multiSetProp(OBJPROP_BACK, true, cMLine0+iCenter+iLine01+iLine02);
+    multiSetProp(OBJPROP_SELECTABLE, false, iCenter+iLine01+iLine02);
 }
 void ImbTool::updateTypeProperty()
 {
-    SetObjectStyle(cMLine0, __Imb_Color, __Imb_Style,  __Imb_Width);
-    SetObjectStyle(iCenter, __Imb_Color, __Imb_Style,  __Imb_Width);
-    ObjectSet(cMLine0, OBJPROP_BACK , true);
-    ObjectSet(iCenter, OBJPROP_BACK , true);
+    if (mIndexType == IMB_RANGE)
+    {
+        ObjectSetText (cPoint1,STR_HIGH, 9, "Consolas", clrGreen);
+        ObjectSetText (cPoint2,STR_LOW , 9, "Consolas", clrRed);
+        multiSetProp(OBJPROP_RAY, true, iLine01+iLine02);
+    }
+    else if (mIndexType == IMB_WAVE) 
+    {
+        ObjectSetText (cPoint1,"░●░", 9, "Consolas", clrGreen);
+        ObjectSetText (cPoint2,"░●░", 9, "Consolas", clrRed);
+        multiSetProp(OBJPROP_COLOR, clrNONE, iLine01+iLine02);
+    }
 }
 void ImbTool::updateItemAfterChangeType()
 {
@@ -276,6 +341,8 @@ void ImbTool::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(cPoint2);
     ObjectDelete(cMLine0);
     ObjectDelete(iCenter);
+    ObjectDelete(iLine01);
+    ObjectDelete(iLine02);
     // Remove old IMB draw
     int idx = 0;
     string objName = "";

@@ -3,7 +3,7 @@
 
 //--------------------------------------------
       string     __H_MainBos_Name    = "bos";
-input string     __H_MainBos_Text    = "bos";
+      string     __H_MainBos_Text    = "𝙗𝙤𝙨";
 input color      __H_MainBos_Color   = clrOlive;
 input LINE_STYLE __H_MainBos_Style   = STYLE_SOLID;
 input int        __H_MainBos_Width   = 2;
@@ -27,31 +27,31 @@ input LINE_STYLE __H_LqGrap_Style    = STYLE_SOLID;
       int        __H_LqGrap_Width    = 1;
 //--------------------------------------------
       string     __H_FailSDz_Name    = "ƒail";
-      string     __H_FailSDz_Text    = "ƒ";
+      string     __H_FailSDz_Text    = "𝙛?";
 input color      __H_FailSDz_Color   = clrCrimson;
 input LINE_STYLE __H_FailSDz_Style   = STYLE_DOT;
       int        __H_FailSDz_Width   = 1;
 //--------------------------------------------
-      string     __H_OFShift_Name    = "OFS";
-      string     __H_OFShift_Text    = "✔";
+      string     __H_OFShift_Name    = "ofs";
+      string     __H_OFShift_Text    = "𝙤𝙛𝙨";
 input color      __H_OFShift_Color   = clrGreen;
 input LINE_STYLE __H_OFShift_Style   = STYLE_DOT;
       int        __H_OFShift_Width   = 1;
 //--------------------------------------------
       string     __H_BosLG_Name      = "b/lg";
-      string     __H_BosLG_Text      = "b/lg?";
+      string     __H_BosLG_Text      = "𝙗𝙤𝙨/𝙡𝙜";
 input color      __H_BosLG_Color     = clrCrimson;
 input LINE_STYLE __H_BosLG_Style     = STYLE_SOLID;
       int        __H_BosLG_Width     = 2;
 //--------------------------------------------
       string     __H_Target_Name     = "eof";
-      string     __H_Target_Text     = "eof";
+      string     __H_Target_Text     = "𝙚𝙤𝙛";
 input color      __H_Target_Color    = clrGreen;
 input LINE_STYLE __H_Target_Style    = STYLE_SOLID;
       int        __H_Target_Width    = 1;
 //--------------------------------------------
       string     __H_BreakEvent_Name     = "be";
-      string     __H_BreakEvent_Text     = "be";
+      string     __H_BreakEvent_Text     = "𝙗𝙚";
 input color      __H_BreakEvent_Color    = clrGreen;
 input LINE_STYLE __H_BreakEvent_Style    = STYLE_SOLID;
       int        __H_BreakEvent_Width    = 1;

@@ -2,13 +2,13 @@
 #include "../Utility.mqh"
 
 input string  C_h_a_r_t_U_t_i_l___Cfg = SEPARATE_LINE;
-input int     __U_LondonSession_Start = 7;
-input int     __U_LondonSession_Finsh = 16;
+input int     __U_Working_Start = 4;
+input int     __U_Working_Finsh = 20;
 
 enum ChartUtilType
 {
+    WORKING_AREA,
     CREATE_ALERT,
-    LONDON_BODER,
     CUTIL_NUM,
 };
 
@@ -56,8 +56,8 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
+    mNameType [WORKING_AREA] = "Working Area";
     mNameType [CREATE_ALERT] = (AlertActive ? "Create Alert" : "Draft Alert");
-    mNameType [LONDON_BODER] = "London Boder";
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
 }
@@ -81,39 +81,39 @@ void ChartUtil::onMouseMove()
 }
 void ChartUtil::onMouseClick()
 {
-    if (mIndexType == LONDON_BODER)
+    if (mIndexType == WORKING_AREA)
     {
+        // TODO: indi này chỉ vẽ trong trong TF H4 đổ xuống thôi
         // S1: Detect datetime
         int YY=TimeYear( pCommonData.mMouseTime);
         int MN=TimeMonth(pCommonData.mMouseTime);
         int DD=TimeDay(  pCommonData.mMouseTime);
         string strBeginOfDay = IntegerToString(YY)+"."+IntegerToString(MN)+"."+IntegerToString(DD)+" 00:00";
-        // S2: Create Rectangle and Adjust
-        string rectLondon = IntegerToString(hashString(strBeginOfDay));
-        if (ObjectFind(rectLondon) < 0)
+        // S2: Detect working time
+        string workingRect = IntegerToString(hashString(strBeginOfDay));
+        datetime dtToday = StrToTime(strBeginOfDay);
+        datetime openTime  = dtToday + 3600*__U_Working_Start;
+        datetime closeTime = dtToday + 3600*__U_Working_Finsh;
+        int beginBar = iBarShift(ChartSymbol(), ChartPeriod(), openTime );
+        int endBar   = iBarShift(ChartSymbol(), ChartPeriod(), closeTime);
+
+        // S3: Detect High Low
+        double highest = iHigh(ChartSymbol(), PERIOD_D1, 1);
+        double lowest  = iLow(ChartSymbol(), PERIOD_D1, 1);
+        if (beginBar > 0)
         {
-            datetime dtToday = StrToTime(strBeginOfDay);
-            datetime openTime  = dtToday + 3600*__U_LondonSession_Start;
-            datetime closeTime = dtToday + 3600*__U_LondonSession_Finsh;
-            int beginBar = iBarShift(ChartSymbol(), ChartPeriod(), openTime );
-            int endBar   = iBarShift(ChartSymbol(), ChartPeriod(), closeTime);
-            if (endBar > 0)
-            {
-                double highest = -1;
-                double lowest  = 10;
-                for (int i = beginBar; i > endBar && i >= 0; i--){
-                    if (High[i] > highest) highest = High[i];
-                    if (Low[i] < lowest)   lowest  = Low[i];
-                }
-                ObjectCreate(rectLondon, OBJ_RECTANGLE , 0, 0, 0);
-                SetObjectStyle(rectLondon, clrDarkSlateGray, 2, 0);
-                setItemPos(rectLondon, openTime, closeTime, highest, lowest);
-            }
-            else
-            {
-                // Don't draw boder when session have not finished
+            for (int i = beginBar; i > endBar && i >= 0; i--){
+                if (High[i] > highest) highest = High[i];
+                if (Low[i] < lowest)   lowest  = Low[i];
             }
         }
+        // S4: Create and set workingRect Position
+        if (ObjectFind(workingRect) < 0)
+        {
+            ObjectCreate(workingRect, OBJ_RECTANGLE , 0, 0, 0);
+            SetObjectStyle(workingRect, clrDarkSlateGray, 2, 0);
+        }
+        setItemPos(workingRect, openTime, closeTime, highest, lowest);
     }
     else if (mIndexType == CREATE_ALERT)
     {

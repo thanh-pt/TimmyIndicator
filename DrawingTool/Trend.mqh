@@ -11,7 +11,7 @@ input LINE_STYLE __T_Normal_Style = STYLE_SOLID;
       bool       __T_Normal_Arrow = false;
 //--------------------------------------------
       string     __T_Lq_Name  = "Liquidity";
-      string     __T_Lq_Text  = "$$$";
+      string     __T_Lq_Text  = "$";
 input color      __T_Lq_Color = clrBlack;
 input LINE_STYLE __T_Lq_Style = STYLE_SOLID;
       int        __T_Lq_Width = 1;

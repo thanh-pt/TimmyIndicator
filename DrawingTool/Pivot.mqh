@@ -3,11 +3,18 @@
 
 // input string          Pivot_ = "Pivot Config";
 
+enum PivotType
+{
+    POINT_PIVOT,
+    POINT_REACT,
+    POINT_PRICE,
+    POINT_NUM,
+};
+
 class Pivot : public BaseItem
 {
 // Internal Value
 private:
-    string IconList[2];
 
 // Component name
 private:
@@ -50,12 +57,12 @@ Pivot::Pivot(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [0] = "Pivot";
-    mNameType [1] = "React";
+    mNameType [POINT_PIVOT] = "Pivot";
+    mNameType [POINT_REACT] = "React";
+    mNameType [POINT_PRICE] = "Price";
+
     mIndexType = 0;
-    mTypeNum = 2;
-    IconList[0] = "●";
-    IconList[1] = "▼";
+    mTypeNum = POINT_NUM;
 }
 
 // Internal Event
@@ -77,7 +84,6 @@ void Pivot::updateDefaultProperty()
 void Pivot::updateTypeProperty()
 {
     ObjectSetText(sType0, IntegerToString(mIndexType));
-    ObjectSetText(cPivot, IconList[mIndexType]);
 }
 void Pivot::activateItem(const string& itemId)
 {
@@ -88,17 +94,23 @@ void Pivot::updateItemAfterChangeType(){}
 void Pivot::refreshData()
 {
     int shift = iBarShift(ChartSymbol(), ChartPeriod(), time);
-    if (price <= Low[shift])
+    bool isUp = false;
+    if (price >= High[shift]) isUp = true;
+
+    ObjectSet(cPivot, OBJPROP_COLOR, isUp ? clrRed : clrGreen);
+    ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+
+    if (mIndexType == POINT_PIVOT)
     {
-        ObjectSet(cPivot, OBJPROP_ANGLE,  180);
-        ObjectSet(cPivot     , OBJPROP_COLOR, clrGreen);
-    }
-    else
+        ObjectSetText(cPivot, "░●░");
+    } else if (mIndexType == POINT_REACT)
     {
-        ObjectSet(cPivot, OBJPROP_ANGLE,  0);
-        
-        ObjectSet(cPivot     , OBJPROP_COLOR, clrRed);
+        ObjectSetText(cPivot, isUp ? "▼" : "▲");
+    } else if (mIndexType == POINT_PRICE)
+    {
+        ObjectSetText(cPivot, DoubleToString(price, 5));
     }
+
     ObjectSetString(ChartID(), cPivot, OBJPROP_TOOLTIP, DoubleToString(price, 5));
     setItemPos(cPivot, time, price);
 }
@@ -118,6 +130,7 @@ void Pivot::onMouseClick()
 }
 void Pivot::onItemDrag(const string &itemId, const string &objId)
 {
+    mIndexType = StrToInteger(ObjectDescription(sType0));
     time  = (datetime)ObjectGet(cPivot, OBJPROP_TIME1);
     price =           ObjectGet(cPivot, OBJPROP_PRICE1);
 
