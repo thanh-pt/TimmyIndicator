@@ -40,7 +40,7 @@ input color           __F_2_Color = clrGold;
 enum FibType
 {
     FIB_FULL,
-    // FIB_5000,
+    FIB_RANGE,
     FIB_BUY0,
     FIB_SELL,
     FIB_NUM,
@@ -118,7 +118,7 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
     // Init variable type
     mIndexType = 0;
     mNameType[FIB_FULL] = "Fib Full";
-    // mNameType[FIB_5000] = "Fib 50";
+    mNameType[FIB_RANGE] = "RANGE";
     mNameType[FIB_BUY0] = "BUY Block";
     mNameType[FIB_SELL] = "SELL Block";
     mTypeNum = FIB_NUM;
@@ -140,12 +140,12 @@ void Fibonacci::createItem()
     if (__F_4_Color != clrNONE) ObjectCreate(iFib4, OBJ_TREND, 0, 0, 0);
     if (__F_5_Color != clrNONE) ObjectCreate(iFib5, OBJ_TREND, 0, 0, 0);
     //------------------------------------------
-    if (__F_0_Color != clrNONE && __F_0_Text != "") ObjectCreate(iTxt0, OBJ_TEXT, 0, 0, 0);
-    if (__F_1_Color != clrNONE && __F_1_Text != "") ObjectCreate(iTxt1, OBJ_TEXT, 0, 0, 0);
-    if (__F_2_Color != clrNONE && __F_2_Text != "") ObjectCreate(iTxt2, OBJ_TEXT, 0, 0, 0);
-    if (__F_3_Color != clrNONE && __F_3_Text != "") ObjectCreate(iTxt3, OBJ_TEXT, 0, 0, 0);
-    if (__F_4_Color != clrNONE && __F_4_Text != "") ObjectCreate(iTxt4, OBJ_TEXT, 0, 0, 0);
-    if (__F_5_Color != clrNONE && __F_5_Text != "") ObjectCreate(iTxt5, OBJ_TEXT, 0, 0, 0);
+    if (__F_0_Color != clrNONE /*&& __F_0_Text != ""*/) ObjectCreate(iTxt0, OBJ_TEXT, 0, 0, 0);
+    if (__F_1_Color != clrNONE /*&& __F_1_Text != ""*/) ObjectCreate(iTxt1, OBJ_TEXT, 0, 0, 0);
+    if (__F_2_Color != clrNONE /*&& __F_2_Text != ""*/) ObjectCreate(iTxt2, OBJ_TEXT, 0, 0, 0);
+    if (__F_3_Color != clrNONE /*&& __F_3_Text != ""*/) ObjectCreate(iTxt3, OBJ_TEXT, 0, 0, 0);
+    if (__F_4_Color != clrNONE /*&& __F_4_Text != ""*/) ObjectCreate(iTxt4, OBJ_TEXT, 0, 0, 0);
+    if (__F_5_Color != clrNONE /*&& __F_5_Text != ""*/) ObjectCreate(iTxt5, OBJ_TEXT, 0, 0, 0);
     ObjectCreate(ckLne, OBJ_RECTANGLE, 0, 0, 0);
 
     ObjectCreate(cPointL1, OBJ_ARROW, 0, 0, 0);
@@ -191,6 +191,7 @@ void Fibonacci::updateTypeProperty()
     ObjectSetText(iTxt5, __F_5_Text + "  ", 7, NULL, __F_5_Color);
     //------------------------------------------
     SetRectangleBackground(ckLne, __F_Bkgrd_Color);
+    multiSetProp(OBJPROP_RAY, false, iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     //------------------------------------------
     ObjectSet(iFib0, OBJPROP_COLOR, __F_0_Color);
     ObjectSet(iFib1, OBJPROP_COLOR, __F_1_Color);
@@ -206,6 +207,16 @@ void Fibonacci::updateTypeProperty()
     if (mIndexType == FIB_BUY0 || mIndexType == FIB_SELL)
     {
         multiSetProp(OBJPROP_COLOR, clrNONE, iTxt0+iTxt1+iTxt2);
+    }
+    if (mIndexType == FIB_RANGE)
+    {
+        ObjectSetText(iTxt0, "𝙇𝙤𝙬  " , 8);
+        ObjectSetText(iTxt1, "𝙃𝙞𝙜𝙝  ", 8);
+        ObjectSetText(iTxt2, "50%  ", 8);
+        multiSetProp(OBJPROP_COLOR, clrGreen, iFib0+iTxt0);
+        multiSetProp(OBJPROP_COLOR, clrRed  , iFib1+iTxt1);
+        multiSetProp(OBJPROP_COLOR, clrDarkOrange, iFib2+iTxt2);
+        multiSetProp(OBJPROP_RAY, true, iFib0+iFib1);
     }
     if (mIndexType == FIB_BUY0)
     {

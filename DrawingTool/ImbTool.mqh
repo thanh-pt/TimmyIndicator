@@ -232,8 +232,8 @@ void ImbTool::updateTypeProperty()
     }
     else if (mIndexType == IMB_WAVE) 
     {
-        ObjectSetText (cPoint1,"░●░", 9, "Consolas", clrGreen);
-        ObjectSetText (cPoint2,"░●░", 9, "Consolas", clrRed);
+        ObjectSetText (cPoint1," ● ", 9, "Consolas", clrGreen);
+        ObjectSetText (cPoint2," ● ", 9, "Consolas", clrRed);
         multiSetProp(OBJPROP_COLOR, clrNONE, iLine01+iLine02);
     }
 }

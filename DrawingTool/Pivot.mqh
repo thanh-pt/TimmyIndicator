@@ -102,7 +102,7 @@ void Pivot::refreshData()
 
     if (mIndexType == POINT_PIVOT)
     {
-        ObjectSetText(cPivot, "░●░");
+        ObjectSetText(cPivot, " ● ");
     } else if (mIndexType == POINT_REACT)
     {
         ObjectSetText(cPivot, isUp ? "▼" : "▲");
