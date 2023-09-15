@@ -353,6 +353,16 @@ void LongShort::onItemDrag(const string &itemId, const string &objId)
             time2 = newtime2;
         }
     }
+    else
+    {
+        if (pCommonData.mCtrlHold == true)
+        {
+            if      (objId == cPointTP) priceTP = pCommonData.mMousePrice;
+            else if (objId == cPointEN) priceEN = pCommonData.mMousePrice;
+            else if (objId == cPointSL) priceSL = pCommonData.mMousePrice;
+            else if (objId == cPointBE) priceBE = pCommonData.mMousePrice;
+        }
+    }
     refreshData();
 }
 void LongShort::onItemClick(const string &itemId, const string &objId)
