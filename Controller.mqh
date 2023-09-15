@@ -113,9 +113,9 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'R') return IDX_RECTANGLE ;
     if (key == 'F') return IDX_FIBONACI  ;
     if (key == 'C') return IDX_CALLOUT   ;
-    if (key == 'D') return IDX_LONGSHORT ;
+    if (key == 'W') return IDX_LONGSHORT ;
     if (key == 'X') return IDX_CHARTUTIL ;
-    if (key == 'A') return IDX_PIVOT     ;
+    if (key == 'Q') return IDX_PIVOT     ;
     if (key == 'S') return IDX_IMBTOOL   ;
     return IDX_NONE;
 }
@@ -161,10 +161,10 @@ void Controller::handleKeyEvent(const long &key)
         ((LongShort*)mListItem[IDX_LONGSHORT]).showHideHistory();
         break;
     // Short cut for Chart fix [S]
-    case 'Q':
+    case 'Y':
         SetChartScaleFix(true);
         break;
-    case 'W':
+    case 'U':
         SetChartScaleFix(false);
         break;
     // Short cut for Chart fix [E]

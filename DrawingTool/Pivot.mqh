@@ -140,7 +140,10 @@ void Pivot::onItemDrag(const string &itemId, const string &objId)
     }
     refreshData();
 }
-void Pivot::onItemClick(const string &itemId, const string &objId){}
+void Pivot::onItemClick(const string &itemId, const string &objId)
+{
+    multiSetProp(OBJPROP_SELECTED   , (int)ObjectGet(objId, OBJPROP_SELECTED), cPivot+sType0);
+}
 void Pivot::onItemChange(const string &itemId, const string &objId){}
 void Pivot::onItemDeleted(const string &itemId, const string &objId)
 {
