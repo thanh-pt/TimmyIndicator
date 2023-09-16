@@ -5,14 +5,16 @@ input color Templates_BgColor1  = clrGray;
 input color Templates_BgColor2  = clrLightGray;
 
 #define TEXT_FULL_BLOCK "██████████████████████████████████████████████████████████████████"
+#define MAX_ROW 4
 
 class Templates
 {
 private:
     string mActiveObjectId;
     string mTemplates[];
-    int mSize;
-    bool mIsOpen;
+    int    mSize;
+    int    mMaxLength;
+    bool   mIsOpen;
 public:
     int mActivePos;
 
@@ -51,6 +53,14 @@ public:
         mActiveObjectId = objId;
         mActivePos = activePos;
         mSize = StringSplit(data,',',mTemplates);
+        mMaxLength = 0;
+        int tempLength;
+        for (int i = 0; i < mSize; i++)
+        {
+            tempLength = StringLen(mTemplates[i]);
+            if (tempLength > mMaxLength) mMaxLength = tempLength;
+        }
+        mMaxLength += 2;
         for (int i = 0; i < mSize; i++)
         {
             drawItem(mTemplates[i], i);
@@ -76,20 +86,19 @@ private:
         ObjectCreate(itemName, OBJ_LABEL, 0, 0, 0);
         ObjectSet(itemBgnd, OBJPROP_SELECTABLE, false);
         ObjectSet(itemName, OBJPROP_SELECTABLE, false);
-        ObjectSetText(itemBgnd, StringSubstr(TEXT_FULL_BLOCK, 0, StringLen(name)+2), 10, "Consolas", Templates_BgColor1);
-        ObjectSetText(itemName,                                            " "+name, 10, "Consolas", Templates_TextColor);
+        ObjectSetText(itemBgnd, StringSubstr(TEXT_FULL_BLOCK, 0, mMaxLength), 10, "Consolas", Templates_BgColor1);
+        ObjectSetText(itemName,                                     " "+name, 10, "Consolas", Templates_TextColor);
         ObjectSetInteger(0, itemName, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
         ObjectSetInteger(0, itemBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
 
-        int topOffset = gCommonData.mMouseY + 10;
-        int leftOffset = gCommonData.mMouseX + 20;
-        int textSpace = 16;
+        int topOffset  = gCommonData.mMouseY + 10 + (pos%MAX_ROW)*16;
+        int leftOffset = gCommonData.mMouseX + 20 + (pos/MAX_ROW)*mMaxLength*8;
 
         ObjectSet(itemName, OBJPROP_XDISTANCE, leftOffset);
-        ObjectSet(itemName, OBJPROP_YDISTANCE, topOffset+pos*textSpace);
+        ObjectSet(itemName, OBJPROP_YDISTANCE, topOffset);
 
         ObjectSet(itemBgnd, OBJPROP_XDISTANCE, leftOffset);
-        ObjectSet(itemBgnd, OBJPROP_YDISTANCE, topOffset+pos*textSpace);
+        ObjectSet(itemBgnd, OBJPROP_YDISTANCE, topOffset);
 
         if (pos == mActivePos)
         {
