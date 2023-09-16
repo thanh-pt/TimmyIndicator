@@ -110,7 +110,12 @@ void CallOut::refreshData()
         ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
         ObjectSetInteger(ChartID(), iUdLine, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
     }
-    ObjectSetText(iUdLine, StringSubstr(UNDER_LINE, 0, StringLen(ObjectDescription(cLbText))));
+    string callOutValue = ObjectDescription(cLbText);
+    ObjectSetText(iUdLine, StringSubstr(UNDER_LINE, 0, StringLen(callOutValue)));
+    if (StrToDouble(callOutValue) != 0.0)
+    {
+        ObjectSetText(cLbText, DoubleToString(price1,5));
+    }
 }
 void CallOut::finishedJobDone(){}
 
@@ -147,6 +152,14 @@ void CallOut::onItemDrag(const string &itemId, const string &objId)
     {
         time2   = (datetime)ObjectGet(cLbText, OBJPROP_TIME1);
         price2  =           ObjectGet(cLbText, OBJPROP_PRICE1);
+    }
+    else if (pCommonData.mCtrlHold == true)
+    {
+        double textPrice = ObjectGet(cLbText, OBJPROP_PRICE1);
+        if (price2 == textPrice)
+        {
+            price1 = pCommonData.mMousePrice;
+        }
     }
 
     refreshData();
