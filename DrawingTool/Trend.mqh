@@ -41,13 +41,13 @@ input LINE_STYLE __T_Bos_Style = STYLE_SOLID;
       int        __T_Bos_Width = 1;
       bool       __T_Bos_Arrow = false;
 //--------------------------------------------
-      string     __T_SpLq_Name  = "SweepLq";
-      string     __T_SpLq_Text  = "x";
+      string     __T_SpLq_Name  = "xLq";
+      string     __T_SpLq_Text  = " ✖ ";
       TEXT_POS   __T_SpLq_TxtPos= TXT_POS_RIGHT;
 input color      __T_SpLq_Color = clrCrimson;
 input LINE_STYLE __T_SpLq_Style = STYLE_SOLID;
       int        __T_SpLq_Width = 1;
-      bool       __T_SpLq_Arrow = false;
+      bool       __T_SpLq_Arrow = true;
 //--------------------------------------------
       string     __T_Fail_Name  = "ƒail";
       string     __T_Fail_Text  = "";
@@ -92,11 +92,11 @@ input LINE_STYLE __T_BE_Style = STYLE_SOLID;
 enum TrendType
 {
     TREND_NML,
-    TREND_LQ,
     TREND_MTG,
     TREND_BOS,
     TREND_BLG,
     TREND_FAIL,
+    TREND_LQ,
     TREND_SLQ,
     TREND_OFS,
     TREND_EOF,
@@ -277,7 +277,7 @@ void Trend::refreshData()
     setItemPos(iAngle0, time1, time2, price1, price2);
     setTextPos(iArrowT, time2, price2);
     double angle=ObjectGet(iAngle0, OBJPROP_ANGLE);
-    ObjectSet(iArrowT, OBJPROP_ANGLE,  angle-90);
+    ObjectSet(iArrowT, OBJPROP_ANGLE,  angle-90.0);
 
     // Update Text
     if      (mTextPos[mIndexType] == TXT_POS_CENTER) setTextPos(iLbText, time3, price3);
@@ -294,7 +294,14 @@ void Trend::refreshData()
     else if (angle > 090 && angle <  180) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?  ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_UPPER);
     else if (angle > 180 && angle <= 270) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
     else if (angle > 270 && angle <  360) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?  ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_UPPER);
-    else if (angle == 0  || angle == 180) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?  ANCHOR_LOWER : ANCHOR_UPPER);
+    else if (angle == 0) 
+    {
+        if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?        ANCHOR_LOWER :       ANCHOR_UPPER);
+        else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?   ANCHOR_LEFT_LOWER :  ANCHOR_LEFT_UPPER);
+        else                                             ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?  ANCHOR_RIGHT_LOWER : ANCHOR_RIGHT_UPPER);
+
+        if (barT1 < barT2) ObjectSet(iArrowT, OBJPROP_ANGLE,  90.0); // case 180*
+    }
 }
 
 void Trend::createItem()
