@@ -108,7 +108,7 @@ void Controller::finishedJob()
 int Controller::findItemIdByKey(const int key)
 {
     if (key == 'T') return IDX_TREND     ;
-    if (key == 'G') return IDX_HTREND    ;
+    // if (key == 'G') return IDX_HTREND    ;
     if (key == 'Z') return IDX_ZIGZAG    ;
     if (key == 'R') return IDX_RECTANGLE ;
     if (key == 'F') return IDX_FIBONACI  ;
