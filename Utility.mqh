@@ -211,7 +211,15 @@ void EraseThisTF()
 
 void SetChartScaleFix(bool bFix)
 {
-    ChartSetInteger(ChartID(), CHART_SCALEFIX, 0, bFix);
+    // PrintFormat("bFix : %d", bFix);
+    //--- reset the error value
+    ResetLastError();
+    //--- set property value
+    if(!ChartSetInteger(ChartID(),CHART_SCALEFIX,0,bFix))
+    {
+        //--- display the error message in Experts journal
+        Print(__FUNCTION__+", Error Code = ",GetLastError());
+    }
 }
 
 string getTFString()

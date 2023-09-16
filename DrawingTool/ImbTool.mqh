@@ -68,10 +68,10 @@ ImbTool::ImbTool(const string name, CommonData* commonData, MouseInfo* mouseInfo
     mIndexType = 0;
     mNameType[IMB_TOOL] = "Imb Tool";
     mTypeNum = IMB_NUM;
-    // for (int i = 0; i < IMB_NUM; i++)
+    // for (int i = 0; i < mTypeNum; i++)
     // {
     //     mTemplateTypes += mNameType[i];
-    //     if (i < IMB_NUM-1) mTemplateTypes += ",";
+    //     if (i < mTypeNum-1) mTemplateTypes += ",";
     // }
 }
 

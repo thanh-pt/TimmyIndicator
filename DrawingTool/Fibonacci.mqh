@@ -124,10 +124,10 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
     mNameType[FIB_BUY0]  = "Buy Order";
     mNameType[FIB_SELL]  = "Sell Order";
     mTypeNum = FIB_NUM;
-    for (int i = 0; i < FIB_NUM; i++)
+    for (int i = 0; i < mTypeNum; i++)
     {
         mTemplateTypes += mNameType[i];
-        if (i < FIB_NUM-1) mTemplateTypes += ",";
+        if (i < mTypeNum-1) mTemplateTypes += ",";
     }
 }
 

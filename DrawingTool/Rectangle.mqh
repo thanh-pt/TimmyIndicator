@@ -104,13 +104,13 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
     mNameType [DZ_LIGHT_TYPE] = __R_DzLight_Name ;
     mPropColor[DZ_LIGHT_TYPE] = __R_DzLight_Color;
     //------------------------------------------
-    for (int i = 0; i < RECT_NUM; i++)
+    mIndexType = 0;
+    mTypeNum = RECT_NUM;
+    for (int i = 0; i < mTypeNum; i++)
     {
         mTemplateTypes += mNameType[i];
-        if (i < RECT_NUM-1) mTemplateTypes += ",";
+        if (i < mTypeNum-1) mTemplateTypes += ",";
     }
-    mTypeNum = RECT_NUM;
-    mIndexType = 0;
 }
 
 // Internal Event

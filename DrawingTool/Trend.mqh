@@ -245,13 +245,13 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_BE  ]  = __T_BE_Width;
     mShowArrow[TREND_BE  ]  = __T_BE_Arrow;
     //--------------------------------------------
-    for (int i = 0; i < TREND_NUM; i++)
+    mIndexType = 0;
+    mTypeNum = TREND_NUM;
+    for (int i = 0; i < mTypeNum; i++)
     {
         mTemplateTypes += mNameType[i];
-        if (i < TREND_NUM-1) mTemplateTypes += ",";
+        if (i < mTypeNum-1) mTemplateTypes += ",";
     }
-    mTypeNum = TREND_NUM;
-    mIndexType = 0;
 }
 
 // Internal Event

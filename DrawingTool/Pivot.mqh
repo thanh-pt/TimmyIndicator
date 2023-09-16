@@ -7,7 +7,8 @@ enum PivotType
 {
     POINT_PIVOT,
     POINT_REACT,
-    POINT_PRICE,
+    POINT_LEFT ,
+    POINT_RIGHT,
     POINT_NUM,
 };
 
@@ -19,7 +20,7 @@ private:
 // Component name
 private:
     string cPivot;
-    string sType0;
+    string sType;
 
 // Value define for Item
 private:
@@ -48,6 +49,7 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
+    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 Pivot::Pivot(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -59,10 +61,16 @@ Pivot::Pivot(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     // Init variable type
     mNameType [POINT_PIVOT] = "Pivot";
     mNameType [POINT_REACT] = "React";
-    mNameType [POINT_PRICE] = "Price";
+    mNameType [POINT_LEFT ] = "⭠";
+    mNameType [POINT_RIGHT] = "⭢";
 
     mIndexType = 0;
     mTypeNum = POINT_NUM;
+    for (int i = 0; i < mTypeNum; i++)
+    {
+        mTemplateTypes += mNameType[i];
+        if (i < mTypeNum-1) mTemplateTypes += ",";
+    }
 }
 
 // Internal Event
@@ -70,45 +78,47 @@ void Pivot::prepareActive(){}
 void Pivot::createItem()
 {
     ObjectCreate(cPivot, OBJ_TEXT , 0, 0, 0);
-    ObjectCreate(sType0, OBJ_TEXT , 0, 0, 0);
-    updateTypeProperty();
+    ObjectCreate(sType, OBJ_TEXT , 0, 0, 0);
     updateDefaultProperty();
+    updateTypeProperty();
     time  = pCommonData.mMouseTime;
     price = pCommonData.mMousePrice;
     refreshData();
 }
 void Pivot::updateDefaultProperty()
 {
-    ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, ANCHOR_LOWER);
 }
 void Pivot::updateTypeProperty()
 {
-    ObjectSetText(sType0, IntegerToString(mIndexType));
+    ObjectSetText(sType, IntegerToString(mIndexType));
+    if (mIndexType == POINT_LEFT || mIndexType == POINT_RIGHT)
+    {
+        ObjectSetText(cPivot, mNameType[mIndexType], 10, NULL, clrNavy);
+        ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, mIndexType == POINT_LEFT ? ANCHOR_LEFT : ANCHOR_RIGHT);
+    }
 }
 void Pivot::activateItem(const string& itemId)
 {
     cPivot = itemId + "_cPivot";
-    sType0 = itemId + "_sType0";
+    sType = itemId + "_sType";
 }
 void Pivot::updateItemAfterChangeType(){}
 void Pivot::refreshData()
 {
-    int shift = iBarShift(ChartSymbol(), ChartPeriod(), time);
-    bool isUp = false;
-    if (price >= High[shift]) isUp = true;
-
-    ObjectSet(cPivot, OBJPROP_COLOR, isUp ? clrRed : clrGreen);
-    ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
-
-    if (mIndexType == POINT_PIVOT)
+    if (mIndexType == POINT_PIVOT || mIndexType == POINT_REACT)
     {
-        ObjectSetText(cPivot, " ● ");
-    } else if (mIndexType == POINT_REACT)
-    {
-        ObjectSetText(cPivot, isUp ? "▼" : "▲");
-    } else if (mIndexType == POINT_PRICE)
-    {
-        ObjectSetText(cPivot, DoubleToString(price, 5));
+        int shift = iBarShift(ChartSymbol(), ChartPeriod(), time);
+        bool isUp = (price >= High[shift]);
+        ObjectSet(cPivot, OBJPROP_COLOR, isUp ? clrRed : clrGreen);
+        ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+        if (mIndexType == POINT_PIVOT)
+        {
+            ObjectSetText(cPivot, " ● ");
+        } else if (mIndexType == POINT_REACT)
+        {
+            // ObjectSetText(cPivot, isUp ? "▼" : "▲");
+            ObjectSetText(cPivot, isUp ? " ⭣ " : " ⭡ ");
+        }
     }
 
     ObjectSetString(ChartID(), cPivot, OBJPROP_TOOLTIP, DoubleToString(price, 5));
@@ -130,7 +140,7 @@ void Pivot::onMouseClick()
 }
 void Pivot::onItemDrag(const string &itemId, const string &objId)
 {
-    mIndexType = StrToInteger(ObjectDescription(sType0));
+    mIndexType = StrToInteger(ObjectDescription(sType));
     time  = (datetime)ObjectGet(cPivot, OBJPROP_TIME1);
     price =           ObjectGet(cPivot, OBJPROP_PRICE1);
 
@@ -142,11 +152,23 @@ void Pivot::onItemDrag(const string &itemId, const string &objId)
 }
 void Pivot::onItemClick(const string &itemId, const string &objId)
 {
-    multiSetProp(OBJPROP_SELECTED   , (int)ObjectGet(objId, OBJPROP_SELECTED), cPivot+sType0);
+    int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
+    multiSetProp(OBJPROP_SELECTED   , selected, cPivot+sType);
+    if (selected)
+    {
+        gTemplates.openTemplates(objId, mTemplateTypes, StrToInteger(ObjectDescription(sType)));
+    }
 }
 void Pivot::onItemChange(const string &itemId, const string &objId){}
 void Pivot::onItemDeleted(const string &itemId, const string &objId)
 {
     ObjectDelete(cPivot);
-    ObjectDelete(sType0);
+    ObjectDelete(sType);
+}
+void Pivot::onUserRequest(const string &itemId, const string &objId)
+{
+    activateItem(itemId);
+    mIndexType = gTemplates.mActivePos;
+    updateTypeProperty();
+    onItemDrag(itemId, objId);
 }

@@ -216,13 +216,13 @@ HTrend::HTrend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     // mPropStyle[HTREND_MN_SIG] = __H_Mn_Sig_Style;
     // mPropWidth[HTREND_MN_SIG] = __H_Mn_Sig_Width;
     //-----------------------------
-    for (int i = 0; i < HTREND_NUM; i++)
-    {
-        mTemplateTypes += mNameType[i];
-        if (i < HTREND_NUM-1) mTemplateTypes += ",";
-    }
     mIndexType = 0;
     mTypeNum   = HTREND_NUM;
+    for (int i = 0; i < mTypeNum; i++)
+    {
+        mTemplateTypes += mNameType[i];
+        if (i < mTypeNum-1) mTemplateTypes += ",";
+    }
 }
 
 // Internal Event

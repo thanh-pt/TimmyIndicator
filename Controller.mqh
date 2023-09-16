@@ -115,8 +115,8 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'C') return IDX_CALLOUT   ;
     if (key == 'W') return IDX_LONGSHORT ;
     if (key == 'X') return IDX_CHARTUTIL ;
-    if (key == 'Q') return IDX_PIVOT     ;
-    if (key == 'S') return IDX_IMBTOOL   ;
+    if (key == 'S') return IDX_PIVOT     ;
+    if (key == 'A') return IDX_IMBTOOL   ;
     return IDX_NONE;
 }
 
