@@ -53,6 +53,8 @@ private:
 
 // Component name
 private:
+    string sType;
+
     string ckLne;
     string iFib0;
     string iFib1;
@@ -117,10 +119,10 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
 
     // Init variable type
     mIndexType = 0;
-    mNameType[FIB_FULL] = "Fib Full";
-    mNameType[FIB_RANGE] = "RANGE";
-    mNameType[FIB_BUY0] = "BUY Block";
-    mNameType[FIB_SELL] = "SELL Block";
+    mNameType[FIB_FULL]  = "Fib";
+    mNameType[FIB_RANGE] = "Range";
+    mNameType[FIB_BUY0]  = "Buy Order";
+    mNameType[FIB_SELL]  = "Sell Order";
     mTypeNum = FIB_NUM;
     for (int i = 0; i < FIB_NUM; i++)
     {
@@ -133,6 +135,8 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
 void Fibonacci::prepareActive(){}
 void Fibonacci::createItem()
 {
+    ObjectCreate(sType, OBJ_TEXT, 0, 0, 0);
+    
     if (__F_0_Color != clrNONE) ObjectCreate(iFib0, OBJ_TREND, 0, 0, 0);
     if (__F_1_Color != clrNONE) ObjectCreate(iFib1, OBJ_TREND, 0, 0, 0);
     if (__F_2_Color != clrNONE) ObjectCreate(iFib2, OBJ_TREND, 0, 0, 0);
@@ -155,15 +159,14 @@ void Fibonacci::createItem()
     ObjectCreate(cPointC1, OBJ_ARROW, 0, 0, 0);
     ObjectCreate(cPointC2, OBJ_ARROW, 0, 0, 0);
 
-    updateTypeProperty();
     updateDefaultProperty();
+    updateTypeProperty();
 
     time0  = pCommonData.mMouseTime;
     price0 = pCommonData.mMousePrice;
 }
 void Fibonacci::updateDefaultProperty()
 {
-    multiSetProp(OBJPROP_RAY          , false     , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     multiSetProp(OBJPROP_WIDTH        , __F_Width , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     multiSetProp(OBJPROP_STYLE        , __F_Style , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     multiSetProp(OBJPROP_SELECTABLE   , false     , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
@@ -183,6 +186,8 @@ void Fibonacci::updateDefaultProperty()
 }
 void Fibonacci::updateTypeProperty()
 {
+    ObjectSetText(sType, IntegerToString(mIndexType));
+    //------------------------------------------
     ObjectSetText(iTxt0, __F_0_Text + "  ", 7, NULL, __F_0_Color);
     ObjectSetText(iTxt1, __F_1_Text + "  ", 7, NULL, __F_1_Color);
     ObjectSetText(iTxt2, __F_2_Text + "  ", 7, NULL, __F_2_Color);
@@ -210,11 +215,7 @@ void Fibonacci::updateTypeProperty()
     }
     if (mIndexType == FIB_RANGE)
     {
-        ObjectSetText(iTxt0, "𝙇𝙤𝙬  " , 8);
-        ObjectSetText(iTxt1, "𝙃𝙞𝙜𝙝  ", 8);
         ObjectSetText(iTxt2, "50%  ", 8);
-        multiSetProp(OBJPROP_COLOR, clrGreen, iFib0+iTxt0);
-        multiSetProp(OBJPROP_COLOR, clrRed  , iFib1+iTxt1);
         multiSetProp(OBJPROP_COLOR, clrDarkOrange, iFib2+iTxt2);
         multiSetProp(OBJPROP_RAY, true, iFib0+iFib1);
     }
@@ -229,6 +230,8 @@ void Fibonacci::updateTypeProperty()
 }
 void Fibonacci::activateItem(const string& itemId)
 {
+    sType = itemId + "_sType";
+
     ckLne = itemId + "_c0Lne";
     iFib0 = itemId + "_iFib0";
     iFib1 = itemId + "_iFib1";
@@ -288,6 +291,15 @@ void Fibonacci::refreshData()
     int selected = (int)ObjectGet(ckLne, OBJPROP_SELECTED);
     multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+ckLne);
+    //-------------------------------------------------
+    if (mIndexType == FIB_RANGE)
+    {
+        bool isUp = (price1 > price0);
+        ObjectSetText(iTxt0, isUp ? "𝙇𝙤𝙬  " : "𝙃𝙞𝙜𝙝  ", 8);
+        ObjectSetText(iTxt1, isUp ? "𝙃𝙞𝙜𝙝  ": "𝙇𝙤𝙬  ", 8);
+        multiSetProp(OBJPROP_COLOR, isUp ? clrGreen : clrRed  , iFib0+iTxt0);
+        multiSetProp(OBJPROP_COLOR, isUp ? clrRed   : clrGreen, iFib1+iTxt1);
+    }
 }
 void Fibonacci::finishedJobDone(){}
 
@@ -314,6 +326,7 @@ void Fibonacci::onMouseClick()
 }
 void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 {
+    mIndexType = StrToInteger(ObjectDescription(sType));
     if (objId == ckLne)
     {
         time0   = (datetime)ObjectGet(ckLne, OBJPROP_TIME1);
@@ -372,7 +385,7 @@ void Fibonacci::onItemClick(const string &itemId, const string &objId)
     {
         unSelectAllExcept(itemId);
         if (objId == cPointC1 || objId == cPointC2)
-            gTemplates.openTemplates(objId, mTemplateTypes, -1);
+            gTemplates.openTemplates(objId, mTemplateTypes, StrToInteger(ObjectDescription(sType)));
     }
 }
 void Fibonacci::onItemChange(const string &itemId, const string &objId){}
@@ -391,10 +404,12 @@ void Fibonacci::onItemDeleted(const string &itemId, const string &objId)
     ObjectDelete(iTxt3);
     ObjectDelete(iTxt4);
     ObjectDelete(iTxt5);
+    ObjectDelete(sType);
 }
 void Fibonacci::onUserRequest(const string &itemId, const string &objId)
 {
     activateItem(itemId);
     mIndexType = gTemplates.mActivePos;
     updateTypeProperty();
+    onItemDrag(itemId, objId);
 }
