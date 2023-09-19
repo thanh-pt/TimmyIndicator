@@ -92,15 +92,15 @@ input LINE_STYLE __T_BE_Style = STYLE_SOLID;
 enum TrendType
 {
     TREND_NML,
-    TREND_MTG,
+    TREND_FA ,
     TREND_BOS,
     TREND_BLG,
-    TREND_FAIL,
-    TREND_LQ,
-    TREND_SLQ,
+    TREND_LQ ,
+    TREND_XLQ,
+    TREND_OF ,
     TREND_OFS,
     TREND_EOF,
-    TREND_BE,
+    TREND_BE ,
     TREND_NUM,
 };
 
@@ -181,13 +181,13 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_LQ   ] = __T_Lq_Width;
     mShowArrow[TREND_LQ   ] = __T_Lq_Arrow;
     //--------------------------------------------
-    mNameType [TREND_MTG  ] = __T_Mtg_Name ;
-    mDispText [TREND_MTG  ] = __T_Mtg_Text ;
-    mTextPos  [TREND_MTG  ] = __T_Mtg_TxtPos;
-    mColorType[TREND_MTG  ] = __T_Mtg_Color;
-    mStyleType[TREND_MTG  ] = __T_Mtg_Style;
-    mWidthType[TREND_MTG  ] = __T_Mtg_Width;
-    mShowArrow[TREND_MTG  ] = __T_Mtg_Arrow;
+    mNameType [TREND_OF   ] = __T_Mtg_Name ;
+    mDispText [TREND_OF   ] = __T_Mtg_Text ;
+    mTextPos  [TREND_OF   ] = __T_Mtg_TxtPos;
+    mColorType[TREND_OF   ] = __T_Mtg_Color;
+    mStyleType[TREND_OF   ] = __T_Mtg_Style;
+    mWidthType[TREND_OF   ] = __T_Mtg_Width;
+    mShowArrow[TREND_OF   ] = __T_Mtg_Arrow;
     //--------------------------------------------
     mNameType [TREND_BOS  ] = __T_Bos_Name ;
     mDispText [TREND_BOS  ] = __T_Bos_Text ;
@@ -205,21 +205,21 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_BLG  ] = __T_BLg_Width;
     mShowArrow[TREND_BLG  ] = __T_BLg_Arrow;
     //--------------------------------------------
-    mNameType [TREND_FAIL ] = __T_Fail_Name ;
-    mDispText [TREND_FAIL ] = __T_Fail_Text ;
-    mTextPos  [TREND_FAIL ] = __T_Fail_TxtPos;
-    mColorType[TREND_FAIL ] = __T_Fail_Color;
-    mStyleType[TREND_FAIL ] = __T_Fail_Style;
-    mWidthType[TREND_FAIL ] = __T_Fail_Width;
-    mShowArrow[TREND_FAIL ] = __T_Fail_Arrow;
+    mNameType [TREND_FA   ] = __T_Fail_Name ;
+    mDispText [TREND_FA   ] = __T_Fail_Text ;
+    mTextPos  [TREND_FA   ] = __T_Fail_TxtPos;
+    mColorType[TREND_FA   ] = __T_Fail_Color;
+    mStyleType[TREND_FA   ] = __T_Fail_Style;
+    mWidthType[TREND_FA   ] = __T_Fail_Width;
+    mShowArrow[TREND_FA   ] = __T_Fail_Arrow;
     //--------------------------------------------
-    mNameType [TREND_SLQ  ] = __T_SpLq_Name ;
-    mDispText [TREND_SLQ  ] = __T_SpLq_Text ;
-    mTextPos  [TREND_SLQ  ] = __T_SpLq_TxtPos;
-    mColorType[TREND_SLQ  ] = __T_SpLq_Color;
-    mStyleType[TREND_SLQ  ] = __T_SpLq_Style;
-    mWidthType[TREND_SLQ  ] = __T_SpLq_Width;
-    mShowArrow[TREND_SLQ  ] = __T_SpLq_Arrow;
+    mNameType [TREND_XLQ  ] = __T_SpLq_Name ;
+    mDispText [TREND_XLQ  ] = __T_SpLq_Text ;
+    mTextPos  [TREND_XLQ  ] = __T_SpLq_TxtPos;
+    mColorType[TREND_XLQ  ] = __T_SpLq_Color;
+    mStyleType[TREND_XLQ  ] = __T_SpLq_Style;
+    mWidthType[TREND_XLQ  ] = __T_SpLq_Width;
+    mShowArrow[TREND_XLQ  ] = __T_SpLq_Arrow;
     //--------------------------------------------
     mNameType [TREND_OFS  ] = __T_Ofs_Name ;
     mDispText [TREND_OFS  ] = __T_Ofs_Text ;

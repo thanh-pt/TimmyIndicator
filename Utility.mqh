@@ -470,6 +470,7 @@ void scanBackgroundOverlap(string target)
 {
     color targetColor = (color)ObjectGet(target, OBJPROP_COLOR);
     if (targetColor == clrNONE) return;
+    if (ObjectGet(target, OBJPROP_BACK) == false) return;
 
     double price1  =           ObjectGet(target, OBJPROP_PRICE1);
     double price2  =           ObjectGet(target, OBJPROP_PRICE2);
