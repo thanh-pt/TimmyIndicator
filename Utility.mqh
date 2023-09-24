@@ -3,6 +3,8 @@
 #define BG_TAG              "BgOverlapFix"
 #define LINE_STYLE          ENUM_LINE_STYLE
 
+#define MAX_TYPE 15
+
 #define CHART_EVENT_SELECT_TEMPLATES CHARTEVENT_CUSTOM+1
 
 #define MIN(a,b) ((a)<(b)?(a):(b))
@@ -209,13 +211,13 @@ void EraseThisTF()
     }
 }
 
-void SetChartScaleFix(bool bFix)
+void SetChartFree(bool bFree)
 {
-    // PrintFormat("bFix : %d", bFix);
+    // PrintFormat("bFree : %d", bFix);
     //--- reset the error value
     ResetLastError();
     //--- set property value
-    if(!ChartSetInteger(ChartID(),CHART_SCALEFIX,0,bFix))
+    if(!ChartSetInteger(ChartID(),CHART_SCALEFIX,0,bFree))
     {
         //--- display the error message in Experts journal
         Print(__FUNCTION__+", Error Code = ",GetLastError());

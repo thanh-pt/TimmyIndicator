@@ -98,14 +98,19 @@ void ChartUtil::onMouseClick()
         int endBar   = iBarShift(ChartSymbol(), ChartPeriod(), closeTime);
 
         // S3: Detect High Low
-        double highest = iHigh(ChartSymbol(), PERIOD_D1, 1);
-        double lowest  = iLow(ChartSymbol(), PERIOD_D1, 1);
+        double highest = High[beginBar];
+        double lowest  = Low[beginBar];
         if (beginBar > 0)
         {
-            for (int i = beginBar; i > endBar && i >= 0; i--){
+            for (int i = beginBar; i > endBar; i--){
                 if (High[i] > highest) highest = High[i];
                 if (Low[i] < lowest)   lowest  = Low[i];
             }
+        }
+        else
+        {
+            highest = iHigh(ChartSymbol(), PERIOD_D1, 1);
+            lowest  = iLow(ChartSymbol(), PERIOD_D1, 1);
         }
         // S4: Create and set workingRect Position
         if (ObjectFind(workingRect) < 0)

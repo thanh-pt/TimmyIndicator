@@ -71,7 +71,7 @@ public:
     {
         if (mIsOpen == false) return;
         mActiveObjectId = "";
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < MAX_TYPE; i++)
         {
             deleteItem(i);
         }

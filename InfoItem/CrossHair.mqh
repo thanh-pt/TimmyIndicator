@@ -100,14 +100,14 @@ public:
         ObjectSet(mHCrossHair, OBJPROP_PRICE1, pCommonData.mMousePrice);
         ObjectSet(mVCrossHair, OBJPROP_TIME1, pCommonData.mMouseTime);
 
+        
         // mWeekInfo and mDateInfo
-        if (ChartPeriod() <= PERIOD_H4)
-        {
-            ObjectSet(mWeekInfo, OBJPROP_XDISTANCE, pCommonData.mMouseX + 10);
-            ObjectSet(mDateInfo, OBJPROP_XDISTANCE, pCommonData.mMouseX + 10);
-            ObjectSetText(mWeekInfo, TimeToStr(pCommonData.mMouseTime, TIME_MINUTES) + " · " + strDayOfWeek(pCommonData.mMouseTime));
-            ObjectSetText(mDateInfo, TimeToStr(pCommonData.mMouseTime, TIME_DATE));
-        }
+        ObjectSet(mWeekInfo, OBJPROP_XDISTANCE, pCommonData.mMouseX + 10);
+        ObjectSet(mDateInfo, OBJPROP_XDISTANCE, pCommonData.mMouseX + 10);
+        ObjectSetText(mDateInfo, TimeToStr(pCommonData.mMouseTime, TIME_DATE));
+        if (ChartPeriod() <= PERIOD_H4) ObjectSetText(mWeekInfo, TimeToStr(pCommonData.mMouseTime, TIME_MINUTES) + " · " + strDayOfWeek(pCommonData.mMouseTime));
+        else if (ChartPeriod() <= PERIOD_D1) ObjectSetText(mWeekInfo, strDayOfWeek(pCommonData.mMouseTime) + "  ·  " + "W"+IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7,2,'0'));
+        else ObjectSetText(mWeekInfo, "W"+IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7,2,'0') + " · " +IntegerToString(TimeYear(pCommonData.mMouseTime)));
     }
     void onObjectDeleted(const string& objectName)
     {

@@ -89,7 +89,7 @@ public:
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
 // Special functional
-    void showHideHistory();
+    void showHistory(bool isShow);
 
 // Alpha feature
     void initData();
@@ -410,9 +410,8 @@ void LongShort::onItemDeleted(const string &itemId, const string &objId)
 }
 
 //-------------------------------------------------------------------
-void LongShort::showHideHistory()
+void LongShort::showHistory(bool isShow)
 {
-    static bool isShow = true;
     for (int i = ObjectsTotal() - 1; i >= 0; i--)
     {
         string objName = ObjectName(i);
@@ -477,5 +476,4 @@ void LongShort::showHideHistory()
         //removeBackgroundOverlap(iBgndSL);
         //removeBackgroundOverlap(iBgndTP);
     }
-    isShow = !isShow;
 }

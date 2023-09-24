@@ -44,7 +44,7 @@ private:
     int         mActive;
     FinishedJob mFinishedJobCb;
     MouseInfo*  pMouseInfo;
-    bool        mbStartErase;
+    bool        mbActiveErase;
 
 private:
     int findItemIdByKey(const int key);
@@ -107,16 +107,31 @@ void Controller::finishedJob()
 
 int Controller::findItemIdByKey(const int key)
 {
-    if (key == 'T') return IDX_TREND     ;
-    // if (key == 'G') return IDX_HTREND    ;
-    if (key == 'Z') return IDX_ZIGZAG    ;
-    if (key == 'R') return IDX_RECTANGLE ;
-    if (key == 'F') return IDX_FIBONACI  ;
-    if (key == 'C') return IDX_CALLOUT   ;
+    /// Left Keyboard
+    // Q: Chart Free
     if (key == 'W') return IDX_LONGSHORT ;
-    if (key == 'X') return IDX_CHARTUTIL ;
+    // E: Erase
+    if (key == 'R') return IDX_RECTANGLE ;
+    if (key == 'T') return IDX_TREND     ;
+    // A: Not Use
     if (key == 'S') return IDX_PIVOT     ;
-    if (key == 'A') return IDX_IMBTOOL   ;
+    // D: Not Use
+    if (key == 'F') return IDX_FIBONACI  ;
+    // G: Not Use
+    if (key == 'Z') return IDX_ZIGZAG    ;
+    if (key == 'X') return IDX_CHARTUTIL ;
+    if (key == 'C') return IDX_CALLOUT   ;
+    // V: Sync Item
+    // B: Delete Item
+    
+    /// Right Keyboard
+    // Y : Show LongShort History
+    // U : Hide LongShort History
+    if (key == 'I') return IDX_IMBTOOL   ;
+    // O : Not Use
+    // P: Chart Force
+    // H J K L : Not Use
+    // N M : Not Use
     return IDX_NONE;
 }
 
@@ -139,35 +154,39 @@ void Controller::handleKeyEvent(const long &key)
 {
     // PrintFormat("handleKeyEvent %c %d", key, key);
     // S1: handle functional Key
+    bool bFunctionKey = true;
     switch ((int)key)
     {
     case 27:
         finishedJob();
         unSelectAll();
         break;
+    // Number Line
     case '1':
-        if (mbStartErase) EraseAll();
+        if (mbActiveErase) EraseAll();
         break;
     case '2':
-        if (mbStartErase) EraseThisTF();
+        if (mbActiveErase) EraseThisTF();
         break;
     case '3':
-        if (mbStartErase) EraseLowerTF();
+        if (mbActiveErase) EraseLowerTF();
         break;
     case '4':
-        if (mbStartErase) EraseBgOverlap();
+        if (mbActiveErase) EraseBgOverlap();
         break;
-    case 'H':
-        ((LongShort*)mListItem[IDX_LONGSHORT]).showHideHistory();
-        break;
-    // Short cut for Chart fix [S]
+    // QWERT Line
     case 'Y':
-        SetChartScaleFix(true);
+        ((LongShort*)mListItem[IDX_LONGSHORT]).showHistory(true);
         break;
     case 'U':
-        SetChartScaleFix(false);
+        ((LongShort*)mListItem[IDX_LONGSHORT]).showHistory(false);
         break;
-    // Short cut for Chart fix [E]
+    case 'Q':
+        SetChartFree(true);
+        break;
+    case 'P':
+        SetChartFree(false);
+        break;
     case 'V':
         syncSelectedItem();
         break;
@@ -175,21 +194,23 @@ void Controller::handleKeyEvent(const long &key)
         syncDeleteSelectedItem();
         break;
     default:
+        bFunctionKey = false;
         break;
     }
     if (mActive == IDX_NONE)
     {
         if (key == 'E')
         {
-            mbStartErase = true;
+            mbActiveErase = true;
             pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF | 4-BgOverlap");
         }
         else
         {
-            mbStartErase = false;
+            mbActiveErase = false;
             pMouseInfo.setText("");
         }
     }
+    if (bFunctionKey == true) return;
 
     // S2: Active drawing tool
     int activeTarget = findItemIdByKey((int)key);

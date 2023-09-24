@@ -75,7 +75,7 @@ input LINE_STYLE __T_BLg_Style = STYLE_SOLID;
 //--------------------------------------------
       string     __T_Eof_Name  = "eof";
       string     __T_Eof_Text  = "𝙚𝙤𝙛";
-      TEXT_POS   __T_Eof_TxtPos= TXT_POS_CENTER;
+      TEXT_POS   __T_Eof_TxtPos= TXT_POS_RIGHT;
 input color      __T_Eof_Color = clrGreen;
 input LINE_STYLE __T_Eof_Style = STYLE_SOLID;
       int        __T_Eof_Width = 1;
@@ -83,11 +83,19 @@ input LINE_STYLE __T_Eof_Style = STYLE_SOLID;
 //--------------------------------------------
       string     __T_BE_Name  = "be";
       string     __T_BE_Text  = "𝙗𝙚";
-      TEXT_POS   __T_BE_TxtPos= TXT_POS_CENTER;
+      TEXT_POS   __T_BE_TxtPos= TXT_POS_RIGHT;
 input color      __T_BE_Color = clrGreen;
 input LINE_STYLE __T_BE_Style = STYLE_SOLID;
       int        __T_BE_Width = 1;
       bool       __T_BE_Arrow = false;
+//--------------------------------------------
+      string     __T_Arr_Name  = "Arw";
+      string     __T_Arr_Text  = "";
+      TEXT_POS   __T_Arr_TxtPos= TXT_POS_CENTER;
+      color      __T_Arr_Color = clrNavy;
+      LINE_STYLE __T_Arr_Style = STYLE_SOLID;
+      int        __T_Arr_Width = 1;
+      bool       __T_Arr_Arrow = true;
 
 enum TrendType
 {
@@ -101,6 +109,7 @@ enum TrendType
     TREND_OFS,
     TREND_EOF,
     TREND_BE ,
+    TREND_ARR,
     TREND_NUM,
 };
 
@@ -244,6 +253,14 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mStyleType[TREND_BE  ]  = __T_BE_Style;
     mWidthType[TREND_BE  ]  = __T_BE_Width;
     mShowArrow[TREND_BE  ]  = __T_BE_Arrow;
+    //--------------------------------------------
+    mNameType [TREND_ARR]  = __T_Arr_Name ;
+    mDispText [TREND_ARR]  = __T_Arr_Text ;
+    mTextPos  [TREND_ARR]  = __T_Arr_TxtPos;
+    mColorType[TREND_ARR]  = __T_Arr_Color;
+    mStyleType[TREND_ARR]  = __T_Arr_Style;
+    mWidthType[TREND_ARR]  = __T_Arr_Width;
+    mShowArrow[TREND_ARR]  = __T_Arr_Arrow;
     //--------------------------------------------
     mIndexType = 0;
     mTypeNum = TREND_NUM;

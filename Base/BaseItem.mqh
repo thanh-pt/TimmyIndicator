@@ -3,7 +3,6 @@
 
 typedef void(*FinishedJob)();
 
-#define MAX_TYPE 10
 
 #define UPDATE_TYPE if((++mIndexType) >= mTypeNum){mIndexType = 0;}
 
