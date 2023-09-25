@@ -88,37 +88,91 @@ void ChartUtil::onMouseClick()
         int YY=TimeYear( pCommonData.mMouseTime);
         int MN=TimeMonth(pCommonData.mMouseTime);
         int DD=TimeDay(  pCommonData.mMouseTime);
-        string strBeginOfDay = IntegerToString(YY)+"."+IntegerToString(MN)+"."+IntegerToString(DD)+" 00:00";
+        string strBeginOfDay = IntegerToString(YY)+"."+IntegerToString(MN)+"."+IntegerToString(DD);
         // S2: Detect working time
-        string workingRect = IntegerToString(hashString(strBeginOfDay));
+        string objWorkingAreaKey = IntegerToString(MN,2,'0')+"."+IntegerToString(DD);
         datetime dtToday = StrToTime(strBeginOfDay);
         datetime openTime  = dtToday + 3600*__U_Working_Start;
         datetime closeTime = dtToday + 3600*__U_Working_Finsh;
         int beginBar = iBarShift(ChartSymbol(), ChartPeriod(), openTime );
         int endBar   = iBarShift(ChartSymbol(), ChartPeriod(), closeTime);
+        // PrintFormat("dtToday %s", TimeToStr(dtToday, TIME_DATE));
+
 
         // S3: Detect High Low
         double highest = High[beginBar];
         double lowest  = Low[beginBar];
-        if (beginBar > 0)
+        if (ChartPeriod() <= PERIOD_H4)
         {
-            for (int i = beginBar; i > endBar; i--){
-                if (High[i] > highest) highest = High[i];
-                if (Low[i] < lowest)   lowest  = Low[i];
+            if (beginBar > 0)
+            {
+                for (int i = beginBar; i > endBar; i--){
+                    if (High[i] > highest) highest = High[i];
+                    if (Low[i] < lowest)   lowest  = Low[i];
+                }
+            }
+            else
+            {
+                highest = iHigh(ChartSymbol(), PERIOD_D1, 1);
+                lowest  = iLow(ChartSymbol(), PERIOD_D1, 1);
+            }
+        } else if (ChartPeriod() == PERIOD_D1)
+        {
+            int currWeek = weekOfYear(pCommonData.mMouseTime);
+            objWorkingAreaKey = "W."+IntegerToString(currWeek,2,'0');
+            int preWeek = currWeek;
+            int nextWeek = currWeek;
+            openTime = pCommonData.mMouseTime;
+            closeTime = pCommonData.mMouseTime;
+            datetime tempTime;
+            int barIdx = 0;
+            bool needPreWeeklyRange = true;
+
+            while (preWeek == currWeek || nextWeek == currWeek)
+            {
+                tempTime = closeTime + 86400;
+                nextWeek = weekOfYear(tempTime);
+                if (nextWeek == currWeek)
+                {
+                    closeTime = tempTime;
+                    barIdx = iBarShift(ChartSymbol(), ChartPeriod(), closeTime );
+                    if (highest < High[barIdx]) highest = High[barIdx];
+                    if (lowest > Low[barIdx]) lowest = Low[barIdx];
+                    if (barIdx != 0) needPreWeeklyRange = false;
+                }
+                tempTime = openTime - 86400;
+                preWeek = weekOfYear(tempTime);
+                if (preWeek == currWeek)
+                {
+                    openTime = tempTime;
+                    barIdx = iBarShift(ChartSymbol(), ChartPeriod(), openTime );
+                    if (highest < High[barIdx]) highest = High[barIdx];
+                    if (lowest > Low[barIdx]) lowest = Low[barIdx];
+                    if (barIdx != 0) needPreWeeklyRange = false;
+                }
+            }
+            closeTime=closeTime+86400;
+            if (needPreWeeklyRange)
+            {
+                highest = iHigh(ChartSymbol(), PERIOD_W1, 1);
+                lowest  = iLow(ChartSymbol(), PERIOD_W1, 1);
             }
         }
         else
         {
-            highest = iHigh(ChartSymbol(), PERIOD_D1, 1);
-            lowest  = iLow(ChartSymbol(), PERIOD_D1, 1);
+            mFinishedJobCb();
+            return;
         }
+
         // S4: Create and set workingRect Position
+        string workingRect = objWorkingAreaKey+"_"+IntegerToString(ChartPeriod())+"#._.";
         if (ObjectFind(workingRect) < 0)
         {
             ObjectCreate(workingRect, OBJ_RECTANGLE , 0, 0, 0);
             SetObjectStyle(workingRect, clrDarkSlateGray, 2, 0);
         }
         setItemPos(workingRect, openTime, closeTime, highest, lowest);
+        ObjectSetText(workingRect, objWorkingAreaKey + " - " + DoubleToString(10000 * (highest - lowest), 1));
     }
     else if (mIndexType == CREATE_ALERT)
     {

@@ -106,7 +106,7 @@ public:
         ObjectSet(mDateInfo, OBJPROP_XDISTANCE, pCommonData.mMouseX + 10);
         ObjectSetText(mDateInfo, TimeToStr(pCommonData.mMouseTime, TIME_DATE));
         if (ChartPeriod() <= PERIOD_H4) ObjectSetText(mWeekInfo, TimeToStr(pCommonData.mMouseTime, TIME_MINUTES) + " · " + strDayOfWeek(pCommonData.mMouseTime));
-        else if (ChartPeriod() <= PERIOD_D1) ObjectSetText(mWeekInfo, strDayOfWeek(pCommonData.mMouseTime) + "  ·  " + "W"+IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7,2,'0'));
+        else if (ChartPeriod() <= PERIOD_D1) ObjectSetText(mWeekInfo, strDayOfWeek(pCommonData.mMouseTime) + "  ·  " + "W"+IntegerToString(weekOfYear(pCommonData.mMouseTime),2,'0'));
         else ObjectSetText(mWeekInfo, "W"+IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7,2,'0') + " · " +IntegerToString(TimeYear(pCommonData.mMouseTime)));
     }
     void onObjectDeleted(const string& objectName)

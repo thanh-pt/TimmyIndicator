@@ -561,6 +561,11 @@ void scanBackgroundOverlap(string target)
     }
 }
 
+int weekOfYear(datetime date)
+{
+    return (TimeDayOfYear(date)+TimeDayOfWeek(StrToTime(IntegerToString(TimeYear(date))+".01.01"))-2)/7;
+}
+
 string strDayOfWeek(datetime date)
 {
     int dayOfWeek = TimeDayOfWeek(date);
@@ -625,11 +630,11 @@ void syncItem(ObjectProperty &objProperty, long currChart, bool objectExit)
     ObjectSetInteger(currChart, objProperty.objName, OBJPROP_WIDTH      , objProperty.objWidth      );
     ObjectSetInteger(currChart, objProperty.objName, OBJPROP_BACK       , objProperty.objBack       );
     ObjectSetInteger(currChart, objProperty.objName, OBJPROP_SELECTABLE , objProperty.objSelectable );
+    ObjectSetString(currChart , objProperty.objName, OBJPROP_TEXT       , objProperty.objText       );
     if (objType == OBJ_TEXT || objType == OBJ_LABEL)
     {
         ObjectSetInteger(currChart, objProperty.objName, OBJPROP_FONTSIZE   , objProperty.objFontSize   );
         ObjectSetInteger(currChart, objProperty.objName, OBJPROP_ANCHOR     , objProperty.objAnchorPoint);
-        ObjectSetString(currChart , objProperty.objName, OBJPROP_TEXT       , objProperty.objText       );
     }
     if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE)
     {
@@ -678,11 +683,11 @@ void syncSelectedItem()
             gListSelectedObjProp[selectedItemNum].objWidth      = (int)ObjectGet(objName, OBJPROP_WIDTH     );
             gListSelectedObjProp[selectedItemNum].objBack       = (int)ObjectGet(objName, OBJPROP_BACK      );
             gListSelectedObjProp[selectedItemNum].objSelectable = (int)ObjectGet(objName, OBJPROP_SELECTABLE);
+            gListSelectedObjProp[selectedItemNum].objText       = ObjectDescription(objName);
             if (objType == OBJ_TEXT || objType == OBJ_LABEL)
             {
             gListSelectedObjProp[selectedItemNum].objFontSize   = (int)ObjectGet(objName, OBJPROP_FONTSIZE  );
             gListSelectedObjProp[selectedItemNum].objAnchorPoint= (int)ObjectGet(objName, OBJPROP_ANCHOR    );
-            gListSelectedObjProp[selectedItemNum].objText       = ObjectGetString(chartID, objName, OBJPROP_TEXT   );
             }
             if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE)
             {
