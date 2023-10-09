@@ -28,10 +28,11 @@ private:
 private:
     datetime time1;
     datetime time2;
-    double price1;
-    double price2;
-    double cPoint1Price;
-    double cPoint2Price;
+    double   price1;
+    double   price2;
+
+    long     mChartScale;
+    
 
 public:
     ImbTool(const string name, CommonData* commonData, MouseInfo* mouseInfo);
@@ -55,6 +56,9 @@ public:
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
     virtual void onUserRequest(const string &itemId, const string &objId);
+
+// Special functional
+    void updateCandle();
 };
 
 ImbTool::ImbTool(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -79,7 +83,7 @@ void ImbTool::activateItem(const string& itemId)
 {
     cPoint1 = itemId + "_c2Point1";
     cPoint2 = itemId + "_c2Point2";
-    cMTrend = itemId + "_c0MTrend";
+    cMTrend = itemId + "_c0ImBMTrend";
     iIbmPnt = itemId + "_iIbmPnt";
 }
 
@@ -141,16 +145,14 @@ void ImbTool::refreshData()
     color decColor = clrSienna;
     color insideBarColor = clrWhite;
     // Chart Scale and BarSize
-    long chartScale=-1;
     int barSize = 3;
-    ChartGetInteger(ChartID(),CHART_SCALE,0,chartScale);
-    if (chartScale <= 2)
+    if (mChartScale <= 2)
     {
         // set StartIdx = 0 to not do calculate logic
         startIdx = 0;
     }
-    else if (chartScale == 4)barSize = 9;
-    else if (chartScale == 5)barSize = 25;
+    else if (mChartScale == 4)barSize = 9;
+    else if (mChartScale == 5)barSize = 25;
     // Some value
     double preH = High[startIdx+1];
     double preL = Low[startIdx+1];
@@ -159,9 +161,9 @@ void ImbTool::refreshData()
     {
         // Detect type
         isInsideBar = false;
-        if      (High[i] > preH && Low[i] > preL) c = incColor;
-        else if (High[i] < preH && Low[i] < preL) c = decColor;
-        else if (High[i] > preH && Low[i] < preL) c = (Open[i] > Close[i]) ? decColor : incColor; // outside bar
+        if      (High[i] >  preH && Low[i] >= preL) c = incColor;
+        else if (High[i] <= preH && Low[i] <  preL) c = decColor;
+        else if (High[i] >  preH && Low[i] <  preL) c = (Open[i] > Close[i]) ? decColor : incColor; // outside bar
         else // inside
         {
             isInsideBar = true;
@@ -242,11 +244,12 @@ void ImbTool::updateItemAfterChangeType()
 //Chart Event
 void ImbTool::onItemDrag(const string &itemId, const string &objId)
 {
+    ChartGetInteger(ChartID(),CHART_SCALE,0,mChartScale);
     time1 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME1);
     time2 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME2);
     price1 =          ObjectGet(cMTrend, OBJPROP_PRICE1);
     price2 =          ObjectGet(cMTrend, OBJPROP_PRICE2);
-    
+
     if (objId == cPoint1)
     {
         time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
@@ -332,4 +335,28 @@ void ImbTool::onItemDeleted(const string &itemId, const string &objId)
 }
 void ImbTool::onUserRequest(const string &itemId, const string &objId)
 {
+}
+void ImbTool::updateCandle()
+{
+    // long chartScale;
+    // ChartGetInteger(ChartID(),CHART_SCALE,0,chartScale);
+    // if (chartScale == mChartScale) return;
+
+    string sparamItems[];
+    for (int i = ObjectsTotal() - 1; i >= 0; i--)
+    {
+        string objName = ObjectName(i);
+        if (StringFind(objName, "ImBMTrend") == -1)
+        {
+            continue;
+        }
+        int k=StringSplit(objName,'_',sparamItems);
+        if (k != 3 || sparamItems[0] != mItemName)
+        {
+            continue;
+        }
+        string objId = sparamItems[0] + "_" + sparamItems[1];
+        activateItem(objId);
+        onItemDrag(objId, objName);
+    }
 }

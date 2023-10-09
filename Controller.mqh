@@ -160,6 +160,7 @@ void Controller::handleKeyEvent(const long &key)
     case 27:
         finishedJob();
         unSelectAll();
+        ((ImbTool*)mListItem[IDX_IMBTOOL]).updateCandle();
         break;
     // Number Line
     case '1':
@@ -192,6 +193,9 @@ void Controller::handleKeyEvent(const long &key)
         break;
     case 'B':
         syncDeleteSelectedItem();
+        break;
+    case 'O':
+        ((ImbTool*)mListItem[IDX_IMBTOOL]).updateCandle();
         break;
     default:
         bFunctionKey = false;
