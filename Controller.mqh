@@ -210,6 +210,18 @@ void Controller::handleKeyEvent(const long &key)
             pMouseInfo.setText("");
         }
     }
+    else 
+    {
+        // there is some tool is active
+        if (key >= '1' && key <= '9')
+        {
+            mListItem[mActive].changeActiveType((int)key-'1');
+        }
+        else if (key == '0')
+        {
+            mListItem[mActive].changeActiveType(9);
+        }
+    }
     if (bFunctionKey == true) return;
 
     // S2: Active drawing tool

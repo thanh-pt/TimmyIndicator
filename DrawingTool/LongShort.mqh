@@ -156,8 +156,8 @@ void LongShort::updateDefaultProperty()
     ObjectSet(cBoder, OBJPROP_COLOR, clrNONE);
     //-------------------------------------------------
     multiSetProp(OBJPROP_ARROWCODE , 4    , cPointWD+cPointBE);
-    multiSetProp(OBJPROP_ARROWCODE , 3    , cPointTP+cPointSL);
-    ObjectSet(cPointEN, OBJPROP_ARROWCODE, 2);
+    multiSetProp(OBJPROP_ARROWCODE , 4    , cPointTP+cPointSL);
+    ObjectSet(cPointEN, OBJPROP_ARROWCODE, 4);
     
     multiSetProp(OBJPROP_SELECTED  , true , cPointTP+cPointSL+cPointEN+cPointWD+cPointBE);
     multiSetProp(OBJPROP_RAY       , false, iTpLine+iBeLine+iEnLine+iSlLine);
@@ -258,7 +258,7 @@ void LongShort::refreshData()
     string strTpInfo   = ""; // RR + dola
     string strEnInfo   = ""; // lot 
     string strSlInfo   = ""; // pip + dola
-    string strBeInfo   = ""; // RR1
+    string strBeInfo   = ObjectDescription(cPointBE); // RR1
     double slPip       = 10000*MathAbs(priceEN-priceSL);
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
@@ -268,9 +268,9 @@ void LongShort::refreshData()
     bool   showStats   = (__LS_ShowStats  == SHOW) || (__LS_ShowStats  == SELECTED_SHOW && selectState);
     bool   showPrice   = (__LS_ShowPrice  == SHOW) || (__LS_ShowPrice  == SELECTED_SHOW && selectState);
     bool   showDollar  = (__LS_ShowDollar == SHOW) || (__LS_ShowDollar == SELECTED_SHOW && selectState);
-
     if (showStats)
     {
+        if (strBeInfo != "") strBeInfo += ": ";
         strTpInfo += DoubleToString(rr,1) + "ʀ";
         strBeInfo += DoubleToString(be,1) + "ʀ  ";
         strSlInfo += DoubleToString(slPip, 1) + "ᖰ";
@@ -384,7 +384,11 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
         Alert(buySell + ": " + DoubleToString(mTradeLot,2) + "\nEn: " + DoubleToString(priceEN,5) + "\nSL: " + DoubleToString(priceSL,5) + "\nTP: " + DoubleToString(priceTP,5));
     }
 }
-void LongShort::onItemChange(const string &itemId, const string &objId){}
+void LongShort::onItemChange(const string &itemId, const string &objId)
+{
+    onItemDrag(itemId, objId);
+    refreshData();
+}
 void LongShort::onItemDeleted(const string &itemId, const string &objId)
 {
     ObjectDelete(iBgndSL );

@@ -48,6 +48,7 @@ public:
     void startActivate(FinishedJob cb);
     void finishedDeactivate();
     void changeActiveType();
+    void changeActiveType(int type);
     void touchItem(const string& itemId);
 };
 
@@ -79,6 +80,21 @@ void BaseItem::finishedDeactivate()
 void BaseItem::touchItem(const string& itemId)
 {
     activateItem(itemId);
+}
+
+void BaseItem::changeActiveType(int type)
+{
+    if (mTypeNum <= 0)
+    {
+        return;
+    }
+    if (type >= mTypeNum)
+    {
+        return;
+    }
+    mIndexType = type;
+    pMouseInfo.setText(createMouseInfo());
+    updateItemAfterChangeType();
 }
 
 void BaseItem::changeActiveType()

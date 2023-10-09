@@ -225,6 +225,7 @@ void Rectangle::onMouseClick()
 }
 void Rectangle::onItemDrag(const string &itemId, const string &objId)
 {
+    gTemplates.clearTemplates();
     if (pCommonData.mCtrlHold)
     {
         if (objId == cPointL1 || objId == cPointR2 || objId == cPointL2 || objId == cPointR1) ObjectSet(objId, OBJPROP_PRICE1, pCommonData.mMousePrice);

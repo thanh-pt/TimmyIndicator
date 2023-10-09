@@ -212,6 +212,7 @@ void Fibonacci::updateTypeProperty()
     if (mIndexType == FIB_BUY0 || mIndexType == FIB_SELL)
     {
         multiSetProp(OBJPROP_COLOR, clrNONE, iTxt0+iTxt1+iTxt2);
+        multiSetProp(OBJPROP_COLOR, __F_0_Color, iFib2);
     }
     if (mIndexType == FIB_RANGE)
     {
@@ -326,6 +327,7 @@ void Fibonacci::onMouseClick()
 }
 void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 {
+    gTemplates.clearTemplates();
     mIndexType = StrToInteger(ObjectDescription(sType));
     if (objId == ckLne)
     {

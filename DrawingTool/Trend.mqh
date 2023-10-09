@@ -42,8 +42,10 @@ input LINE_STYLE __T_Bos_Style = STYLE_SOLID;
       bool       __T_Bos_Arrow = false;
 //--------------------------------------------
       string     __T_SpLq_Name  = "xLq";
-      string     __T_SpLq_Text  = " ✖ ";
-      TEXT_POS   __T_SpLq_TxtPos= TXT_POS_RIGHT;
+    //   string     __T_SpLq_Text  = " ✖ ";
+    //   TEXT_POS   __T_SpLq_TxtPos= TXT_POS_RIGHT;
+      string     __T_SpLq_Text  = "$";
+      TEXT_POS   __T_SpLq_TxtPos= TXT_POS_CENTER;
 input color      __T_SpLq_Color = clrCrimson;
 input LINE_STYLE __T_SpLq_Style = STYLE_SOLID;
       int        __T_SpLq_Width = 1;
@@ -105,7 +107,7 @@ enum TrendType
     TREND_BLG,
     TREND_LQ ,
     TREND_XLQ,
-    TREND_OF ,
+    // TREND_OF ,
     TREND_OFS,
     TREND_EOF,
     TREND_BE ,
@@ -190,13 +192,13 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_LQ   ] = __T_Lq_Width;
     mShowArrow[TREND_LQ   ] = __T_Lq_Arrow;
     //--------------------------------------------
-    mNameType [TREND_OF   ] = __T_Mtg_Name ;
-    mDispText [TREND_OF   ] = __T_Mtg_Text ;
-    mTextPos  [TREND_OF   ] = __T_Mtg_TxtPos;
-    mColorType[TREND_OF   ] = __T_Mtg_Color;
-    mStyleType[TREND_OF   ] = __T_Mtg_Style;
-    mWidthType[TREND_OF   ] = __T_Mtg_Width;
-    mShowArrow[TREND_OF   ] = __T_Mtg_Arrow;
+    // mNameType [TREND_OF   ] = __T_Mtg_Name ;
+    // mDispText [TREND_OF   ] = __T_Mtg_Text ;
+    // mTextPos  [TREND_OF   ] = __T_Mtg_TxtPos;
+    // mColorType[TREND_OF   ] = __T_Mtg_Color;
+    // mStyleType[TREND_OF   ] = __T_Mtg_Style;
+    // mWidthType[TREND_OF   ] = __T_Mtg_Width;
+    // mShowArrow[TREND_OF   ] = __T_Mtg_Arrow;
     //--------------------------------------------
     mNameType [TREND_BOS  ] = __T_Bos_Name ;
     mDispText [TREND_BOS  ] = __T_Bos_Text ;
@@ -339,7 +341,7 @@ void Trend::createItem()
 void Trend::updateDefaultProperty()
 {
     multiSetProp(OBJPROP_ARROWCODE , 4      , cPoint1+cPoint2);
-    multiSetProp(OBJPROP_WIDTH     , 0      , cPoint1+cPoint2);
+    multiSetProp(OBJPROP_WIDTH     , 5      , cPoint1+cPoint2);
     multiSetProp(OBJPROP_SELECTABLE, false  , iArrowT+iAngle0+iLbText);
     multiSetProp(OBJPROP_COLOR     , clrNONE, cPoint1+cPoint2+iAngle0);
     multiSetStrs(OBJPROP_TOOLTIP   , "\n"   , cPoint1+cPoint2+cMTrend+iAngle0+iLbText+iArrowT);
@@ -366,6 +368,7 @@ void Trend::updateItemAfterChangeType()
 //Chart Event
 void Trend::onItemDrag(const string &itemId, const string &objId)
 {
+    gTemplates.clearTemplates();
     mIndexType = StrToInteger(ObjectDescription(sTData));
     time1 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME1);
     time2 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME2);

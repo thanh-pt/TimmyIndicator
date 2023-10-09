@@ -9,6 +9,8 @@ enum PivotType
     POINT_REACT,
     POINT_LEFT ,
     POINT_RIGHT,
+    POINT_TOP  ,
+    // POINT_DOWN,
     POINT_NUM,
 };
 
@@ -16,6 +18,7 @@ class Pivot : public BaseItem
 {
 // Internal Value
 private:
+    int leftRighTopDownPos[4];
 
 // Component name
 private:
@@ -61,8 +64,13 @@ Pivot::Pivot(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     // Init variable type
     mNameType [POINT_PIVOT] = "Pivot";
     mNameType [POINT_REACT] = "React";
-    mNameType [POINT_LEFT ] = "⭠";
-    mNameType [POINT_RIGHT] = "⭢";
+    mNameType [POINT_LEFT ] = "⭠ ";
+    mNameType [POINT_RIGHT] = "⭢ ";
+    mNameType [POINT_TOP  ] = "↓";
+
+    leftRighTopDownPos[POINT_LEFT-POINT_LEFT] = ANCHOR_LEFT;
+    leftRighTopDownPos[POINT_RIGHT-POINT_LEFT] = ANCHOR_RIGHT;
+    leftRighTopDownPos[POINT_TOP-POINT_LEFT] = ANCHOR_LOWER;
 
     mIndexType = 0;
     mTypeNum = POINT_NUM;
@@ -91,10 +99,10 @@ void Pivot::updateDefaultProperty()
 void Pivot::updateTypeProperty()
 {
     ObjectSetText(sType, IntegerToString(mIndexType));
-    if (mIndexType == POINT_LEFT || mIndexType == POINT_RIGHT)
+    if (mIndexType == POINT_LEFT || mIndexType == POINT_RIGHT || mIndexType == POINT_TOP)
     {
         ObjectSetText(cPivot, mNameType[mIndexType], 10, NULL, clrNavy);
-        ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, mIndexType == POINT_LEFT ? ANCHOR_LEFT : ANCHOR_RIGHT);
+        ObjectSetInteger(ChartID(), cPivot, OBJPROP_ANCHOR, leftRighTopDownPos[mIndexType - POINT_LEFT]);
     }
 }
 void Pivot::activateItem(const string& itemId)
@@ -140,6 +148,7 @@ void Pivot::onMouseClick()
 }
 void Pivot::onItemDrag(const string &itemId, const string &objId)
 {
+    gTemplates.clearTemplates();
     mIndexType = StrToInteger(ObjectDescription(sType));
     time  = (datetime)ObjectGet(cPivot, OBJPROP_TIME1);
     price =           ObjectGet(cPivot, OBJPROP_PRICE1);

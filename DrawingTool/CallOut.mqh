@@ -111,8 +111,9 @@ void CallOut::refreshData()
         ObjectSetInteger(ChartID(), iUdLine, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
     }
     string callOutValue = ObjectDescription(cLbText);
-    ObjectSetText(iUdLine, StringSubstr(UNDER_LINE, 0, StringLen(callOutValue)));
-    if (StrToDouble(callOutValue) != 0.0)
+    int calloutLen = StringLen(callOutValue);
+    ObjectSetText(iUdLine, StringSubstr(UNDER_LINE, 0, calloutLen));
+    if (calloutLen == 7 && StrToDouble(callOutValue) != 0.0)
     {
         ObjectSetText(cLbText, DoubleToString(price1,5));
     }

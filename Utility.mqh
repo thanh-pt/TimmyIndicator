@@ -320,6 +320,7 @@ void SetRectangleBackground(string obj, color c)
 {
     ObjectSet(obj, OBJPROP_COLOR, c);
     ObjectSet(obj, OBJPROP_BACK , true);
+    ObjectSet(obj, OBJPROP_STYLE, 2); // Dot as default
 }
 
 void SetObjectStyle(string obj, color c, int style, int width)

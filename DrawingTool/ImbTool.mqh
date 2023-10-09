@@ -1,9 +1,6 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-#define STR_HIGH " ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ HIGH"
-#define STR_LOW  " ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ LOW"
-
 //--------------------------------------------
 input color      __Imb_Color = clrMidnightBlue;
 input LINE_STYLE __Imb_MainLine0_Style = STYLE_DOT;
@@ -92,17 +89,8 @@ void ImbTool::refreshData()
     setItemPos(cPoint1, time1, price1);
     setItemPos(cPoint2, time2, price2);
 
-    // Remove old IMB draw
     int idx = 0;
     string objName = "";
-    do
-    {
-        objName = iIbmPnt + "#" + IntegerToString(idx);
-        idx++;
-    }
-    while (ObjectDelete(objName) == true);
-    // Scan and replace new IMB
-    idx = 0;
     int startIdx = iBarShift(ChartSymbol(), ChartPeriod(), time1);
     int endIdx   = iBarShift(ChartSymbol(), ChartPeriod(), time2);
 
@@ -113,6 +101,8 @@ void ImbTool::refreshData()
         startIdx = startIdx - endIdx;
     }
 
+    // IMB Tool
+    /*
     bool hasImbUp = false;
     bool hasImbDown = false;
     double p1 = 0;
@@ -144,6 +134,76 @@ void ImbTool::refreshData()
             idx++;
         }
     }
+    */
+    // Color
+    color c = clrNONE;
+    color incColor = clrYellowGreen;
+    color decColor = clrSienna;
+    color insideBarColor = clrWhite;
+    // Chart Scale and BarSize
+    long chartScale=-1;
+    int barSize = 3;
+    ChartGetInteger(ChartID(),CHART_SCALE,0,chartScale);
+    if (chartScale <= 2)
+    {
+        // set StartIdx = 0 to not do calculate logic
+        startIdx = 0;
+    }
+    else if (chartScale == 4)barSize = 9;
+    else if (chartScale == 5)barSize = 25;
+    // Some value
+    double preH = High[startIdx+1];
+    double preL = Low[startIdx+1];
+    bool isInsideBar = false;
+    for (int i = startIdx; i >= endIdx && i > 0; i--)
+    {
+        // Detect type
+        isInsideBar = false;
+        if      (High[i] > preH && Low[i] > preL) c = incColor;
+        else if (High[i] < preH && Low[i] < preL) c = decColor;
+        else if (High[i] > preH && Low[i] < preL) c = (Open[i] > Close[i]) ? decColor : incColor; // outside bar
+        else // inside
+        {
+            isInsideBar = true;
+            if (ChartPeriod() == PERIOD_D1 && TimeDayOfWeek(Time[i]) == 0)
+            {
+                //Ignore Sunday
+            }
+            else
+            {
+                c = insideBarColor;
+            }
+        }
+        if (isInsideBar == false)
+        {
+            preH = High[i];
+            preL = Low[i];
+        }
+        if (c == clrNONE) continue;
+        // bg draw:
+        objName = iIbmPnt + "#" + IntegerToString(idx);
+        ObjectCreate(objName, OBJ_TREND , 0, 0, 0);
+        setItemPos(  objName, Time[i], Time[i], Open[i], Close[i]);
+        ObjectSet(   objName, OBJPROP_SELECTABLE, false);
+        ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+        SetObjectStyle(objName, clrBlack, 0, barSize+2);
+        idx++;
+        // body draw:
+        objName = iIbmPnt + "#" + IntegerToString(idx);
+        ObjectCreate(objName, OBJ_TREND , 0, 0, 0);
+        setItemPos(  objName, Time[i], Time[i], Open[i], Close[i]);
+        ObjectSet(   objName, OBJPROP_SELECTABLE, false);
+        ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+        SetObjectStyle(objName, c, 0, barSize);
+        idx++;
+    }
+    // Remove item thừa
+    do
+    {
+        objName = iIbmPnt + "#" + IntegerToString(idx);
+        idx++;
+    }
+    while (ObjectDelete(objName) == true);
 }
 
 void ImbTool::createItem()

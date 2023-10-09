@@ -135,9 +135,10 @@ void OnChartEvent(const int id,
     break;
     case CHARTEVENT_CHART_CHANGE:
         gTemplates.clearTemplates();
+        PrintFormat("%d", id);
     break;
     default:
-        // PrintFormat("%d", id);
+        PrintFormat("%d", id);
     break;
     }
 }
