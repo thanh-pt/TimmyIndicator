@@ -9,6 +9,7 @@
 #include "DrawingTool/Fibonacci.mqh"
 #include "DrawingTool/ChartUtil.mqh"
 #include "DrawingTool/Pivot.mqh"
+#include "DrawingTool/Label.mqh"
 
 #define CHECK_NOT_ACTIVE_RETURN if(mActive == IDX_NONE){return;}
 #define CHECK_ACTIVE_RETURN if(mActive != IDX_NONE){return;}
@@ -23,6 +24,7 @@
 #define IDX_CHARTUTIL   6
 #define IDX_PIVOT       7
 #define IDX_IMBTOOL     8
+#define IDX_LABEL       9
 
 #define ITEM_TREND      ".Trend"
 #define ITEM_ZIGZAG     ".ZigZag"
@@ -33,6 +35,7 @@
 #define ITEM_CHARTUTIL  ".ChartUtil"
 #define ITEM_PIVOT      ".Pivot"
 #define ITEM_IMBTOOL    ".ImbTool"
+#define ITEM_LABEL      ".Label"
 
 class Controller
 {
@@ -72,6 +75,7 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     mListItem[IDX_CHARTUTIL ]    = new ChartUtil ( ITEM_CHARTUTIL , commonData, mouseInfo);
     mListItem[IDX_PIVOT]         = new Pivot     ( ITEM_PIVOT     , commonData, mouseInfo);
     mListItem[IDX_IMBTOOL]       = new ImbTool   ( ITEM_IMBTOOL   , commonData, mouseInfo);
+    mListItem[IDX_LABEL]         = new LabelText ( ITEM_LABEL     , commonData, mouseInfo);
 }
 
 Controller::~Controller()
@@ -85,6 +89,7 @@ Controller::~Controller()
     delete mListItem[IDX_CHARTUTIL ];
     delete mListItem[IDX_PIVOT     ];
     delete mListItem[IDX_IMBTOOL   ];
+    delete mListItem[IDX_LABEL     ];
 }
 
 void Controller::setFinishedJobCB(FinishedJob cb)
@@ -112,7 +117,7 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'S') return IDX_PIVOT     ;
     // D: Not Use
     if (key == 'F') return IDX_FIBONACI  ;
-    // G: Not Use
+    if (key == 'G') return IDX_LABEL     ;
     if (key == 'Z') return IDX_ZIGZAG    ;
     if (key == 'X') return IDX_CHARTUTIL ;
     if (key == 'C') return IDX_CALLOUT   ;
@@ -141,6 +146,7 @@ int Controller::findItemIdByName(const string& name)
     if (name == ITEM_CHARTUTIL ) return IDX_CHARTUTIL ;
     if (name == ITEM_PIVOT     ) return IDX_PIVOT     ;
     if (name == ITEM_IMBTOOL   ) return IDX_IMBTOOL   ;
+    if (name == ITEM_LABEL     ) return IDX_LABEL     ;
     return IDX_NONE;
 }
 
