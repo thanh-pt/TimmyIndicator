@@ -117,6 +117,16 @@ void CallOut::refreshData()
     {
         ObjectSetText(cLbText, DoubleToString(price1,5));
     }
+    // additional leg
+    int idx = 0;
+    string additionalLeg = cPtLine + IntegerToString(idx);
+    while (ObjectFind(additionalLeg) >= 0)
+    {
+        ObjectSet(additionalLeg, OBJPROP_TIME2 , time2);
+        ObjectSet(additionalLeg, OBJPROP_PRICE2, price2);
+        idx++;
+        additionalLeg = cPtLine + IntegerToString(idx);
+    }
 }
 void CallOut::finishedJobDone(){}
 
@@ -173,7 +183,19 @@ void CallOut::onItemChange(const string &itemId, const string &objId)
 }
 void CallOut::onItemDeleted(const string &itemId, const string &objId)
 {
-    ObjectDelete(cLbText);
-    ObjectDelete(cPtLine);
-    ObjectDelete(iUdLine);
+    if (objId == cLbText || objId == cPtLine || objId == iUdLine)
+    {
+        ObjectDelete(cLbText);
+        ObjectDelete(cPtLine);
+        ObjectDelete(iUdLine);
+    }
+    // additional leg removing
+    int idx = 0;
+    string objName = "";
+    do
+    {
+        objName = cPtLine + IntegerToString(idx);
+        idx++;
+    }
+    while (ObjectDelete(objName) == true);
 }

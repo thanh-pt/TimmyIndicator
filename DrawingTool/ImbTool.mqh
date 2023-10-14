@@ -145,6 +145,7 @@ void ImbTool::refreshData()
     color decColor = clrSienna;
     color insideBarColor = clrWhite;
     // Chart Scale and BarSize
+    ChartGetInteger(ChartID(),CHART_SCALE,0,mChartScale);
     int barSize = 3;
     if (mChartScale <= 2)
     {
@@ -244,7 +245,6 @@ void ImbTool::updateItemAfterChangeType()
 //Chart Event
 void ImbTool::onItemDrag(const string &itemId, const string &objId)
 {
-    ChartGetInteger(ChartID(),CHART_SCALE,0,mChartScale);
     time1 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME1);
     time2 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME2);
     price1 =          ObjectGet(cMTrend, OBJPROP_PRICE1);
@@ -338,10 +338,6 @@ void ImbTool::onUserRequest(const string &itemId, const string &objId)
 }
 void ImbTool::updateCandle()
 {
-    // long chartScale;
-    // ChartGetInteger(ChartID(),CHART_SCALE,0,chartScale);
-    // if (chartScale == mChartScale) return;
-
     string sparamItems[];
     for (int i = ObjectsTotal() - 1; i >= 0; i--)
     {

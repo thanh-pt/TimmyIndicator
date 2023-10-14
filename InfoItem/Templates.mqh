@@ -1,5 +1,6 @@
 #include "../Utility.mqh"
 
+input string _1 = "";
 input color Templates_TextColor = clrBlack;
 input color Templates_BgColor1  = clrGray;
 input color Templates_BgColor2  = clrLightGray;

@@ -8,6 +8,7 @@ enum TEXT_POS
     TXT_POS_RIGHT,
 };
 
+input string _2 = "";
 //--------------------------------------------
       string     __T_Normal_Name  = "Nml";
       string     __T_Normal_Text  = "";
@@ -25,14 +26,6 @@ input LINE_STYLE __T_Lq_Style = STYLE_SOLID;
       int        __T_Lq_Width = 1;
       bool       __T_Lq_Arrow = false;
 //--------------------------------------------
-      string     __T_Mtg_Name  = "OF";
-      string     __T_Mtg_Text  = "OF";
-      TEXT_POS   __T_Mtg_TxtPos= TXT_POS_CENTER;
-input color      __T_Mtg_Color = clrGreen;
-input LINE_STYLE __T_Mtg_Style = STYLE_SOLID;
-      int        __T_Mtg_Width = 1;
-      bool       __T_Mtg_Arrow = true;
-//--------------------------------------------
       string     __T_Bos_Name  = "bos";
       string     __T_Bos_Text  = "𝙗𝙤𝙨";
       TEXT_POS   __T_Bos_TxtPos= TXT_POS_CENTER;
@@ -42,8 +35,6 @@ input LINE_STYLE __T_Bos_Style = STYLE_SOLID;
       bool       __T_Bos_Arrow = false;
 //--------------------------------------------
       string     __T_SpLq_Name  = "xLq";
-    //   string     __T_SpLq_Text  = " ✖ ";
-    //   TEXT_POS   __T_SpLq_TxtPos= TXT_POS_RIGHT;
       string     __T_SpLq_Text  = "$";
       TEXT_POS   __T_SpLq_TxtPos= TXT_POS_CENTER;
 input color      __T_SpLq_Color = clrCrimson;
@@ -58,14 +49,6 @@ input color      __T_Fail_Color = clrCrimson;
 input LINE_STYLE __T_Fail_Style = STYLE_DOT;
       int        __T_Fail_Width = 1;
       bool       __T_Fail_Arrow = false;
-//--------------------------------------------
-      string     __T_Ofs_Name  = "ofs";
-      string     __T_Ofs_Text  = "𝙤𝙛𝙨";
-      TEXT_POS   __T_Ofs_TxtPos= TXT_POS_CENTER;
-input color      __T_Ofs_Color = clrGreen;
-input LINE_STYLE __T_Ofs_Style = STYLE_SOLID;
-      int        __T_Ofs_Width = 1;
-      bool       __T_Ofs_Arrow = true;
 //--------------------------------------------
       string     __T_BLg_Name  = "b/lg";
       string     __T_BLg_Text  = "𝙗𝙤𝙨/𝙡𝙜";
@@ -108,7 +91,6 @@ enum TrendType
     TREND_LQ ,
     TREND_XLQ,
     // TREND_OF ,
-    TREND_OFS,
     TREND_EOF,
     TREND_BE ,
     TREND_ARR,
@@ -192,14 +174,6 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_LQ   ] = __T_Lq_Width;
     mShowArrow[TREND_LQ   ] = __T_Lq_Arrow;
     //--------------------------------------------
-    // mNameType [TREND_OF   ] = __T_Mtg_Name ;
-    // mDispText [TREND_OF   ] = __T_Mtg_Text ;
-    // mTextPos  [TREND_OF   ] = __T_Mtg_TxtPos;
-    // mColorType[TREND_OF   ] = __T_Mtg_Color;
-    // mStyleType[TREND_OF   ] = __T_Mtg_Style;
-    // mWidthType[TREND_OF   ] = __T_Mtg_Width;
-    // mShowArrow[TREND_OF   ] = __T_Mtg_Arrow;
-    //--------------------------------------------
     mNameType [TREND_BOS  ] = __T_Bos_Name ;
     mDispText [TREND_BOS  ] = __T_Bos_Text ;
     mTextPos  [TREND_BOS  ] = __T_Bos_TxtPos;
@@ -231,14 +205,6 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mStyleType[TREND_XLQ  ] = __T_SpLq_Style;
     mWidthType[TREND_XLQ  ] = __T_SpLq_Width;
     mShowArrow[TREND_XLQ  ] = __T_SpLq_Arrow;
-    //--------------------------------------------
-    mNameType [TREND_OFS  ] = __T_Ofs_Name ;
-    mDispText [TREND_OFS  ] = __T_Ofs_Text ;
-    mTextPos  [TREND_OFS  ] = __T_Ofs_TxtPos;
-    mColorType[TREND_OFS  ] = __T_Ofs_Color;
-    mStyleType[TREND_OFS  ] = __T_Ofs_Style;
-    mWidthType[TREND_OFS  ] = __T_Ofs_Width;
-    mShowArrow[TREND_OFS  ] = __T_Ofs_Arrow;
     //--------------------------------------------
     mNameType [TREND_EOF  ] = __T_Eof_Name ;
     mDispText [TREND_EOF  ] = __T_Eof_Text ;
@@ -414,12 +380,15 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
 }
 void Trend::onItemClick(const string &itemId, const string &objId)
 {
-    if (objId == iAngle0) return;
-    if (objId == iArrowT) return;
-    if (objId == iLbText) return;
-    multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(objId, OBJPROP_SELECTED), cPoint1+cPoint2+cMTrend+iAngle0+iLbText+iArrowT+sTData);
-    if (objId == cPoint2 && (bool)ObjectGet(cMTrend, OBJPROP_SELECTED) == true){
-        gTemplates.openTemplates(objId, mTemplateTypes, StrToInteger(ObjectDescription(sTData)));
+    string targetobj = objId;
+    if (objId == iAngle0 || objId == iArrowT || objId == iLbText)
+    {
+        if ((int)ObjectGet(cMTrend, OBJPROP_SELECTED) == 0) return;
+        targetobj = cMTrend;
+    }
+    multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(targetobj, OBJPROP_SELECTED), cPoint1+cPoint2+cMTrend+iAngle0+iLbText+iArrowT+sTData);
+    if (targetobj == cPoint2 && (bool)ObjectGet(cMTrend, OBJPROP_SELECTED) == true){
+        gTemplates.openTemplates(targetobj, mTemplateTypes, StrToInteger(ObjectDescription(sTData)));
     }
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
