@@ -90,7 +90,6 @@ enum TrendType
     TREND_BLG,
     TREND_LQ ,
     TREND_XLQ,
-    // TREND_OF ,
     TREND_EOF,
     TREND_BE ,
     TREND_ARR,
@@ -116,7 +115,6 @@ private:
     string iAngle0;
     string iLbText;
     string iArrowT;
-    string sTData;
 
 // Value define for Item
 private:
@@ -147,8 +145,6 @@ public:
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
-    virtual void onItemDeleted(const string &itemId, const string &objId);
-    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -250,7 +246,8 @@ void Trend::activateItem(const string& itemId)
     iLbText = itemId + "_0iLbText";
     iAngle0 = itemId + "_0iAngle0";
     iArrowT = itemId + "_0iArrowT";
-    sTData = itemId + "_sTData";
+
+    mAllItem += cPoint1+cPoint2+cMTrend+iLbText+iAngle0+iArrowT;
 }
 
 void Trend::refreshData()
@@ -291,7 +288,6 @@ void Trend::refreshData()
 
 void Trend::createItem()
 {
-    ObjectCreate(sTData, OBJ_TEXT        , 0, 0, 0);
     ObjectCreate(iAngle0, OBJ_TRENDBYANGLE, 0, 0, 0);
     ObjectCreate(iArrowT, OBJ_TEXT        , 0, 0, 0);
     ObjectCreate(cMTrend, OBJ_TREND       , 0, 0, 0);
@@ -320,7 +316,6 @@ void Trend::updateTypeProperty()
     ObjectSetText (iLbText,  mDispText[mIndexType], 8, "Consolas", mColorType[mIndexType]);
     ObjectSetText (iArrowT,  mShowArrow[mIndexType] ? "▲" : "", 9, "Consolas", mShowArrow[mIndexType] ? mColorType[mIndexType] : clrNONE);
     SetObjectStyle(cMTrend,  mColorType[mIndexType],          mStyleType[mIndexType],  mWidthType[mIndexType]);
-    ObjectSetText (sTData,  IntegerToString(mIndexType));
 }
 void Trend::updateItemAfterChangeType()
 {
@@ -335,7 +330,6 @@ void Trend::updateItemAfterChangeType()
 void Trend::onItemDrag(const string &itemId, const string &objId)
 {
     gTemplates.clearTemplates();
-    mIndexType = StrToInteger(ObjectDescription(sTData));
     time1 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME1);
     time2 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME2);
     price1 =          ObjectGet(cMTrend, OBJPROP_PRICE1);
@@ -386,9 +380,9 @@ void Trend::onItemClick(const string &itemId, const string &objId)
         if ((int)ObjectGet(cMTrend, OBJPROP_SELECTED) == 0) return;
         targetobj = cMTrend;
     }
-    multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(targetobj, OBJPROP_SELECTED), cPoint1+cPoint2+cMTrend+iAngle0+iLbText+iArrowT+sTData);
+    multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(targetobj, OBJPROP_SELECTED), mAllItem);
     if (targetobj == cPoint2 && (bool)ObjectGet(cMTrend, OBJPROP_SELECTED) == true){
-        gTemplates.openTemplates(targetobj, mTemplateTypes, StrToInteger(ObjectDescription(sTData)));
+        gTemplates.openTemplates(objId, mTemplateTypes, mIndexType);
     }
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
@@ -430,20 +424,4 @@ void Trend::onMouseMove()
     time2  = pCommonData.mMouseTime;
     getCenterPos(time1, time2, price1, price2, time3, price3);
     refreshData();
-}
-void Trend::onItemDeleted(const string &itemId, const string &objId)
-{
-    ObjectDelete(cPoint1);
-    ObjectDelete(cPoint2);
-    ObjectDelete(cMTrend);
-    ObjectDelete(iLbText);
-    ObjectDelete(iAngle0);
-    ObjectDelete(iArrowT);
-}
-void Trend::onUserRequest(const string &itemId, const string &objId)
-{
-    activateItem(itemId);
-    mIndexType = gTemplates.mActivePos;
-    updateTypeProperty();
-    onItemDrag(itemId, objId);
 }

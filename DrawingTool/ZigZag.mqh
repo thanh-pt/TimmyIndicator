@@ -39,7 +39,6 @@ public:
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
-    virtual void onItemDeleted(const string &itemId, const string &objId);
 };
 
 ZigZag::ZigZag(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -148,4 +147,3 @@ void ZigZag::onItemChange(const string &itemId, const string &objId)
     }
     while (ObjectFind(objName) >= 0);
 }
-void ZigZag::onItemDeleted(const string &itemId, const string &objId){}

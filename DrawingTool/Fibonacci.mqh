@@ -47,8 +47,6 @@ private:
 
 // Component name
 private:
-    string sType;
-
     string ckLne;
     string iFib0;
     string iFib1;
@@ -101,8 +99,6 @@ public:
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
-    virtual void onItemDeleted(const string &itemId, const string &objId);
-    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -129,8 +125,6 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
 void Fibonacci::prepareActive(){}
 void Fibonacci::createItem()
 {
-    ObjectCreate(sType, OBJ_TEXT, 0, 0, 0);
-    
     if (Fib_0_Color != clrNONE) ObjectCreate(iFib0, OBJ_TREND, 0, 0, 0);
     if (Fib_1_Color != clrNONE) ObjectCreate(iFib1, OBJ_TREND, 0, 0, 0);
     if (Fib_2_Color != clrNONE) ObjectCreate(iFib2, OBJ_TREND, 0, 0, 0);
@@ -170,17 +164,10 @@ void Fibonacci::updateDefaultProperty()
     multiSetProp(OBJPROP_ARROWCODE,       4, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     multiSetProp(OBJPROP_COLOR    , clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     
-    multiSetStrs(OBJPROP_TOOLTIP, "\n",
-                            ckLne
-                            +iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
-                            +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
-    
-    multiSetStrs(OBJPROP_TOOLTIP   , "\n",
-                            cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
+    multiSetStrs(OBJPROP_TOOLTIP, "\n", mAllItem);
 }
 void Fibonacci::updateTypeProperty()
 {
-    ObjectSetText(sType, IntegerToString(mIndexType));
     //------------------------------------------
     ObjectSetText(iTxt0, Fib_0_Text + "  ", 7, NULL, Fib_0_Color);
     ObjectSetText(iTxt1, Fib_1_Text + "  ", 7, NULL, Fib_1_Color);
@@ -225,8 +212,6 @@ void Fibonacci::updateTypeProperty()
 }
 void Fibonacci::activateItem(const string& itemId)
 {
-    sType = itemId + "_sType";
-
     ckLne = itemId + "_c0Lne";
     iFib0 = itemId + "_iFib0";
     iFib1 = itemId + "_iFib1";
@@ -247,6 +232,9 @@ void Fibonacci::activateItem(const string& itemId)
     cPointR2 = itemId + "_cPointR2";
     cPointC1 = itemId + "_cPointC1";
     cPointC2 = itemId + "_cPointC2";
+
+    mAllItem += ckLne+iFib0+iFib1+iFib2+iFib3+iFib4+iFib5+iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5
+                +cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2;
 }
 void Fibonacci::updateItemAfterChangeType()
 {
@@ -322,7 +310,6 @@ void Fibonacci::onMouseClick()
 void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 {
     gTemplates.clearTemplates();
-    mIndexType = StrToInteger(ObjectDescription(sType));
     if (objId == ckLne)
     {
         time0   = (datetime)ObjectGet(ckLne, OBJPROP_TIME1);
@@ -381,31 +368,7 @@ void Fibonacci::onItemClick(const string &itemId, const string &objId)
     {
         unSelectAllExcept(itemId);
         if (objId == cPointC1 || objId == cPointC2)
-            gTemplates.openTemplates(objId, mTemplateTypes, StrToInteger(ObjectDescription(sType)));
+           gTemplates.openTemplates(objId, mTemplateTypes, mIndexType);
     }
 }
 void Fibonacci::onItemChange(const string &itemId, const string &objId){}
-void Fibonacci::onItemDeleted(const string &itemId, const string &objId)
-{
-    ObjectDelete(ckLne);
-    ObjectDelete(iFib0);
-    ObjectDelete(iFib1);
-    ObjectDelete(iFib2);
-    ObjectDelete(iFib3);
-    ObjectDelete(iFib4);
-    ObjectDelete(iFib5);
-    ObjectDelete(iTxt0);
-    ObjectDelete(iTxt1);
-    ObjectDelete(iTxt2);
-    ObjectDelete(iTxt3);
-    ObjectDelete(iTxt4);
-    ObjectDelete(iTxt5);
-    ObjectDelete(sType);
-}
-void Fibonacci::onUserRequest(const string &itemId, const string &objId)
-{
-    activateItem(itemId);
-    mIndexType = gTemplates.mActivePos;
-    updateTypeProperty();
-    onItemDrag(itemId, objId);
-}

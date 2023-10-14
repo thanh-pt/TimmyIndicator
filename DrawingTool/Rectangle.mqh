@@ -78,7 +78,6 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
-    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -165,6 +164,8 @@ void Rectangle::activateItem(const string& itemId)
     cPointR2 = itemId + "_cPointR2";
     cPointC1 = itemId + "_cPointC1";
     cPointC2 = itemId + "_cPointC2";
+
+    mAllItem += cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cBkgnd+iCText+iLText+iRText;
 }
 void Rectangle::updateItemAfterChangeType()
 {
@@ -272,12 +273,12 @@ void Rectangle::onItemClick(const string &itemId, const string &objId)
 {
     if (objId == iCText || objId == iLText || objId == iRText) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cBkgnd+iCText+iLText+iRText);
+    multiSetProp(OBJPROP_SELECTED, selected, mAllItem);
     multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     if (selected) {
         unSelectAllExcept(itemId);
         if (objId == cPointC1 || objId == cPointC2)
-            gTemplates.openTemplates(objId, mTemplateTypes, -1);
+            gTemplates.openTemplates(objId, mTemplateTypes, mIndexType);
     }
 }
 void Rectangle::onItemChange(const string &itemId, const string &objId)
@@ -297,14 +298,6 @@ void Rectangle::onItemChange(const string &itemId, const string &objId)
 }
 void Rectangle::onItemDeleted(const string &itemId, const string &objId)
 {
-    ObjectDelete(iCText);
-    ObjectDelete(iLText);
-    ObjectDelete(iRText);
+    BaseItem::onItemDeleted(itemId, objId);
     removeBackgroundOverlap(cBkgnd);
-}
-void Rectangle::onUserRequest(const string &itemId, const string &objId)
-{
-    activateItem(itemId);
-    mIndexType = gTemplates.mActivePos;
-    updateTypeProperty();
 }

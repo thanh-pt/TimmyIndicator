@@ -46,7 +46,6 @@ public:
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
-    virtual void onItemDeleted(const string &itemId, const string &objId);
 };
 
 ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -97,7 +96,6 @@ void ChartUtil::onMouseClick()
         int beginBar = iBarShift(ChartSymbol(), ChartPeriod(), openTime );
         int endBar   = iBarShift(ChartSymbol(), ChartPeriod(), closeTime);
         // PrintFormat("dtToday %s", TimeToStr(dtToday, TIME_DATE));
-
 
         // S3: Detect High Low
         double highest = High[beginBar];
@@ -217,4 +215,3 @@ void ChartUtil::onItemChange(const string &itemId, const string &objId)
 {
     if (objId == cAlert) onItemDrag(itemId, objId);
 }
-void ChartUtil::onItemDeleted(const string &itemId, const string &objId){}

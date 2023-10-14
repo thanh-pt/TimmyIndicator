@@ -56,7 +56,6 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
-    virtual void onUserRequest(const string &itemId, const string &objId);
 
 // Special functional
     void updateCandle();
@@ -334,9 +333,7 @@ void ImbTool::onItemDeleted(const string &itemId, const string &objId)
     }
     while (ObjectDelete(objName) == true);
 }
-void ImbTool::onUserRequest(const string &itemId, const string &objId)
-{
-}
+
 void ImbTool::updateCandle()
 {
     string sparamItems[];

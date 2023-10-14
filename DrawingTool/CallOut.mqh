@@ -77,7 +77,7 @@ void CallOut::createItem()
 void CallOut::updateDefaultProperty()
 {
     ObjectSet(iUdLine, OBJPROP_SELECTABLE, false);
-    multiSetStrs(OBJPROP_TOOLTIP, "\n",cLbText+cPtLine+iUdLine);
+    multiSetStrs(OBJPROP_TOOLTIP, "\n", mAllItem);
 }
 void CallOut::updateTypeProperty()
 {
@@ -92,6 +92,8 @@ void CallOut::activateItem(const string& itemId)
     cLbText = itemId + "_cLbText";
     cPtLine = itemId + "_cPtLine";
     iUdLine = itemId + "_iUdLine";
+
+    mAllItem += cLbText+cPtLine+iUdLine;
 }
 void CallOut::updateItemAfterChangeType(){}
 void CallOut::refreshData()
@@ -185,9 +187,7 @@ void CallOut::onItemDeleted(const string &itemId, const string &objId)
 {
     if (objId == cLbText || objId == cPtLine || objId == iUdLine)
     {
-        ObjectDelete(cLbText);
-        ObjectDelete(cPtLine);
-        ObjectDelete(iUdLine);
+        BaseItem::onItemDeleted(itemId, objId);
     }
     // additional leg removing
     int idx = 0;

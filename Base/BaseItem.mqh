@@ -3,11 +3,10 @@
 
 typedef void(*FinishedJob)();
 
-
-#define UPDATE_TYPE if((++mIndexType) >= mTypeNum){mIndexType = 0;}
-
 class BaseItem
 {
+private:
+    string      mTempSparamItems[];
 protected:
     string      mItemName;
     CommonData* pCommonData;
@@ -19,6 +18,8 @@ protected:
     int         mTypeNum;
     string      mNameType[MAX_TYPE];
     string      mTemplateTypes;
+    string      mTData;
+    string      mAllItem;
 
 protected:
     string createMouseInfo();
@@ -33,16 +34,17 @@ protected:
     virtual void updateItemAfterChangeType(){};
     virtual void refreshData()=0;
     virtual void finishedJobDone(){};
+    virtual void storeTData();
 
 // Chart Event:
 public:
     virtual void onMouseMove(){}
     virtual void onMouseClick(){}
-    virtual void onItemDrag(const string &itemId, const string &objId){};
+    virtual void onItemDrag(const string &itemId, const string &objId)=0;
     virtual void onItemClick(const string &itemId, const string &objId){};
     virtual void onItemChange(const string &itemId, const string &objId){};
-    virtual void onItemDeleted(const string &itemId, const string &objId){};
-    virtual void onUserRequest(const string &itemId, const string &objId){};
+    virtual void onItemDeleted(const string &itemId, const string &objId);
+    virtual void onUserRequest(const string &itemId, const string &objId);
 
 public:
     void startActivate(FinishedJob cb);
@@ -67,62 +69,48 @@ void BaseItem::startActivate(FinishedJob cb)
     mFinishedJobCb = cb;
     prepareActive();
     string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(TimeLocal());
+    mTData = itemId + "_mTData";
+    mAllItem = mTData;
     activateItem(itemId);
-    // PrintFormat("NewItem: %s", itemId);
 }
 
 void BaseItem::finishedDeactivate()
 {
+    storeTData();
     ChartSetInteger(0, CHART_MOUSE_SCROLL, true);
     finishedJobDone();
 }
 
 void BaseItem::touchItem(const string& itemId)
 {
+    mTData = itemId + "_mTData";
+    mAllItem = mTData;
     activateItem(itemId);
+    mIndexType = StrToInteger(ObjectDescription(mTData));
 }
 
 void BaseItem::changeActiveType(int type)
 {
-    if (mTypeNum <= 0)
-    {
-        return;
-    }
-    if (type >= mTypeNum)
-    {
-        return;
-    }
+    if (mTypeNum <= 0 || type >= mTypeNum) return;
+
     mIndexType = type;
     pMouseInfo.setText(createMouseInfo());
     updateItemAfterChangeType();
+    storeTData();
 }
 
 void BaseItem::changeActiveType()
 {
-    if (mTypeNum <= 0)
-    {
-        return;
-    }
+    if (mTypeNum <= 0) return;
 
-    /* disable hold shift feature
-    if (pCommonData.mShiftHold)
+    if((++mIndexType) >= mTypeNum)
     {
-        if((--mIndexType) < 0)
-        {
-            mIndexType = mTypeNum-1;
-        }
-    }
-    else
-    */
-    {
-        if((++mIndexType) >= mTypeNum)
-        {
-            mIndexType = 0;
-        }
+        mIndexType = 0;
     }
     
     pMouseInfo.setText(createMouseInfo());
     updateItemAfterChangeType();
+    storeTData();
 }
 
 string BaseItem::createMouseInfo()
@@ -142,4 +130,28 @@ string BaseItem::createMouseInfo()
         mouseInfo += mNameType[i];
     }
     return mouseInfo;
+}
+
+void BaseItem::storeTData()
+{
+    if (ObjectFind(mTData) < 0) ObjectCreate(mTData, OBJ_TEXT, 0, 0, 0);
+    ObjectSetText (mTData, IntegerToString(mIndexType));
+}
+
+void BaseItem::onUserRequest(const string &itemId, const string &objId)
+{
+    touchItem(itemId);
+    mIndexType = gTemplates.mActivePos;
+    updateTypeProperty();
+    onItemDrag(itemId, objId);
+}
+
+void BaseItem::onItemDeleted(const string &itemId, const string &objId)
+{
+    int k=StringSplit(mAllItem,'.',mTempSparamItems);
+    for (int i = 0; i < k; i++)
+    {
+        if (mTempSparamItems[i] == "") continue;
+        ObjectDelete("."+mTempSparamItems[i]);
+    }
 }

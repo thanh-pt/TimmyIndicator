@@ -23,7 +23,6 @@ private:
 // Component name
 private:
     string cPivot;
-    string sType;
 
 // Value define for Item
 private:
@@ -51,8 +50,6 @@ public:
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
-    virtual void onItemDeleted(const string &itemId, const string &objId);
-    virtual void onUserRequest(const string &itemId, const string &objId);
 };
 
 Pivot::Pivot(const string name, CommonData* commonData, MouseInfo* mouseInfo)
@@ -86,7 +83,6 @@ void Pivot::prepareActive(){}
 void Pivot::createItem()
 {
     ObjectCreate(cPivot, OBJ_TEXT , 0, 0, 0);
-    ObjectCreate(sType, OBJ_TEXT , 0, 0, 0);
     updateDefaultProperty();
     updateTypeProperty();
     time  = pCommonData.mMouseTime;
@@ -98,7 +94,6 @@ void Pivot::updateDefaultProperty()
 }
 void Pivot::updateTypeProperty()
 {
-    ObjectSetText(sType, IntegerToString(mIndexType));
     if (mIndexType == POINT_LEFT || mIndexType == POINT_RIGHT || mIndexType == POINT_TOP)
     {
         ObjectSetText(cPivot, mNameType[mIndexType], 10, NULL, clrNavy);
@@ -108,7 +103,7 @@ void Pivot::updateTypeProperty()
 void Pivot::activateItem(const string& itemId)
 {
     cPivot = itemId + "_cPivot";
-    sType = itemId + "_sType";
+    mAllItem += cPivot;
 }
 void Pivot::updateItemAfterChangeType(){}
 void Pivot::refreshData()
@@ -149,7 +144,6 @@ void Pivot::onMouseClick()
 void Pivot::onItemDrag(const string &itemId, const string &objId)
 {
     gTemplates.clearTemplates();
-    mIndexType = StrToInteger(ObjectDescription(sType));
     time  = (datetime)ObjectGet(cPivot, OBJPROP_TIME1);
     price =           ObjectGet(cPivot, OBJPROP_PRICE1);
 
@@ -162,22 +156,10 @@ void Pivot::onItemDrag(const string &itemId, const string &objId)
 void Pivot::onItemClick(const string &itemId, const string &objId)
 {
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    multiSetProp(OBJPROP_SELECTED   , selected, cPivot+sType);
+    multiSetProp(OBJPROP_SELECTED   , selected, mAllItem);
     if (selected)
     {
-        gTemplates.openTemplates(objId, mTemplateTypes, StrToInteger(ObjectDescription(sType)));
+        gTemplates.openTemplates(objId, mTemplateTypes, mIndexType);
     }
 }
 void Pivot::onItemChange(const string &itemId, const string &objId){}
-void Pivot::onItemDeleted(const string &itemId, const string &objId)
-{
-    ObjectDelete(cPivot);
-    ObjectDelete(sType);
-}
-void Pivot::onUserRequest(const string &itemId, const string &objId)
-{
-    activateItem(itemId);
-    mIndexType = gTemplates.mActivePos;
-    updateTypeProperty();
-    onItemDrag(itemId, objId);
-}
