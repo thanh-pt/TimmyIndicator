@@ -57,7 +57,7 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
 
     // Init variable type
     mNameType [WORKING_AREA] = "Working Area";
-    mNameType [CREATE_ALERT] = (AlertActive ? "Create Alert" : "Draft Alert");
+    mNameType [CREATE_ALERT] = (gAlertActive ? "Create Alert" : "Draft Alert");
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
 }

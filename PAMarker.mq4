@@ -1,7 +1,7 @@
 #property strict
 
-input bool  AlertActive = false;
-input color gColorMousePoint = clrGray;
+input bool  gAlertActive = false;
+input color gColorMousePoint = clrSlateGray;
 #include "InfoItem/CrossHair.mqh"
 #include "InfoItem/MouseInfo.mqh"
 #include "InfoItem/Templates.mqh"
@@ -98,7 +98,7 @@ int OnCalculate(const int rates_total,
                 const long &volume[],
                 const int &spread[])
 {
-    if (AlertActive) checkAlert();
+    if (gAlertActive) checkAlert();
     return (rates_total);
 }
 

@@ -1,7 +1,7 @@
 #include "../CommonData.mqh"
 #include "../Utility.mqh"
 
-input color CrossHair_Color = clrDarkSlateGray;
+input color CrossHair_Color = clrSlateGray;
 
 class CrossHair
 {
