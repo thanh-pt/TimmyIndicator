@@ -1,4 +1,3 @@
-#define SEPARATE_LINE       "------------------------------------------------------------------------------------------------------------------------"
 #define STATIC_TAG          "%"
 #define BG_TAG              "BgOverlapFix"
 #define LINE_STYLE          ENUM_LINE_STYLE

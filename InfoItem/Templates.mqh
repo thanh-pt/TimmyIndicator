@@ -1,9 +1,9 @@
 #include "../Utility.mqh"
 
 input string _1 = "";
-input color Templates_TextColor = clrBlack;
-input color Templates_BgColor1  = clrGray;
-input color Templates_BgColor2  = clrLightGray;
+input color Templ_TextColor = clrBlack;
+input color Templ_BgColor1  = clrGray;
+input color Templ_BgColor2  = clrLightGray;
 
 #define TEXT_FULL_BLOCK "██████████████████████████████████████████████████████████████████"
 #define MAX_ROW 4
@@ -39,10 +39,10 @@ public:
         {
             itemBgnd = "TemplatesBgnd_"+IntegerToString(i);
             if (i == mActivePos){
-                ObjectSet(itemBgnd, OBJPROP_COLOR, Templates_BgColor2);
+                ObjectSet(itemBgnd, OBJPROP_COLOR, Templ_BgColor2);
             }
             else {
-                ObjectSet(itemBgnd, OBJPROP_COLOR, Templates_BgColor1);
+                ObjectSet(itemBgnd, OBJPROP_COLOR, Templ_BgColor1);
             }
         }
         gController.handleSparamEvent(CHART_EVENT_SELECT_TEMPLATES, mActiveObjectId);
@@ -87,8 +87,8 @@ private:
         ObjectCreate(itemName, OBJ_LABEL, 0, 0, 0);
         ObjectSet(itemBgnd, OBJPROP_SELECTABLE, false);
         ObjectSet(itemName, OBJPROP_SELECTABLE, false);
-        ObjectSetText(itemBgnd, StringSubstr(TEXT_FULL_BLOCK, 0, mMaxLength), 10, "Consolas", Templates_BgColor1);
-        ObjectSetText(itemName,                                     " "+name, 10, "Consolas", Templates_TextColor);
+        ObjectSetText(itemBgnd, StringSubstr(TEXT_FULL_BLOCK, 0, mMaxLength), 10, "Consolas", Templ_BgColor1);
+        ObjectSetText(itemName,                                     " "+name, 10, "Consolas", Templ_TextColor);
         ObjectSetInteger(0, itemName, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
         ObjectSetInteger(0, itemBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
 
@@ -103,7 +103,7 @@ private:
 
         if (pos == mActivePos)
         {
-            ObjectSet(itemBgnd, OBJPROP_COLOR, Templates_BgColor2);
+            ObjectSet(itemBgnd, OBJPROP_COLOR, Templ_BgColor2);
         }
     }
     void deleteItem(int pos)

@@ -2,9 +2,10 @@
 #include "../Utility.mqh"
 
 //--------------------------------------------
-input color      __Imb_Color = clrMidnightBlue;
-input LINE_STYLE __Imb_MainLine0_Style = STYLE_DOT;
-input LINE_STYLE __Imb_RangeLine_Style = STYLE_SOLID;
+input string            _4 = "";
+input color      Imb_Color = clrMidnightBlue;
+input LINE_STYLE Imb_MainLine0_Style = STYLE_DOT;
+input LINE_STYLE Imb_RangeLine_Style = STYLE_SOLID;
 
 enum ImbToolType
 {
@@ -225,7 +226,7 @@ void ImbTool::updateDefaultProperty()
     ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, ANCHOR_CENTER);
     ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, ANCHOR_CENTER);
     multiSetStrs(OBJPROP_TOOLTIP   , "\n", cPoint1+cPoint2+cMTrend);
-    SetObjectStyle(cMTrend, __Imb_Color, __Imb_MainLine0_Style,  0);
+    SetObjectStyle(cMTrend, Imb_Color, Imb_MainLine0_Style,  0);
     multiSetProp(OBJPROP_BACK, true, cMTrend);
 }
 void ImbTool::updateTypeProperty()

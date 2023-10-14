@@ -1,9 +1,9 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string C_a_l_l_O_u_t___Cfg = SEPARATE_LINE;
-input color  __C_Color    = clrWhite;
-input int    __C_FontSize = 10;
+input string _6 = "";
+input color  CallOut_Color    = clrMidnightBlue;
+input int    CallOut_FontSize = 10;
 
 
 string UNDER_LINE = "________________________________________________________________________________________";
@@ -81,10 +81,10 @@ void CallOut::updateDefaultProperty()
 }
 void CallOut::updateTypeProperty()
 {
-    SetObjectStyle(cPtLine, __C_Color, 0, 1);
+    SetObjectStyle(cPtLine, CallOut_Color, 0, 1);
     //-------------------------------------------------------------
-    ObjectSetText(cLbText, DoubleToString(pCommonData.mMousePrice, 5), __C_FontSize, "Consolas", __C_Color);
-    ObjectSetText(iUdLine,                                    "_____", __C_FontSize, "Consolas", __C_Color);
+    ObjectSetText(cLbText, DoubleToString(pCommonData.mMousePrice, 5), CallOut_FontSize, "Consolas", CallOut_Color);
+    ObjectSetText(iUdLine,                                    "_____", CallOut_FontSize, "Consolas", CallOut_Color);
     ObjectSet(cLbText, OBJPROP_SELECTED, true);
 }
 void CallOut::activateItem(const string& itemId)

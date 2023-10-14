@@ -1,24 +1,20 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string            R_e_c_t_a_n_g_l_e___Cfg = SEPARATE_LINE;
-input color             __R_Text_Color  = clrDarkGray;
+input string            _3 = "";
+input color             Rect_Text_Color  = clrDarkGray;
 //-----------------------------------------------------------
-      string            R_e_c_t_a_n_g_l_e___S_z___Cfg = SEPARATE_LINE;
-      string            __R_Sz_Name       = "Sz";
-input color             __R_Sz_Color      = C'64,0,32';
+      string            Rect_Sz_Name       = "Sz";
+input color             Rect_Sz_Color      = C'255,200,200';
 //-----------------------------------------------------------
-      string            R_e_c_t_a_n_g_l_e___D_z___Cfg = SEPARATE_LINE;
-      string            __R_Dz_Name       = "Dz";
-input color             __R_Dz_Color      = C'21,43,37';
+      string            Rect_SzLight_Name  = "lSz";
+input color             Rect_SzLight_Color = C'255,234,234';
 //-----------------------------------------------------------
-      string            R_e_c_t_a_n_g_l_e___S_z1__Cfg = SEPARATE_LINE;
-      string            __R_SzLight_Name  = "lSz";
-input color             __R_SzLight_Color = C'40,0,21';
+      string            Rect_Dz_Name       = "Dz";
+input color             Rect_Dz_Color      = C'209,225,237';
 //-----------------------------------------------------------
-      string            R_e_c_t_a_n_g_l_e___D_z2__Cfg = SEPARATE_LINE;
-      string            __R_DzLight_Name  = "lDz";
-input color             __R_DzLight_Color = C'14,29,24';
+      string            Rect_DzLight_Name  = "lDz";
+input color             Rect_DzLight_Color = C'232,240,247';
 //-----------------------------------------------------------
 
 enum RectangleType
@@ -92,17 +88,17 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [SYPPLY_TYPE]   = __R_Sz_Name      ;
-    mPropColor[SYPPLY_TYPE]   = __R_Sz_Color     ;
+    mNameType [SYPPLY_TYPE]   = Rect_Sz_Name      ;
+    mPropColor[SYPPLY_TYPE]   = Rect_Sz_Color     ;
     //------------------------------------------
-    mNameType [DEMAND_TYPE]   = __R_Dz_Name      ;
-    mPropColor[DEMAND_TYPE]   = __R_Dz_Color     ;
+    mNameType [DEMAND_TYPE]   = Rect_Dz_Name      ;
+    mPropColor[DEMAND_TYPE]   = Rect_Dz_Color     ;
     //------------------------------------------
-    mNameType [SZ_LIGHT_TYPE] = __R_SzLight_Name ;
-    mPropColor[SZ_LIGHT_TYPE] = __R_SzLight_Color;
+    mNameType [SZ_LIGHT_TYPE] = Rect_SzLight_Name ;
+    mPropColor[SZ_LIGHT_TYPE] = Rect_SzLight_Color;
     //------------------------------------------
-    mNameType [DZ_LIGHT_TYPE] = __R_DzLight_Name ;
-    mPropColor[DZ_LIGHT_TYPE] = __R_DzLight_Color;
+    mNameType [DZ_LIGHT_TYPE] = Rect_DzLight_Name ;
+    mPropColor[DZ_LIGHT_TYPE] = Rect_DzLight_Color;
     //------------------------------------------
     mIndexType = 0;
     mTypeNum = RECT_NUM;
@@ -148,7 +144,7 @@ void Rectangle::updateDefaultProperty()
     ObjectSetInteger(ChartID(), iLText, OBJPROP_ANCHOR, ANCHOR_LEFT);
     ObjectSetInteger(ChartID(), iRText, OBJPROP_ANCHOR, ANCHOR_RIGHT);
 
-    multiSetProp(OBJPROP_COLOR     , __R_Text_Color, iCText+iLText+iRText);
+    multiSetProp(OBJPROP_COLOR     , Rect_Text_Color, iCText+iLText+iRText);
     multiSetProp(OBJPROP_SELECTABLE, false         , iCText+iLText+iRText);
     multiSetStrs(OBJPROP_TOOLTIP   , "\n"          , cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+cBkgnd+iCText+iLText+iRText);
 }

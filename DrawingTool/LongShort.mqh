@@ -7,26 +7,25 @@ enum e_display
 {
     HIDE,
     SHOW,
-    SELECTED_SHOW,
+    OPTION,
 };
 
+input string          _7 = "";
 //-------------------------------------------------
-input string          L_o_n_g_S_h_o_r_t___Cfg = SEPARATE_LINE;
-input color           __LS_TextColor     = clrWhite;
-input int             __LS_TextSize      = 8;
-input color           __LS_TpColor       = clrYellowGreen;
-input color           __LS_SlColor       = clrRed;
-input color           __LS_EnColor       = clrOrange;
-input int             __LS_LineWidth     = 1;
-input color           __LS_SlBkgrdColor  = C'80,50,70';
-input color           __LS_TpBkgrdColor  = C'40,80,70';
+input color           LS_TextColor     = clrMidnightBlue;
+input int             LS_TextSize      = 8;
+input color           LS_TpColor       = clrSteelBlue;
+input color           LS_SlColor       = clrChocolate;
+input color           LS_EnColor       = clrChocolate;
+input int             LS_LineWidth     = 1;
+input color           LS_SlBkgrdColor  = clrLavenderBlush;
+input color           LS_TpBkgrdColor  = clrWhiteSmoke;
 //-------------------------------------------------
-input string          L_o_n_g_S_h_o_r_t___T_r_a_d_e___Cfg = SEPARATE_LINE;
-input double          __LS_Cost          = 50;
-input e_display       __LS_ShowStats     = SHOW;
-input e_display       __LS_ShowPrice     = SHOW;
-input e_display       __LS_ShowDollar    = SHOW;
-input bool            __LS_ShowModel     = false;
+input double          LS_Cost          = 5;
+input e_display       LS_ShowStats     = SHOW;
+input e_display       LS_ShowPrice     = OPTION;
+input e_display       LS_ShowDollar    = HIDE;
+input bool            LS_ShowModel     = false;
 
 class LongShort : public BaseItem
 {
@@ -125,7 +124,7 @@ void LongShort::createItem()
     ObjectCreate(iEnText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iSlText  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iBeText  , OBJ_TEXT      , 0, 0, 0);
-    if (__LS_ShowModel) ObjectCreate(iMdlTxt  , OBJ_TEXT      , 0, 0, 0);
+    if (LS_ShowModel) ObjectCreate(iMdlTxt  , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(cBoder   , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cPointTP , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPointSL , OBJ_ARROW     , 0, 0, 0);
@@ -147,7 +146,7 @@ void LongShort::initData()
 }
 void LongShort::updateDefaultProperty()
 {
-    ObjectSetText(iMdlTxt, "Model-??", __LS_TextSize+1, "Consolas", __C_Color);
+    ObjectSetText(iMdlTxt, "Model-??", LS_TextSize+1, "Consolas", LS_TextColor);
     //-------------------------------------------------
     ObjectSet(iBgndSL, OBJPROP_BACK, true);
     ObjectSet(iBgndTP, OBJPROP_BACK, true);
@@ -167,18 +166,18 @@ void LongShort::updateDefaultProperty()
 }
 void LongShort::updateTypeProperty()
 {
-    ObjectSet(iBgndSL, OBJPROP_COLOR, __LS_SlBkgrdColor);
-    ObjectSet(iBgndTP, OBJPROP_COLOR, __LS_TpBkgrdColor);
+    ObjectSet(iBgndSL, OBJPROP_COLOR, LS_SlBkgrdColor);
+    ObjectSet(iBgndTP, OBJPROP_COLOR, LS_TpBkgrdColor);
     ObjectSet(iBeLine, OBJPROP_WIDTH, 1);
     ObjectSet(iBeLine, OBJPROP_STYLE, 2);
     //-------------------------------------------------
-    multiSetProp(OBJPROP_COLOR, __LS_TpColor  , iTpLine+iBeLine+cPointTP+cPointBE);
-    multiSetProp(OBJPROP_COLOR, __LS_EnColor  , iEnLine+cPointEN+cPointWD);
-    multiSetProp(OBJPROP_COLOR, __LS_SlColor  , iSlLine+cPointSL);
-    multiSetProp(OBJPROP_COLOR, __LS_TextColor, iTpText+iEnText+iSlText+iBeText+iTpPrice+iEnPrice+iSlPrice);
+    multiSetProp(OBJPROP_COLOR, LS_TpColor  , iTpLine+iBeLine+cPointTP+cPointBE);
+    multiSetProp(OBJPROP_COLOR, LS_EnColor  , iEnLine+cPointEN+cPointWD);
+    multiSetProp(OBJPROP_COLOR, LS_SlColor  , iSlLine+cPointSL);
+    multiSetProp(OBJPROP_COLOR, LS_TextColor, iTpText+iEnText+iSlText+iBeText+iTpPrice+iEnPrice+iSlPrice);
     //-------------------------------------------------
-    multiSetProp(OBJPROP_WIDTH   , __LS_LineWidth, iTpLine+iEnLine+iSlLine);
-    multiSetProp(OBJPROP_FONTSIZE, __LS_TextSize , iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText+iTpPrice+iEnPrice+iSlPrice);
+    multiSetProp(OBJPROP_WIDTH   , LS_LineWidth, iTpLine+iEnLine+iSlLine);
+    multiSetProp(OBJPROP_FONTSIZE, LS_TextSize , iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText+iTpPrice+iEnPrice+iSlPrice);
 }
 void LongShort::activateItem(const string& itemId)
 {
@@ -262,12 +261,12 @@ void LongShort::refreshData()
     double slPip       = 10000*MathAbs(priceEN-priceSL);
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
-    mTradeLot          = NormalizeDouble((__LS_Cost/slPip/10),2);
+    mTradeLot          = NormalizeDouble((LS_Cost/slPip/10),2);
     double realCost    = mTradeLot*slPip*10;
     bool   selectState = (bool)ObjectGet(cPointWD, OBJPROP_SELECTED);
-    bool   showStats   = (__LS_ShowStats  == SHOW) || (__LS_ShowStats  == SELECTED_SHOW && selectState);
-    bool   showPrice   = (__LS_ShowPrice  == SHOW) || (__LS_ShowPrice  == SELECTED_SHOW && selectState);
-    bool   showDollar  = (__LS_ShowDollar == SHOW) || (__LS_ShowDollar == SELECTED_SHOW && selectState);
+    bool   showStats   = (LS_ShowStats  == SHOW) || (LS_ShowStats  == OPTION && selectState);
+    bool   showPrice   = (LS_ShowPrice  == SHOW) || (LS_ShowPrice  == OPTION && selectState);
+    bool   showDollar  = (LS_ShowDollar == SHOW) || (LS_ShowDollar == OPTION && selectState);
     if (showStats)
     {
         if (strBeInfo != "") strBeInfo += ": ";
@@ -377,7 +376,7 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
         ObjectSet(cPointBE, OBJPROP_SELECTED, selectState);
     }
     onItemDrag(itemId, objId);
-    if (objId == cPointWD && selectState == true && (int)ObjectGet(cBoder, OBJPROP_SELECTED) == true && __LS_ShowPrice  != HIDE)
+    if (objId == cPointWD && selectState == true && (int)ObjectGet(cBoder, OBJPROP_SELECTED) == true && LS_ShowPrice  != HIDE)
     {
         string buySell = "Sell";
         if (priceTP > priceEN) buySell = "Buy";

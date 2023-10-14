@@ -1,10 +1,10 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          Z_i_g_Z_a_g___Cfg = SEPARATE_LINE;
-input color           __Z_Color = clrWhite;
-input LINE_STYLE      __Z_Style = STYLE_SOLID;
-input int             __Z_Width = 1;
+input string          _5 = "";
+input color           Zz_Color = clrMidnightBlue;
+input LINE_STYLE      Zz_Style = STYLE_SOLID;
+input int             Zz_Width = 1;
 
 class ZigZag : public BaseItem
 {
@@ -66,7 +66,7 @@ void ZigZag::createItem()
 }
 void ZigZag::updateDefaultProperty()
 {
-    SetObjectStyle(mTempLine, __Z_Color, __Z_Style, __Z_Width);
+    SetObjectStyle(mTempLine, Zz_Color, Zz_Style, Zz_Width);
     ObjectSetString(ChartID(), mTempLine ,OBJPROP_TOOLTIP,"\n");
 }
 void ZigZag::updateTypeProperty(){}

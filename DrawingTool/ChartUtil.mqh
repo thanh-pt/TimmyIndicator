@@ -1,7 +1,7 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string  C_h_a_r_t_U_t_i_l___Cfg = SEPARATE_LINE;
+input string  _9 = "";
 input int     __U_Working_Start = 4;
 input int     __U_Working_Finsh = 20;
 

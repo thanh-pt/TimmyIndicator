@@ -2,7 +2,6 @@
 #include "InfoItem/MouseInfo.mqh"
 #include "DrawingTool/Trend.mqh"
 #include "DrawingTool/ImbTool.mqh"
-#include "DrawingTool/HTrend.mqh"
 #include "DrawingTool/ZigZag.mqh"
 #include "DrawingTool/Rectangle.mqh"
 #include "DrawingTool/CallOut.mqh"
@@ -16,18 +15,16 @@
 
 #define IDX_NONE        -1
 #define IDX_TREND       0
-#define IDX_HTREND      1
-#define IDX_ZIGZAG      2
-#define IDX_RECTANGLE   3
-#define IDX_FIBONACI    4
-#define IDX_CALLOUT     5
-#define IDX_LONGSHORT   6
-#define IDX_CHARTUTIL   7
-#define IDX_PIVOT       8
-#define IDX_IMBTOOL     9
+#define IDX_ZIGZAG      1
+#define IDX_RECTANGLE   2
+#define IDX_FIBONACI    3
+#define IDX_CALLOUT     4
+#define IDX_LONGSHORT   5
+#define IDX_CHARTUTIL   6
+#define IDX_PIVOT       7
+#define IDX_IMBTOOL     8
 
 #define ITEM_TREND      ".Trend"
-#define ITEM_HTREND     ".HTrend"
 #define ITEM_ZIGZAG     ".ZigZag"
 #define ITEM_RECTANGLE  ".Rectangle"
 #define ITEM_FIBONACI   ".Fibonacci"
@@ -67,7 +64,6 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
     mActive = IDX_NONE;
     mListItem[IDX_TREND     ]    = new Trend     ( ITEM_TREND     , commonData, mouseInfo);
-    mListItem[IDX_HTREND    ]    = new HTrend    ( ITEM_HTREND    , commonData, mouseInfo);
     mListItem[IDX_ZIGZAG    ]    = new ZigZag    ( ITEM_ZIGZAG    , commonData, mouseInfo);
     mListItem[IDX_RECTANGLE ]    = new Rectangle ( ITEM_RECTANGLE , commonData, mouseInfo);
     mListItem[IDX_FIBONACI  ]    = new Fibonacci ( ITEM_FIBONACI  , commonData, mouseInfo);
@@ -81,7 +77,6 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
 Controller::~Controller()
 {
     delete mListItem[IDX_TREND     ];
-    delete mListItem[IDX_HTREND    ];
     delete mListItem[IDX_ZIGZAG    ];
     delete mListItem[IDX_RECTANGLE ];
     delete mListItem[IDX_FIBONACI  ];
@@ -138,7 +133,6 @@ int Controller::findItemIdByKey(const int key)
 int Controller::findItemIdByName(const string& name)
 {
     if (name == ITEM_TREND     ) return IDX_TREND     ;
-    if (name == ITEM_HTREND    ) return IDX_HTREND    ;
     if (name == ITEM_ZIGZAG    ) return IDX_ZIGZAG    ;
     if (name == ITEM_RECTANGLE ) return IDX_RECTANGLE ;
     if (name == ITEM_FIBONACI  ) return IDX_FIBONACI  ;
