@@ -16,7 +16,7 @@ void OnStart()
 {
     // Check new order
     double newOrder = GlobalVariableGet("GV_NewOrder");
-    if (newOrder < -0.01) 
+    if (newOrder < 0.01) 
     {
         Print("No New Order!");
         return;

@@ -110,7 +110,7 @@ LongShort::LongShort(const string name, CommonData* commonData, MouseInfo* mouse
     mIndexType = 0;
     mTypeNum = 2;
 
-    mTemplateTypes = "+ Spread";
+    mTemplateTypes  =  "Add Spread";
     mTemplateTypes += ",Trade Ready!";
 
     // Other initialize
