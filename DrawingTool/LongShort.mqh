@@ -35,6 +35,7 @@ double mTradeLot;
 int    mSymbolDigits;
 string mNativeCurrency;
 double mNativeCost;
+double mSymbolCode;
 
 // Component name
 private:
@@ -89,7 +90,7 @@ public:
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
-    virtual void onItemDeleted(const string &itemId, const string &objId);
+    virtual void onUserRequest(const string &itemId, const string &objId);
 // Special functional
     void showHistory(bool isShow);
 
@@ -109,18 +110,25 @@ LongShort::LongShort(const string name, CommonData* commonData, MouseInfo* mouse
     mIndexType = 0;
     mTypeNum = 2;
 
-    // Other initialize
-    string symbol = Symbol();
-    mSymbolDigits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+    mTemplateTypes = "+ Spread";
+    mTemplateTypes += ",Trade Ready!";
 
-    symbol = StringSubstr(symbol, 0, 6);
-    PrintFormat("symbol %s", symbol);
-    mNativeCurrency = StringSubstr(symbol, StringLen(symbol)-3, 3);
+    // Other initialize
+    string strSymbol = Symbol();
+    mSymbolDigits = (int)SymbolInfoInteger(strSymbol, SYMBOL_DIGITS);
+    mSymbolCode = 0;
+    for (int i = 0; i < StringLen(strSymbol); i++)
+    {
+        mSymbolCode += strSymbol[i] * (i+1);
+    }
+
+    strSymbol = StringSubstr(strSymbol, 0, 6);
+    mNativeCurrency = StringSubstr(strSymbol, StringLen(strSymbol)-3, 3);
     if (mNativeCurrency == "JPY")
     {
         mNativeCost = LS_Cost * 1.49;
     }
-    else if (symbol == "XAUUSD")
+    else if (strSymbol == "XAUUSD")
     {
         mNativeCost = LS_Cost * 10;
     }
@@ -224,6 +232,9 @@ void LongShort::activateItem(const string& itemId)
     cPointEN = itemId + "_c0PointEN";
     cPointWD = itemId + "_ckPointWD";
     cPointBE = itemId + "_cPointBE";
+
+    mAllItem += iBgndSL+iBgndTP+iTpLine+iEnLine+iSlLine+iBeLine+iTpPrice+iEnPrice+iSlPrice+iTpText+iEnText+iSlText+iBeText+iMdlTxt;
+    mAllItem += cBoder+cPointTP+cPointSL+cPointEN+cPointWD+cPointBE;
 }
 void LongShort::updateItemAfterChangeType(){}
 void LongShort::refreshData()
@@ -401,43 +412,14 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
         ObjectSet(cPointBE, OBJPROP_SELECTED, selectState);
     }
     onItemDrag(itemId, objId);
-    if (objId == cPointWD && selectState == true && (int)ObjectGet(cBoder, OBJPROP_SELECTED) == true && LS_ShowPrice  != HIDE)
+    if (objId == cPointWD && selectState == true)
     {
-        string buySell = "Sell";
-        if (priceTP > priceEN) buySell = "Buy";
-        Alert(buySell + ": " + DoubleToString(mTradeLot,2)
-                  + "\nEn: " + DoubleToString(priceEN,mSymbolDigits)
-                  + "\nSL: " + DoubleToString(priceSL,mSymbolDigits)
-                  + "\nTP: " + DoubleToString(priceTP,mSymbolDigits));
+        gTemplates.openTemplates(objId, mTemplateTypes, -1);
     }
 }
 void LongShort::onItemChange(const string &itemId, const string &objId)
 {
     onItemDrag(itemId, objId);
-    refreshData();
-}
-void LongShort::onItemDeleted(const string &itemId, const string &objId)
-{
-    ObjectDelete(iBgndSL );
-    ObjectDelete(iBgndTP );
-    ObjectDelete(iTpLine );
-    ObjectDelete(iBeLine );
-    ObjectDelete(iEnLine );
-    ObjectDelete(iSlLine );
-    ObjectDelete(iTpPrice);
-    ObjectDelete(iEnPrice);
-    ObjectDelete(iSlPrice);
-    ObjectDelete(iTpText );
-    ObjectDelete(iEnText );
-    ObjectDelete(iSlText );
-    ObjectDelete(iBeText );
-    ObjectDelete(iMdlTxt );
-    ObjectDelete(cBoder  );
-    ObjectDelete(cPointTP);
-    ObjectDelete(cPointSL);
-    ObjectDelete(cPointEN);
-    ObjectDelete(cPointWD);
-    ObjectDelete(cPointBE);
 }
 
 //-------------------------------------------------------------------
@@ -507,4 +489,34 @@ void LongShort::showHistory(bool isShow)
         //removeBackgroundOverlap(iBgndSL);
         //removeBackgroundOverlap(iBgndTP);
     }
+}
+
+void LongShort::onUserRequest(const string &itemId, const string &objId)
+{
+    if (gTemplates.mActivePos == 1)
+    {
+        GlobalVariableSet("GV_priceEN", priceEN);
+        GlobalVariableSet("GV_priceSL", priceSL);
+        GlobalVariableSet("GV_priceTP", priceTP);
+        GlobalVariableSet("GV_lotSize", mTradeLot);
+        GlobalVariableSet("GV_SymbolCode", mSymbolCode);
+        GlobalVariableSet("GV_NewOrder", 1.0);
+    }
+    else if (gTemplates.mActivePos == 0)
+    {
+        onItemDrag(itemId, objId);
+        double spread = (double)SymbolInfoInteger(Symbol(), SYMBOL_SPREAD)*2;
+        spread = spread / pow(10, mSymbolDigits);
+
+        if (priceEN > priceSL) {
+            // Buy order
+            priceEN += spread;
+        } else {
+            // Sell order
+            priceTP += spread;
+            priceSL += spread;
+        }
+        refreshData();
+    }
+    gTemplates.clearTemplates();
 }

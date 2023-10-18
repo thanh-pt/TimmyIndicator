@@ -284,6 +284,7 @@ void Controller::handleSparamEvent(const int id, const string& sparam)
     case CHARTEVENT_OBJECT_DELETE:
         if (StringFind(sparam, "_c") == -1) return;
         mListItem[receiverItem].onItemDeleted(itemId, sparam);
+        gTemplates.clearTemplates();
         break;
     case CHARTEVENT_OBJECT_DRAG:
         if (StringFind(sparam, "_c") == -1) return;
