@@ -24,7 +24,7 @@ input color           LS_TpBkgrdColor  = clrWhiteSmoke;
 input double          LS_Cost          = 5;
 input e_display       LS_ShowStats     = SHOW;
 input e_display       LS_ShowPrice     = OPTION;
-input e_display       LS_ShowDollar    = HIDE;
+input e_display       LS_ShowDollar    = OPTION;
 input bool            LS_ShowModel     = false;
 
 class LongShort : public BaseItem
@@ -32,6 +32,9 @@ class LongShort : public BaseItem
 // Internal Value
 private:
 double mTradeLot;
+int    mSymbolDigits;
+string mNativeCurrency;
+double mNativeCost;
 
 // Component name
 private:
@@ -105,6 +108,26 @@ LongShort::LongShort(const string name, CommonData* commonData, MouseInfo* mouse
     mNameType [1] = "Short";
     mIndexType = 0;
     mTypeNum = 2;
+
+    // Other initialize
+    string symbol = Symbol();
+    mSymbolDigits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+
+    symbol = StringSubstr(symbol, 0, 6);
+    PrintFormat("symbol %s", symbol);
+    mNativeCurrency = StringSubstr(symbol, StringLen(symbol)-3, 3);
+    if (mNativeCurrency == "JPY")
+    {
+        mNativeCost = LS_Cost * 1.49;
+    }
+    else if (symbol == "XAUUSD")
+    {
+        mNativeCost = LS_Cost * 10;
+    }
+    else
+    {
+        mNativeCost = LS_Cost;
+    }
 }
 
 // Internal Event
@@ -258,11 +281,13 @@ void LongShort::refreshData()
     string strEnInfo   = ""; // lot 
     string strSlInfo   = ""; // pip + dola
     string strBeInfo   = ObjectDescription(cPointBE); // RR1
-    double slPip       = 10000*MathAbs(priceEN-priceSL);
+    double slPip       = floor(fabs(priceEN-priceSL) * (pow(10, mSymbolDigits)))/10;
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
-    mTradeLot          = NormalizeDouble((LS_Cost/slPip/10),2);
-    double realCost    = mTradeLot*slPip*10;
+
+    mTradeLot          = floor(mNativeCost / slPip * 10)/100;
+    double realCost    = mTradeLot*slPip*10/mNativeCost*LS_Cost;
+
     bool   selectState = (bool)ObjectGet(cPointWD, OBJPROP_SELECTED);
     bool   showStats   = (LS_ShowStats  == SHOW) || (LS_ShowStats  == OPTION && selectState);
     bool   showPrice   = (LS_ShowPrice  == SHOW) || (LS_ShowPrice  == OPTION && selectState);
@@ -288,9 +313,9 @@ void LongShort::refreshData()
     //-------------------------------------------------
     if (showPrice)
     {
-        ObjectSetText(iTpPrice, DoubleToString(priceTP,5));
-        ObjectSetText(iEnPrice, DoubleToString(priceEN,5));
-        ObjectSetText(iSlPrice, DoubleToString(priceSL,5));
+        ObjectSetText(iTpPrice, DoubleToString(priceTP, mSymbolDigits));
+        ObjectSetText(iEnPrice, DoubleToString(priceEN, mSymbolDigits));
+        ObjectSetText(iSlPrice, DoubleToString(priceSL, mSymbolDigits));
         strEnInfo += DoubleToString(mTradeLot,2) + "lot";
     }
     else
@@ -380,7 +405,10 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
     {
         string buySell = "Sell";
         if (priceTP > priceEN) buySell = "Buy";
-        Alert(buySell + ": " + DoubleToString(mTradeLot,2) + "\nEn: " + DoubleToString(priceEN,5) + "\nSL: " + DoubleToString(priceSL,5) + "\nTP: " + DoubleToString(priceTP,5));
+        Alert(buySell + ": " + DoubleToString(mTradeLot,2)
+                  + "\nEn: " + DoubleToString(priceEN,mSymbolDigits)
+                  + "\nSL: " + DoubleToString(priceSL,mSymbolDigits)
+                  + "\nTP: " + DoubleToString(priceTP,mSymbolDigits));
     }
 }
 void LongShort::onItemChange(const string &itemId, const string &objId)
