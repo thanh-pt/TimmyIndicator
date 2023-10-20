@@ -116,6 +116,7 @@ LongShort::LongShort(const string name, CommonData* commonData, MouseInfo* mouse
     // Other initialize
     string strSymbol = Symbol();
     mSymbolDigits = (int)SymbolInfoInteger(strSymbol, SYMBOL_DIGITS);
+    if (mSymbolDigits == 0) mSymbolDigits = 5;
     mSymbolCode = 0;
     for (int i = 0; i < StringLen(strSymbol); i++)
     {
@@ -295,7 +296,7 @@ void LongShort::refreshData()
     double slPip       = floor(fabs(priceEN-priceSL) * (pow(10, mSymbolDigits)))/10;
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
-
+    
     mTradeLot          = floor(mNativeCost / slPip * 10)/100;
     double realCost    = mTradeLot*slPip*10/mNativeCost*LS_Cost;
 
