@@ -187,8 +187,14 @@ void ChartUtil::onItemDrag(const string &itemId, const string &objId)
 {
     if (objId == cAlert)
     {
+        double priceAlert = ObjectGet(cAlert, OBJPROP_PRICE1);
+        if (pCommonData.mCtrlHold == true)
+        {
+            priceAlert = pCommonData.mMousePrice;
+            ObjectSet(cAlert, OBJPROP_PRICE1, priceAlert);
+        }
         mAlertText = ObjectGetString(ChartID(), cAlert, OBJPROP_TEXT);
-        mAlertIndi = (ObjectGet(cAlert, OBJPROP_PRICE1) > Bid ? "[H]" : "[L]");
+        mAlertIndi = (priceAlert > Bid ? "[H]" : "[L]");
 
         if (StringFind(mAlertText, "[H]") == -1 && StringFind(mAlertText, "[L]") == -1 )
         {
