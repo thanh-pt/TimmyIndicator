@@ -32,7 +32,6 @@ class LongShort : public BaseItem
 // Internal Value
 private:
 double mTradeLot;
-int    mSymbolDigits;
 string mNativeCurrency;
 double mNativeCost;
 double mSymbolCode;
@@ -115,8 +114,6 @@ LongShort::LongShort(const string name, CommonData* commonData, MouseInfo* mouse
 
     // Other initialize
     string strSymbol = Symbol();
-    mSymbolDigits = (int)SymbolInfoInteger(strSymbol, SYMBOL_DIGITS);
-    if (mSymbolDigits == 0) mSymbolDigits = 5;
     mSymbolCode = 0;
     for (int i = 0; i < StringLen(strSymbol); i++)
     {
@@ -293,7 +290,7 @@ void LongShort::refreshData()
     string strEnInfo   = ""; // lot 
     string strSlInfo   = ""; // pip + dola
     string strBeInfo   = ObjectDescription(cPointBE); // RR1
-    double slPip       = floor(fabs(priceEN-priceSL) * (pow(10, mSymbolDigits)))/10;
+    double slPip       = floor(fabs(priceEN-priceSL) * (pow(10, gSymbolDigits)))/10;
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
     
@@ -325,9 +322,9 @@ void LongShort::refreshData()
     //-------------------------------------------------
     if (showPrice)
     {
-        ObjectSetText(iTpPrice, DoubleToString(priceTP, mSymbolDigits));
-        ObjectSetText(iEnPrice, DoubleToString(priceEN, mSymbolDigits));
-        ObjectSetText(iSlPrice, DoubleToString(priceSL, mSymbolDigits));
+        ObjectSetText(iTpPrice, DoubleToString(priceTP, gSymbolDigits));
+        ObjectSetText(iEnPrice, DoubleToString(priceEN, gSymbolDigits));
+        ObjectSetText(iSlPrice, DoubleToString(priceSL, gSymbolDigits));
         strEnInfo += DoubleToString(mTradeLot,2) + "lot";
     }
     else
@@ -507,7 +504,7 @@ void LongShort::onUserRequest(const string &itemId, const string &objId)
     {
         onItemDrag(itemId, objId);
         double spread = (double)SymbolInfoInteger(Symbol(), SYMBOL_SPREAD)*2;
-        spread = spread / pow(10, mSymbolDigits);
+        spread = spread / pow(10, gSymbolDigits);
 
         if (priceEN > priceSL) {
             // Buy order

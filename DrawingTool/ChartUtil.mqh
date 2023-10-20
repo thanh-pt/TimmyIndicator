@@ -177,7 +177,7 @@ void ChartUtil::onMouseClick()
         ObjectCreate(cAlert, OBJ_HLINE, 0, 0, pCommonData.mMousePrice);
         SetObjectStyle(cAlert, clrDarkSlateGray, STYLE_DASHDOT, 0);
         mAlertIndi = (ObjectGet(cAlert, OBJPROP_PRICE1) > Bid ? "[H]" : "[L]");
-        ObjectSetText(cAlert, mAlertIndi + " Alert!");
+        ObjectSetText(cAlert, mAlertIndi + "Alert");
         // Add Alert to gListAlert
         gListAlert += cAlert + ",";
     }

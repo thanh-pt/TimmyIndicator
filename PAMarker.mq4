@@ -24,6 +24,8 @@ int    gAlertTotal  = 0;
 bool   gAlertReach  = false;
 double gAlertPrice  = 0;
 string gAlertRemain = "";
+int    gSymbolDigits= 0;
+
 
 void initAlarm()
 {
@@ -65,7 +67,7 @@ void checkAlert()
         // Send notification or save remain Alert
         if (gAlertReach == true)
         {
-            SendNotification("["+ DoubleToString(gAlertPrice, 5) + "] " + gAlertText);
+            SendNotification(Symbol()+":   "+ DoubleToString(gAlertPrice, gSymbolDigits) + "\n" + gAlertText);
             ObjectDelete(gAlertArr[i]);
         }
         else
@@ -81,8 +83,13 @@ int OnInit()
     ChartSetInteger(ChartID(), CHART_EVENT_MOUSE_MOVE, true);
     ChartSetInteger(ChartID(), CHART_EVENT_OBJECT_DELETE, true);
     
+    // Init global variable
     gController.setFinishedJobCB(FinishedJobFunc);
 
+    gSymbolDigits = (int)SymbolInfoInteger(Symbol(), SYMBOL_DIGITS);
+    if (gSymbolDigits == 0) gSymbolDigits = 5;
+
+    // Init function
     initAlarm();
     return (INIT_SUCCEEDED);
 }
