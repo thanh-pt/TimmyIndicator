@@ -285,22 +285,29 @@ void LongShort::refreshData()
         ObjectSetInteger(0,iSlPrice, OBJPROP_ANCHOR, ANCHOR_UPPER);
     }
     //-------------------------------------------------
-    if (priceEN == priceSL) return;
-    string strTpInfo   = ""; // RR + dola
-    string strEnInfo   = ""; // lot 
-    string strSlInfo   = ""; // pip + dola
-    string strBeInfo   = ObjectDescription(cPointBE); // RR1
+    //            TÍNH TOÁN CÁC THỨ
+    //-------------------------------------------------
+    // 1. Thông tin lệnh
     double slPip       = floor(fabs(priceEN-priceSL) * (pow(10, gSymbolDigits)))/10;
+    if (slPip <= 0.001) return;
+
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
     
     mTradeLot          = floor(mNativeCost / slPip * 10)/100;
     double realCost    = mTradeLot*slPip*10/mNativeCost*LS_Cost;
-
+    // 2. Thông tin hiển thị
     bool   selectState = (bool)ObjectGet(cPointWD, OBJPROP_SELECTED);
     bool   showStats   = (LS_ShowStats  == SHOW) || (LS_ShowStats  == OPTION && selectState);
     bool   showPrice   = (LS_ShowPrice  == SHOW) || (LS_ShowPrice  == OPTION && selectState);
     bool   showDollar  = (LS_ShowDollar == SHOW) || (LS_ShowDollar == OPTION && selectState);
+    
+    // 3. String Data để hiển thị
+    string strTpInfo   = ""; // RR + dola
+    string strEnInfo   = ""; // lot 
+    string strSlInfo   = ""; // pip + dola
+    string strBeInfo   = ObjectDescription(cPointBE); // RR1
+
     if (showStats)
     {
         if (strBeInfo != "") strBeInfo += ": ";
@@ -394,6 +401,10 @@ void LongShort::onItemDrag(const string &itemId, const string &objId)
             else if (objId == cPointEN) priceEN = pCommonData.mMousePrice;
             else if (objId == cPointSL) priceSL = pCommonData.mMousePrice;
             else if (objId == cPointBE) priceBE = pCommonData.mMousePrice;
+        }
+        if (objId == cPointEN && pCommonData.mShiftHold == true){
+            Print("vao1");
+            time1   = (datetime)ObjectGet(cBoder, OBJPROP_TIME1);
         }
     }
     refreshData();
