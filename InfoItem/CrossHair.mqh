@@ -2,6 +2,7 @@
 #include "../Utility.mqh"
 
 input color CrossHair_Color = clrSlateGray;
+      int   CrossHair_LocalTimeZone = 7;
 
 class CrossHair
 {
@@ -105,7 +106,12 @@ public:
         ObjectSet(mWeekInfo, OBJPROP_XDISTANCE, pCommonData.mMouseX + 10);
         ObjectSet(mDateInfo, OBJPROP_XDISTANCE, pCommonData.mMouseX + 10);
         ObjectSetText(mDateInfo, TimeToStr(pCommonData.mMouseTime, TIME_DATE));
-        if (ChartPeriod() <= PERIOD_H4) ObjectSetText(mWeekInfo, TimeToStr(pCommonData.mMouseTime, TIME_MINUTES) + " · " + strDayOfWeek(pCommonData.mMouseTime));
+        if (ChartPeriod() <= PERIOD_H4)
+        {
+            ObjectSetText(mWeekInfo,
+                            TimeToStr(pCommonData.mMouseTime + CrossHair_LocalTimeZone*3600, TIME_MINUTES)
+                            + " · " + strDayOfWeek(pCommonData.mMouseTime));
+        }
         else if (ChartPeriod() <= PERIOD_D1) ObjectSetText(mWeekInfo, strDayOfWeek(pCommonData.mMouseTime) + "  ·  " + "W"+IntegerToString(weekOfYear(pCommonData.mMouseTime),2,'0'));
         else ObjectSetText(mWeekInfo, "W"+IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7,2,'0') + " · " +IntegerToString(TimeYear(pCommonData.mMouseTime)));
     }
