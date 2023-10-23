@@ -45,6 +45,7 @@ private:
     FinishedJob mFinishedJobCb;
     MouseInfo*  pMouseInfo;
     bool        mbActiveErase;
+    bool        mbActiveTFChange;
 
 private:
     int findItemIdByKey(const int key);
@@ -165,15 +166,19 @@ void Controller::handleKeyEvent(const long &key)
     // Number Line
     case '1':
         if (mbActiveErase) EraseAll();
+        if (mbActiveTFChange) ChartSetSymbolPeriod(ChartID(), ChartSymbol(), PERIOD_M5);
         break;
     case '2':
         if (mbActiveErase) EraseThisTF();
+        if (mbActiveTFChange) ChartSetSymbolPeriod(ChartID(), ChartSymbol(), PERIOD_M15);
         break;
     case '3':
         if (mbActiveErase) EraseLowerTF();
+        if (mbActiveTFChange) ChartSetSymbolPeriod(ChartID(), ChartSymbol(), PERIOD_H4);
         break;
     case '4':
         if (mbActiveErase) EraseBgOverlap();
+        if (mbActiveTFChange) ChartSetSymbolPeriod(ChartID(), ChartSymbol(), PERIOD_D1);
         break;
     // QWERT Line
     case 'Y':
@@ -208,8 +213,14 @@ void Controller::handleKeyEvent(const long &key)
             mbActiveErase = true;
             pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF | 4-BgOverlap");
         }
+        else if (key == 'D')
+        {
+            mbActiveTFChange = true;
+            pMouseInfo.setText("TF: 1-m5 | 2-m15 | 3-H4 | 4-D1"); // | 5-W1 | 6-MN");
+        }
         else
         {
+            mbActiveTFChange = false;
             mbActiveErase = false;
             pMouseInfo.setText("");
         }
