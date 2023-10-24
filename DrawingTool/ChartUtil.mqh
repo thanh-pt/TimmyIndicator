@@ -175,7 +175,8 @@ void ChartUtil::onMouseClick()
     else if (mIndexType == CREATE_ALERT)
     {
         ObjectCreate(cAlert, OBJ_HLINE, 0, 0, pCommonData.mMousePrice);
-        SetObjectStyle(cAlert, clrDarkSlateGray, STYLE_DASHDOT, 0);
+        SetObjectStyle(cAlert, clrGainsboro, STYLE_DASHDOT, 0);
+        ObjectSet(cAlert, OBJPROP_BACK , true);
         mAlertIndi = (ObjectGet(cAlert, OBJPROP_PRICE1) > Bid ? "[H]" : "[L]");
         ObjectSetText(cAlert, mAlertIndi + "Alert");
         // Add Alert to gListAlert

@@ -514,7 +514,7 @@ void LongShort::onUserRequest(const string &itemId, const string &objId)
     else if (gTemplates.mActivePos == 0)
     {
         onItemDrag(itemId, objId);
-        double spread = (double)SymbolInfoInteger(Symbol(), SYMBOL_SPREAD)*2;
+        double spread = (double)SymbolInfoInteger(Symbol(), SYMBOL_SPREAD)*1.5;
         spread = spread / pow(10, gSymbolDigits);
 
         if (priceEN > priceSL) {
