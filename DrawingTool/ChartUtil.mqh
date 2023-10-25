@@ -7,8 +7,8 @@ input int     __U_Working_Finsh = 20;
 
 enum ChartUtilType
 {
-    WORKING_AREA,
     CREATE_ALERT,
+    WORKING_AREA,
     CUTIL_NUM,
 };
 
