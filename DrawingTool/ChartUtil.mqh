@@ -4,10 +4,17 @@
 input string  _9 = "";
 input int     __U_Working_Start = 4;
 input int     __U_Working_Finsh = 20;
+int Chartutil_Asian_Beg  = 07 - 07;
+int Chartutil_Asian_End  = 13 - 07;
+int Chartutil_London_Beg = 14 - 07;
+int Chartutil_London_End = 18 - 07;
+int Chartutil_NY_Beg     = 19 - 07;
+int Chartutil_NY_End     = 23 - 07;
 
 enum ChartUtilType
 {
     CREATE_ALERT,
+    SESSION_LINE,
     WORKING_AREA,
     CUTIL_NUM,
 };
@@ -39,6 +46,10 @@ public:
     virtual void refreshData();
     virtual void finishedJobDone();
 
+// Internal Function
+private:
+    void createSessionLine(const datetime& date, int beg, int end, string mask);
+
 // Chart Event
 public:
     virtual void onMouseMove();
@@ -56,6 +67,7 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
 
     // Init variable type
     mNameType [WORKING_AREA] = "Working Area";
+    mNameType [SESSION_LINE] = "Session Line";
     mNameType [CREATE_ALERT] = (gAlertActive ? "Create Alert" : "Draft Alert");
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
@@ -80,6 +92,12 @@ void ChartUtil::onMouseMove()
 }
 void ChartUtil::onMouseClick()
 {
+    if (mIndexType == SESSION_LINE && ChartPeriod() <= PERIOD_M15){
+        datetime mouseDate = StrToTime(TimeToStr(pCommonData.mMouseTime, TIME_DATE));
+        createSessionLine(mouseDate, Chartutil_Asian_Beg, Chartutil_Asian_End, "Asian");
+        createSessionLine(mouseDate, Chartutil_London_Beg, Chartutil_London_End, "London");
+        createSessionLine(mouseDate, Chartutil_NY_Beg, Chartutil_NY_End, "NY");
+    }
     if (mIndexType == WORKING_AREA)
     {
         // TODO: indi này chỉ vẽ trong trong TF H4 đổ xuống thôi
@@ -221,4 +239,22 @@ void ChartUtil::onItemClick(const string &itemId, const string &objId){}
 void ChartUtil::onItemChange(const string &itemId, const string &objId)
 {
     if (objId == cAlert) onItemDrag(itemId, objId);
+}
+// Internal function
+void ChartUtil::createSessionLine(const datetime& date, int beg, int end, string mask)
+{
+    string objBeg = TimeToStr(date, TIME_DATE)+mask+"Beg";
+    string objEnd = TimeToStr(date, TIME_DATE)+mask+"End";
+    ObjectCreate(objBeg, OBJ_VLINE , 0, date + beg*3600, 0);
+    ObjectCreate(objEnd, OBJ_VLINE , 0, date + end*3600, 0);
+    ObjectSet(objBeg, OBJPROP_COLOR, clrGainsboro);
+    ObjectSet(objEnd, OBJPROP_COLOR, clrGainsboro);
+    ObjectSet(objBeg, OBJPROP_STYLE, 2);
+    ObjectSet(objEnd, OBJPROP_STYLE, 2);
+    ObjectSet(objBeg, OBJPROP_BACK , true);
+    ObjectSet(objEnd, OBJPROP_BACK , true);
+    ObjectSet(objBeg, OBJPROP_SELECTABLE, false);
+    ObjectSet(objEnd, OBJPROP_SELECTABLE, false);
+    ObjectSetText(objBeg, mask);
+    ObjectSetText(objEnd, mask+" End");
 }

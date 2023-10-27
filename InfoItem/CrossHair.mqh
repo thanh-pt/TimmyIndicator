@@ -12,6 +12,7 @@ private:
     string mHCrossHair;
     string mWeekInfo;
     string mDateInfo;
+    string mPriceInfo;
     uint mTimeOffset;
     bool mIsHide;
     bool mHideState;
@@ -22,6 +23,7 @@ public:
         mHCrossHair = STATIC_TAG + "HCrossHair";
         mWeekInfo   = STATIC_TAG + "mWeekInfo";
         mDateInfo   = STATIC_TAG + "mDateInfo";
+        mPriceInfo  = STATIC_TAG + "mPriceInfo";
         pCommonData = commonData;
 
         if (ChartPeriod() == PERIOD_MN1) mTimeOffset = ChartPeriod()*60*100;
@@ -61,6 +63,17 @@ public:
         ObjectSet(mDateInfo, OBJPROP_YDISTANCE, 20);
         ObjectSetInteger(0, mDateInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
         ObjectSetString( 0, mDateInfo, OBJPROP_TOOLTIP,"\n");
+
+        // mPriceInfo
+        ObjectCreate(mPriceInfo, OBJ_LABEL, 0, 0, 0);
+        ObjectSetInteger(ChartID(), mPriceInfo, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
+        ObjectSetInteger(ChartID(), mPriceInfo, OBJPROP_ANCHOR , ANCHOR_RIGHT_UPPER);
+        ObjectSetText(mPriceInfo, "", 8, "Consolas");
+        ObjectSet(mPriceInfo, OBJPROP_COLOR, CrossHair_Color);
+        ObjectSet(mPriceInfo, OBJPROP_XDISTANCE, 0);
+        ObjectSetString( 0, mPriceInfo, OBJPROP_TOOLTIP,"\n");
+        ObjectSet(mPriceInfo, OBJPROP_SELECTABLE, false);
+
     }
     void onMouseMove()
     {
@@ -114,6 +127,11 @@ public:
         }
         else if (ChartPeriod() <= PERIOD_D1) ObjectSetText(mWeekInfo, strDayOfWeek(pCommonData.mMouseTime) + "  ·  " + "W"+IntegerToString(weekOfYear(pCommonData.mMouseTime),2,'0'));
         else ObjectSetText(mWeekInfo, "W"+IntegerToString(TimeDayOfYear(pCommonData.mMouseTime)/7,2,'0') + " · " +IntegerToString(TimeYear(pCommonData.mMouseTime)));
+
+        //mPriceInfo
+        ObjectSet(mPriceInfo, OBJPROP_YDISTANCE, pCommonData.mMouseY);
+        ObjectSetText(mPriceInfo, DoubleToString(pCommonData.mMousePrice, gSymbolDigits));
+
     }
     void onObjectDeleted(const string& objectName)
     {
