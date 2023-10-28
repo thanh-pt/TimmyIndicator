@@ -110,6 +110,9 @@ void LabelText::onMouseClick()
 }
 void LabelText::onItemDrag(const string &itemId, const string &objId)
 {
+    int size = (int)ObjectGet(objId, OBJPROP_FONTSIZE);
+    if     (size == 10) spaceSize = 15;
+    else if(size == 12) spaceSize = 19;
     if (objId == cLbText)
     {
         posX = (int)ObjectGet(objId, OBJPROP_XDISTANCE);
@@ -140,7 +143,29 @@ void LabelText::onItemClick(const string &itemId, const string &objId)
         additionalText = cLbText +"#"+ IntegerToString(idx);
     }
 }
-void LabelText::onItemChange(const string &itemId, const string &objId){}
+void LabelText::onItemChange(const string &itemId, const string &objId)
+{
+    int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
+    // font color size
+    string font = ObjectGetString(ChartID(), objId, OBJPROP_FONT);
+    color c     = (color)ObjectGet(objId, OBJPROP_COLOR);
+    int size    = (int)  ObjectGet(objId, OBJPROP_FONTSIZE);
+    
+    ObjectSet(cLbText, OBJPROP_COLOR, c);
+    ObjectSet(cLbText, OBJPROP_FONTSIZE, size);
+    ObjectSetString(ChartID(), cLbText, OBJPROP_FONT, font);
+
+    int idx = 0;
+    string additionalText = cLbText +"#"+ IntegerToString(idx);
+    while (ObjectFind(additionalText) >= 0)
+    {
+        ObjectSet(additionalText, OBJPROP_COLOR, c);
+        ObjectSet(additionalText, OBJPROP_FONTSIZE, size);
+        ObjectSetString(ChartID(), additionalText, OBJPROP_FONT, font);
+        idx++;
+        additionalText = cLbText +"#"+ IntegerToString(idx);
+    }
+}
 void LabelText::onItemDeleted(const string &itemId, const string &objId)
 {
     ObjectDelete(cLbText);

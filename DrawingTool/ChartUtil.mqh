@@ -15,8 +15,8 @@ enum ChartUtilType
 {
     CREATE_ALERT,
     SESSION_LINE,
-    WORKING_AREA,
     CUTIL_NUM,
+    WORKING_AREA,// Unused
 };
 
 class ChartUtil : public BaseItem
@@ -67,8 +67,8 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
 
     // Init variable type
     mNameType [WORKING_AREA] = "Working Area";
-    mNameType [SESSION_LINE] = "Session Line";
-    mNameType [CREATE_ALERT] = (gAlertActive ? "Create Alert" : "Draft Alert");
+    mNameType [SESSION_LINE] = "Session";
+    mNameType [CREATE_ALERT] = (gAlertActive ? "Alert" : "Alert disabled");
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
 }
@@ -94,8 +94,8 @@ void ChartUtil::onMouseClick()
 {
     if (mIndexType == SESSION_LINE && ChartPeriod() <= PERIOD_M15){
         datetime mouseDate = StrToTime(TimeToStr(pCommonData.mMouseTime, TIME_DATE));
-        createSessionLine(mouseDate, Chartutil_Asian_Beg, Chartutil_Asian_End, "Asian");
-        createSessionLine(mouseDate, Chartutil_London_Beg, Chartutil_London_End, "London");
+        createSessionLine(mouseDate, Chartutil_Asian_Beg, Chartutil_Asian_End, "As");
+        createSessionLine(mouseDate, Chartutil_London_Beg, Chartutil_London_End, "Lo");
         createSessionLine(mouseDate, Chartutil_NY_Beg, Chartutil_NY_End, "NY");
     }
     if (mIndexType == WORKING_AREA)
@@ -190,7 +190,7 @@ void ChartUtil::onMouseClick()
         setItemPos(workingRect, openTime, closeTime, highest, lowest);
         ObjectSetText(workingRect, objWorkingAreaKey + " - " + DoubleToString(10000 * (highest - lowest), 1));
     }
-    else if (mIndexType == CREATE_ALERT)
+    else if (mIndexType == CREATE_ALERT && gAlertActive)
     {
         ObjectCreate(cAlert, OBJ_HLINE, 0, 0, pCommonData.mMousePrice);
         SetObjectStyle(cAlert, clrGainsboro, STYLE_DASHDOT, 0);
@@ -256,5 +256,5 @@ void ChartUtil::createSessionLine(const datetime& date, int beg, int end, string
     ObjectSet(objBeg, OBJPROP_SELECTABLE, false);
     ObjectSet(objEnd, OBJPROP_SELECTABLE, false);
     ObjectSetText(objBeg, mask);
-    ObjectSetText(objEnd, mask+" End");
+    ObjectSetText(objEnd, mask+" E");
 }

@@ -370,7 +370,7 @@ void LongShort::onItemDrag(const string &itemId, const string &objId)
     priceEN =           ObjectGet(cPointEN, OBJPROP_PRICE1);
     priceSL =           ObjectGet(cPointSL, OBJPROP_PRICE1);
     priceBE =           ObjectGet(cPointBE, OBJPROP_PRICE1);
-    time1   = (datetime)ObjectGet(cPointEN, OBJPROP_TIME1);
+    time1   = (datetime)ObjectGet(cBoder  , OBJPROP_TIME1);
     time2   = (datetime)ObjectGet(cPointWD, OBJPROP_TIME1);
     if (objId == cBoder)
     {
@@ -403,8 +403,7 @@ void LongShort::onItemDrag(const string &itemId, const string &objId)
             else if (objId == cPointBE) priceBE = pCommonData.mMousePrice;
         }
         if (objId == cPointEN && pCommonData.mShiftHold == true){
-            Print("vao1");
-            time1   = (datetime)ObjectGet(cBoder, OBJPROP_TIME1);
+            time1   = (datetime)ObjectGet(cPointEN, OBJPROP_TIME1);
         }
     }
     refreshData();

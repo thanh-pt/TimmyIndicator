@@ -58,8 +58,8 @@ input LINE_STYLE Trend_BLg_Style = STYLE_SOLID;
       int        Trend_BLg_Width = 2;
       bool       Trend_BLg_Arrow = false;
 //--------------------------------------------
-      string     Trend_Eof_Name  = "eof";
-      string     Trend_Eof_Text  = "𝙚𝙤𝙛";
+      string     Trend_Eof_Name  = "ERL";
+      string     Trend_Eof_Text  = "ERL";
       TEXT_POS   Trend_Eof_TxtPos= TXT_POS_RIGHT;
 input color      Trend_Eof_Color = clrGreen;
 input LINE_STYLE Trend_Eof_Style = STYLE_SOLID;
@@ -278,9 +278,9 @@ void Trend::refreshData()
     else if (angle > 270 && angle <  360) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?  ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_UPPER);
     else if (angle == 0) 
     {
-        if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?        ANCHOR_LOWER :       ANCHOR_UPPER);
-        else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?   ANCHOR_LEFT_LOWER :  ANCHOR_LEFT_UPPER);
-        else                                             ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?  ANCHOR_RIGHT_LOWER : ANCHOR_RIGHT_UPPER);
+        if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+        else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_LEFT : ANCHOR_RIGHT);
+        else                                             ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_RIGHT: ANCHOR_LEFT);
 
         if (barT1 < barT2) ObjectSet(iArrowT, OBJPROP_ANGLE,  90.0); // case 180*
     }
@@ -306,7 +306,7 @@ void Trend::updateDefaultProperty()
     multiSetProp(OBJPROP_WIDTH     , 5      , cPoint1+cPoint2);
     multiSetProp(OBJPROP_SELECTABLE, false  , iArrowT+iAngle0+iLbText);
     multiSetProp(OBJPROP_COLOR     , clrNONE, cPoint1+cPoint2+iAngle0);
-    multiSetStrs(OBJPROP_TOOLTIP   , "\n"   , cPoint1+cPoint2+cMTrend+iAngle0+iLbText+iArrowT);
+    multiSetStrs(OBJPROP_TOOLTIP   , "\n"   , mAllItem);
 
     multiSetProp(OBJPROP_RAY     , false, cMTrend+iAngle0);
     ObjectSetInteger(ChartID(), iArrowT, OBJPROP_ANCHOR, ANCHOR_CENTER);

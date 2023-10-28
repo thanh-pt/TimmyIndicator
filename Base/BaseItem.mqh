@@ -142,6 +142,7 @@ void BaseItem::onUserRequest(const string &itemId, const string &objId)
 {
     touchItem(itemId);
     mIndexType = gTemplates.mActivePos;
+    storeTData();
     updateTypeProperty();
     onItemDrag(itemId, objId);
 }
