@@ -245,8 +245,16 @@ void ChartUtil::createSessionLine(const datetime& date, int beg, int end, string
 {
     string objBeg = TimeToStr(date, TIME_DATE)+mask+"Beg";
     string objEnd = TimeToStr(date, TIME_DATE)+mask+"End";
+    if (ObjectFind(objBeg) >= 0) {
+        // Toggle Session on/off
+        ObjectDelete(objBeg);
+        ObjectDelete(objEnd);
+        return;
+    }
     ObjectCreate(objBeg, OBJ_VLINE , 0, date + beg*3600, 0);
     ObjectCreate(objEnd, OBJ_VLINE , 0, date + end*3600, 0);
+    ObjectSetString(ChartID(), objBeg, OBJPROP_TOOLTIP, "\n");
+    ObjectSetString(ChartID(), objEnd, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objBeg, OBJPROP_COLOR, clrGainsboro);
     ObjectSet(objEnd, OBJPROP_COLOR, clrGainsboro);
     ObjectSet(objBeg, OBJPROP_STYLE, 2);

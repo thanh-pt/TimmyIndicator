@@ -335,37 +335,33 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
     price1 =          ObjectGet(cMTrend, OBJPROP_PRICE1);
     price2 =          ObjectGet(cMTrend, OBJPROP_PRICE2);
     
-    if (objId == cPoint1)
-    {
+    if (objId == cPoint1) {
         time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
-        if (pCommonData.mShiftHold)
-        {
+        if (pCommonData.mShiftHold) {
             price1 = price2;
         }
-        else if (pCommonData.mCtrlHold)
-        {
+        else if (pCommonData.mCtrlHold) {
             price1 = pCommonData.mMousePrice;
         }
-        else
-        {
+        else {
             price1 = ObjectGet(objId, OBJPROP_PRICE1);
         }
     }
-    else if (objId == cPoint2)
-    {
+    else if (objId == cPoint2) {
         time2 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
-        if (pCommonData.mShiftHold)
-        {
+        if (pCommonData.mShiftHold) {
             price2 = price1;
         }
-        else if (pCommonData.mCtrlHold)
-        {
+        else if (pCommonData.mCtrlHold) {
             price2 = pCommonData.mMousePrice;
         }
-        else
-        {
+        else {
             price2 = ObjectGet(objId, OBJPROP_PRICE1);
         }
+    }
+    else if (objId == cMTrend && pCommonData.mCtrlHold){
+        price1 = pCommonData.mMousePrice;
+        price2 = pCommonData.mMousePrice;
     }
 
     getCenterPos(time1, time2, price1, price2, time3, price3);
