@@ -199,6 +199,7 @@ void Controller::handleKeyEvent(const long &key)
         break;
     case 'Q':
         ChartSetSymbolPeriod(ChartID(), ChartSymbol(), lowerTF());
+        SetChartFree(false);
         break;
     case 'P': // Using AHK to combine 'Shift+Q'='P'
         ChartSetSymbolPeriod(ChartID(), ChartSymbol(), higherTF());
