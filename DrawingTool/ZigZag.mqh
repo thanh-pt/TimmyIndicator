@@ -66,6 +66,7 @@ void ZigZag::createItem()
 void ZigZag::updateDefaultProperty()
 {
     SetObjectStyle(mTempLine, Zz_Color, Zz_Style, Zz_Width);
+    ObjectSet(mTempLine, OBJPROP_BACK , true);
     ObjectSetString(ChartID(), mTempLine ,OBJPROP_TOOLTIP,"\n");
 }
 void ZigZag::updateTypeProperty(){}

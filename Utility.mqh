@@ -749,3 +749,32 @@ void syncDeleteSelectedItem()
     }
 }
 
+int higherTF()
+{
+    int currentTf = ChartPeriod();
+    int retTF = PERIOD_M15;
+    switch (currentTf)
+    {
+        case PERIOD_D1:  retTF = PERIOD_D1; break;
+        case PERIOD_H4:  retTF = PERIOD_D1; break;
+        case PERIOD_M15: retTF = PERIOD_H4; break;
+        case PERIOD_M5: retTF = PERIOD_M15; break;
+        case PERIOD_M1: retTF = PERIOD_M5; break;
+    }
+    return retTF;
+}
+
+int lowerTF()
+{
+    int currentTf = ChartPeriod();
+    int retTF = PERIOD_M15;
+    switch (currentTf)
+    {
+        case PERIOD_D1:  retTF = PERIOD_H4; break;
+        case PERIOD_H4:  retTF = PERIOD_M15; break;
+        case PERIOD_M15: retTF = PERIOD_M5; break;
+        case PERIOD_M5:  retTF = PERIOD_M1; break;
+        case PERIOD_M1:  retTF = PERIOD_M1; break;
+    }
+    return retTF;
+}

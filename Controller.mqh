@@ -45,7 +45,6 @@ private:
     FinishedJob mFinishedJobCb;
     MouseInfo*  pMouseInfo;
     bool        mbActiveErase;
-    bool        mbActiveTFChange;
 
 private:
     int findItemIdByKey(const int key);
@@ -109,14 +108,14 @@ void Controller::finishedJob()
 int Controller::findItemIdByKey(const int key)
 {
     /// Left Keyboard
-    // Q: Chart Free
+    // Q: Lower TF
     if (key == 'W') return IDX_LONGSHORT ;
     // E: Erase
     if (key == 'R') return IDX_RECTANGLE ;
     if (key == 'T') return IDX_TREND     ;
-    // A: Not Use
+    // A: Chart Free
     if (key == 'S') return IDX_PIVOT     ;
-    // D: Not Use
+    // D: Chart Force
     if (key == 'F') return IDX_FIBONACI  ;
     if (key == 'G') return IDX_LABEL     ;
     if (key == 'Z') return IDX_ZIGZAG    ;
@@ -129,8 +128,8 @@ int Controller::findItemIdByKey(const int key)
     // Y : Show LongShort History
     // U : Hide LongShort History
     if (key == 'I') return IDX_IMBTOOL   ;
-    // O : Not Use
-    // P: Chart Force
+    // O : Reload imbtool
+    // P: Higher TF
     // H J K L : Not Use
     // N M : Not Use
     return IDX_NONE;
@@ -166,19 +165,15 @@ void Controller::handleKeyEvent(const long &key)
     // Number Line
     case '1':
         if (mbActiveErase) EraseAll();
-        if (mbActiveTFChange) ChartSetSymbolPeriod(ChartID(), ChartSymbol(), PERIOD_M5);
         break;
     case '2':
         if (mbActiveErase) EraseThisTF();
-        if (mbActiveTFChange) ChartSetSymbolPeriod(ChartID(), ChartSymbol(), PERIOD_M15);
         break;
     case '3':
         if (mbActiveErase) EraseLowerTF();
-        if (mbActiveTFChange) ChartSetSymbolPeriod(ChartID(), ChartSymbol(), PERIOD_H4);
         break;
     case '4':
         if (mbActiveErase) EraseBgOverlap();
-        if (mbActiveTFChange) ChartSetSymbolPeriod(ChartID(), ChartSymbol(), PERIOD_D1);
         break;
     // QWERT Line
     case 'Y':
@@ -187,10 +182,10 @@ void Controller::handleKeyEvent(const long &key)
     case 'U':
         ((LongShort*)mListItem[IDX_LONGSHORT]).showHistory(false);
         break;
-    case 'Q':
+    case 'A':
         SetChartFree(true);
         break;
-    case 'P':
+    case 'D':
         SetChartFree(false);
         break;
     case 'V':
@@ -202,31 +197,28 @@ void Controller::handleKeyEvent(const long &key)
     case 'O':
         ((ImbTool*)mListItem[IDX_IMBTOOL]).updateCandle();
         break;
+    case 'Q':
+        ChartSetSymbolPeriod(ChartID(), ChartSymbol(), lowerTF());
+        break;
+    case 'P': // Using AHK to combine 'Shift+Q'='P'
+        ChartSetSymbolPeriod(ChartID(), ChartSymbol(), higherTF());
+        SetChartFree(false);
+        break;
     default:
         bFunctionKey = false;
         break;
     }
-    if (mActive == IDX_NONE)
-    {
-        if (key == 'E')
-        {
+    if (mActive == IDX_NONE) {
+        if (key == 'E') {
             mbActiveErase = true;
             pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF | 4-BgOverlap");
         }
-        else if (key == 'D')
-        {
-            mbActiveTFChange = true;
-            pMouseInfo.setText("TF: 1-m5 | 2-m15 | 3-H4 | 4-D1"); // | 5-W1 | 6-MN");
-        }
-        else
-        {
-            mbActiveTFChange = false;
+        else {
             mbActiveErase = false;
             pMouseInfo.setText("");
         }
     }
-    else 
-    {
+    else {
         // there is some tool is active
         if (key >= '1' && key <= '9')
         {
