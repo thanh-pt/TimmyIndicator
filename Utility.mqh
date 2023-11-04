@@ -572,13 +572,20 @@ string strDayOfWeek(datetime date)
     string retDayOfW = "";
     switch (dayOfWeek)
     {
-        case 0: retDayOfW = "Su"; break;
-        case 1: retDayOfW = "Mo"; break;
-        case 2: retDayOfW = "Tu"; break;
-        case 3: retDayOfW = "We"; break;
-        case 4: retDayOfW = "Th"; break;
-        case 5: retDayOfW = "Fr"; break;
-        case 6: retDayOfW = "Sa"; break;
+        case 0: retDayOfW = "CN"; break;
+        case 1: retDayOfW = "T2"; break;
+        case 2: retDayOfW = "T3"; break;
+        case 3: retDayOfW = "T4"; break;
+        case 4: retDayOfW = "T5"; break;
+        case 5: retDayOfW = "T6"; break;
+        case 6: retDayOfW = "T7"; break;
+        // case 0: retDayOfW = "Su"; break;
+        // case 1: retDayOfW = "Mo"; break;
+        // case 2: retDayOfW = "Tu"; break;
+        // case 3: retDayOfW = "We"; break;
+        // case 4: retDayOfW = "Th"; break;
+        // case 5: retDayOfW = "Fr"; break;
+        // case 6: retDayOfW = "Sa"; break;
     }
     return retDayOfW;
 }

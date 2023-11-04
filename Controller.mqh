@@ -182,10 +182,10 @@ void Controller::handleKeyEvent(const long &key)
     case 'U':
         ((LongShort*)mListItem[IDX_LONGSHORT]).showHistory(false);
         break;
-    case 'A':
+    case 'H':
         SetChartFree(true);
         break;
-    case 'D':
+    case 'J':
         SetChartFree(false);
         break;
     case 'V':
