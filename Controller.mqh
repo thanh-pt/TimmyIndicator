@@ -205,6 +205,12 @@ void Controller::handleKeyEvent(const long &key)
         ChartSetSymbolPeriod(ChartID(), ChartSymbol(), higherTF());
         SetChartFree(false);
         break;
+    case 188: // ','
+        scaleChart(false);
+        break;
+    case 190: // '.'
+        scaleChart(true);
+        break;
     default:
         bFunctionKey = false;
         break;

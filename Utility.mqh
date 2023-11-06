@@ -223,6 +223,26 @@ void SetChartFree(bool bFree)
     }
 }
 
+void scaleChart(bool isUp)
+{
+    ChartSetInteger(ChartID(), CHART_SCALEFIX, 0, 1);
+    double chartMin = 0;
+    double chartMax = 0;
+    long chart_ID = ChartID();
+    ChartGetDouble(chart_ID,CHART_FIXED_MAX,0,chartMax);
+    ChartGetDouble(chart_ID,CHART_FIXED_MIN,0,chartMin);
+    if (isUp) {
+        chartMax = chartMax + 10/(pow(10, gSymbolDigits));
+        chartMin = chartMin - 10/(pow(10, gSymbolDigits));
+    }
+    else {
+        chartMax = chartMax - 10/(pow(10, gSymbolDigits));
+        chartMin = chartMin + 10/(pow(10, gSymbolDigits));
+    }
+    ChartSetDouble(chart_ID,CHART_FIXED_MAX,chartMax);
+    ChartSetDouble(chart_ID,CHART_FIXED_MIN,chartMin);
+}
+
 string getTFString()
 {
     string result = "";
