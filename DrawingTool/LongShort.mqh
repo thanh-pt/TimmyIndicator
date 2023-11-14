@@ -92,6 +92,7 @@ public:
     virtual void onUserRequest(const string &itemId, const string &objId);
 // Special functional
     void showHistory(bool isShow);
+    void createTrade(int id, datetime _time1, datetime _time2, double _priceEN, double _priceSL, double _priceTP, double _priceBE);
 
 // Alpha feature
     void initData();
@@ -527,4 +528,19 @@ void LongShort::onUserRequest(const string &itemId, const string &objId)
         refreshData();
     }
     gTemplates.clearTemplates();
+}
+
+void LongShort::createTrade(int id, datetime _time1, datetime _time2, double _priceEN, double _priceSL, double _priceTP, double _priceBE)
+{
+    Print(id);
+    string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(id);
+    activateItem(itemId);
+    createItem();
+    time1 = _time1;
+    time2 = _time2;
+    priceTP = _priceTP;
+    priceEN = _priceEN;
+    priceSL = _priceSL;
+    priceBE = _priceBE;
+    refreshData();
 }

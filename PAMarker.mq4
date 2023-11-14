@@ -11,6 +11,8 @@ input color gColorMousePoint = clrSlateGray;
 void FinishedJobFunc();
 void detectMouseDraging(const string &sparam);
 
+LongShort* gpLongShort;
+
 CommonData gCommonData;
 CrossHair  gCrossHair(&gCommonData);
 MouseInfo  gMouseInfo(&gCommonData);

@@ -76,6 +76,8 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     mListItem[IDX_PIVOT]         = new Pivot     ( ITEM_PIVOT     , commonData, mouseInfo);
     mListItem[IDX_IMBTOOL]       = new ImbTool   ( ITEM_IMBTOOL   , commonData, mouseInfo);
     mListItem[IDX_LABEL]         = new LabelText ( ITEM_LABEL     , commonData, mouseInfo);
+
+    gpLongShort = (LongShort*)mListItem[IDX_LONGSHORT];
 }
 
 Controller::~Controller()
@@ -210,6 +212,9 @@ void Controller::handleKeyEvent(const long &key)
         break;
     case 190: // '.'
         scaleChart(true);
+        break;
+    case 'L':
+        restoreBacktestingTrade();
         break;
     default:
         bFunctionKey = false;
