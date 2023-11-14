@@ -2,8 +2,8 @@
 #include "../Utility.mqh"
 
 input string  _9 = "";
-input int     __U_Working_Start = 4;
-input int     __U_Working_Finsh = 20;
+input int  Chartutil_WorkBeg = 13 - 07;
+input int  Chartutil_WorkEnd = 18 - 07;
 int Chartutil_Asian_Beg  = 07 - 07;
 int Chartutil_Asian_End  = 13 - 07;
 int Chartutil_London_Beg = 14 - 07;
@@ -15,8 +15,8 @@ enum ChartUtilType
 {
     CREATE_ALERT,
     SESSION_LINE,
+    WORKING_AREA,
     CUTIL_NUM,
-    WORKING_AREA,// Unused
 };
 
 class ChartUtil : public BaseItem
@@ -101,25 +101,19 @@ void ChartUtil::onMouseClick()
     if (mIndexType == WORKING_AREA)
     {
         // TODO: indi này chỉ vẽ trong trong TF H4 đổ xuống thôi
-        // S1: Detect datetime
-        int YY=TimeYear( pCommonData.mMouseTime);
-        int MN=TimeMonth(pCommonData.mMouseTime);
-        int DD=TimeDay(  pCommonData.mMouseTime);
-        string strBeginOfDay = IntegerToString(YY)+"."+IntegerToString(MN)+"."+IntegerToString(DD);
+        // S1: Get Date only
+        string strToday = TimeToStr(pCommonData.mMouseTime, TIME_DATE);
         // S2: Detect working time
-        string objWorkingAreaKey = IntegerToString(MN,2,'0')+"."+IntegerToString(DD);
-        datetime dtToday = StrToTime(strBeginOfDay);
-        datetime openTime  = dtToday + 3600*__U_Working_Start;
-        datetime closeTime = dtToday + 3600*__U_Working_Finsh;
+        datetime dtToday = StrToTime(strToday);
+        datetime openTime  = dtToday + 3600*Chartutil_WorkBeg;
+        datetime closeTime = dtToday + 3600*Chartutil_WorkEnd;
         int beginBar = iBarShift(ChartSymbol(), ChartPeriod(), openTime );
         int endBar   = iBarShift(ChartSymbol(), ChartPeriod(), closeTime);
-        // PrintFormat("dtToday %s", TimeToStr(dtToday, TIME_DATE));
 
         // S3: Detect High Low
         double highest = High[beginBar];
         double lowest  = Low[beginBar];
-        if (ChartPeriod() <= PERIOD_H4)
-        {
+        if (ChartPeriod() <= PERIOD_H4) {
             if (beginBar > 0)
             {
                 for (int i = beginBar; i > endBar; i--){
@@ -132,47 +126,6 @@ void ChartUtil::onMouseClick()
                 highest = iHigh(ChartSymbol(), PERIOD_D1, 1);
                 lowest  = iLow(ChartSymbol(), PERIOD_D1, 1);
             }
-        } else if (ChartPeriod() == PERIOD_D1)
-        {
-            int currWeek = weekOfYear(pCommonData.mMouseTime);
-            objWorkingAreaKey = "W."+IntegerToString(currWeek,2,'0');
-            int preWeek = currWeek;
-            int nextWeek = currWeek;
-            openTime = pCommonData.mMouseTime;
-            closeTime = pCommonData.mMouseTime;
-            datetime tempTime;
-            int barIdx = 0;
-            bool needPreWeeklyRange = true;
-
-            while (preWeek == currWeek || nextWeek == currWeek)
-            {
-                tempTime = closeTime + 86400;
-                nextWeek = weekOfYear(tempTime);
-                if (nextWeek == currWeek)
-                {
-                    closeTime = tempTime;
-                    barIdx = iBarShift(ChartSymbol(), ChartPeriod(), closeTime );
-                    if (highest < High[barIdx]) highest = High[barIdx];
-                    if (lowest > Low[barIdx]) lowest = Low[barIdx];
-                    if (barIdx != 0) needPreWeeklyRange = false;
-                }
-                tempTime = openTime - 86400;
-                preWeek = weekOfYear(tempTime);
-                if (preWeek == currWeek)
-                {
-                    openTime = tempTime;
-                    barIdx = iBarShift(ChartSymbol(), ChartPeriod(), openTime );
-                    if (highest < High[barIdx]) highest = High[barIdx];
-                    if (lowest > Low[barIdx]) lowest = Low[barIdx];
-                    if (barIdx != 0) needPreWeeklyRange = false;
-                }
-            }
-            closeTime=closeTime+86400;
-            if (needPreWeeklyRange)
-            {
-                highest = iHigh(ChartSymbol(), PERIOD_W1, 1);
-                lowest  = iLow(ChartSymbol(), PERIOD_W1, 1);
-            }
         }
         else
         {
@@ -181,14 +134,12 @@ void ChartUtil::onMouseClick()
         }
 
         // S4: Create and set workingRect Position
-        string workingRect = objWorkingAreaKey+"_"+IntegerToString(ChartPeriod())+"#._.";
-        if (ObjectFind(workingRect) < 0)
+        if (ObjectFind(strToday) < 0)
         {
-            ObjectCreate(workingRect, OBJ_RECTANGLE , 0, 0, 0);
-            SetObjectStyle(workingRect, clrDarkSlateGray, 2, 0);
+            ObjectCreate(strToday, OBJ_RECTANGLE , 0, 0, 0);
+            SetObjectStyle(strToday, clrDarkSlateGray, 2, 0);
         }
-        setItemPos(workingRect, openTime, closeTime, highest, lowest);
-        ObjectSetText(workingRect, objWorkingAreaKey + " - " + DoubleToString(10000 * (highest - lowest), 1));
+        setItemPos(strToday, openTime, closeTime, highest, lowest);
     }
     else if (mIndexType == CREATE_ALERT && gAlertActive)
     {

@@ -58,8 +58,8 @@ input LINE_STYLE Trend_BLg_Style = STYLE_SOLID;
       int        Trend_BLg_Width = 2;
       bool       Trend_BLg_Arrow = false;
 //--------------------------------------------
-      string     Trend_Eof_Name  = "ERL";
-      string     Trend_Eof_Text  = "ERL";
+      string     Trend_Eof_Name  = "eof";
+      string     Trend_Eof_Text  = "eof";
       TEXT_POS   Trend_Eof_TxtPos= TXT_POS_RIGHT;
 input color      Trend_Eof_Color = clrGreen;
 input LINE_STYLE Trend_Eof_Style = STYLE_SOLID;

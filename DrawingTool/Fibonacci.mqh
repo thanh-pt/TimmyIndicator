@@ -19,9 +19,9 @@ input string          Fib_2_Text  = "0.5";
 input double          Fib_2_Ratio = 0.5;
 input color           Fib_2_Color = clrLightGray;
 //--------------------------------------------
-      string          Fib_3_Text  = "0.618";
-      double          Fib_3_Ratio = 0.618;
-      color           Fib_3_Color = clrNONE;
+      string          Fib_3_Text  = "0.382";
+      double          Fib_3_Ratio = 0.382;
+      color           Fib_3_Color = clrLightGray;
 //--------------------------------------------
       string          Fib_4_Text  = "-0.27";
       double          Fib_4_Ratio = -0.27;
@@ -33,10 +33,9 @@ input color           Fib_2_Color = clrLightGray;
 
 enum FibType
 {
-    FIB_FULL,
+    FIB_OF,
     FIB_RANGE,
-    FIB_BUY0,
-    FIB_SELL,
+    FIB_FULL,
     FIB_NUM,
 };
 
@@ -110,9 +109,8 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
     // Init variable type
     mIndexType = 0;
     mNameType[FIB_FULL]  = "Fib";
+    mNameType[FIB_OF]    = "OrderFlow";
     mNameType[FIB_RANGE] = "Range";
-    mNameType[FIB_BUY0]  = "Buy Order";
-    mNameType[FIB_SELL]  = "Sell Order";
     mTypeNum = FIB_NUM;
     for (int i = 0; i < mTypeNum; i++)
     {
@@ -157,6 +155,7 @@ void Fibonacci::updateDefaultProperty()
 {
     multiSetProp(OBJPROP_WIDTH        , Fib_Width , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     multiSetProp(OBJPROP_STYLE        , Fib_Style , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
+    multiSetProp(OBJPROP_BACK         , true      , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     multiSetProp(OBJPROP_SELECTABLE   , false     , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
                                                    +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
     multiSetInts(OBJPROP_ANCHOR, ANCHOR_RIGHT     , iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
@@ -186,28 +185,17 @@ void Fibonacci::updateTypeProperty()
     ObjectSet(iFib4, OBJPROP_COLOR, Fib_4_Color);
     ObjectSet(iFib5, OBJPROP_COLOR, Fib_5_Color);
 
-    if (mIndexType != FIB_FULL)
-    {
+    if (mIndexType != FIB_FULL) {
         multiSetProp(OBJPROP_COLOR, clrNONE, iFib3+iFib4+iFib5 + iTxt3+iTxt4+iTxt5);
     }
-    if (mIndexType == FIB_BUY0 || mIndexType == FIB_SELL)
-    {
-        multiSetProp(OBJPROP_COLOR, clrNONE, iTxt0+iTxt1+iTxt2);
-        multiSetProp(OBJPROP_COLOR, Fib_0_Color, iFib2);
+    if (mIndexType == FIB_OF) {
+        multiSetProp(OBJPROP_COLOR, clrNONE, iFib0+iFib1+iTxt2+iTxt1+iTxt0);
+        multiSetProp(OBJPROP_COLOR, Fib_3_Color, iFib3);
     }
-    if (mIndexType == FIB_RANGE)
-    {
+    if (mIndexType == FIB_RANGE) {
         ObjectSetText(iTxt2, "50%  ", 8);
         multiSetProp(OBJPROP_COLOR, clrDarkOrange, iFib2+iTxt2);
         multiSetProp(OBJPROP_RAY, true, iFib0+iFib1);
-    }
-    if (mIndexType == FIB_BUY0)
-    {
-        SetRectangleBackground(ckLne, Rect_Dz_Color);
-    }
-    if (mIndexType == FIB_SELL)
-    {
-        SetRectangleBackground(ckLne, Rect_Sz_Color);
     }
 }
 void Fibonacci::activateItem(const string& itemId)
@@ -282,6 +270,9 @@ void Fibonacci::refreshData()
         ObjectSetText(iTxt1, isUp ? "𝙃𝙞𝙜𝙝  ": "𝙇𝙤𝙬  ", 8);
         multiSetProp(OBJPROP_COLOR, isUp ? clrGreen : clrRed  , iFib0+iTxt0);
         multiSetProp(OBJPROP_COLOR, isUp ? clrRed   : clrGreen, iFib1+iTxt1);
+    }
+    else if (mIndexType == FIB_OF) {
+        SetRectangleBackground(ckLne, price1 > price0 ? Rect_DzLight_Color : Rect_SzLight_Color);
     }
 }
 void Fibonacci::finishedJobDone(){}
