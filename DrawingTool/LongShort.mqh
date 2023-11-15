@@ -404,6 +404,7 @@ void LongShort::onItemDrag(const string &itemId, const string &objId)
             else if (objId == cPointBE) priceBE = pCommonData.mMousePrice;
         }
         if (objId == cPointEN && pCommonData.mShiftHold == true){
+            priceEN =           ObjectGet(cPointWD, OBJPROP_PRICE1);
             time1   = (datetime)ObjectGet(cPointEN, OBJPROP_TIME1);
         }
     }
