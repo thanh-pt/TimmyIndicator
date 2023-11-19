@@ -208,6 +208,8 @@ void ChartUtil::createSessionLine(const datetime& date, int beg, int end, string
     ObjectSetString(ChartID(), objEnd, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objBeg, OBJPROP_COLOR, clrGainsboro);
     ObjectSet(objEnd, OBJPROP_COLOR, clrGainsboro);
+    if (mask == "Lo") ObjectSet(objEnd, OBJPROP_COLOR, clrBrown);
+    if (mask == "As") ObjectSet(objEnd, OBJPROP_COLOR, clrDarkGreen);
     ObjectSet(objBeg, OBJPROP_STYLE, 2);
     ObjectSet(objEnd, OBJPROP_STYLE, 2);
     ObjectSet(objBeg, OBJPROP_BACK , true);

@@ -42,13 +42,13 @@ input LINE_STYLE Trend_SpLq_Style = STYLE_SOLID;
       int        Trend_SpLq_Width = 1;
       bool       Trend_SpLq_Arrow = true;
 //--------------------------------------------
-      string     Trend_Fail_Name  = "ƒail";
-      string     Trend_Fail_Text  = "";
-      TEXT_POS   Trend_Fail_TxtPos= TXT_POS_CENTER;
-input color      Trend_Fail_Color = clrSlateGray;
-input LINE_STYLE Trend_Fail_Style = STYLE_DOT;
-      int        Trend_Fail_Width = 1;
-      bool       Trend_Fail_Arrow = false;
+      string     Trend_Brk_Name  = "brk";
+      string     Trend_Brk_Text  = "";
+      TEXT_POS   Trend_Brk_TxtPos= TXT_POS_RIGHT;
+input color      Trend_Brk_Color = clrSlateGray;
+input LINE_STYLE Trend_Brk_Style = STYLE_DOT;
+      int        Trend_Brk_Width = 1;
+      bool       Trend_Brk_Arrow = false;
 //--------------------------------------------
       string     Trend_BLg_Name  = "b/lg";
       string     Trend_BLg_Text  = "𝙗𝙤𝙨/𝙡𝙜";
@@ -85,7 +85,7 @@ input LINE_STYLE Trend_BE_Style = STYLE_SOLID;
 enum TrendType
 {
     TREND_NML,
-    TREND_FA ,
+    TREND_BRK,
     TREND_BOS,
     TREND_BLG,
     TREND_LQ ,
@@ -114,6 +114,8 @@ private:
     string cMTrend;
     string iAngle0;
     string iLbText;
+    string iRtText;
+    string iLtText;
     string iArrowT;
 
 // Value define for Item
@@ -137,6 +139,8 @@ public:
     virtual void updateTypeProperty();
     virtual void prepareActive();
     virtual void updateItemAfterChangeType();
+private:
+    bool isHorizontalLine();
 
 // Chart Event
 public:
@@ -186,13 +190,13 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mWidthType[TREND_BLG  ] = Trend_BLg_Width;
     mShowArrow[TREND_BLG  ] = Trend_BLg_Arrow;
     //--------------------------------------------
-    mNameType [TREND_FA   ] = Trend_Fail_Name ;
-    mDispText [TREND_FA   ] = Trend_Fail_Text ;
-    mTextPos  [TREND_FA   ] = Trend_Fail_TxtPos;
-    mColorType[TREND_FA   ] = Trend_Fail_Color;
-    mStyleType[TREND_FA   ] = Trend_Fail_Style;
-    mWidthType[TREND_FA   ] = Trend_Fail_Width;
-    mShowArrow[TREND_FA   ] = Trend_Fail_Arrow;
+    mNameType [TREND_BRK  ] = Trend_Brk_Name ;
+    mDispText [TREND_BRK  ] = Trend_Brk_Text ;
+    mTextPos  [TREND_BRK  ] = Trend_Brk_TxtPos;
+    mColorType[TREND_BRK  ] = Trend_Brk_Color;
+    mStyleType[TREND_BRK  ] = Trend_Brk_Style;
+    mWidthType[TREND_BRK  ] = Trend_Brk_Width;
+    mShowArrow[TREND_BRK  ] = Trend_Brk_Arrow;
     //--------------------------------------------
     mNameType [TREND_XLQ  ] = Trend_SpLq_Name ;
     mDispText [TREND_XLQ  ] = Trend_SpLq_Text ;
@@ -244,10 +248,12 @@ void Trend::activateItem(const string& itemId)
     cPoint2 = itemId + "_c2Point2";
     cMTrend = itemId + "_c1MTrend";
     iLbText = itemId + "_0iLbText";
+    iRtText = itemId + "_0iRtText";
+    iLtText = itemId + "_0iLtText";
     iAngle0 = itemId + "_0iAngle0";
     iArrowT = itemId + "_0iArrowT";
 
-    mAllItem += cPoint1+cPoint2+cMTrend+iLbText+iAngle0+iArrowT;
+    mAllItem += cPoint1+cPoint2+cMTrend+iLbText+iRtText+iLtText+iAngle0+iArrowT;
 }
 
 void Trend::refreshData()
@@ -262,9 +268,9 @@ void Trend::refreshData()
     ObjectSet(iArrowT, OBJPROP_ANGLE,  angle-90.0);
 
     // Update Text
-    if      (mTextPos[mIndexType] == TXT_POS_CENTER) setTextPos(iLbText, time3, price3);
-    else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  setTextPos(iLbText, time2, price2);
-    else                                             setTextPos(iLbText, time1, price1);
+    setTextPos(iLbText, time3, price3);
+    setTextPos(iRtText, time2, price3);
+    setTextPos(iLtText, time1, price3);
 
     bool isUp = false;
     int barT1 = iBarShift(ChartSymbol(), ChartPeriod(), time1);
@@ -272,18 +278,20 @@ void Trend::refreshData()
     if (barT1 > barT2 && price1 >= High[barT1]) isUp = true;
     else if (barT2 > barT1 && price2 >= High[barT2]) isUp = true;
 
-    if      (angle > 000 && angle <=  90) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
-    else if (angle > 090 && angle <  180) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?  ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_UPPER);
-    else if (angle > 180 && angle <= 270) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
-    else if (angle > 270 && angle <  360) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ?  ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_UPPER);
+    if      (angle > 000 && angle <=  90) multiSetInts(OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER , iLbText+iRtText+iLtText);
+    else if (angle > 090 && angle <  180) multiSetInts(OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER, iLbText+iRtText+iLtText);
+    else if (angle > 180 && angle <= 270) multiSetInts(OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER , iLbText+iRtText+iLtText);
+    else if (angle > 270 && angle <  360) multiSetInts(OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER, iLbText+iRtText+iLtText);
     else if (angle == 0) 
     {
-        if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
-        else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_LEFT : ANCHOR_RIGHT);
-        else                                             ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_RIGHT: ANCHOR_LEFT);
+        ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+        ObjectSetInteger(0, iRtText, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_LEFT : ANCHOR_RIGHT);
+        ObjectSetInteger(0, iLtText, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_RIGHT: ANCHOR_LEFT);
 
         if (barT1 < barT2) ObjectSet(iArrowT, OBJPROP_ANGLE,  90.0); // case 180*
     }
+    // Customization
+    if (mIndexType == TREND_BRK) ObjectSet(cMTrend, OBJPROP_COLOR , isUp ? clrDarkGreen : clrBrown);
 }
 
 void Trend::createItem()
@@ -292,6 +300,8 @@ void Trend::createItem()
     ObjectCreate(iArrowT, OBJ_TEXT        , 0, 0, 0);
     ObjectCreate(cMTrend, OBJ_TREND       , 0, 0, 0);
     ObjectCreate(iLbText, OBJ_TEXT        , 0, 0, 0);
+    ObjectCreate(iRtText, OBJ_TEXT        , 0, 0, 0);
+    ObjectCreate(iLtText, OBJ_TEXT        , 0, 0, 0);
     ObjectCreate(cPoint1, OBJ_ARROW       , 0, 0, 0);
     ObjectCreate(cPoint2, OBJ_ARROW       , 0, 0, 0);
 
@@ -304,7 +314,7 @@ void Trend::updateDefaultProperty()
 {
     multiSetProp(OBJPROP_ARROWCODE , 4      , cPoint1+cPoint2);
     multiSetProp(OBJPROP_WIDTH     , 5      , cPoint1+cPoint2);
-    multiSetProp(OBJPROP_SELECTABLE, false  , iArrowT+iAngle0+iLbText);
+    multiSetProp(OBJPROP_SELECTABLE, false  , iArrowT+iAngle0+iLbText+iRtText+iLtText);
     multiSetProp(OBJPROP_COLOR     , clrNONE, cPoint1+cPoint2+iAngle0);
     multiSetStrs(OBJPROP_TOOLTIP   , "\n"   , mAllItem);
 
@@ -313,9 +323,18 @@ void Trend::updateDefaultProperty()
 }
 void Trend::updateTypeProperty()
 {
-    ObjectSetText (iLbText,  mDispText[mIndexType], 8, "Consolas", mColorType[mIndexType]);
+    ObjectSetText(iLbText, "");
+    ObjectSetText(iRtText, "");
+    ObjectSetText(iLtText, "");
+    multiSetProp (OBJPROP_COLOR, mColorType[mIndexType], iLbText+iRtText+iLtText);
+
+    if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetText (iLbText,  mDispText[mIndexType], 8, "Consolas", mColorType[mIndexType]);
+    else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetText (iRtText,  mDispText[mIndexType], 8, "Consolas", mColorType[mIndexType]);
+    else                                             ObjectSetText (iLtText,  mDispText[mIndexType], 8, "Consolas", mColorType[mIndexType]);
+
     ObjectSetText (iArrowT,  mShowArrow[mIndexType] ? "▲" : "", 9, "Consolas", mShowArrow[mIndexType] ? mColorType[mIndexType] : clrNONE);
     SetObjectStyle(cMTrend,  mColorType[mIndexType],          mStyleType[mIndexType],  mWidthType[mIndexType]);
+    multiSetProp  (OBJPROP_BACK , true, cMTrend+iAngle0);
 }
 void Trend::updateItemAfterChangeType()
 {
@@ -363,6 +382,7 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
         price1 = pCommonData.mMousePrice;
         price2 = pCommonData.mMousePrice;
     }
+    if (isHorizontalLine()) price2 = price1;
 
     getCenterPos(time1, time2, price1, price2, time3, price3);
 
@@ -383,18 +403,22 @@ void Trend::onItemClick(const string &itemId, const string &objId)
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
 {
-    if (objId == cMTrend)
-    {
-        color c = (color)ObjectGet(objId, OBJPROP_COLOR);
-        multiSetProp(OBJPROP_COLOR, c, cMTrend+iLbText);
-        string lineDescription = ObjectDescription(cMTrend);
-        if (lineDescription != "")
-        {
-            ObjectSetText(iLbText, lineDescription);
-            ObjectSetText(cMTrend, "");
-        }
-        onItemDrag(itemId, objId);
+    if (objId == cMTrend) multiSetProp(OBJPROP_COLOR, (color)ObjectGet(cMTrend, OBJPROP_COLOR), iLbText+iRtText+iLtText);
+    if (objId == cPoint1 || objId == cPoint2 || objId == cMTrend){
+        string strLbText = ObjectDescription(cMTrend);
+        string strRtText = ObjectDescription(cPoint2);
+        string strLtText = ObjectDescription(cPoint1);
+        if (strLbText != "") ObjectSetText(iLbText, strLbText);
+        if (strRtText != "") ObjectSetText(iRtText, strRtText);
+        if (strLtText != "") ObjectSetText(iLtText, strLtText);
+        if (strLbText == ".") ObjectSetText(iLbText, "");
+        if (strRtText == ".") ObjectSetText(iRtText, "");
+        if (strLtText == ".") ObjectSetText(iLtText, "");
+        ObjectSetText(cMTrend, "");
+        ObjectSetText(cPoint2, "");
+        ObjectSetText(cPoint1, "");
     }
+    onItemDrag(itemId, objId);
 }
 void Trend::onMouseClick()
 {
@@ -409,15 +433,23 @@ void Trend::onMouseClick()
 void Trend::onMouseMove()
 {
     if (mFirstPoint == false) return;
-    if (pCommonData.mShiftHold)
-    {
+    if (pCommonData.mShiftHold || isHorizontalLine()) {
         price2 = price1;
     }
-    else
-    {
+    else {
         price2 = pCommonData.mMousePrice;
     }
     time2  = pCommonData.mMouseTime;
     getCenterPos(time1, time2, price1, price2, time3, price3);
     refreshData();
+}
+
+bool Trend::isHorizontalLine()
+{
+    if (mIndexType == TREND_BRK ||
+        mIndexType == TREND_BOS ||
+        mIndexType == TREND_BE  ||
+        mIndexType == TREND_EOF ||
+        mIndexType == TREND_BLG ) return true;
+    return false;
 }
