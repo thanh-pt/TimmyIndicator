@@ -323,14 +323,14 @@ void Trend::updateDefaultProperty()
 }
 void Trend::updateTypeProperty()
 {
-    ObjectSetText(iLbText, "");
-    ObjectSetText(iRtText, "");
-    ObjectSetText(iLtText, "");
+    ObjectSetText(iLbText, "", 8, "Consolas", mColorType[mIndexType]);
+    ObjectSetText(iRtText, "", 8, "Consolas", mColorType[mIndexType]);
+    ObjectSetText(iLtText, "", 8, "Consolas", mColorType[mIndexType]);
     multiSetProp (OBJPROP_COLOR, mColorType[mIndexType], iLbText+iRtText+iLtText);
 
-    if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetText (iLbText,  mDispText[mIndexType], 8, "Consolas", mColorType[mIndexType]);
-    else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetText (iRtText,  mDispText[mIndexType], 8, "Consolas", mColorType[mIndexType]);
-    else                                             ObjectSetText (iLtText,  mDispText[mIndexType], 8, "Consolas", mColorType[mIndexType]);
+    if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetText (iLbText,  mDispText[mIndexType]);
+    else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetText (iRtText,  mDispText[mIndexType]);
+    else                                             ObjectSetText (iLtText,  mDispText[mIndexType]);
 
     ObjectSetText (iArrowT,  mShowArrow[mIndexType] ? "▲" : "", 9, "Consolas", mShowArrow[mIndexType] ? mColorType[mIndexType] : clrNONE);
     SetObjectStyle(cMTrend,  mColorType[mIndexType],          mStyleType[mIndexType],  mWidthType[mIndexType]);
