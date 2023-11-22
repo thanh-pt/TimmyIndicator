@@ -422,7 +422,7 @@ void LongShort::onItemClick(const string &itemId, const string &objId)
         ObjectSet(cPointBE, OBJPROP_SELECTED, selectState);
     }
     onItemDrag(itemId, objId);
-    if (objId == cPointWD && selectState == true)
+    if (objId == cPointWD && selectState == true && LS_ShowPrice != HIDE)
     {
         gTemplates.openTemplates(objId, mTemplateTypes, -1);
     }
