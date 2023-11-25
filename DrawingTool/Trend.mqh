@@ -291,7 +291,7 @@ void Trend::refreshData()
         if (barT1 < barT2) ObjectSet(iArrowT, OBJPROP_ANGLE,  90.0); // case 180*
     }
     // Customization
-    if (mIndexType == TREND_BRK) ObjectSet(cMTrend, OBJPROP_COLOR , isUp ? clrDarkGreen : clrBrown);
+    if (mIndexType == TREND_BRK) multiSetProp(OBJPROP_COLOR, isUp ? clrDarkGreen : clrBrown, cMTrend+iLbText+iRtText+iLtText);
 }
 
 void Trend::createItem()
@@ -326,7 +326,6 @@ void Trend::updateTypeProperty()
     ObjectSetText(iLbText, "", 8, "Consolas", mColorType[mIndexType]);
     ObjectSetText(iRtText, "", 8, "Consolas", mColorType[mIndexType]);
     ObjectSetText(iLtText, "", 8, "Consolas", mColorType[mIndexType]);
-    multiSetProp (OBJPROP_COLOR, mColorType[mIndexType], iLbText+iRtText+iLtText);
 
     if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetText (iLbText,  mDispText[mIndexType]);
     else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetText (iRtText,  mDispText[mIndexType]);

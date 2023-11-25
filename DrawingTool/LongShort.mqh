@@ -304,7 +304,7 @@ void LongShort::refreshData()
     bool   showDollar  = (LS_ShowDollar == SHOW) || (LS_ShowDollar == OPTION && selectState);
     
     // 3. String Data để hiển thị
-    string strTpInfo   = ""; // RR + dola
+    string strTpInfo   = DoubleToString(rr,1) + "ʀ"; // RR + dola
     string strEnInfo   = ""; // lot 
     string strSlInfo   = ""; // pip + dola
     string strBeInfo   = ObjectDescription(cPointBE); // RR1
@@ -312,7 +312,7 @@ void LongShort::refreshData()
     if (showStats)
     {
         if (strBeInfo != "") strBeInfo += ": ";
-        strTpInfo += DoubleToString(rr,1) + "ʀ";
+        // strTpInfo += DoubleToString(rr,1) + "ʀ";
         strBeInfo += DoubleToString(be,1) + "ʀ  ";
         strSlInfo += DoubleToString(slPip, 1) + "ᖰ";
     }
