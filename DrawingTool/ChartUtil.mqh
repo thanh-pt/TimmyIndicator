@@ -94,6 +94,7 @@ void ChartUtil::onMouseClick()
 {
     if (mIndexType == SESSION_LINE && ChartPeriod() <= PERIOD_M15){
         datetime mouseDate = StrToTime(TimeToStr(pCommonData.mMouseTime, TIME_DATE));
+        // TODO: Tự động update session cho mùa đông
         createSessionLine(mouseDate, Chartutil_Asian_Beg, Chartutil_Asian_End, "As");
         createSessionLine(mouseDate, Chartutil_London_Beg, Chartutil_London_End, "Lo");
         createSessionLine(mouseDate, Chartutil_NY_Beg, Chartutil_NY_End, "NY");
