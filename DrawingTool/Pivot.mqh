@@ -2,6 +2,7 @@
 #include "../Utility.mqh"
 
 // input string          Pivot_ = "Pivot Config";
+// TODO: Update thành kiểu Text cho tương đồng với TradingView
 
 enum PivotType
 {
