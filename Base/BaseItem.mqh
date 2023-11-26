@@ -118,16 +118,12 @@ string BaseItem::createMouseInfo()
     string mouseInfo = "";
     for (int i = 0; i < mTypeNum; i++)
     {
-        if (mouseInfo != "")
-        {
-            mouseInfo += "·";
-        }
         if (i == mIndexType)
         {
-            mouseInfo += "(" + mNameType[i] + ")";
+            mouseInfo += "(" + IntegerToString(i+1) + "." + mNameType[i] + ") ";
             continue;
         }
-        mouseInfo += mNameType[i];
+        mouseInfo += IntegerToString(i+1) + "." + mNameType[i] + " ";
     }
     return mouseInfo;
 }
