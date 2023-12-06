@@ -19,10 +19,10 @@ input color             Rect_DzLight_Color = C'232,240,247';
 
 enum RectangleType
 {
-    SYPPLY_TYPE,
     SZ_LIGHT_TYPE,
-    DEMAND_TYPE,
+    SZ_POI_TYPE,
     DZ_LIGHT_TYPE,
+    DZ_POI_TYPE,
     RECT_NUM,
 };
 
@@ -87,11 +87,11 @@ Rectangle::Rectangle(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [SYPPLY_TYPE]   = Rect_Sz_Name      ;
-    mPropColor[SYPPLY_TYPE]   = Rect_Sz_Color     ;
+    mNameType [SZ_POI_TYPE]   = Rect_Sz_Name      ;
+    mPropColor[SZ_POI_TYPE]   = Rect_Sz_Color     ;
     //------------------------------------------
-    mNameType [DEMAND_TYPE]   = Rect_Dz_Name      ;
-    mPropColor[DEMAND_TYPE]   = Rect_Dz_Color     ;
+    mNameType [DZ_POI_TYPE]   = Rect_Dz_Name      ;
+    mPropColor[DZ_POI_TYPE]   = Rect_Dz_Color     ;
     //------------------------------------------
     mNameType [SZ_LIGHT_TYPE] = Rect_SzLight_Name ;
     mPropColor[SZ_LIGHT_TYPE] = Rect_SzLight_Color;

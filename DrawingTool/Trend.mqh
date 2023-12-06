@@ -87,11 +87,11 @@ enum TrendType
     TREND_NML,
     TREND_BRK,
     TREND_BOS,
-    TREND_EOF,
     TREND_BE ,
-    TREND_LQ ,
     TREND_XLQ,
+    TREND_LQ ,
     TREND_ARR,
+    TREND_EOF,
     TREND_BLG,
     TREND_NUM,
 };

@@ -1,9 +1,9 @@
 //+------------------------------------------------------------------+
 //|                                                 ForexSession.mq4 |
-//|                                 Thanh Pham - Price Action Trader |
+//|                                 Timmy - Trader Ham Hoc |
 //|            https://www.youtube.com/@thanhpham-PriceActionTrader/ |
 //+------------------------------------------------------------------+
-#property copyright "Thanh Pham - Price Action Trader"
+#property copyright "Timmy - Trader Ham Hoc"
 #property link      "https://www.youtube.com/@thanhpham-PriceActionTrader/"
 #property version   "1.00"
 #property strict

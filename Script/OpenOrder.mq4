@@ -3,7 +3,7 @@
 //|                                           Timmy - Trader Ham Học |
 //|                       https://www.youtube.com/@TimmyTraderHamHoc |
 //+------------------------------------------------------------------+
-#property copyright "Timmy - Trader Ham Học"
+#property copyright "Timmy - Trader Ham Hoc"
 #property link      "https://www.youtube.com/@TimmyTraderHamHoc"
 #property version   "1.00"
 #property strict
