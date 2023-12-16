@@ -35,12 +35,12 @@ input LINE_STYLE Trend_Bos_Style = STYLE_SOLID;
       bool       Trend_Bos_Arrow = false;
 //--------------------------------------------
       string     Trend_SpLq_Name  = "xLq";
-      string     Trend_SpLq_Text  = "$";
+      string     Trend_SpLq_Text  = "x";
       TEXT_POS   Trend_SpLq_TxtPos= TXT_POS_CENTER;
 input color      Trend_SpLq_Color = clrCrimson;
 input LINE_STYLE Trend_SpLq_Style = STYLE_SOLID;
       int        Trend_SpLq_Width = 1;
-      bool       Trend_SpLq_Arrow = true;
+      bool       Trend_SpLq_Arrow = false;
 //--------------------------------------------
       string     Trend_Brk_Name  = "brk";
       string     Trend_Brk_Text  = "";
@@ -87,10 +87,10 @@ enum TrendType
     TREND_NML,
     TREND_BRK,
     TREND_BOS,
-    TREND_BE ,
     TREND_XLQ,
     TREND_LQ ,
     TREND_ARR,
+    TREND_BE ,
     TREND_EOF,
     TREND_BLG,
     TREND_NUM,

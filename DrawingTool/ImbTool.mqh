@@ -7,9 +7,14 @@ input color      Imb_Color = clrMidnightBlue;
 input LINE_STYLE Imb_MainLine0_Style = STYLE_DOT;
 input LINE_STYLE Imb_RangeLine_Style = STYLE_SOLID;
 
+
+#define BULLISH 1
+#define BEARISH -1
+#define REVERT  -1
+
 enum ImbToolType
 {
-    IMB_TOOL,
+    STRUCTURE_POINT,
     IMB_NUM,
 };
 
@@ -23,7 +28,9 @@ private:
     string cPoint1;
     string cPoint2;
     string cMTrend;
+    string cMBox;
     string iIbmPnt;
+    string iHLPnt;
 
 // Value define for Item
 private:
@@ -67,7 +74,7 @@ ImbTool::ImbTool(const string name, CommonData* commonData, MouseInfo* mouseInfo
     pCommonData = commonData;
     pMouseInfo = mouseInfo;
     mIndexType = 0;
-    mNameType[IMB_TOOL] = "Imb Tool";
+    mNameType[STRUCTURE_POINT] = "Structure Point";
     mTypeNum = IMB_NUM;
     // for (int i = 0; i < mTypeNum; i++)
     // {
@@ -85,135 +92,112 @@ void ImbTool::activateItem(const string& itemId)
     cPoint2 = itemId + "_c2Point2";
     cMTrend = itemId + "_c0ImBMTrend";
     iIbmPnt = itemId + "_iIbmPnt";
+    iHLPnt  = itemId + "_iHLPnt";
+    cMBox   = itemId + "_c0MBox";
 }
 
 void ImbTool::refreshData()
 {
-    setItemPos(cMTrend, time1, time2, price1, price2);
-    setItemPos(cPoint1, time1, price1);
-    setItemPos(cPoint2, time2, price2);
-
-    int idx = 0;
     string objName = "";
     int startIdx = iBarShift(ChartSymbol(), ChartPeriod(), time1);
     int endIdx   = iBarShift(ChartSymbol(), ChartPeriod(), time2);
 
-    if (startIdx < endIdx)
-    {
+    if (startIdx < endIdx) {
         startIdx = startIdx +endIdx;
-        endIdx = startIdx - endIdx;
+        endIdx   = startIdx - endIdx;
         startIdx = startIdx - endIdx;
     }
-
-    // IMB Tool
-    /*
-    bool hasImbUp = false;
-    bool hasImbDown = false;
-    double p1 = 0;
-    double p2 = 0;
-    for (int i = startIdx; i >= endIdx && i > 1; i--)
-    {
-        hasImbUp = false;
-        hasImbDown = false;
-        if (High[i+1] < Low[i-1])
-        {
-            hasImbUp = true;
-            p1 = High[i+1];
-            p2 = Low[i-1];
-        } else if (Low[i+1] > High[i-1])
-        {
-            hasImbDown = true;
-            p1 = Low[i+1];
-            p2 = High[i-1];
-        }
-
-        if (hasImbUp || hasImbDown)
-        {
-            objName = iIbmPnt + "#" + IntegerToString(idx);
-            ObjectCreate(objName, OBJ_RECTANGLE , 0, 0, 0);
-            ObjectSet(objName   , OBJPROP_SELECTABLE, false);
-            setItemPos(objName, Time[i], Time[i-1], p1, p2);
-            SetRectangleBackground(objName, hasImbUp ? clrGreen : clrRed);
-            ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-            idx++;
-        }
-    }
-    */
-    // Color
-    color c = clrNONE;
-    color incColor = clrYellowGreen;
-    color decColor = clrSienna;
-    color insideBarColor = clrWhite;
-    // Chart Scale and BarSize
-    ChartGetInteger(ChartID(),CHART_SCALE,0,mChartScale);
-    int barSize = 3;
-    if (mChartScale <= 2)
-    {
-        // set StartIdx = 0 to not do calculate logic
-        startIdx = 0;
-    }
-    else if (mChartScale == 4)barSize = 9;
-    else if (mChartScale == 5)barSize = 25;
     // Some value
-    double preH = High[startIdx+1];
-    double preL = Low[startIdx+1];
+    price1 = High[startIdx+1];
+    price2 = Low[startIdx+1];
+    //
+    double preH   = High[startIdx+1];
+    double preL   = Low[startIdx+1];
+    datetime preT = Time[startIdx+1];
     bool isInsideBar = false;
+    bool itOutsideBarCorrectionContinuation = false;
+    int preDir = 0;
+    int curDir = 0;
+    // value for drawing
+    int pointIdx = 0;
+    datetime hlPntTime;
+    double   hlPntPrice;
     for (int i = startIdx; i >= endIdx && i > 0; i--)
     {
+        if (price1 < High[i]) price1 = High[i];
+        if (price2 > Low [i]) price2 = Low[i];
         // Detect type
         isInsideBar = false;
-        if      (High[i] >  preH && Low[i] >= preL) c = incColor;
-        else if (High[i] <= preH && Low[i] <  preL) c = decColor;
-        else if (High[i] >  preH && Low[i] <  preL) c = (Open[i] > Close[i]) ? decColor : incColor; // outside bar
-        else // inside
-        {
-            isInsideBar = true;
-            if (ChartPeriod() == PERIOD_D1 && TimeDayOfWeek(Time[i]) == 0)
-            {
-                //Ignore Sunday
-            }
-            else
-            {
-                c = insideBarColor;
-            }
+        itOutsideBarCorrectionContinuation = false;
+        if      (High[i] >  preH && Low[i] >= preL) curDir = BULLISH;
+        else if (High[i] <= preH && Low[i] <  preL) curDir = BEARISH;
+        else if (High[i] >  preH && Low[i] <  preL){ // Outside bar correction
+            curDir = curDir * REVERT;
+            //if (curDir == BEARISH && Close[i] > Open[i]) itOutsideBarCorrectionContinuation = true;
+            //else if (curDir == BULLISH && Open[i] > Close[i]) itOutsideBarCorrectionContinuation = true;
         }
-        if (isInsideBar == false)
-        {
+        else isInsideBar = true;
+
+        if (preDir != curDir && preDir != 0) {
+            objName = iHLPnt + "#" + IntegerToString(pointIdx);
+            if (itOutsideBarCorrectionContinuation == false) {
+                if (curDir == BULLISH) {
+                    if (Low[i] > preL) {
+                        hlPntPrice = preL;
+                        hlPntTime  = preT;
+                    } else {
+                        hlPntPrice = Low[i];
+                        hlPntTime  = Time[i];
+                    }
+                } else {
+                    if (High[i] < preH) {
+                        hlPntPrice = preH;
+                        hlPntTime  = preT;
+                    } else {
+                        hlPntPrice = High[i];
+                        hlPntTime  = Time[i];
+                    }
+                }
+            } else {
+                if (curDir == BULLISH) {
+                    hlPntPrice = preL;
+                    hlPntTime  = preT;
+                } else {
+                    hlPntPrice = preH;
+                    hlPntTime  = preT;
+                }
+            }
+            ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
+            // ObjectSetText(objName, "●", 5);
+            ObjectSetText(objName, curDir == BEARISH ? "▼" : "▲", 5);
+            setItemPos(objName, hlPntTime, hlPntPrice);
+            ObjectSet(objName, OBJPROP_SELECTABLE, false);
+            ObjectSet(objName, OBJPROP_COLOR, curDir == BEARISH ? clrRed : clrGreen);
+            ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, curDir == BEARISH ? ANCHOR_LOWER : ANCHOR_UPPER);
+            pointIdx++;
+        }
+        preDir = curDir;
+
+        if (isInsideBar == false) {
             preH = High[i];
             preL = Low[i];
+            preT = Time[i];
         }
-        if (c == clrNONE) continue;
-        // bg draw:
-        objName = iIbmPnt + "#" + IntegerToString(idx);
-        ObjectCreate(objName, OBJ_TREND , 0, 0, 0);
-        setItemPos(  objName, Time[i], Time[i], Open[i], Close[i]);
-        ObjectSet(   objName, OBJPROP_SELECTABLE, false);
-        ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-        SetObjectStyle(objName, clrBlack, 0, barSize+2);
-        idx++;
-        // body draw:
-        objName = iIbmPnt + "#" + IntegerToString(idx);
-        ObjectCreate(objName, OBJ_TREND , 0, 0, 0);
-        setItemPos(  objName, Time[i], Time[i], Open[i], Close[i]);
-        ObjectSet(   objName, OBJPROP_SELECTABLE, false);
-        ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-        SetObjectStyle(objName, c, 0, barSize);
-        idx++;
     }
     // Remove item thừa
     do
     {
-        objName = iIbmPnt + "#" + IntegerToString(idx);
-        idx++;
+        objName = iHLPnt + "#" + IntegerToString(pointIdx);
+        pointIdx++;
     }
     while (ObjectDelete(objName) == true);
+
+    setItemPos(cMBox, time1, time2, price1, price2);
 }
 
 void ImbTool::createItem()
 {
-    ObjectCreate(cMTrend, OBJ_TREND , 0, 0, 0);
-    ObjectCreate(cPoint1, OBJ_TEXT  , 0, 0, 0);
-    ObjectCreate(cPoint2, OBJ_TEXT  , 0, 0, 0);
+    ObjectCreate(cMBox, OBJ_RECTANGLE , 0, 0, 0);
 
     updateDefaultProperty();
     updateTypeProperty();
@@ -222,16 +206,11 @@ void ImbTool::createItem()
 }
 void ImbTool::updateDefaultProperty()
 {
-    ObjectSetInteger(ChartID(), cPoint1, OBJPROP_ANCHOR, ANCHOR_CENTER);
-    ObjectSetInteger(ChartID(), cPoint2, OBJPROP_ANCHOR, ANCHOR_CENTER);
-    multiSetStrs(OBJPROP_TOOLTIP   , "\n", cPoint1+cPoint2+cMTrend);
-    SetObjectStyle(cMTrend, Imb_Color, Imb_MainLine0_Style,  0);
-    multiSetProp(OBJPROP_BACK, true, cMTrend);
+    multiSetStrs(OBJPROP_TOOLTIP   , "\n", cPoint1+cPoint2);
 }
 void ImbTool::updateTypeProperty()
 {
-    ObjectSetText (cPoint1," ●A", 9, "Consolas", clrGreen);
-    ObjectSetText (cPoint2," ●B", 9, "Consolas", clrRed);
+    SetObjectStyle(cMBox, clrGreen, 2, 1);
 }
 void ImbTool::updateItemAfterChangeType()
 {
@@ -245,43 +224,8 @@ void ImbTool::updateItemAfterChangeType()
 //Chart Event
 void ImbTool::onItemDrag(const string &itemId, const string &objId)
 {
-    time1 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME1);
-    time2 = (datetime)ObjectGet(cMTrend, OBJPROP_TIME2);
-    price1 =          ObjectGet(cMTrend, OBJPROP_PRICE1);
-    price2 =          ObjectGet(cMTrend, OBJPROP_PRICE2);
-
-    if (objId == cPoint1)
-    {
-        time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
-        if (pCommonData.mShiftHold)
-        {
-            price1 = price2;
-        }
-        else if (pCommonData.mCtrlHold)
-        {
-            price1 = pCommonData.mMousePrice;
-        }
-        else
-        {
-            price1 = ObjectGet(objId, OBJPROP_PRICE1);
-        }
-    }
-    else if (objId == cPoint2)
-    {
-        time2 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
-        if (pCommonData.mShiftHold)
-        {
-            price2 = price1;
-        }
-        else if (pCommonData.mCtrlHold)
-        {
-            price2 = pCommonData.mMousePrice;
-        }
-        else
-        {
-            price2 = ObjectGet(objId, OBJPROP_PRICE1);
-        }
-    }
+    time1 = (datetime)ObjectGet(cMBox, OBJPROP_TIME1);
+    time2 = (datetime)ObjectGet(cMBox, OBJPROP_TIME2);
 
     refreshData();
 }
@@ -328,7 +272,7 @@ void ImbTool::onItemDeleted(const string &itemId, const string &objId)
     string objName = "";
     do
     {
-        objName = iIbmPnt + "#" + IntegerToString(idx);
+        objName = iHLPnt + "#" + IntegerToString(idx);
         idx++;
     }
     while (ObjectDelete(objName) == true);
