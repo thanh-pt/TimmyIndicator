@@ -131,9 +131,13 @@ void Structure::refreshData()
             if      (High[i] >  preH && Low[i] >= preL) curDir = BULLISH;
             else if (High[i] <= preH && Low[i] <  preL) curDir = BEARISH;
             else if (High[i] >  preH && Low[i] <  preL){ // Outside bar correction
-                curDir = curDir * REVERT;
-                //if (curDir == BEARISH && Close[i] > Open[i]) itOutsideBarCorrectionContinuation = true;
-                //else if (curDir == BULLISH && Open[i] > Close[i]) itOutsideBarCorrectionContinuation = true;
+                if (curDir == BULLISH) {
+                    if (High[i-1] > High[i]) curDir = curDir * REVERT;
+                    itOutsideBarCorrectionContinuation = true;
+                } else {
+                    if (Low[i-1] < Low[i]) curDir = curDir * REVERT;
+                    itOutsideBarCorrectionContinuation = true;
+                }
             }
             else isInsideBar = true;
 
