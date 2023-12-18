@@ -108,7 +108,6 @@ void Structure::refreshData()
     double preL   = Low[startIdx+1];
     datetime preT = Time[startIdx+1];
     bool isInsideBar = false;
-    bool itOutsideBarCorrectionContinuation = false;
     int preDir = 0;
     int curDir = 0;
     datetime hlPntTime;
@@ -127,31 +126,19 @@ void Structure::refreshData()
         // HiLo Point Code
         if (mIndexType == HILO_POINT){
             isInsideBar = false;
-            itOutsideBarCorrectionContinuation = false;
             if      (High[i] >  preH && Low[i] >= preL) curDir = BULLISH;
             else if (High[i] <= preH && Low[i] <  preL) curDir = BEARISH;
             else if (High[i] >  preH && Low[i] <  preL){ // Outside bar correction
-                if (curDir == BULLISH) {
-                    if (High[i-1] > High[i]) curDir = curDir * REVERT;
-                    itOutsideBarCorrectionContinuation = true;
-                } else {
-                    if (Low[i-1] < Low[i]) curDir = curDir * REVERT;
-                    itOutsideBarCorrectionContinuation = true;
-                }
+                curDir = curDir * REVERT;
             }
             else isInsideBar = true;
 
             if (preDir != curDir && preDir != 0) {
                 objName = iHLPnt + "#" + IntegerToString(hiLoIdx);
-                if (itOutsideBarCorrectionContinuation == false) {
-                    hlPntPrice = (curDir == BULLISH ? (Low[i] > preL ? preL : Low[i] ) : (High[i] < preH ? preH : High[i]));
-                    hlPntTime  = (curDir == BULLISH ? (Low[i] > preL ? preT : Time[i]) : (High[i] < preH ? preT : Time[i]));
-                } else {
-                    hlPntPrice = (curDir == BULLISH ? preL : preH);
-                    hlPntTime  = (curDir == BULLISH ? preT : preT);
-                }
+                hlPntPrice = (curDir == BULLISH ? (Low[i] > preL ? preL : Low[i] ) : (High[i] < preH ? preH : High[i]));
+                hlPntTime  = (curDir == BULLISH ? (Low[i] > preL ? preT : Time[i]) : (High[i] < preH ? preT : Time[i]));
                 ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
-                // ObjectSetText(objName, "●", 5);
+                // ObjectSetText(objName, "●", 4);
                 ObjectSetText(objName, curDir == BEARISH ? "▼" : "▲", 5);
                 setItemPos(objName, hlPntTime, hlPntPrice);
                 ObjectSet(objName, OBJPROP_SELECTABLE, false);
