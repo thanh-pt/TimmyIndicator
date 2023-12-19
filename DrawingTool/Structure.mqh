@@ -72,8 +72,7 @@ Structure::Structure(const string name, CommonData* commonData, MouseInfo* mouse
     mNameType[HILO_POINT] = "HiLo Point";
     mNameType[IMB_AREA]   = "Imbalance";
     mTypeNum = IMB_NUM;
-    for (int i = 0; i < mTypeNum; i++)
-    {
+    for (int i = 0; i < mTypeNum; i++) {
         mTemplateTypes += mNameType[i];
         if (i < mTypeNum-1) mTemplateTypes += ",";
     }
@@ -119,8 +118,7 @@ void Structure::refreshData()
     double p1 = 0;
     double p2 = 0;
     int imbIdx = 0;
-    for (int i = startIdx; i >= endIdx && i > 0; i--)
-    {
+    for (int i = startIdx; i >= endIdx && i > 0; i--) {
         if (price1 < High[i]) price1 = High[i];
         if (price2 > Low [i]) price2 = Low[i];
         // HiLo Point Code
@@ -137,14 +135,23 @@ void Structure::refreshData()
                 objName = iHLPnt + "#" + IntegerToString(hiLoIdx);
                 hlPntPrice = (curDir == BULLISH ? (Low[i] > preL ? preL : Low[i] ) : (High[i] < preH ? preH : High[i]));
                 hlPntTime  = (curDir == BULLISH ? (Low[i] > preL ? preT : Time[i]) : (High[i] < preH ? preT : Time[i]));
-                ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
+                if (ObjectFind(objName) < 0){
+                    ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
+                    ObjectSet(objName, OBJPROP_SELECTABLE, false);
+                    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+                    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, false);
+                }
                 // ObjectSetText(objName, "●", 4);
-                ObjectSetText(objName, curDir == BEARISH ? "▼" : "▲", 5);
                 setItemPos(objName, hlPntTime, hlPntPrice);
-                ObjectSet(objName, OBJPROP_SELECTABLE, false);
-                ObjectSet(objName, OBJPROP_COLOR, curDir == BEARISH ? clrRed : clrGreen);
-                ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-                ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, curDir == BEARISH ? ANCHOR_LOWER : ANCHOR_UPPER);
+                if (curDir == BEARISH) {
+                    ObjectSetText(objName, "▼", 5);
+                    ObjectSet(objName, OBJPROP_COLOR, clrRed);
+                    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, ANCHOR_LOWER);
+                } else {
+                    ObjectSetText(objName, "▲", 5);
+                    ObjectSet(objName, OBJPROP_COLOR, clrGreen);
+                    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, ANCHOR_UPPER);
+                }
                 hiLoIdx++;
             }
             preDir = curDir;
@@ -156,28 +163,27 @@ void Structure::refreshData()
             }
         }
         else if (mIndexType == IMB_AREA){
-            //
             hasImbUp = false;
             hasImbDown = false;
-            if (High[i+1] < Low[i-1])
-            {
+            if (High[i+1] < Low[i-1]) {
                 hasImbUp = true;
                 p1 = High[i+1];
                 p2 = Low[i-1];
-            } else if (Low[i+1] > High[i-1])
-            {
+            } else if (Low[i+1] > High[i-1]) {
                 hasImbDown = true;
                 p1 = Low[i+1];
                 p2 = High[i-1];
             }
 
-            if (hasImbUp || hasImbDown)
-            {
+            if (hasImbUp || hasImbDown) {
                 objName = iImbPnt + "#" + IntegerToString(imbIdx);
+                if (ObjectFind(objName) < 0) {
                 ObjectCreate(objName, OBJ_RECTANGLE , 0, 0, 0);
-                ObjectSet(objName   , OBJPROP_SELECTABLE, false);
+                    ObjectSet(objName, OBJPROP_SELECTABLE, false);
+                    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+                    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+                }
                 setItemPos(objName, Time[i], Time[i-1], p1, p2);
-                ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
                 SetRectangleBackground(objName, hasImbUp ? clrGreen : clrRed);
                 imbIdx++;
             }
@@ -188,13 +194,13 @@ void Structure::refreshData()
         objName  = iHLPnt + "#" + IntegerToString(hiLoIdx);
         hiLoIdx++;
     }
-    while (ObjectDelete(objName) == true);
+    while (ObjectSet(objName, OBJPROP_TIME1, 0) == true);
     
     do {// for Imb
         objName  = iImbPnt + "#" + IntegerToString(imbIdx);
         imbIdx++;
     }
-    while (ObjectDelete(objName) == true);
+    while (ObjectSet(objName, OBJPROP_TIME1, 0) == true);
 
     setItemPos(cMBox, time1, time2, price1, price2);
 }
@@ -216,8 +222,7 @@ void Structure::updateTypeProperty()
 }
 void Structure::updateItemAfterChangeType()
 {
-    if (mFirstPoint == true)
-    {
+    if (mFirstPoint == true) {
         updateTypeProperty();
         refreshData();
     }
@@ -237,8 +242,7 @@ void Structure::onItemChange(const string &itemId, const string &objId)
 }
 void Structure::onMouseClick()
 {
-    if (mFirstPoint == false)
-    {
+    if (mFirstPoint == false) {
         createItem();
         mFirstPoint = true;
         return;
@@ -248,12 +252,10 @@ void Structure::onMouseClick()
 void Structure::onMouseMove()
 {
     if (mFirstPoint == false) return;
-    if (pCommonData.mShiftHold)
-    {
+    if (pCommonData.mShiftHold) {
         price2 = price1;
     }
-    else
-    {
+    else {
         price2 = pCommonData.mMousePrice;
     }
     time2  = pCommonData.mMouseTime;
@@ -265,8 +267,7 @@ void Structure::onItemDeleted(const string &itemId, const string &objId)
     int idx = 0;
     string hiLoItemName = "";
     string imbItemName = "";
-    do
-    {
+    do {
         hiLoItemName = iHLPnt + "#" + IntegerToString(idx);
         imbItemName  = iImbPnt + "#" + IntegerToString(idx);
         idx++;
@@ -277,18 +278,11 @@ void Structure::onItemDeleted(const string &itemId, const string &objId)
 void Structure::updateCandle()
 {
     string sparamItems[];
-    for (int i = ObjectsTotal() - 1; i >= 0; i--)
-    {
+    for (int i = ObjectsTotal() - 1; i >= 0; i--) {
         string objName = ObjectName(i);
-        if (StringFind(objName, "c0MBox") == -1)
-        {
-            continue;
-        }
+        if (StringFind(objName, "c0MBox") == -1) continue;
         int k=StringSplit(objName,'_',sparamItems);
-        if (k != 3 || sparamItems[0] != mItemName)
-        {
-            continue;
-        }
+        if (k != 3 || sparamItems[0] != mItemName) continue;
         string objId = sparamItems[0] + "_" + sparamItems[1];
         touchItem(objId);
         onItemDrag(objId, objName);
