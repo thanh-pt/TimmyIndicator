@@ -62,7 +62,6 @@ int OnInit() {
     return (INIT_SUCCEEDED);
 }
 
-bool test = true;
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |
 //+------------------------------------------------------------------+
@@ -89,16 +88,6 @@ int OnCalculate(const int       rates_total,
         gPreLo = low[0];
         gPos = 1;
         gIndiGap = 0; // (gPreHi - gPreLo) / 10;
-    }
-    if (test == true) {
-        test = false;
-        string testObj;
-        for (int i = 0; i < 255; i++) {
-            testObj = "TestArr" + IntegerToString(i);
-            ObjectCreate(testObj, OBJ_ARROW, 0, Time[i], 1.27992);
-            ObjectSet(testObj, OBJPROP_PRICE1, 1.27992);
-            ObjectSet(testObj, OBJPROP_ARROWCODE, i + 1);
-        }
     }
     for (gIdx = gPos; gIdx < rates_total; gIdx++) {
         hiPivotBuffer[gIdx] = EMPTY_VALUE;
