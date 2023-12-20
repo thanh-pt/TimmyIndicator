@@ -52,7 +52,14 @@ public:
     void changeActiveType();
     void changeActiveType(int type);
     void touchItem(const string& itemId);
+
+public:
+    ~BaseItem();
 };
+
+BaseItem::~BaseItem()
+{
+}
 
 void BaseItem::startActivate(FinishedJob cb)
 {

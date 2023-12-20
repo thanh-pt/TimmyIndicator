@@ -87,7 +87,7 @@ int OnCalculate(const int       rates_total,
         gPreHi = high[0];
         gPreLo = low[0];
         gPos = 1;
-        gIndiGap = 0; // (gPreHi - gPreLo) / 10;
+        gIndiGap = (gPreHi - gPreLo) / 20;
     }
     for (gIdx = gPos; gIdx < rates_total; gIdx++) {
         hiPivotBuffer[gIdx] = EMPTY_VALUE;
