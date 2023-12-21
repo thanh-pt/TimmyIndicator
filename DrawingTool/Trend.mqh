@@ -3,96 +3,96 @@
 
 enum TEXT_POS
 {
-    TXT_POS_LEFT,
-    TXT_POS_CENTER,
-    TXT_POS_RIGHT,
+    TXT_LEFT,
+    TXT_CENTER,
+    TXT_RIGHT,
 };
 
 input string _2 = "";
 //--------------------------------------------
-      string     Trend_Normal_Name  = "Nml";
-      string     Trend_Normal_Text  = "";
-      TEXT_POS   Trend_Normal_TxtPos= TXT_POS_CENTER;
-input color      Trend_Normal_Color = clrMidnightBlue;
-input LINE_STYLE Trend_Normal_Style = STYLE_SOLID;
-      int        Trend_Normal_Width = 1;
-      bool       Trend_Normal_Arrow = false;
+input string     Trend_1______Name  = "bos";
+input color      Trend_1_Color      = clrNavy;
+input string     Trend_1_Text       = "bos";
+input TEXT_POS   Trend_1_TxtPos     = TXT_CENTER;
+input LINE_STYLE Trend_1_Style      = STYLE_SOLID;
+input int        Trend_1_Width      = 2;
+input bool       Trend_1_Arrow      = false;
 //--------------------------------------------
-      string     Trend_Lq_Name  = "Lq";
-      string     Trend_Lq_Text  = "$";
-      TEXT_POS   Trend_Lq_TxtPos= TXT_POS_CENTER;
-input color      Trend_Lq_Color = clrBlack;
-input LINE_STYLE Trend_Lq_Style = STYLE_SOLID;
-      int        Trend_Lq_Width = 1;
-      bool       Trend_Lq_Arrow = false;
+input string     Trend_2______Name  = "xLq";
+input color      Trend_2_Color      = clrBlack;
+input string     Trend_2_Text       = "x";
+input TEXT_POS   Trend_2_TxtPos     = TXT_CENTER;
+input LINE_STYLE Trend_2_Style      = STYLE_SOLID;
+input int        Trend_2_Width      = 1;
+input bool       Trend_2_Arrow      = false;
 //--------------------------------------------
-      string     Trend_Bos_Name  = "bos";
-      string     Trend_Bos_Text  = "𝙗𝙤𝙨";
-      TEXT_POS   Trend_Bos_TxtPos= TXT_POS_CENTER;
-input color      Trend_Bos_Color = clrNavy;
-input LINE_STYLE Trend_Bos_Style = STYLE_SOLID;
-      int        Trend_Bos_Width = 1;
-      bool       Trend_Bos_Arrow = false;
+input string     Trend_3______Name  = "b/lg";
+input color      Trend_3_Color      = clrCrimson;
+input string     Trend_3_Text       = "b/lg";
+input TEXT_POS   Trend_3_TxtPos     = TXT_CENTER;
+input LINE_STYLE Trend_3_Style      = STYLE_SOLID;
+input int        Trend_3_Width      = 2;
+input bool       Trend_3_Arrow      = false;
 //--------------------------------------------
-      string     Trend_SpLq_Name  = "xLq";
-      string     Trend_SpLq_Text  = "x";
-      TEXT_POS   Trend_SpLq_TxtPos= TXT_POS_CENTER;
-input color      Trend_SpLq_Color = clrCrimson;
-input LINE_STYLE Trend_SpLq_Style = STYLE_SOLID;
-      int        Trend_SpLq_Width = 1;
-      bool       Trend_SpLq_Arrow = false;
+input string     Trend_4______Name  = "Break";
+input color      Trend_4_Color      = clrBlack;
+input string     Trend_4_Text       = "";
+input TEXT_POS   Trend_4_TxtPos     = TXT_CENTER;
+input LINE_STYLE Trend_4_Style      = STYLE_DOT;
+input int        Trend_4_Width      = 1;
+input bool       Trend_4_Arrow      = false;
 //--------------------------------------------
-      string     Trend_Brk_Name  = "brk";
-      string     Trend_Brk_Text  = "";
-      TEXT_POS   Trend_Brk_TxtPos= TXT_POS_RIGHT;
-input color      Trend_Brk_Color = clrSlateGray;
-input LINE_STYLE Trend_Brk_Style = STYLE_DOT;
-      int        Trend_Brk_Width = 1;
-      bool       Trend_Brk_Arrow = false;
+input string     Trend_5______Name  = "lq";
+input color      Trend_5_Color      = clrBlack;
+input string     Trend_5_Text       = "$";
+input TEXT_POS   Trend_5_TxtPos     = TXT_RIGHT;
+input LINE_STYLE Trend_5_Style      = STYLE_SOLID;
+input int        Trend_5_Width      = 1;
+input bool       Trend_5_Arrow      = false;
 //--------------------------------------------
-      string     Trend_BLg_Name  = "b/lg";
-      string     Trend_BLg_Text  = "𝙗𝙤𝙨/𝙡𝙜";
-      TEXT_POS   Trend_BLg_TxtPos= TXT_POS_CENTER;
-input color      Trend_BLg_Color = clrCrimson;
-input LINE_STYLE Trend_BLg_Style = STYLE_SOLID;
-      int        Trend_BLg_Width = 2;
-      bool       Trend_BLg_Arrow = false;
+input string     Trend_6______Name  = "sbos";
+input color      Trend_6_Color      = clrNavy;
+input string     Trend_6_Text       = "sbos";
+input TEXT_POS   Trend_6_TxtPos     = TXT_CENTER;
+input LINE_STYLE Trend_6_Style      = STYLE_SOLID;
+input int        Trend_6_Width      = 1;
+input bool       Trend_6_Arrow      = false;
 //--------------------------------------------
-      string     Trend_Eof_Name  = "eof";
-      string     Trend_Eof_Text  = "eof";
-      TEXT_POS   Trend_Eof_TxtPos= TXT_POS_RIGHT;
-input color      Trend_Eof_Color = clrGreen;
-input LINE_STYLE Trend_Eof_Style = STYLE_SOLID;
-      int        Trend_Eof_Width = 1;
-      bool       Trend_Eof_Arrow = false;
+input string     Trend_7______Name  = "eof";
+input color      Trend_7_Color      = clrGreen;
+input string     Trend_7_Text       = "eof";
+input TEXT_POS   Trend_7_TxtPos     = TXT_RIGHT;
+input LINE_STYLE Trend_7_Style      = STYLE_SOLID;
+input int        Trend_7_Width      = 1;
+input bool       Trend_7_Arrow      = false;
 //--------------------------------------------
-      string     Trend_BE_Name  = "be";
-      string     Trend_BE_Text  = "𝙗𝙚";
-      TEXT_POS   Trend_BE_TxtPos= TXT_POS_RIGHT;
-input color      Trend_BE_Color = clrGreen;
-input LINE_STYLE Trend_BE_Style = STYLE_SOLID;
-      int        Trend_BE_Width = 1;
-      bool       Trend_BE_Arrow = false;
+input string     Trend_8______Name  = "be";
+input color      Trend_8_Color      = clrGreen;
+input string     Trend_8_Text       = "be";
+input TEXT_POS   Trend_8_TxtPos     = TXT_RIGHT;
+input LINE_STYLE Trend_8_Style      = STYLE_SOLID;
+input int        Trend_8_Width      = 1;
+input bool       Trend_8_Arrow      = false;
 //--------------------------------------------
-      string     Trend_Arr_Name  = "Arw";
-      string     Trend_Arr_Text  = "";
-      TEXT_POS   Trend_Arr_TxtPos= TXT_POS_CENTER;
-      color      Trend_Arr_Color = clrNavy;
-      LINE_STYLE Trend_Arr_Style = STYLE_SOLID;
-      int        Trend_Arr_Width = 1;
-      bool       Trend_Arr_Arrow = true;
+input string     Trend_9______Name  = "Arw";
+input color      Trend_9_Color      = clrNavy;
+input string     Trend_9_Text       = "";
+input TEXT_POS   Trend_9_TxtPos     = TXT_CENTER;
+input LINE_STYLE Trend_9_Style      = STYLE_SOLID;
+input int        Trend_9_Width      = 1;
+input bool       Trend_9_Arrow      = true;
 
 enum TrendType
 {
-    TREND_NML,
-    TREND_BRK,
-    TREND_BOS,
-    TREND_XLQ,
-    TREND_LQ ,
-    TREND_ARR,
-    TREND_BE ,
-    TREND_EOF,
-    TREND_BLG,
+    TREND_1,
+    TREND_2,
+    TREND_3,
+    TREND_4,
+    TREND_5,
+    TREND_6,
+    TREND_7,
+    TREND_8,
+    TREND_9,
     TREND_NUM,
 };
 
@@ -140,7 +140,6 @@ public:
     virtual void prepareActive();
     virtual void updateItemAfterChangeType();
 private:
-    bool isHorizontalLine();
 
 // Chart Event
 public:
@@ -158,82 +157,86 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [TREND_NML  ] = Trend_Normal_Name ;
-    mDispText [TREND_NML  ] = Trend_Normal_Text ;
-    mTextPos  [TREND_NML  ] = Trend_Normal_TxtPos;
-    mColorType[TREND_NML  ] = Trend_Normal_Color;
-    mStyleType[TREND_NML  ] = Trend_Normal_Style;
-    mWidthType[TREND_NML  ] = Trend_Normal_Width;
-    mShowArrow[TREND_NML  ] = Trend_Normal_Arrow;
+    mNameType [TREND_1] = Trend_1______Name ;
+    mDispText [TREND_1] = Trend_1_Text      ;
+    mTextPos  [TREND_1] = Trend_1_TxtPos    ;
+    mColorType[TREND_1] = Trend_1_Color     ;
+    mStyleType[TREND_1] = Trend_1_Style     ;
+    mWidthType[TREND_1] = Trend_1_Width     ;
+    mShowArrow[TREND_1] = Trend_1_Arrow     ;
     //--------------------------------------------
-    mNameType [TREND_LQ   ] = Trend_Lq_Name ;
-    mDispText [TREND_LQ   ] = Trend_Lq_Text ;
-    mTextPos  [TREND_LQ   ] = Trend_Lq_TxtPos;
-    mColorType[TREND_LQ   ] = Trend_Lq_Color;
-    mStyleType[TREND_LQ   ] = Trend_Lq_Style;
-    mWidthType[TREND_LQ   ] = Trend_Lq_Width;
-    mShowArrow[TREND_LQ   ] = Trend_Lq_Arrow;
+    mNameType [TREND_2] = Trend_2______Name ;
+    mDispText [TREND_2] = Trend_2_Text      ;
+    mTextPos  [TREND_2] = Trend_2_TxtPos    ;
+    mColorType[TREND_2] = Trend_2_Color     ;
+    mStyleType[TREND_2] = Trend_2_Style     ;
+    mWidthType[TREND_2] = Trend_2_Width     ;
+    mShowArrow[TREND_2] = Trend_2_Arrow     ;
     //--------------------------------------------
-    mNameType [TREND_BOS  ] = Trend_Bos_Name ;
-    mDispText [TREND_BOS  ] = Trend_Bos_Text ;
-    mTextPos  [TREND_BOS  ] = Trend_Bos_TxtPos;
-    mColorType[TREND_BOS  ] = Trend_Bos_Color;
-    mStyleType[TREND_BOS  ] = Trend_Bos_Style;
-    mWidthType[TREND_BOS  ] = Trend_Bos_Width;
-    mShowArrow[TREND_BOS  ] = Trend_Bos_Arrow;
+    mNameType [TREND_3] = Trend_3______Name ;
+    mDispText [TREND_3] = Trend_3_Text      ;
+    mTextPos  [TREND_3] = Trend_3_TxtPos    ;
+    mColorType[TREND_3] = Trend_3_Color     ;
+    mStyleType[TREND_3] = Trend_3_Style     ;
+    mWidthType[TREND_3] = Trend_3_Width     ;
+    mShowArrow[TREND_3] = Trend_3_Arrow     ;
     //--------------------------------------------
-    mNameType [TREND_BLG  ] = Trend_BLg_Name ;
-    mDispText [TREND_BLG  ] = Trend_BLg_Text ;
-    mTextPos  [TREND_BLG  ] = Trend_BLg_TxtPos;
-    mColorType[TREND_BLG  ] = Trend_BLg_Color;
-    mStyleType[TREND_BLG  ] = Trend_BLg_Style;
-    mWidthType[TREND_BLG  ] = Trend_BLg_Width;
-    mShowArrow[TREND_BLG  ] = Trend_BLg_Arrow;
+    mNameType [TREND_4] = Trend_4______Name ;
+    mDispText [TREND_4] = Trend_4_Text      ;
+    mTextPos  [TREND_4] = Trend_4_TxtPos    ;
+    mColorType[TREND_4] = Trend_4_Color     ;
+    mStyleType[TREND_4] = Trend_4_Style     ;
+    mWidthType[TREND_4] = Trend_4_Width     ;
+    mShowArrow[TREND_4] = Trend_4_Arrow     ;
     //--------------------------------------------
-    mNameType [TREND_BRK  ] = Trend_Brk_Name ;
-    mDispText [TREND_BRK  ] = Trend_Brk_Text ;
-    mTextPos  [TREND_BRK  ] = Trend_Brk_TxtPos;
-    mColorType[TREND_BRK  ] = Trend_Brk_Color;
-    mStyleType[TREND_BRK  ] = Trend_Brk_Style;
-    mWidthType[TREND_BRK  ] = Trend_Brk_Width;
-    mShowArrow[TREND_BRK  ] = Trend_Brk_Arrow;
+    mNameType [TREND_5] = Trend_5______Name ;
+    mDispText [TREND_5] = Trend_5_Text      ;
+    mTextPos  [TREND_5] = Trend_5_TxtPos    ;
+    mColorType[TREND_5] = Trend_5_Color     ;
+    mStyleType[TREND_5] = Trend_5_Style     ;
+    mWidthType[TREND_5] = Trend_5_Width     ;
+    mShowArrow[TREND_5] = Trend_5_Arrow     ;
     //--------------------------------------------
-    mNameType [TREND_XLQ  ] = Trend_SpLq_Name ;
-    mDispText [TREND_XLQ  ] = Trend_SpLq_Text ;
-    mTextPos  [TREND_XLQ  ] = Trend_SpLq_TxtPos;
-    mColorType[TREND_XLQ  ] = Trend_SpLq_Color;
-    mStyleType[TREND_XLQ  ] = Trend_SpLq_Style;
-    mWidthType[TREND_XLQ  ] = Trend_SpLq_Width;
-    mShowArrow[TREND_XLQ  ] = Trend_SpLq_Arrow;
+    mNameType [TREND_6] = Trend_6______Name ;
+    mDispText [TREND_6] = Trend_6_Text      ;
+    mTextPos  [TREND_6] = Trend_6_TxtPos    ;
+    mColorType[TREND_6] = Trend_6_Color     ;
+    mStyleType[TREND_6] = Trend_6_Style     ;
+    mWidthType[TREND_6] = Trend_6_Width     ;
+    mShowArrow[TREND_6] = Trend_6_Arrow     ;
     //--------------------------------------------
-    mNameType [TREND_EOF  ] = Trend_Eof_Name ;
-    mDispText [TREND_EOF  ] = Trend_Eof_Text ;
-    mTextPos  [TREND_EOF  ] = Trend_Eof_TxtPos;
-    mColorType[TREND_EOF  ] = Trend_Eof_Color;
-    mStyleType[TREND_EOF  ] = Trend_Eof_Style;
-    mWidthType[TREND_EOF  ] = Trend_Eof_Width;
-    mShowArrow[TREND_EOF  ] = Trend_Eof_Arrow;
+    mNameType [TREND_7] = Trend_7______Name ;
+    mDispText [TREND_7] = Trend_7_Text      ;
+    mTextPos  [TREND_7] = Trend_7_TxtPos    ;
+    mColorType[TREND_7] = Trend_7_Color     ;
+    mStyleType[TREND_7] = Trend_7_Style     ;
+    mWidthType[TREND_7] = Trend_7_Width     ;
+    mShowArrow[TREND_7] = Trend_7_Arrow     ;
     //--------------------------------------------
-    mNameType [TREND_BE  ]  = Trend_BE_Name ;
-    mDispText [TREND_BE  ]  = Trend_BE_Text ;
-    mTextPos  [TREND_BE  ]  = Trend_BE_TxtPos;
-    mColorType[TREND_BE  ]  = Trend_BE_Color;
-    mStyleType[TREND_BE  ]  = Trend_BE_Style;
-    mWidthType[TREND_BE  ]  = Trend_BE_Width;
-    mShowArrow[TREND_BE  ]  = Trend_BE_Arrow;
+    mNameType [TREND_8] = Trend_8______Name ;
+    mDispText [TREND_8] = Trend_8_Text      ;
+    mTextPos  [TREND_8] = Trend_8_TxtPos    ;
+    mColorType[TREND_8] = Trend_8_Color     ;
+    mStyleType[TREND_8] = Trend_8_Style     ;
+    mWidthType[TREND_8] = Trend_8_Width     ;
+    mShowArrow[TREND_8] = Trend_8_Arrow     ;
     //--------------------------------------------
-    mNameType [TREND_ARR]  = Trend_Arr_Name ;
-    mDispText [TREND_ARR]  = Trend_Arr_Text ;
-    mTextPos  [TREND_ARR]  = Trend_Arr_TxtPos;
-    mColorType[TREND_ARR]  = Trend_Arr_Color;
-    mStyleType[TREND_ARR]  = Trend_Arr_Style;
-    mWidthType[TREND_ARR]  = Trend_Arr_Width;
-    mShowArrow[TREND_ARR]  = Trend_Arr_Arrow;
+    mNameType [TREND_9] = Trend_9______Name;
+    mDispText [TREND_9] = Trend_9_Text     ;
+    mTextPos  [TREND_9] = Trend_9_TxtPos   ;
+    mColorType[TREND_9] = Trend_9_Color    ;
+    mStyleType[TREND_9] = Trend_9_Style    ;
+    mWidthType[TREND_9] = Trend_9_Width    ;
+    mShowArrow[TREND_9] = Trend_9_Arrow    ;
     //--------------------------------------------
     mIndexType = 0;
     mTypeNum = TREND_NUM;
-    for (int i = 0; i < mTypeNum; i++)
+    for (int i = 0; i < TREND_NUM; i++)
     {
+        if (mColorType[i] == clrNONE) {
+            mTypeNum = i;
+            break;
+        }
         mTemplateTypes += mNameType[i];
         if (i < mTypeNum-1) mTemplateTypes += ",";
     }
@@ -269,19 +272,38 @@ void Trend::refreshData()
 
     // Update Text
     setTextPos(iLbText, time3, price3);
-    setTextPos(iRtText, time2, price3);
-    setTextPos(iLtText, time1, price3);
+    setTextPos(iRtText, time2, price2);
+    setTextPos(iLtText, time1, price1);
 
     bool isUp = false;
     int barT1 = iBarShift(ChartSymbol(), ChartPeriod(), time1);
     int barT2 = iBarShift(ChartSymbol(), ChartPeriod(), time2);
     if (barT1 > barT2 && price1 >= High[barT1]) isUp = true;
     else if (barT2 > barT1 && price2 >= High[barT2]) isUp = true;
+    // // idea check isUp/Down based on time3
+    // int barT3 = iBarShift(ChartSymbol(), ChartPeriod(), time3);
+    // isUp = (price3 >= High[barT3]);
 
-    if      (angle > 000 && angle <=  90) multiSetInts(OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER , iLbText+iRtText+iLtText);
-    else if (angle > 090 && angle <  180) multiSetInts(OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER, iLbText+iRtText+iLtText);
-    else if (angle > 180 && angle <= 270) multiSetInts(OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER , iLbText+iRtText+iLtText);
-    else if (angle > 270 && angle <  360) multiSetInts(OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER, iLbText+iRtText+iLtText);
+    if (angle > 000 && angle <=  90) {
+        ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
+        ObjectSetInteger(0, iRtText, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        ObjectSetInteger(0, iLtText, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+    }
+    else if (angle > 090 && angle <  180) {
+        ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER);
+        ObjectSetInteger(0, iRtText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        ObjectSetInteger(0, iLtText, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+    }
+    else if (angle > 180 && angle <= 270) {
+        ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
+        ObjectSetInteger(0, iRtText, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        ObjectSetInteger(0, iLtText, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+    }
+    else if (angle > 270 && angle <  360) {
+        ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER);
+        ObjectSetInteger(0, iRtText, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+        ObjectSetInteger(0, iLtText, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+    }
     else if (angle == 0) 
     {
         ObjectSetInteger(0, iLbText, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
@@ -291,7 +313,6 @@ void Trend::refreshData()
         if (barT1 < barT2) ObjectSet(iArrowT, OBJPROP_ANGLE,  90.0); // case 180*
     }
     // Customization
-    if (mIndexType == TREND_BRK) multiSetProp(OBJPROP_COLOR, isUp ? clrDarkGreen : clrBrown, cMTrend+iLbText+iRtText+iLtText);
 }
 
 void Trend::createItem()
@@ -327,9 +348,9 @@ void Trend::updateTypeProperty()
     ObjectSetText(iRtText, "", 8, "Consolas", mColorType[mIndexType]);
     ObjectSetText(iLtText, "", 8, "Consolas", mColorType[mIndexType]);
 
-    if      (mTextPos[mIndexType] == TXT_POS_CENTER) ObjectSetText (iLbText,  mDispText[mIndexType]);
-    else if (mTextPos[mIndexType] == TXT_POS_RIGHT)  ObjectSetText (iRtText,  mDispText[mIndexType]);
-    else                                             ObjectSetText (iLtText,  mDispText[mIndexType]);
+    if      (mTextPos[mIndexType] == TXT_CENTER) ObjectSetText (iLbText,  mDispText[mIndexType]);
+    else if (mTextPos[mIndexType] == TXT_RIGHT)  ObjectSetText (iRtText,  mDispText[mIndexType]);
+    else                                         ObjectSetText (iLtText,  mDispText[mIndexType]);
 
     ObjectSetText (iArrowT,  mShowArrow[mIndexType] ? "▲" : "", 9, "Consolas", mShowArrow[mIndexType] ? mColorType[mIndexType] : clrNONE);
     SetObjectStyle(cMTrend,  mColorType[mIndexType],          mStyleType[mIndexType],  mWidthType[mIndexType]);
@@ -381,7 +402,6 @@ void Trend::onItemDrag(const string &itemId, const string &objId)
         price1 = pCommonData.mMousePrice;
         price2 = pCommonData.mMousePrice;
     }
-    if (isHorizontalLine()) price2 = price1;
 
     getCenterPos(time1, time2, price1, price2, time3, price3);
 
@@ -432,7 +452,7 @@ void Trend::onMouseClick()
 void Trend::onMouseMove()
 {
     if (mFirstPoint == false) return;
-    if (pCommonData.mShiftHold || isHorizontalLine()) {
+    if (pCommonData.mShiftHold) {
         price2 = price1;
     }
     else {
@@ -441,14 +461,4 @@ void Trend::onMouseMove()
     time2  = pCommonData.mMouseTime;
     getCenterPos(time1, time2, price1, price2, time3, price3);
     refreshData();
-}
-
-bool Trend::isHorizontalLine()
-{
-    if (mIndexType == TREND_BRK ||
-        mIndexType == TREND_BOS ||
-        mIndexType == TREND_BE  ||
-        mIndexType == TREND_EOF ||
-        mIndexType == TREND_BLG ) return true;
-    return false;
 }
