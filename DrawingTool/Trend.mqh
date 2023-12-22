@@ -233,12 +233,14 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mTypeNum = TREND_NUM;
     for (int i = 0; i < TREND_NUM; i++)
     {
-        if (mColorType[i] == clrNONE) {
-            mTypeNum = i;
-            break;
-        }
         mTemplateTypes += mNameType[i];
-        if (i < mTypeNum-1) mTemplateTypes += ",";
+        if (i < mTypeNum-1) {
+            if (mColorType[i+1] == clrNONE) {
+                mTypeNum = i+1;
+                break;
+            }
+            mTemplateTypes += ",";
+        }
     }
 }
 
