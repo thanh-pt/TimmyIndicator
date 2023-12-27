@@ -28,10 +28,10 @@
 #define REVERT - 1
 
 input string Hi_Pivot_Configuration = "";
-input color HiPivotColor = clrRed;
+input color HiPivotColor = clrLightPink;
 input int HiPivotCode = 119;
 input string Lo_Pivot_Configuration = "";
-input color LoPivotColor = clrGreen;
+input color LoPivotColor = clrLightGreen;
 input int LoPivotCode = 119;
 
 //--- indicator buffers

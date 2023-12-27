@@ -8,7 +8,7 @@
 #include "DrawingTool/LongShort.mqh"
 #include "DrawingTool/Fibonacci.mqh"
 #include "DrawingTool/ChartUtil.mqh"
-#include "DrawingTool/Pivot.mqh"
+#include "DrawingTool/Points.mqh"
 #include "DrawingTool/Label.mqh"
 
 #define CHECK_NOT_ACTIVE_RETURN if(mActive == IDX_NONE){return;}
@@ -22,7 +22,7 @@
 #define IDX_CALLOUT     4
 #define IDX_LONGSHORT   5
 #define IDX_CHARTUTIL   6
-#define IDX_PIVOT       7
+#define IDX_POINT       7
 #define IDX_STRUCTURE   8
 #define IDX_LABEL       9
 
@@ -33,7 +33,7 @@
 #define ITEM_CALLOUT    ".CallOut"
 #define ITEM_LONGSHORT  ".LongShort"
 #define ITEM_CHARTUTIL  ".ChartUtil"
-#define ITEM_PIVOT      ".Pivot"
+#define ITEM_POINT      ".Point"
 #define ITEM_STRUCTURE  ".Structure"
 #define ITEM_LABEL      ".Label"
 
@@ -73,7 +73,7 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     mListItem[IDX_CALLOUT   ]    = new CallOut   ( ITEM_CALLOUT   , commonData, mouseInfo);
     mListItem[IDX_LONGSHORT ]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
     mListItem[IDX_CHARTUTIL ]    = new ChartUtil ( ITEM_CHARTUTIL , commonData, mouseInfo);
-    mListItem[IDX_PIVOT]         = new Pivot     ( ITEM_PIVOT     , commonData, mouseInfo);
+    mListItem[IDX_POINT]         = new Point     ( ITEM_POINT     , commonData, mouseInfo);
     mListItem[IDX_STRUCTURE]     = new Structure ( ITEM_STRUCTURE , commonData, mouseInfo);
     mListItem[IDX_LABEL]         = new LabelText ( ITEM_LABEL     , commonData, mouseInfo);
 
@@ -89,7 +89,7 @@ Controller::~Controller()
     delete mListItem[IDX_CALLOUT   ];
     delete mListItem[IDX_LONGSHORT ];
     delete mListItem[IDX_CHARTUTIL ];
-    delete mListItem[IDX_PIVOT     ];
+    delete mListItem[IDX_POINT     ];
     delete mListItem[IDX_STRUCTURE ];
     delete mListItem[IDX_LABEL     ];
 }
@@ -116,7 +116,7 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'R') return IDX_RECTANGLE ;
     if (key == 'T') return IDX_TREND     ;
     // A: Chart Free
-    if (key == 'I') return IDX_PIVOT     ;
+    if (key == 'I') return IDX_STRUCTURE ;
     // D: Chart Force
     if (key == 'F') return IDX_FIBONACI  ;
     if (key == 'G') return IDX_LABEL     ;
@@ -129,7 +129,7 @@ int Controller::findItemIdByKey(const int key)
     /// Right Keyboard
     // Y : Show LongShort History
     // U : Hide LongShort History
-    if (key == 'S') return IDX_STRUCTURE  ;
+    if (key == 'S') return IDX_POINT     ;
     // O : Not Use
     // P: Higher TF
     // H J K L : Not Use
@@ -146,7 +146,7 @@ int Controller::findItemIdByName(const string& name)
     if (name == ITEM_CALLOUT   ) return IDX_CALLOUT   ;
     if (name == ITEM_LONGSHORT ) return IDX_LONGSHORT ;
     if (name == ITEM_CHARTUTIL ) return IDX_CHARTUTIL ;
-    if (name == ITEM_PIVOT     ) return IDX_PIVOT     ;
+    if (name == ITEM_POINT     ) return IDX_POINT     ;
     if (name == ITEM_STRUCTURE ) return IDX_STRUCTURE ;
     if (name == ITEM_LABEL     ) return IDX_LABEL     ;
     return IDX_NONE;
