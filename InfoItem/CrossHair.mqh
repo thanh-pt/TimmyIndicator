@@ -14,7 +14,7 @@ private:
     string mDateInfo;
     string mPriceInfo;
     uint mTimeOffset;
-    bool mIsHide;
+    bool mIsHided;
     bool mHideState;
 public:
     CrossHair(CommonData* commonData)
@@ -30,7 +30,7 @@ public:
         else mTimeOffset = 120000*ChartPeriod();
 
         initDrawing();
-        mIsHide = false;
+        mIsHided = false;
     }
     void initDrawing()
     {
@@ -79,15 +79,16 @@ public:
     {
         mHideState = (pCommonData.mMouseX > ChartGetInteger(0,CHART_WIDTH_IN_PIXELS,0) || pCommonData.mMouseY > ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS,0));
         
-        if (mIsHide == true)
+        if (mIsHided == true)
         {
             if (mHideState == true)
             {
                 return;
             }
-            mIsHide = false;
+            mIsHided = false;
             ObjectSet(mDateInfo,   OBJPROP_COLOR, CrossHair_Color);
             ObjectSet(mWeekInfo,   OBJPROP_COLOR, CrossHair_Color);
+            ObjectSet(mPriceInfo,  OBJPROP_COLOR, CrossHair_Color);
             ObjectSet(mVCrossHair, OBJPROP_COLOR, CrossHair_Color);
             ObjectSet(mHCrossHair, OBJPROP_COLOR, CrossHair_Color);
         }
@@ -95,9 +96,10 @@ public:
         {
             if (mHideState == true)
             {
-                mIsHide = true;
+                mIsHided = true;
                 ObjectSet(mDateInfo,   OBJPROP_COLOR, clrNONE);
                 ObjectSet(mWeekInfo,   OBJPROP_COLOR, clrNONE);
+                ObjectSet(mPriceInfo , OBJPROP_COLOR, clrNONE);
                 ObjectSet(mVCrossHair, OBJPROP_COLOR, clrNONE);
                 ObjectSet(mHCrossHair, OBJPROP_COLOR, clrNONE);
                 return;
@@ -111,8 +113,8 @@ public:
         ObjectSet(mVCrossHair, OBJPROP_PRICE1, ChartGetDouble(ChartID(),CHART_FIXED_MIN)-10);
         ObjectSet(mVCrossHair, OBJPROP_PRICE2, ChartGetDouble(ChartID(),CHART_FIXED_MAX)+10);
 
-        ObjectSet(mHCrossHair, OBJPROP_PRICE1, pCommonData.mMousePrice);
-        ObjectSet(mVCrossHair, OBJPROP_TIME1, pCommonData.mMouseTime);
+        ObjectSet(mHCrossHair, OBJPROP_PRICE1, pCommonData.mMousePrice); // -> Price
+        ObjectSet(mVCrossHair, OBJPROP_TIME1,  pCommonData.mMouseTime);   //-> time
 
         
         // mWeekInfo and mDateInfo
