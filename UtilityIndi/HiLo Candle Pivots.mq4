@@ -10,41 +10,31 @@
 #property indicator_chart_window
 #property indicator_buffers 2
 #property indicator_plots 2
-//--- plot hiPivot
-#property indicator_label1 "hiPivot"
-#property indicator_type1 DRAW_ARROW
-#property indicator_color1 clrRed
-#property indicator_style1 STYLE_SOLID
-#property indicator_width1 1
-//--- plot loPivot
-#property indicator_label2 "loPivot"
-#property indicator_type2 DRAW_ARROW
-#property indicator_color2 clrGreen
-#property indicator_style2 STYLE_SOLID
-#property indicator_width2 1
+#property indicator_label1 "HiPivot"
+#property indicator_label2 "LoPivot"
 
 #define BULLISH 1
 #define BEARISH - 1
 #define REVERT - 1
 
-input string Hi_Pivot_Configuration = "";
-input color HiPivotColor = clrLightPink;
-input int HiPivotCode = 119;
-input string Lo_Pivot_Configuration = "";
-input color LoPivotColor = clrLightGreen;
-input int LoPivotCode = 119;
+#define APP_TAG "HiLoPivots"
+
+input color HiPivotColor = clrBlack;
+input string HiPivotCharecter = "H";
+input color LoPivotColor = clrBlack;
+input string LoPivotCharecter = "L";
+input int HiLoPivotSize = 5;
 
 //--- indicator buffers
 double hiPivotBuffer[];
 double loPivotBuffer[];
 
-int gPos, gIdx, gPivotIdx, gPreHLIdx, gSymbolDigits;
+int gPos, gIdx, gPivotIdx, gPreHLIdx;
 double gPreHi, gPreLo;
 int gCurDir = 0, gPreDir = 0;
 bool gIsInsideBar, gIsOutsideBar;
 double gIndiGap = 0;
 long gChartScale = 0;
-long gPreChartScale = 0;
 
 bool isUpBar(const double& open[], const double& close[], int barIdx) {
     return open[barIdx] < close[barIdx];
@@ -55,16 +45,16 @@ bool isUpBar(const double& open[], const double& close[], int barIdx) {
 //+------------------------------------------------------------------+
 int OnInit() {
     //--- indicator buffers mapping
-    SetIndexBuffer(0, hiPivotBuffer);
-    SetIndexBuffer(1, loPivotBuffer);
-    //--- setting a code from the Wingdings charset as the property of PLOT_ARROW
-    SetIndexArrow(0, HiPivotCode);
-    SetIndexArrow(1, LoPivotCode);
-    SetIndexStyle(0, DRAW_ARROW, 0, 0, HiPivotColor);
-    SetIndexStyle(1, DRAW_ARROW, 0, 0, LoPivotColor);
-    gSymbolDigits = (int) SymbolInfoInteger(Symbol(), SYMBOL_DIGITS);
+    SetIndexBuffer(0, hiPivotBuffer, INDICATOR_DATA);
+    SetIndexBuffer(1, loPivotBuffer, INDICATOR_DATA);
     //---
     return (INIT_SUCCEEDED);
+}
+void OnDeinit(const int reason) {
+    for (int i = ObjectsTotal() - 1; i >= 0; i--) {
+        string objName = ObjectName(i);
+        if (StringFind(objName, APP_TAG) != -1) ObjectDelete(objName);
+    }
 }
 
 //+------------------------------------------------------------------+
@@ -81,22 +71,16 @@ int OnCalculate(const int       rates_total,
                 const long&     volume[],
                 const int&      spread[])
 {
-    //--- counting from 0 to rates_total
-    ArraySetAsSeries(hiPivotBuffer, false);
-    ArraySetAsSeries(loPivotBuffer, false);
-    ArraySetAsSeries(high, false);
-    ArraySetAsSeries(low, false);
-    ArraySetAsSeries(open, false);
-    ArraySetAsSeries(close, false);
-
     gPos = prev_calculated;
     if (prev_calculated == 0) {
-        gPreHi = high[0];
-        gPreLo = low[0];
-        gPos = 1;
+        gPreHi = high[rates_total-1];
+        gPreLo = low[rates_total-1];
+        gPos = rates_total-2;
         gIndiGap = (gPreHi - gPreLo) / 5;
+    } else {
+        gPos = rates_total - prev_calculated;
     }
-    for (gIdx = gPos; gIdx < rates_total; gIdx++) {
+    for (gIdx = gPos; gIdx > 0; gIdx--) {
         hiPivotBuffer[gIdx] = EMPTY_VALUE;
         loPivotBuffer[gIdx] = EMPTY_VALUE;
 
@@ -111,7 +95,7 @@ int OnCalculate(const int       rates_total,
 
         if (gPreDir != gCurDir && gPreDir != 0) {
             if (gCurDir == BEARISH) {
-                if (gIsOutsideBar && isUpBar(open, close, gIdx)==true ){ // && isUpBar(open, close, gIdx-1) == false) {
+                if (gIsOutsideBar && isUpBar(open, close, gIdx)==true && high[gIdx] < high[gIdx-1]){
                     hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx] + gIndiGap;
                 } else if (high[gIdx] < gPreHi) {
                     hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx] + gIndiGap;
@@ -119,7 +103,7 @@ int OnCalculate(const int       rates_total,
                     hiPivotBuffer[gIdx] = high[gIdx] + gIndiGap;
                 }
             } else {
-                if (gIsOutsideBar && isUpBar(open, close, gIdx)==false){ // && isUpBar(open, close, gIdx-1) == true) {
+                if (gIsOutsideBar && isUpBar(open, close, gIdx)==false && low[gIdx] > low[gIdx-1]){
                     loPivotBuffer[gPreHLIdx] = low[gPreHLIdx] - gIndiGap;
                 } else if (low[gIdx] > gPreLo) {
                     loPivotBuffer[gPreHLIdx] = low[gPreHLIdx] - gIndiGap;
@@ -139,22 +123,47 @@ int OnCalculate(const int       rates_total,
     //--- return value of prev_calculated for next call
     return (rates_total);
 }
+
+void pivotConfig(const string& objName, bool isHi, const datetime& time, const double& price){
+    if (ObjectFind(objName) < 0) {
+        ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
+        ObjectSet(objName, OBJPROP_BACK, true);
+        ObjectSet(objName, OBJPROP_SELECTABLE, false);
+        ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+        ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    }
+    ObjectSetText(objName, isHi ? HiPivotCharecter : LoPivotCharecter, HiLoPivotSize, NULL, isHi ? HiPivotColor : LoPivotColor);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, isHi ? ANCHOR_LOWER : ANCHOR_UPPER);
+    ObjectSet(objName, OBJPROP_TIME1, time);
+    ObjectSet(objName, OBJPROP_PRICE1, price);
+}
 //+------------------------------------------------------------------+
 void OnChartEvent(const int id,
                 const long & lparam,
                 const double & dparam,
                 const string & sparam)
 {
-    //---
-    bool ret = ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
-    if (gChartScale != gPreChartScale) {
-        gPreChartScale = gChartScale;
-        if (gChartScale < 2) {
-            SetIndexStyle(0, DRAW_ARROW, 0, 0, clrNONE);
-            SetIndexStyle(1, DRAW_ARROW, 0, 0, clrNONE);
-        } else {
-            SetIndexStyle(0, DRAW_ARROW, 0, 0, HiPivotColor);
-            SetIndexStyle(1, DRAW_ARROW, 0, 0, LoPivotColor);
+    if (id == CHARTEVENT_CHART_CHANGE) {
+        bool ret = ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
+        int bars_count=WindowBarsPerChart();
+        int bar=WindowFirstVisibleBar();
+        int pIdx = 0;
+        string objName;
+        if (gChartScale >= 2) {
+            for(int i=0; i<bars_count && bar>0; i++,bar--) {
+                if (hiPivotBuffer[bar] != EMPTY_VALUE) {
+                    objName = APP_TAG + IntegerToString(pIdx++);
+                    pivotConfig(objName, true, Time[bar], High[bar]);
+                }
+                if (loPivotBuffer[bar] != EMPTY_VALUE) {
+                    objName = APP_TAG + IntegerToString(pIdx++);
+                    pivotConfig(objName, false, Time[bar], Low[bar]);
+                }
+            }
         }
+        do {
+            objName  = APP_TAG + IntegerToString(pIdx++);
+            ObjectSet(objName, OBJPROP_TIME1, 0);
+        } while (ObjectFind(objName) >= 0);
     }
 }
