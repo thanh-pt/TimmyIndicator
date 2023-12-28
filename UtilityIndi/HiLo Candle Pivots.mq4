@@ -15,7 +15,6 @@
 
 #define BULLISH 1
 #define BEARISH - 1
-#define REVERT - 1
 
 #define APP_TAG "HiLoPivots"
 
@@ -34,6 +33,7 @@ double gPreHi, gPreLo;
 int gCurDir = 0, gPreDir = 0;
 bool gIsInsideBar, gIsOutsideBar;
 long gChartScale = 0;
+bool gIsInitData;
 
 bool isUpBar(const double& open[], const double& close[], int barIdx) {
     return open[barIdx] < close[barIdx];
@@ -47,6 +47,7 @@ int OnInit() {
     SetIndexBuffer(0, hiPivotBuffer, INDICATOR_DATA);
     SetIndexBuffer(1, loPivotBuffer, INDICATOR_DATA);
     //---
+    gIsInitData = false;
     return (INIT_SUCCEEDED);
 }
 void OnDeinit(const int reason) {
@@ -87,27 +88,23 @@ int OnCalculate(const int       rates_total,
         if (high[gIdx] > gPreHi && low[gIdx] >= gPreLo) gCurDir = BULLISH;
         else if (high[gIdx] <= gPreHi && low[gIdx] < gPreLo) gCurDir = BEARISH;
         else if (high[gIdx] > gPreHi && low[gIdx] < gPreLo) { // Outside bar correction
-            gCurDir = gCurDir * REVERT;
             gIsOutsideBar = true;
         } else gIsInsideBar = true;
 
         if (gPreDir != gCurDir && gPreDir != 0) {
             if (gCurDir == BEARISH) {
-                if (gIsOutsideBar && isUpBar(open, close, gIdx)==true && high[gIdx] < high[gIdx-1]){
-                    hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx];
-                } else if (high[gIdx] < gPreHi) {
-                    hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx];
-                } else {
-                    hiPivotBuffer[gIdx] = high[gIdx];
-                }
+                hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx];
             } else {
-                if (gIsOutsideBar && isUpBar(open, close, gIdx)==false && low[gIdx] > low[gIdx-1]){
-                    loPivotBuffer[gPreHLIdx] = low[gPreHLIdx];
-                } else if (low[gIdx] > gPreLo) {
-                    loPivotBuffer[gPreHLIdx] = low[gPreHLIdx];
-                } else {
-                    loPivotBuffer[gIdx] = low[gIdx];
-                }
+                loPivotBuffer[gPreHLIdx] = low[gPreHLIdx];
+            }
+        }
+        else if (gIsOutsideBar) {
+            if (gCurDir == BEARISH) {
+                loPivotBuffer[gPreHLIdx] = low[gPreHLIdx];
+                hiPivotBuffer[gIdx] = high[gIdx];
+            } else {
+                hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx];
+                loPivotBuffer[gIdx] = low[gIdx];
             }
         }
         gPreDir = gCurDir;
@@ -118,6 +115,8 @@ int OnCalculate(const int       rates_total,
             gPreHLIdx = gIdx;
         }
     }
+    loadPivotDrawing();
+    gIsInitData = true;
     //--- return value of prev_calculated for next call
     return (rates_total);
 }
@@ -135,33 +134,26 @@ void pivotConfig(const string& objName, bool isHi, const datetime& time, const d
     ObjectSet(objName, OBJPROP_TIME1, time);
     ObjectSet(objName, OBJPROP_PRICE1, price);
 }
-//+------------------------------------------------------------------+
-void OnChartEvent(const int id,
-                const long & lparam,
-                const double & dparam,
-                const string & sparam)
-{
-    if (id == CHARTEVENT_CHART_CHANGE) {
-        ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
-        int bars_count=WindowBarsPerChart();
-        int bar=WindowFirstVisibleBar();
-        int pIdx = 0;
-        string objName;
-        if (gChartScale >= 2) {
-            for(int i=0; i<bars_count && bar>0; i++,bar--) {
-                if (hiPivotBuffer[bar] != EMPTY_VALUE) {
-                    objName = APP_TAG + IntegerToString(pIdx++);
-                    pivotConfig(objName, true, Time[bar], High[bar]);
-                }
-                if (loPivotBuffer[bar] != EMPTY_VALUE) {
-                    objName = APP_TAG + IntegerToString(pIdx++);
-                    pivotConfig(objName, false, Time[bar], Low[bar]);
-                }
+void loadPivotDrawing(){
+    ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
+    int bars_count=WindowBarsPerChart();
+    int bar=WindowFirstVisibleBar();
+    int pIdx = 0;
+    string objName;
+    if (gChartScale >= 2) {
+        for(int i=0; i<bars_count && bar>0; i++,bar--) {
+            if (hiPivotBuffer[bar] != EMPTY_VALUE) {
+                objName = APP_TAG + IntegerToString(pIdx++);
+                pivotConfig(objName, true, Time[bar], High[bar]);
+            }
+            if (loPivotBuffer[bar] != EMPTY_VALUE) {
+                objName = APP_TAG + IntegerToString(pIdx++);
+                pivotConfig(objName, false, Time[bar], Low[bar]);
             }
         }
-        do {
-            objName  = APP_TAG + IntegerToString(pIdx++);
-            ObjectSet(objName, OBJPROP_TIME1, 0);
-        } while (ObjectFind(objName) >= 0);
     }
+    do {
+        objName  = APP_TAG + IntegerToString(pIdx++);
+        ObjectSet(objName, OBJPROP_TIME1, 0);
+    } while (ObjectFind(objName) >= 0);
 }
