@@ -33,8 +33,8 @@ input color           Fib_2_Color = clrLightGray;
 
 enum FibType
 {
-    FIB_OF,
     FIB_RANGE,
+    FIB_RANGE_EXT,
     FIB_FULL,
     FIB_NUM,
 };
@@ -108,9 +108,9 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
 
     // Init variable type
     mIndexType = 0;
-    mNameType[FIB_FULL]  = "Fib";
-    mNameType[FIB_OF]    = "OrderFlow";
-    mNameType[FIB_RANGE] = "Range";
+    mNameType[FIB_RANGE]     = "Range";
+    mNameType[FIB_RANGE_EXT] = "RangeExt";
+    mNameType[FIB_FULL]      = "Fib";
     mTypeNum = FIB_NUM;
     for (int i = 0; i < mTypeNum; i++)
     {
@@ -188,13 +188,11 @@ void Fibonacci::updateTypeProperty()
     if (mIndexType != FIB_FULL) {
         multiSetProp(OBJPROP_COLOR, clrNONE, iFib3+iFib4+iFib5 + iTxt3+iTxt4+iTxt5);
     }
-    if (mIndexType == FIB_OF) {
-        multiSetProp(OBJPROP_COLOR, clrNONE, iFib0+iFib1+iTxt2+iTxt1+iTxt0);
-        multiSetProp(OBJPROP_COLOR, Fib_3_Color, iFib3);
-    }
-    if (mIndexType == FIB_RANGE) {
-        ObjectSetText(iTxt2, "50%  ", 8);
+    if (mIndexType == FIB_RANGE || mIndexType == FIB_RANGE_EXT){
+        ObjectSetText(iTxt2, "𝙀𝙦  ", 8);
         multiSetProp(OBJPROP_COLOR, clrDarkOrange, iFib2+iTxt2);
+    }
+    if (mIndexType == FIB_RANGE_EXT) {
         multiSetProp(OBJPROP_RAY, true, iFib0+iFib1);
     }
 }
@@ -263,17 +261,14 @@ void Fibonacci::refreshData()
     multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     multiSetProp(OBJPROP_SELECTED, selected, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2+ckLne);
     //-------------------------------------------------
-    if (mIndexType == FIB_RANGE)
-    {
+    if (mIndexType == FIB_RANGE || mIndexType == FIB_RANGE_EXT){
         bool isUp = (price1 > price0);
-        ObjectSetText(iTxt0, isUp ? "𝙇𝙤𝙬  " : "𝙃𝙞𝙜𝙝  ", 8);
-        ObjectSetText(iTxt1, isUp ? "𝙃𝙞𝙜𝙝  ": "𝙇𝙤𝙬  ", 8);
+        ObjectSetText(iTxt0, isUp ? "𝙇𝙤  " : "𝙃𝙞  ", 8);
+        ObjectSetText(iTxt1, isUp ? "𝙃𝙞  " : "𝙇𝙤  ", 8);
         multiSetProp(OBJPROP_COLOR, isUp ? clrGreen : clrRed  , iFib0+iTxt0);
         multiSetProp(OBJPROP_COLOR, isUp ? clrRed   : clrGreen, iFib1+iTxt1);
     }
-    else if (mIndexType == FIB_OF) {
-        SetRectangleBackground(ckLne, price1 > price0 ? Rect_DzLight_Color : Rect_SzLight_Color);
-    }
+
 }
 void Fibonacci::finishedJobDone(){}
 

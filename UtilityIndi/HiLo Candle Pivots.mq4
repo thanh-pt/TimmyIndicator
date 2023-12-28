@@ -41,10 +41,15 @@ double loPivotBuffer[];
 int gPos, gIdx, gPivotIdx, gPreHLIdx, gSymbolDigits;
 double gPreHi, gPreLo;
 int gCurDir = 0, gPreDir = 0;
-bool gIsInsideBar;
+bool gIsInsideBar, gIsOutsideBar;
 double gIndiGap = 0;
 long gChartScale = 0;
 long gPreChartScale = 0;
+
+bool isUpBar(const double& open[], const double& close[], int barIdx) {
+    return open[barIdx] < close[barIdx];
+}
+
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -81,34 +86,42 @@ int OnCalculate(const int       rates_total,
     ArraySetAsSeries(loPivotBuffer, false);
     ArraySetAsSeries(high, false);
     ArraySetAsSeries(low, false);
+    ArraySetAsSeries(open, false);
+    ArraySetAsSeries(close, false);
 
     gPos = prev_calculated;
     if (prev_calculated == 0) {
         gPreHi = high[0];
         gPreLo = low[0];
         gPos = 1;
-        gIndiGap = (gPreHi - gPreLo) / 20;
+        gIndiGap = (gPreHi - gPreLo) / 5;
     }
     for (gIdx = gPos; gIdx < rates_total; gIdx++) {
         hiPivotBuffer[gIdx] = EMPTY_VALUE;
         loPivotBuffer[gIdx] = EMPTY_VALUE;
 
         gIsInsideBar = false;
+        gIsOutsideBar = false;
         if (high[gIdx] > gPreHi && low[gIdx] >= gPreLo) gCurDir = BULLISH;
         else if (high[gIdx] <= gPreHi && low[gIdx] < gPreLo) gCurDir = BEARISH;
         else if (high[gIdx] > gPreHi && low[gIdx] < gPreLo) { // Outside bar correction
             gCurDir = gCurDir * REVERT;
+            gIsOutsideBar = true;
         } else gIsInsideBar = true;
 
         if (gPreDir != gCurDir && gPreDir != 0) {
             if (gCurDir == BEARISH) {
-                if (high[gIdx] < gPreHi) {
+                if (gIsOutsideBar && isUpBar(open, close, gIdx)==true ){ // && isUpBar(open, close, gIdx-1) == false) {
+                    hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx] + gIndiGap;
+                } else if (high[gIdx] < gPreHi) {
                     hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx] + gIndiGap;
                 } else {
                     hiPivotBuffer[gIdx] = high[gIdx] + gIndiGap;
                 }
             } else {
-                if (low[gIdx] > gPreLo) {
+                if (gIsOutsideBar && isUpBar(open, close, gIdx)==false){ // && isUpBar(open, close, gIdx-1) == true) {
+                    loPivotBuffer[gPreHLIdx] = low[gPreHLIdx] - gIndiGap;
+                } else if (low[gIdx] > gPreLo) {
                     loPivotBuffer[gPreHLIdx] = low[gPreHLIdx] - gIndiGap;
                 } else {
                     loPivotBuffer[gIdx] = low[gIdx] - gIndiGap;
