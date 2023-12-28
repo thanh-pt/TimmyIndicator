@@ -33,11 +33,6 @@ double gPreHi, gPreLo;
 int gCurDir = 0, gPreDir = 0;
 bool gIsInsideBar, gIsOutsideBar;
 long gChartScale = 0;
-bool gIsInitData;
-
-bool isUpBar(const double& open[], const double& close[], int barIdx) {
-    return open[barIdx] < close[barIdx];
-}
 
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
@@ -47,7 +42,6 @@ int OnInit() {
     SetIndexBuffer(0, hiPivotBuffer, INDICATOR_DATA);
     SetIndexBuffer(1, loPivotBuffer, INDICATOR_DATA);
     //---
-    gIsInitData = false;
     return (INIT_SUCCEEDED);
 }
 void OnDeinit(const int reason) {
@@ -116,7 +110,6 @@ int OnCalculate(const int       rates_total,
         }
     }
     loadPivotDrawing();
-    gIsInitData = true;
     //--- return value of prev_calculated for next call
     return (rates_total);
 }
