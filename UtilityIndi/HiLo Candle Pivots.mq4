@@ -29,11 +29,10 @@ input int HiLoPivotSize = 5;
 double hiPivotBuffer[];
 double loPivotBuffer[];
 
-int gPos, gIdx, gPivotIdx, gPreHLIdx;
+int gPos, gIdx, gPreHLIdx;
 double gPreHi, gPreLo;
 int gCurDir = 0, gPreDir = 0;
 bool gIsInsideBar, gIsOutsideBar;
-double gIndiGap = 0;
 long gChartScale = 0;
 
 bool isUpBar(const double& open[], const double& close[], int barIdx) {
@@ -76,7 +75,6 @@ int OnCalculate(const int       rates_total,
         gPreHi = high[rates_total-1];
         gPreLo = low[rates_total-1];
         gPos = rates_total-2;
-        gIndiGap = (gPreHi - gPreLo) / 5;
     } else {
         gPos = rates_total - prev_calculated;
     }
@@ -96,19 +94,19 @@ int OnCalculate(const int       rates_total,
         if (gPreDir != gCurDir && gPreDir != 0) {
             if (gCurDir == BEARISH) {
                 if (gIsOutsideBar && isUpBar(open, close, gIdx)==true && high[gIdx] < high[gIdx-1]){
-                    hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx] + gIndiGap;
+                    hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx];
                 } else if (high[gIdx] < gPreHi) {
-                    hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx] + gIndiGap;
+                    hiPivotBuffer[gPreHLIdx] = high[gPreHLIdx];
                 } else {
-                    hiPivotBuffer[gIdx] = high[gIdx] + gIndiGap;
+                    hiPivotBuffer[gIdx] = high[gIdx];
                 }
             } else {
                 if (gIsOutsideBar && isUpBar(open, close, gIdx)==false && low[gIdx] > low[gIdx-1]){
-                    loPivotBuffer[gPreHLIdx] = low[gPreHLIdx] - gIndiGap;
+                    loPivotBuffer[gPreHLIdx] = low[gPreHLIdx];
                 } else if (low[gIdx] > gPreLo) {
-                    loPivotBuffer[gPreHLIdx] = low[gPreHLIdx] - gIndiGap;
+                    loPivotBuffer[gPreHLIdx] = low[gPreHLIdx];
                 } else {
-                    loPivotBuffer[gIdx] = low[gIdx] - gIndiGap;
+                    loPivotBuffer[gIdx] = low[gIdx];
                 }
             }
         }
@@ -144,7 +142,7 @@ void OnChartEvent(const int id,
                 const string & sparam)
 {
     if (id == CHARTEVENT_CHART_CHANGE) {
-        bool ret = ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
+        ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
         int bars_count=WindowBarsPerChart();
         int bar=WindowFirstVisibleBar();
         int pIdx = 0;
