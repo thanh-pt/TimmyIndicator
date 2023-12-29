@@ -42,6 +42,8 @@ int OnInit() {
     SetIndexBuffer(0, hiPivotBuffer, INDICATOR_DATA);
     SetIndexBuffer(1, loPivotBuffer, INDICATOR_DATA);
     //---
+    SetIndexStyle(0, DRAW_NONE);
+    SetIndexStyle(1, DRAW_NONE);
     return (INIT_SUCCEEDED);
 }
 void OnDeinit(const int reason) {
