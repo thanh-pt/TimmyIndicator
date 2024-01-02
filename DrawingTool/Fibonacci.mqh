@@ -34,8 +34,8 @@ input color           Fib_2_Color = clrLightGray;
 enum FibType
 {
     FIB_RANGE,
-    FIB_RANGE_EXT,
     FIB_FULL,
+    FIB_RANGE_EXT,
     FIB_NUM,
 };
 

@@ -3,9 +3,10 @@
 
 input string     _0 = "Point Config";
 input string     Point_1______Name  = "Swing Point";
-input color      Point_1_Color      = clrRed;
-input string     Point_1_Charecter  = "●";
-input int        Point_1_Size       = 9;
+input color      Point_1_Color      = clrPink;
+input string     Point_1_Charecter  = "n";
+input int        Point_1_Size       = 10;
+input string     Point_1_Font       = "webdings";
 
 enum PointType
 {
@@ -23,6 +24,7 @@ private:
     color  mColor    [MAX_TYPE];
     string mCharecter[MAX_TYPE];
     int    mSize     [MAX_TYPE];
+    string mFont     [MAX_TYPE];
 
 // Component name
 private:
@@ -67,6 +69,7 @@ Point::Point(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mColor    [POINT_1] = Point_1_Color  ;
     mCharecter[POINT_1] = Point_1_Charecter;
     mSize     [POINT_1] = Point_1_Size     ;
+    mFont     [POINT_1] = Point_1_Font     ;
 
     mIndexType = 0;
     mTypeNum = POINT_NUM;
@@ -90,10 +93,11 @@ void Point::createItem()
 }
 void Point::updateDefaultProperty()
 {
+    ObjectSet(cPoint, OBJPROP_BACK , true);
 }
 void Point::updateTypeProperty()
 {
-    ObjectSetText(cPoint, mCharecter[mIndexType], mSize[mIndexType], NULL, mColor[mIndexType]);
+    ObjectSetText(cPoint, mCharecter[mIndexType], mSize[mIndexType], mFont[mIndexType], mColor[mIndexType]);
 }
 void Point::activateItem(const string& itemId)
 {
@@ -106,7 +110,8 @@ void Point::refreshData()
     int shift = iBarShift(ChartSymbol(), ChartPeriod(), time);
     bool isUp = (price >= High[shift]);
     ObjectSet(cPoint, OBJPROP_COLOR, mColor[mIndexType]);
-    ObjectSetInteger(ChartID(), cPoint, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+    // ObjectSetInteger(ChartID(), cPoint, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+    ObjectSetInteger(ChartID(), cPoint, OBJPROP_ANCHOR, ANCHOR_CENTER);
     ObjectSetString(ChartID(), cPoint, OBJPROP_TOOLTIP, DoubleToString(price, 5));
     setItemPos(cPoint, time, price);
 }
