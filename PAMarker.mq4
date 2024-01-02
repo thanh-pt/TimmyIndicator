@@ -96,6 +96,10 @@ int OnInit()
     return (INIT_SUCCEEDED);
 }
 
+void OnDeinit(const int reason) {
+    gTemplates.clearTemplates();
+}
+
 int OnCalculate(const int rates_total,
                 const int prev_calculated,
                 const datetime &time[],
