@@ -149,7 +149,7 @@ void LabelText::onItemClick(const string &itemId, const string &objId)
         idx++;
         additionalText = cLbText +"#"+ IntegerToString(idx);
     }
-    if (selected == true && objId == lastItem) gTemplates.openTemplates(objId, mTemplateTypes, -1);
+    if (selected == true && objId == lastItem && pCommonData.mShiftHold) gTemplates.openTemplates(objId, mTemplateTypes, -1);
 }
 void LabelText::onItemChange(const string &itemId, const string &objId)
 {

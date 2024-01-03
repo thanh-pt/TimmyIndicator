@@ -145,8 +145,7 @@ void Point::onItemClick(const string &itemId, const string &objId)
 {
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
     multiSetProp(OBJPROP_SELECTED   , selected, mAllItem);
-    if (selected)
-    {
+    if (selected && pCommonData.mShiftHold){
         gTemplates.openTemplates(objId, mTemplateTypes, mIndexType);
     }
 }

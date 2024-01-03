@@ -353,7 +353,7 @@ void Fibonacci::onItemClick(const string &itemId, const string &objId)
     if (selected)
     {
         unSelectAllExcept(itemId);
-        if (objId == cPointC1 || objId == cPointC2)
+        if (StringFind(objId, "_c") >= 0 && pCommonData.mShiftHold)
            gTemplates.openTemplates(objId, mTemplateTypes, mIndexType);
     }
 }

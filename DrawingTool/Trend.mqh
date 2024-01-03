@@ -417,8 +417,9 @@ void Trend::onItemClick(const string &itemId, const string &objId)
         if ((int)ObjectGet(cMTrend, OBJPROP_SELECTED) == 0) return;
         targetobj = cMTrend;
     }
-    multiSetProp(OBJPROP_SELECTED, (int)ObjectGet(targetobj, OBJPROP_SELECTED), mAllItem);
-    if (targetobj == cPoint2 && (bool)ObjectGet(cMTrend, OBJPROP_SELECTED) == true){
+    int selected = (int)ObjectGet(targetobj, OBJPROP_SELECTED);
+    multiSetProp(OBJPROP_SELECTED, selected, mAllItem);
+    if (selected && StringFind(objId, "_c") >= 0 && pCommonData.mShiftHold){
         gTemplates.openTemplates(objId, mTemplateTypes, mIndexType);
     }
 }

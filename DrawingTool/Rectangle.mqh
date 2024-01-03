@@ -277,7 +277,7 @@ void Rectangle::onItemClick(const string &itemId, const string &objId)
     multiSetProp(OBJPROP_COLOR   , selected ? gColorMousePoint : clrNONE, cPointL1+cPointL2+cPointR1+cPointR2+cPointC1+cPointC2);
     if (selected) {
         unSelectAllExcept(itemId);
-        if (objId == cPointC1 || objId == cPointC2)
+        if (StringFind(objId, "_c") >= 0 && pCommonData.mShiftHold)
             gTemplates.openTemplates(objId, mTemplateTypes, mIndexType);
     }
 }
