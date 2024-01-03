@@ -424,7 +424,7 @@ void Trend::onItemClick(const string &itemId, const string &objId)
 }
 void Trend::onItemChange(const string &itemId, const string &objId)
 {
-    if (objId == cMTrend) multiSetProp(OBJPROP_COLOR, (color)ObjectGet(cMTrend, OBJPROP_COLOR), iLbText+iRtText+iLtText);
+    if (objId == cMTrend) multiSetProp(OBJPROP_COLOR, (color)ObjectGet(cMTrend, OBJPROP_COLOR), iLbText+iRtText+iLtText+iArrowT);
     if (objId == cPoint1 || objId == cPoint2 || objId == cMTrend){
         string strLbText = ObjectDescription(cMTrend);
         string strRtText = ObjectDescription(cPoint2);
