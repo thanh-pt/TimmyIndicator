@@ -23,6 +23,7 @@ input string HiPivotCharecter = "H";
 input color LoPivotColor = clrBlack;
 input string LoPivotCharecter = "L";
 input int HiLoPivotSize = 5;
+input int VisibilityChartScale = 2;
 
 //--- indicator buffers
 double hiPivotBuffer[];
@@ -135,7 +136,7 @@ void loadPivotDrawing(){
     int bar=WindowFirstVisibleBar();
     int pIdx = 0;
     string objName;
-    if (gChartScale >= 2) {
+    if (gChartScale >= VisibilityChartScale) {
         for(int i=0; i<bars_count && bar>0; i++,bar--) {
             if (hiPivotBuffer[bar] != EMPTY_VALUE) {
                 objName = APP_TAG + IntegerToString(pIdx++);
