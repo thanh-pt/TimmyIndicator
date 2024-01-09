@@ -49,6 +49,8 @@ return
 #IfWinActive, ahk_exe Forex Simulator.exe
 	Right::^Right
 	Left::^Left
+	XButton1::^Right
+	XButton2::^Left
 #IfWinActive
 
 ;------------------------------------------------------------ Chrome Hotkey --------------------------------------------------------------------------------

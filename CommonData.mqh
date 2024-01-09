@@ -12,6 +12,7 @@ public:
     int      mMouseY;
     bool     mShiftHold;
     bool     mCtrlHold;
+    long     mChartWidth;
 public:
     void updateMousePosition(const long& x, const double& y, const string &sparam)
     {
@@ -21,46 +22,41 @@ public:
         mMouseX = (int) x;
         mMouseY = (int) y;
         ChartXYToTimePrice(ChartID(), (int)mMouseX, (int)mMouseY, mSubwindow, mMouseTime, mMousePrice);
-        if(mCtrlHold)
-        {
+        if(mCtrlHold) {
             controlHold();
         }
+        ChartGetInteger(ChartID(),CHART_WIDTH_IN_PIXELS ,mSubwindow, mChartWidth);
+        ChartSetDouble(ChartID(),CHART_FIXED_POSITION, (double)mMouseX/mChartWidth*100);
     }
     void controlHold()
     {
         int shift = iBarShift(ChartSymbol(), ChartPeriod(), mMouseTime);
-        if (shift <= 0)
-        {
+        if (shift <= 0) {
             return;
         }
         do
         {
-            if (mMousePrice <= Low[shift])
-            {
+            if (mMousePrice <= Low[shift]) {
                 mMousePrice = Low[shift];
                 break;
             }
-            if (mMousePrice >= High[shift])
-            {
+            if (mMousePrice >= High[shift]) {
                 mMousePrice = High[shift];
                 break;
             }
             double bodyHigh = Open[shift];
             double bodyLow  = Close[shift];
-            if (Close[shift] > Open[shift])
-            {
+            if (Close[shift] > Open[shift]) {
                 bodyHigh = Close[shift];
                 bodyLow  = Open[shift];
             }
             
             double centerPrice = (bodyLow + bodyHigh) / 2;
             
-            if (mMousePrice <= centerPrice)
-            {
+            if (mMousePrice <= centerPrice) {
                 mMousePrice = bodyLow;
             }
-            else
-            {
+            else {
                 mMousePrice = bodyHigh;
             }
 
