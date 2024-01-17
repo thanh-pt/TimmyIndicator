@@ -16,7 +16,7 @@ return
 	XButton1::End
 	^XButton1::
 		Send, J ;Chart Force
-		sleep, 10
+		sleep, 100
 		Send, H ;Chart Free
 	return
 
@@ -49,8 +49,6 @@ return
 #IfWinActive, ahk_exe Forex Simulator.exe
 	Right::^Right
 	Left::^Left
-	XButton1::^Right
-	XButton2::^Left
 #IfWinActive
 
 ;------------------------------------------------------------ Chrome Hotkey --------------------------------------------------------------------------------
@@ -64,4 +62,8 @@ return
 	return
 #IfWinActive ; Reset the hotkey context back to all windows
 
-
+#IfWinActive, ahk_exe chrome.exe
+	^XButton2::
+		SendInput, {Ctrl}{Home}
+	return
+#IfWinActive
