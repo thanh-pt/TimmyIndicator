@@ -27,6 +27,7 @@ bool   gAlertReach  = false;
 double gAlertPrice  = 0;
 string gAlertRemain = "";
 int    gSymbolDigits= 0;
+double gScaleRange = 0;
 
 
 void initAlarm()
@@ -112,6 +113,10 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
     if (gAlertActive) checkAlert();
+    if (prev_calculated == 0) {
+        // Init Scale Range
+        gScaleRange = ((High[1]-Low[1])+(High[2]-Low[2])+(High[3]-Low[3])+(High[4]-Low[4])+(High[5]-Low[5])+(High[6]-Low[6])+(High[7]-Low[7]))/35;
+    }
     return (rates_total);
 }
 

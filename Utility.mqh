@@ -232,14 +232,13 @@ void scaleChart(bool isUp)
     long chart_ID = ChartID();
     ChartGetDouble(chart_ID,CHART_FIXED_MAX,0,chartMax);
     ChartGetDouble(chart_ID,CHART_FIXED_MIN,0,chartMin);
-    double lastCandleHeigh = (High[1]-Low[1])/5;
     if (isUp) {
-        chartMax = chartMax + lastCandleHeigh;
-        chartMin = chartMin - lastCandleHeigh;
+        chartMax = chartMax + gScaleRange;
+        chartMin = chartMin - gScaleRange;
     }
     else {
-        chartMax = chartMax - lastCandleHeigh;
-        chartMin = chartMin + lastCandleHeigh;
+        chartMax = chartMax - gScaleRange;
+        chartMin = chartMin + gScaleRange;
     }
     ChartSetDouble(chart_ID,CHART_FIXED_MAX,chartMax);
     ChartSetDouble(chart_ID,CHART_FIXED_MIN,chartMin);
