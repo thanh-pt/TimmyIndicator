@@ -19,6 +19,7 @@ input color BoxColor = clrSlateGray;
 int chartPeriod;
 int barBoxCount;
 bool chartReady;
+int prev_totalRate;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -51,6 +52,10 @@ int OnCalculate(const int rates_total,
                 const int & spread[]) {
     //---
     chartReady = true;
+    if (prev_totalRate != rates_total){
+        scanAndDrawTimeBox();
+        prev_totalRate = rates_total;
+    }
     //--- return value of prev_calculated for next call
     return (rates_total);
 }
@@ -62,17 +67,25 @@ void OnChartEvent(const int id,
                 const double & dparam,
                 const string & sparam) {
     //---
-    if (chartReady && chartPeriod <= PERIOD_M15 && id == CHARTEVENT_CHART_CHANGE) {
+    if (id == CHARTEVENT_CHART_CHANGE) {
+        scanAndDrawTimeBox();
+    }
+}
+//+------------------------------------------------------------------+
+
+void scanAndDrawTimeBox(){
+    if (!chartReady) return;
+    int timeBoxIdx = 0;
+    if (chartPeriod <= PERIOD_M15){
         int bar = WindowFirstVisibleBar();
         int bars_count = WindowBarsPerChart();
 
         int hour = 0;
         double hi=0, lo=0;
-        int timeBoxIdx = 0;
         int beginBarIdx = 0;
         bool start = false;
 
-        for (int i = 0; i < bars_count && bar > 0; i++, bar--) {
+        for (int i = 0; bar > 0; i++, bar--) {
             hour = TimeHour(Time[bar]);
             if (hour >= BeginHour && hour < EndHour){
                 if (start == false) {
@@ -88,37 +101,55 @@ void OnChartEvent(const int id,
                 // last sample and draw
                 if (High[bar] > hi) hi = High[bar];
                 if (Low[bar] < lo) lo = Low[bar];
-                drawTimeBox(timeBoxIdx++, beginBarIdx, bar, hi, lo);
+                drawTimeBox(timeBoxIdx++, Time[beginBarIdx], Time[bar], hi, lo);
                 start = false;
+                if (i >= bars_count) {
+                    break;
+                }
             }
         }
-        if (start == true){
+        if (bar == 0){
             // Draw current box
-            drawTimeBox(timeBoxIdx++, beginBarIdx, bar, hi, lo);
+            MqlDateTime  dt_struct;
+            TimeToStruct(Time[0], dt_struct);
+            dt_struct.hour = 0;
+            dt_struct.min = 0;
+            dt_struct.sec = 0;
+            datetime dt_today;
+            dt_today = StructToTime(dt_struct);
+            bar = iBarShift(ChartSymbol(), chartPeriod, dt_today);
+            if (bar > EndHour*60/chartPeriod) return;
+            hi = High[bar];
+            lo = Low[bar];
+            for (; bar > 0; bar--) {
+                if (High[bar] > hi) hi = High[bar];
+                if (Low[bar] < lo) lo = Low[bar];
+            }
+            drawTimeBox(timeBoxIdx++, dt_today + BeginHour*3600, dt_today + EndHour*3600, hi, lo);
         }
-        string objName;
-        do {
-            objName = APP_TAG + "1" + IntegerToString(timeBoxIdx);
-            ObjectSet(objName, OBJPROP_TIME1, 0);
-            ObjectSet(objName, OBJPROP_TIME2, 0);
-
-            objName = APP_TAG + "2" + IntegerToString(timeBoxIdx);
-            ObjectSet(objName, OBJPROP_TIME1, 0);
-            ObjectSet(objName, OBJPROP_TIME2, 0);
-            
-            objName = APP_TAG + "3" + IntegerToString(timeBoxIdx);
-            ObjectSet(objName, OBJPROP_TIME1, 0);
-            ObjectSet(objName, OBJPROP_TIME2, 0);
-            
-            objName = APP_TAG + "4" + IntegerToString(timeBoxIdx++);
-            ObjectSet(objName, OBJPROP_TIME2, 0);
-            ObjectSet(objName, OBJPROP_TIME1, 0);
-        } while (ObjectFind(objName) >= 0);
     }
-}
-//+------------------------------------------------------------------+
 
-void drawTimeBox(int index, int beginBarIdx, int endBarIdx, double hi, double lo){
+    string objName;
+    do {
+        objName = APP_TAG + "1" + IntegerToString(timeBoxIdx);
+        ObjectSet(objName, OBJPROP_TIME1, 0);
+        ObjectSet(objName, OBJPROP_TIME2, 0);
+
+        objName = APP_TAG + "2" + IntegerToString(timeBoxIdx);
+        ObjectSet(objName, OBJPROP_TIME1, 0);
+        ObjectSet(objName, OBJPROP_TIME2, 0);
+        
+        objName = APP_TAG + "3" + IntegerToString(timeBoxIdx);
+        ObjectSet(objName, OBJPROP_TIME1, 0);
+        ObjectSet(objName, OBJPROP_TIME2, 0);
+        
+        objName = APP_TAG + "4" + IntegerToString(timeBoxIdx++);
+        ObjectSet(objName, OBJPROP_TIME2, 0);
+        ObjectSet(objName, OBJPROP_TIME1, 0);
+    } while (ObjectFind(objName) >= 0);
+}
+
+void drawTimeBox(int index, datetime begin_dt, datetime end_dt, double hi, double lo){
     string objName1 = APP_TAG + "1" + IntegerToString(index);
     string objName2 = APP_TAG + "2" + IntegerToString(index);
     string objName3 = APP_TAG + "3" + IntegerToString(index);
@@ -164,21 +195,22 @@ void drawTimeBox(int index, int beginBarIdx, int endBarIdx, double hi, double lo
     }
     ObjectSet(objName1, OBJPROP_PRICE1, hi);
     ObjectSet(objName1, OBJPROP_PRICE2, hi);
-    ObjectSet(objName1, OBJPROP_TIME1, Time[beginBarIdx]);
-    ObjectSet(objName1, OBJPROP_TIME2, Time[endBarIdx]);
+    ObjectSet(objName1, OBJPROP_TIME1, begin_dt);
+    ObjectSet(objName1, OBJPROP_TIME2, end_dt);
 
     ObjectSet(objName2, OBJPROP_PRICE1, hi);
     ObjectSet(objName2, OBJPROP_PRICE2, lo);
-    ObjectSet(objName2, OBJPROP_TIME1, Time[endBarIdx]);
-    ObjectSet(objName2, OBJPROP_TIME2, Time[endBarIdx]);
+    ObjectSet(objName2, OBJPROP_TIME1, end_dt);
+    ObjectSet(objName2, OBJPROP_TIME2, end_dt);
 
     ObjectSet(objName3, OBJPROP_PRICE1, lo);
     ObjectSet(objName3, OBJPROP_PRICE2, lo);
-    ObjectSet(objName3, OBJPROP_TIME1, Time[beginBarIdx]);
-    ObjectSet(objName3, OBJPROP_TIME2, Time[endBarIdx]);
+    ObjectSet(objName3, OBJPROP_TIME1, begin_dt);
+    ObjectSet(objName3, OBJPROP_TIME2, end_dt);
 
     ObjectSet(objName4, OBJPROP_PRICE1, hi);
     ObjectSet(objName4, OBJPROP_PRICE2, lo);
-    ObjectSet(objName4, OBJPROP_TIME1, Time[beginBarIdx]);
-    ObjectSet(objName4, OBJPROP_TIME2, Time[beginBarIdx]);
+    ObjectSet(objName4, OBJPROP_TIME1, begin_dt);
+    ObjectSet(objName4, OBJPROP_TIME2, begin_dt);
+
 }
