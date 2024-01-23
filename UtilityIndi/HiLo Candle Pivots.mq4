@@ -22,8 +22,8 @@ input color HiPivotColor = clrBlack;
 input string HiPivotCharecter = "H";
 input color LoPivotColor = clrBlack;
 input string LoPivotCharecter = "L";
-input int HiLoPivotSize = 5;
-input int VisibilityChartScale = 2;
+input int HiLoPivotSize = 4;
+input int VisibilityChartScale = 3;
 
 //--- indicator buffers
 double hiPivotBuffer[];
@@ -85,7 +85,12 @@ int OnCalculate(const int       rates_total,
         if (high[gIdx] > gPreHi && low[gIdx] >= gPreLo) gCurDir = BULLISH;
         else if (high[gIdx] <= gPreHi && low[gIdx] < gPreLo) gCurDir = BEARISH;
         else if (high[gIdx] > gPreHi && low[gIdx] < gPreLo) { // Outside bar correction
-            gIsOutsideBar = true;
+            if (gCurDir == BULLISH) {
+                gIsOutsideBar = (open[gIdx] < close[gIdx]);
+            } else {
+                gIsOutsideBar = (open[gIdx] > close[gIdx]);
+            }
+            // gIsOutsideBar = true;
         } else gIsInsideBar = true;
 
         if (gPreDir != gCurDir && gPreDir != 0) {

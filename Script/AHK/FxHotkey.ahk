@@ -44,11 +44,22 @@ return
 	^Right::
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
+	$]::
+		WinActivate, ahk_exe Forex Simulator.exe
+	return
+	$[::
+		WinActivate, ahk_exe Forex Simulator.exe
+	return
+	$/::
+		WinActivate, ahk_exe Forex Simulator.exe
+	return
 #IfWinActive
 
 #IfWinActive, ahk_exe Forex Simulator.exe
 	Right::^Right
 	Left::^Left
+	$]::^Right
+	$[::^Left
 #IfWinActive
 
 ;------------------------------------------------------------ Chrome Hotkey --------------------------------------------------------------------------------
