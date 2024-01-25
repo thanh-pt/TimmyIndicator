@@ -118,14 +118,17 @@ void scanAndDrawTimeBox(){
             datetime dt_today;
             dt_today = StructToTime(dt_struct);
             bar = iBarShift(ChartSymbol(), chartPeriod, dt_today);
-            if (bar > EndHour*60/chartPeriod) return;
+            if (bar > EndHour*60/chartPeriod) {
+                hideTodayTimeBox();
+                return;
+            }
             hi = High[bar];
             lo = Low[bar];
             for (; bar > 0; bar--) {
                 if (High[bar] > hi) hi = High[bar];
                 if (Low[bar] < lo) lo = Low[bar];
             }
-            drawTimeBox(timeBoxIdx++, dt_today + BeginHour*3600, dt_today + EndHour*3600, hi, lo);
+            drawTodayTimeBox(dt_today, hi, lo);
         }
     }
 
@@ -213,4 +216,85 @@ void drawTimeBox(int index, datetime begin_dt, datetime end_dt, double hi, doubl
     ObjectSet(objName4, OBJPROP_TIME1, begin_dt);
     ObjectSet(objName4, OBJPROP_TIME2, begin_dt);
 
+}
+
+void hideTodayTimeBox()
+{
+    string preSsLine  = APP_TAG + "preSsLine";
+    string beginLine  = APP_TAG + "beginLine";
+    string preEndLine = APP_TAG + "preEdLine";
+    string endLine    = APP_TAG + "end__Line";
+    ObjectSet(preSsLine,  OBJPROP_PRICE1, 0);
+    ObjectSet(preSsLine,  OBJPROP_PRICE2, 0);
+    ObjectSet(beginLine,  OBJPROP_PRICE1, 0);
+    ObjectSet(beginLine,  OBJPROP_PRICE2, 0);
+    ObjectSet(preEndLine, OBJPROP_PRICE1, 0);
+    ObjectSet(preEndLine, OBJPROP_PRICE2, 0);
+    ObjectSet(endLine,    OBJPROP_PRICE1, 0);
+    ObjectSet(endLine,    OBJPROP_PRICE2, 0);
+}
+
+void drawTodayTimeBox(datetime dt, double hi, double lo)
+{
+    string preSsLine  = APP_TAG + "preSsLine";
+    string beginLine  = APP_TAG + "beginLine";
+    string preEndLine = APP_TAG + "preEdLine";
+    string endLine    = APP_TAG + "end__Line";
+    if (ObjectFind(preSsLine) < 0) {
+        ObjectCreate(preSsLine, OBJ_TREND, 0, 0, 0);
+        ObjectCreate(beginLine, OBJ_TREND, 0, 0, 0);
+        ObjectCreate(endLine, OBJ_TREND, 0, 0, 0);
+        ObjectCreate(preEndLine, OBJ_TREND, 0, 0, 0);
+        ObjectSet(preSsLine, OBJPROP_BACK, true);
+        ObjectSet(beginLine, OBJPROP_BACK, true);
+        ObjectSet(preEndLine, OBJPROP_BACK, true);
+        ObjectSet(endLine, OBJPROP_BACK, true);
+
+        ObjectSet(preSsLine, OBJPROP_STYLE, STYLE_DOT);
+        ObjectSet(beginLine, OBJPROP_STYLE, STYLE_DOT);
+        ObjectSet(preEndLine, OBJPROP_STYLE, STYLE_DOT);
+        ObjectSet(endLine, OBJPROP_STYLE, STYLE_DOT);
+        ObjectSet(preSsLine, OBJPROP_WIDTH, 0);
+        ObjectSet(beginLine, OBJPROP_WIDTH, 0);
+        ObjectSet(preEndLine, OBJPROP_WIDTH, 0);
+        ObjectSet(endLine, OBJPROP_WIDTH, 0);
+        ObjectSet(preSsLine, OBJPROP_SELECTABLE, false);
+        ObjectSet(beginLine, OBJPROP_SELECTABLE, false);
+        ObjectSet(preEndLine, OBJPROP_SELECTABLE, false);
+        ObjectSet(endLine, OBJPROP_SELECTABLE, false);
+        ObjectSetString(ChartID(), preSsLine, OBJPROP_TOOLTIP, "\n");
+        ObjectSetString(ChartID(), beginLine, OBJPROP_TOOLTIP, "\n");
+        ObjectSetString(ChartID(), preEndLine, OBJPROP_TOOLTIP, "\n");
+        ObjectSetString(ChartID(), endLine, OBJPROP_TOOLTIP, "\n");
+        ObjectSetInteger(ChartID(), preSsLine, OBJPROP_HIDDEN, true);
+        ObjectSetInteger(ChartID(), beginLine, OBJPROP_HIDDEN, true);
+        ObjectSetInteger(ChartID(), preEndLine, OBJPROP_HIDDEN, true);
+        ObjectSetInteger(ChartID(), endLine, OBJPROP_HIDDEN, true);
+        ObjectSet(preSsLine, OBJPROP_RAY, false);
+        ObjectSet(beginLine, OBJPROP_RAY, false);
+        ObjectSet(preEndLine, OBJPROP_RAY, false);
+        ObjectSet(endLine, OBJPROP_RAY, false);
+        ObjectSet(preSsLine, OBJPROP_COLOR, BoxColor);
+        ObjectSet(beginLine, OBJPROP_COLOR, BoxColor);
+        ObjectSet(preEndLine, OBJPROP_COLOR, BoxColor);
+        ObjectSet(endLine, OBJPROP_COLOR, BoxColor);
+    }
+    ObjectSet(preSsLine, OBJPROP_PRICE1, hi);
+    ObjectSet(preSsLine, OBJPROP_PRICE2, lo);
+    ObjectSet(preSsLine, OBJPROP_TIME1, dt+BeginHour*3600-30*60);
+    ObjectSet(preSsLine, OBJPROP_TIME2, dt+BeginHour*3600-30*60);
+    ObjectSet(preEndLine, OBJPROP_PRICE1, hi);
+    ObjectSet(preEndLine, OBJPROP_PRICE2, lo);
+    ObjectSet(preEndLine, OBJPROP_TIME1, dt+EndHour*3600-30*60);
+    ObjectSet(preEndLine, OBJPROP_TIME2, dt+EndHour*3600-30*60);
+
+
+    ObjectSet(beginLine, OBJPROP_PRICE1, hi);
+    ObjectSet(beginLine, OBJPROP_PRICE2, lo);
+    ObjectSet(beginLine, OBJPROP_TIME1, dt+EndHour*3600);
+    ObjectSet(beginLine, OBJPROP_TIME2, dt+EndHour*3600);
+    ObjectSet(endLine, OBJPROP_PRICE1, hi);
+    ObjectSet(endLine, OBJPROP_PRICE2, lo);
+    ObjectSet(endLine, OBJPROP_TIME1, dt+BeginHour*3600);
+    ObjectSet(endLine, OBJPROP_TIME2, dt+BeginHour*3600);
 }
