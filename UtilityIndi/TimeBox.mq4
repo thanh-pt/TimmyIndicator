@@ -12,8 +12,13 @@
 #define APP_TAG "TimeBox"
 
 input int BeginHour = 7;
-input int EndHour = 12;
+input int EndHour = 10;
 input color BoxColor = clrSlateGray;
+input ENUM_LINE_STYLE BoxStyle = STYLE_DOT;
+input color PreSSColor   = clrSlateGray;
+input color StartSSColor = clrDarkGreen;
+input color PreEndColor  = clrCrimson;
+input color EODColor     = clrSlateGray;
 
 
 int chartPeriod;
@@ -122,13 +127,7 @@ void scanAndDrawTimeBox(){
                 hideTodayTimeBox();
                 return;
             }
-            hi = High[bar];
-            lo = Low[bar];
-            for (; bar > 0; bar--) {
-                if (High[bar] > hi) hi = High[bar];
-                if (Low[bar] < lo) lo = Low[bar];
-            }
-            drawTodayTimeBox(dt_today, hi, lo);
+            drawTodayTimeBox(dt_today);
         }
     }
 
@@ -167,10 +166,10 @@ void drawTimeBox(int index, datetime begin_dt, datetime end_dt, double hi, doubl
         ObjectSet(objName3, OBJPROP_BACK, true);
         ObjectSet(objName4, OBJPROP_BACK, true);
 
-        ObjectSet(objName1, OBJPROP_STYLE, STYLE_DOT);
-        ObjectSet(objName2, OBJPROP_STYLE, STYLE_DOT);
-        ObjectSet(objName3, OBJPROP_STYLE, STYLE_DOT);
-        ObjectSet(objName4, OBJPROP_STYLE, STYLE_DOT);
+        ObjectSet(objName1, OBJPROP_STYLE, BoxStyle);
+        ObjectSet(objName2, OBJPROP_STYLE, BoxStyle);
+        ObjectSet(objName3, OBJPROP_STYLE, BoxStyle);
+        ObjectSet(objName4, OBJPROP_STYLE, BoxStyle);
         ObjectSet(objName1, OBJPROP_WIDTH, 0);
         ObjectSet(objName2, OBJPROP_WIDTH, 0);
         ObjectSet(objName3, OBJPROP_WIDTH, 0);
@@ -220,81 +219,39 @@ void drawTimeBox(int index, datetime begin_dt, datetime end_dt, double hi, doubl
 
 void hideTodayTimeBox()
 {
-    string preSsLine  = APP_TAG + "preSsLine";
-    string beginLine  = APP_TAG + "beginLine";
-    string preEndLine = APP_TAG + "preEdLine";
-    string endLine    = APP_TAG + "end__Line";
-    ObjectSet(preSsLine,  OBJPROP_PRICE1, 0);
-    ObjectSet(preSsLine,  OBJPROP_PRICE2, 0);
-    ObjectSet(beginLine,  OBJPROP_PRICE1, 0);
-    ObjectSet(beginLine,  OBJPROP_PRICE2, 0);
-    ObjectSet(preEndLine, OBJPROP_PRICE1, 0);
-    ObjectSet(preEndLine, OBJPROP_PRICE2, 0);
-    ObjectSet(endLine,    OBJPROP_PRICE1, 0);
-    ObjectSet(endLine,    OBJPROP_PRICE2, 0);
+    string objPreSS  = APP_TAG + "PreSS" ;
+    string objStart  = APP_TAG + "Start" ;
+    string objPreEnd = APP_TAG + "PreEnd";
+    string objEOD    = APP_TAG + "EOD"   ;
+    ObjectSet(objPreSS , OBJPROP_TIME1, 0);
+    ObjectSet(objStart , OBJPROP_TIME1, 0);
+    ObjectSet(objPreEnd, OBJPROP_TIME1, 0);
+    ObjectSet(objEOD   , OBJPROP_TIME1, 0);
 }
 
-void drawTodayTimeBox(datetime dt, double hi, double lo)
+void drawHorizontalLine(string lablel, color c, datetime dt)
 {
-    string preSsLine  = APP_TAG + "preSsLine";
-    string beginLine  = APP_TAG + "beginLine";
-    string preEndLine = APP_TAG + "preEdLine";
-    string endLine    = APP_TAG + "end__Line";
-    if (ObjectFind(preSsLine) < 0) {
-        ObjectCreate(preSsLine, OBJ_TREND, 0, 0, 0);
-        ObjectCreate(beginLine, OBJ_TREND, 0, 0, 0);
-        ObjectCreate(endLine, OBJ_TREND, 0, 0, 0);
-        ObjectCreate(preEndLine, OBJ_TREND, 0, 0, 0);
-        ObjectSet(preSsLine, OBJPROP_BACK, true);
-        ObjectSet(beginLine, OBJPROP_BACK, true);
-        ObjectSet(preEndLine, OBJPROP_BACK, true);
-        ObjectSet(endLine, OBJPROP_BACK, true);
+    string objName = APP_TAG + lablel;
+    if (ObjectFind(objName) < 0) {
+        ObjectCreate(objName, OBJ_VLINE, 0, 0, 0);
+        ObjectSet(objName, OBJPROP_BACK, true);
 
-        ObjectSet(preSsLine, OBJPROP_STYLE, STYLE_DOT);
-        ObjectSet(beginLine, OBJPROP_STYLE, STYLE_DOT);
-        ObjectSet(preEndLine, OBJPROP_STYLE, STYLE_DOT);
-        ObjectSet(endLine, OBJPROP_STYLE, STYLE_DOT);
-        ObjectSet(preSsLine, OBJPROP_WIDTH, 0);
-        ObjectSet(beginLine, OBJPROP_WIDTH, 0);
-        ObjectSet(preEndLine, OBJPROP_WIDTH, 0);
-        ObjectSet(endLine, OBJPROP_WIDTH, 0);
-        ObjectSet(preSsLine, OBJPROP_SELECTABLE, false);
-        ObjectSet(beginLine, OBJPROP_SELECTABLE, false);
-        ObjectSet(preEndLine, OBJPROP_SELECTABLE, false);
-        ObjectSet(endLine, OBJPROP_SELECTABLE, false);
-        ObjectSetString(ChartID(), preSsLine, OBJPROP_TOOLTIP, "\n");
-        ObjectSetString(ChartID(), beginLine, OBJPROP_TOOLTIP, "\n");
-        ObjectSetString(ChartID(), preEndLine, OBJPROP_TOOLTIP, "\n");
-        ObjectSetString(ChartID(), endLine, OBJPROP_TOOLTIP, "\n");
-        ObjectSetInteger(ChartID(), preSsLine, OBJPROP_HIDDEN, true);
-        ObjectSetInteger(ChartID(), beginLine, OBJPROP_HIDDEN, true);
-        ObjectSetInteger(ChartID(), preEndLine, OBJPROP_HIDDEN, true);
-        ObjectSetInteger(ChartID(), endLine, OBJPROP_HIDDEN, true);
-        ObjectSet(preSsLine, OBJPROP_RAY, false);
-        ObjectSet(beginLine, OBJPROP_RAY, false);
-        ObjectSet(preEndLine, OBJPROP_RAY, false);
-        ObjectSet(endLine, OBJPROP_RAY, false);
-        ObjectSet(preSsLine, OBJPROP_COLOR, BoxColor);
-        ObjectSet(beginLine, OBJPROP_COLOR, BoxColor);
-        ObjectSet(preEndLine, OBJPROP_COLOR, BoxColor);
-        ObjectSet(endLine, OBJPROP_COLOR, BoxColor);
+        ObjectSet(objName, OBJPROP_STYLE, STYLE_DOT);
+        ObjectSet(objName, OBJPROP_WIDTH, 0);
+        ObjectSet(objName, OBJPROP_SELECTABLE, false);
+        ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+        ObjectSetText(objName, lablel);
+        ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+        ObjectSet(objName, OBJPROP_RAY, false);
+        ObjectSet(objName, OBJPROP_COLOR, c);
     }
-    ObjectSet(preSsLine, OBJPROP_PRICE1, hi);
-    ObjectSet(preSsLine, OBJPROP_PRICE2, lo);
-    ObjectSet(preSsLine, OBJPROP_TIME1, dt+BeginHour*3600-30*60);
-    ObjectSet(preSsLine, OBJPROP_TIME2, dt+BeginHour*3600-30*60);
-    ObjectSet(preEndLine, OBJPROP_PRICE1, hi);
-    ObjectSet(preEndLine, OBJPROP_PRICE2, lo);
-    ObjectSet(preEndLine, OBJPROP_TIME1, dt+EndHour*3600-30*60);
-    ObjectSet(preEndLine, OBJPROP_TIME2, dt+EndHour*3600-30*60);
+    ObjectSet(objName, OBJPROP_TIME1, dt);
+}
 
-
-    ObjectSet(beginLine, OBJPROP_PRICE1, hi);
-    ObjectSet(beginLine, OBJPROP_PRICE2, lo);
-    ObjectSet(beginLine, OBJPROP_TIME1, dt+EndHour*3600);
-    ObjectSet(beginLine, OBJPROP_TIME2, dt+EndHour*3600);
-    ObjectSet(endLine, OBJPROP_PRICE1, hi);
-    ObjectSet(endLine, OBJPROP_PRICE2, lo);
-    ObjectSet(endLine, OBJPROP_TIME1, dt+BeginHour*3600);
-    ObjectSet(endLine, OBJPROP_TIME2, dt+BeginHour*3600);
+void drawTodayTimeBox(datetime dt)
+{
+    drawHorizontalLine("PreSS" , PreSSColor  , dt+BeginHour*3600-1800);
+    drawHorizontalLine("Start" , StartSSColor, dt+BeginHour*3600);
+    drawHorizontalLine("PreEnd", PreEndColor , dt+EndHour*3600-1800);
+    drawHorizontalLine("EOD"   , EODColor    , dt+EndHour*3600);
 }
