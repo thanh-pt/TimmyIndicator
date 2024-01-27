@@ -556,15 +556,13 @@ void scanBackgroundOverlap(string target)
             }
             continue;
         }
+        color colorBgColor = (color)ObjectGet(objName, OBJPROP_COLOR);
         if (ObjectFind(bgItem) < 0)
         {
             ObjectCreate(bgItem, OBJ_RECTANGLE , 0, 0, 0);
             ObjectSet(bgItem   , OBJPROP_SELECTABLE, false);
             ObjectSetString(ChartID(), bgItem, OBJPROP_TOOLTIP, "\n");
         }
-
-        color colorBgColor = (color)ObjectGet(objName, OBJPROP_COLOR);
-        
         if (colorBgColor == targetColor)
         {
             SetRectangleBackground(bgItem, increaseLum(targetColor));

@@ -19,9 +19,9 @@
 #define APP_TAG "HiLoPivots"
 
 input color HiPivotColor = clrBlack;
-input string HiPivotCharecter = "H";
+input string HiPivotCharecter = "●";
 input color LoPivotColor = clrBlack;
-input string LoPivotCharecter = "L";
+input string LoPivotCharecter = "●";
 input int HiLoPivotSize = 4;
 input int VisibilityChartScale = 3;
 
