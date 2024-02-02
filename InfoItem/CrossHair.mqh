@@ -3,6 +3,7 @@
 
 input color CrossHair_Color = clrSlateGray;
       int   CrossHair_LocalTimeZone = 7;
+input bool  CrossHair_DisplayDateInfo = false;
 
 class CrossHair
 {
@@ -51,7 +52,7 @@ public:
         ObjectSetText(mWeekInfo, "", 10, "Consolas");
         ObjectSet(mWeekInfo, OBJPROP_SELECTABLE, false);
         ObjectSet(mWeekInfo, OBJPROP_COLOR, CrossHair_Color);
-        ObjectSet(mWeekInfo, OBJPROP_YDISTANCE, 30);
+        ObjectSet(mWeekInfo, OBJPROP_YDISTANCE, CrossHair_DisplayDateInfo ? 25 : 15);
         ObjectSetInteger(0, mWeekInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
         ObjectSetString( 0, mWeekInfo, OBJPROP_TOOLTIP,"\n");
 
@@ -60,7 +61,7 @@ public:
         ObjectSetText(mDateInfo, "", 10, "Consolas");
         ObjectSet(mDateInfo, OBJPROP_SELECTABLE, false);
         ObjectSet(mDateInfo, OBJPROP_COLOR, CrossHair_Color);
-        ObjectSet(mDateInfo, OBJPROP_YDISTANCE, 20);
+        ObjectSet(mDateInfo, OBJPROP_YDISTANCE, CrossHair_DisplayDateInfo ? 15 : 0);
         ObjectSetInteger(0, mDateInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
         ObjectSetString( 0, mDateInfo, OBJPROP_TOOLTIP,"\n");
 

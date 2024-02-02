@@ -43,15 +43,22 @@ void OnDeinit(const int reason) {
     }
 }
 void CreateIndiObjects(){
+    long foregroundColor=clrBlack;
+    ChartGetInteger(ChartID(),CHART_COLOR_FOREGROUND,0,foregroundColor);
     if (ObjectFind(sBtnDisplaySetting) < 0){
         ObjectCreate(sBtnDisplaySetting, OBJ_LABEL, 0, 0, 0);
         ObjectSetString(ChartID(), sBtnDisplaySetting, OBJPROP_TOOLTIP, "\n");
         ObjectSet(sBtnDisplaySetting, OBJPROP_SELECTABLE, false);
         ObjectSet(sBtnDisplaySetting, OBJPROP_XDISTANCE, 5);
         ObjectSet(sBtnDisplaySetting, OBJPROP_YDISTANCE, 15);
-        long foregroundColor=clrBlack;
-        ChartGetInteger(ChartID(),CHART_COLOR_FOREGROUND,0,foregroundColor);
         ObjectSetText(sBtnDisplaySetting, gdisplayState, 8, "Calibri", (color)foregroundColor);
+    } else {
+        gdisplayState = ObjectDescription(sBtnDisplaySetting);
+        Print(gdisplayState);
+        if (gdisplayState != DISPLAY_OFF && gdisplayState != DISPLAY_ON) {
+            gdisplayState = DISPLAY_OFF;
+            ObjectSetText(sBtnDisplaySetting, gdisplayState, 8, "Calibri", (color)foregroundColor);
+        }
     }
 }
 //+------------------------------------------------------------------+
