@@ -9,8 +9,9 @@
 #property strict
 #property indicator_chart_window
 
-#define APP_TAG "TimeBox"
+string APP_TAG = "TimeBox";
 
+input string BoxLabel = "Ld";
 input int BeginHour = 7;
 input int EndHour = 10;
 input color BoxColor = clrSlateGray;
@@ -33,6 +34,7 @@ int OnInit() {
     chartPeriod = ChartPeriod();
     barBoxCount = (EndHour-BeginHour)*60/chartPeriod;
     chartReady = false;
+    APP_TAG += BoxLabel;
     return (INIT_SUCCEEDED);
 }
 void OnDeinit(const int reason) {
@@ -156,15 +158,18 @@ void drawTimeBox(int index, datetime begin_dt, datetime end_dt, double hi, doubl
     string objName2 = APP_TAG + "2" + IntegerToString(index);
     string objName3 = APP_TAG + "3" + IntegerToString(index);
     string objName4 = APP_TAG + "4" + IntegerToString(index);
+    string objName5 = APP_TAG + "5" + IntegerToString(index);
     if (ObjectFind(objName1) < 0) {
         ObjectCreate(objName1, OBJ_TREND, 0, 0, 0);
         ObjectCreate(objName2, OBJ_TREND, 0, 0, 0);
         ObjectCreate(objName3, OBJ_TREND, 0, 0, 0);
         ObjectCreate(objName4, OBJ_TREND, 0, 0, 0);
+        ObjectCreate(objName5, OBJ_TEXT, 0, 0, 0);
         ObjectSet(objName1, OBJPROP_BACK, true);
         ObjectSet(objName2, OBJPROP_BACK, true);
         ObjectSet(objName3, OBJPROP_BACK, true);
         ObjectSet(objName4, OBJPROP_BACK, true);
+        ObjectSet(objName5, OBJPROP_BACK, true);
 
         ObjectSet(objName1, OBJPROP_STYLE, BoxStyle);
         ObjectSet(objName2, OBJPROP_STYLE, BoxStyle);
@@ -178,14 +183,17 @@ void drawTimeBox(int index, datetime begin_dt, datetime end_dt, double hi, doubl
         ObjectSet(objName2, OBJPROP_SELECTABLE, false);
         ObjectSet(objName3, OBJPROP_SELECTABLE, false);
         ObjectSet(objName4, OBJPROP_SELECTABLE, false);
+        ObjectSet(objName5, OBJPROP_SELECTABLE, false);
         ObjectSetString(ChartID(), objName1, OBJPROP_TOOLTIP, "\n");
         ObjectSetString(ChartID(), objName2, OBJPROP_TOOLTIP, "\n");
         ObjectSetString(ChartID(), objName3, OBJPROP_TOOLTIP, "\n");
         ObjectSetString(ChartID(), objName4, OBJPROP_TOOLTIP, "\n");
+        ObjectSetString(ChartID(), objName5, OBJPROP_TOOLTIP, "\n");
         ObjectSetInteger(ChartID(), objName1, OBJPROP_HIDDEN, true);
         ObjectSetInteger(ChartID(), objName2, OBJPROP_HIDDEN, true);
         ObjectSetInteger(ChartID(), objName3, OBJPROP_HIDDEN, true);
         ObjectSetInteger(ChartID(), objName4, OBJPROP_HIDDEN, true);
+        ObjectSetInteger(ChartID(), objName5, OBJPROP_HIDDEN, true);
         ObjectSet(objName1, OBJPROP_RAY, false);
         ObjectSet(objName2, OBJPROP_RAY, false);
         ObjectSet(objName3, OBJPROP_RAY, false);
@@ -194,6 +202,10 @@ void drawTimeBox(int index, datetime begin_dt, datetime end_dt, double hi, doubl
         ObjectSet(objName2, OBJPROP_COLOR, BoxColor);
         ObjectSet(objName3, OBJPROP_COLOR, BoxColor);
         ObjectSet(objName4, OBJPROP_COLOR, BoxColor);
+        ObjectSet(objName5, OBJPROP_COLOR, BoxColor);
+
+        ObjectSetText(objName5, BoxLabel, 7);
+        ObjectSetInteger(ChartID(), objName5, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
     }
     ObjectSet(objName1, OBJPROP_PRICE1, hi);
     ObjectSet(objName1, OBJPROP_PRICE2, hi);
@@ -214,6 +226,9 @@ void drawTimeBox(int index, datetime begin_dt, datetime end_dt, double hi, doubl
     ObjectSet(objName4, OBJPROP_PRICE2, lo);
     ObjectSet(objName4, OBJPROP_TIME1, begin_dt);
     ObjectSet(objName4, OBJPROP_TIME2, begin_dt);
+
+    ObjectSet(objName5, OBJPROP_PRICE1, hi);
+    ObjectSet(objName5, OBJPROP_TIME1, end_dt);
 
 }
 
