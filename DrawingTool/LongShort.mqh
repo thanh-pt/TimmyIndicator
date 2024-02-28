@@ -26,6 +26,8 @@ input e_display       LS_ShowStats     = SHOW;
 input e_display       LS_ShowPrice     = OPTION;
 input e_display       LS_ShowDollar    = OPTION;
 
+int LS_StlSpace = 2;
+
 class LongShort : public BaseItem
 {
 // Internal Value
@@ -34,6 +36,7 @@ double mTradeLot;
 string mNativeCurrency;
 double mNativeCost;
 double mSymbolCode;
+double mStlSpace;
 
 // Component name
 private:
@@ -506,16 +509,18 @@ void LongShort::onUserRequest(const string &itemId, const string &objId)
     else if (gTemplates.mActivePos == 0)
     {
         onItemDrag(itemId, objId);
-        double spread = (double)SymbolInfoInteger(Symbol(), SYMBOL_SPREAD)*1.2;
+        double spread = (double)SymbolInfoInteger(Symbol(), SYMBOL_SPREAD);
+        mStlSpace = (double)LS_StlSpace / pow(10, gSymbolDigits);
         spread = spread / pow(10, gSymbolDigits);
 
         if (priceEN > priceSL) {
             // Buy order
             priceEN += spread;
+            priceSL -= mStlSpace;
         } else {
             // Sell order
             priceTP += spread;
-            priceSL += spread;
+            priceSL += spread+mStlSpace;
         }
         refreshData();
     }
