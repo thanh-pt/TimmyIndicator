@@ -14,8 +14,8 @@
 #define DISPLAY_ON  "[Indi] Imb Highlighter - ON"
 #define DISPLAY_OFF "[Indi] Imb Highlighter - OFF"
 //--- input parameters
-input color ImbDownColor = C'255,200,200';
-input color ImbUpColor = C'209,225,237';
+input color ImbDownColor = clrSilver;
+input color ImbUpColor = clrSilver;
 // input string _ControlConfig; // Lúc nào conflic thì tính tiếp
 //--- Indi variable
 int gLastVisibleBar = 0;
@@ -23,7 +23,7 @@ int gLastVisibleBar = 0;
 // Component
 string sBtnDisplaySetting;
 // State
-string gdisplayState = DISPLAY_OFF;
+string gdisplayState = DISPLAY_ON;
 bool gDeinitState = false;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
