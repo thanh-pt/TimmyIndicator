@@ -812,7 +812,7 @@ void restoreBacktestingTrade()
     datetime time2; // = time1 + 10 candle
     bool isBuy;
 
-    for (int idx = 0; idx < 100; idx++) {
+    for (int idx = 0; idx < 1000; idx++) {
         // Step 1: Find obj
         objEn = "sim#3d_en#" + IntegerToString(idx);
         if (ObjectFind(objEn) < 0) continue;

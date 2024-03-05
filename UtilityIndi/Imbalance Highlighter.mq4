@@ -144,6 +144,7 @@ void loadImbFunction(){
                 if (ObjectFind(objName) < 0) {
                     ObjectCreate(objName, OBJ_RECTANGLE , 0, 0, 0);
                     ObjectSet(objName, OBJPROP_SELECTABLE, false);
+                    ObjectSet(objName, OBJPROP_BACK, true);
                     ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
                     ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
                 }
