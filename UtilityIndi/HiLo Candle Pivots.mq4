@@ -68,14 +68,17 @@ int OnCalculate(const int       rates_total,
                 const long&     volume[],
                 const int&      spread[])
 {
-    gPos = prev_calculated;
-    if (prev_calculated == 0) {
-        gPreHi = high[rates_total-1];
-        gPreLo = low[rates_total-1];
-        gPos = rates_total-2;
-    } else {
-        gPos = rates_total - prev_calculated;
-    }
+    // gPos = prev_calculated;
+    // if (prev_calculated == 0) {
+    //     gPreHi = high[rates_total-1];
+    //     gPreLo = low[rates_total-1];
+    //     gPos = rates_total-2;
+    // } else {
+    //     gPos = rates_total - prev_calculated;
+    // }
+    gPreHi = high[rates_total-1];
+    gPreLo = low[rates_total-1];
+    gPos = rates_total-2;
     for (gIdx = gPos; gIdx > 0; gIdx--) {
         hiPivotBuffer[gIdx] = EMPTY_VALUE;
         loPivotBuffer[gIdx] = EMPTY_VALUE;
