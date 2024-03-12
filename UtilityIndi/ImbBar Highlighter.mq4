@@ -31,6 +31,7 @@ double         ImbLoBuffer[];
 int BarWidth = 13;
 long gChartScale = 0;
 long gPreChartScale = 0;
+double gGap = 0;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -45,6 +46,18 @@ int OnInit()
    
 //---
     return(INIT_SUCCEEDED);
+}
+
+void fillHiLo(int idx, double hiCandle, double loCandle, double hiGap, double loGap)
+{
+    if (hiCandle - loCandle == 0) return;
+    if ((hiGap-loGap)/(hiCandle-loCandle) > 0.6){
+        ImbHiBuffer[idx] = hiCandle;
+        ImbLoBuffer[idx] = loCandle;
+    } else {
+        ImbHiBuffer[idx] = MathMin(hiCandle, hiGap);
+        ImbLoBuffer[idx] = MathMax(loCandle, loGap);
+    }
 }
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |
@@ -61,23 +74,18 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
   {
 //---
-    double bodyHigh, bodyLow, gap;
+    double bodyHigh, bodyLow;
     for (int idx = rates_total - 2; idx > 0; idx--) {
-        {
-            bodyHigh = MathMax(open[idx], close[idx]);
-            bodyLow  = MathMin(open[idx], close[idx]);
-        }
-        gap = (bodyHigh - bodyLow) * 1/90;
+        bodyHigh = MathMax(open[idx], close[idx]);
+        bodyLow  = MathMin(open[idx], close[idx]);
+        gGap = (bodyHigh - bodyLow) * 1/90;
+        ImbHiBuffer[idx-1] = EMPTY_VALUE;
+        ImbLoBuffer[idx-1] = EMPTY_VALUE;
 
         if (low[idx+1] > high[idx-1]) { // Down
-            ImbHiBuffer[idx] = open[idx] - gap;
-            ImbLoBuffer[idx] = close[idx] + gap;
+            fillHiLo(idx, bodyHigh, bodyLow, low[idx+1], high[idx-1]);
         } else if (high[idx+1] < low[idx-1]){ // Up
-            ImbHiBuffer[idx] = close[idx] - gap;
-            ImbLoBuffer[idx] = open[idx] + gap;
-        } else {
-            ImbHiBuffer[idx] = EMPTY_VALUE;
-            ImbLoBuffer[idx] = EMPTY_VALUE;
+            fillHiLo(idx, bodyHigh, bodyLow, low[idx-1], high[idx+1]);
         }
     }
 //--- return value of prev_calculated for next call
