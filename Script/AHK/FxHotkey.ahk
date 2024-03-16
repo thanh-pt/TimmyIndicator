@@ -5,6 +5,7 @@
 #Persistent
 
 #Space::Send, {PrintScreen}
+; ^Space::Send, +{PrintScreen}
 
 ^+n::
 	Run, Chrome.exe "https://www.youtube.com/watch?v=2y4r5_jPp8A"

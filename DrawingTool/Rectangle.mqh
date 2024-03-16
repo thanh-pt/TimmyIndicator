@@ -284,15 +284,15 @@ void Rectangle::onItemClick(const string &itemId, const string &objId)
 void Rectangle::onItemChange(const string &itemId, const string &objId)
 {
     string targetItem;
-    if (objId == cBkgnd)      targetItem = iCText;
+    if (objId == cBkgnd)        targetItem = iCText;
     else if (objId == cPointC2) targetItem = iRText;
     else if (objId == cPointC1) targetItem = iLText;
     else                      return;
     
     string txtContent = ObjectDescription(objId);
     if (txtContent == "" ) return;
-    if (txtContent == ".") txtContent = "";
-    ObjectSetText(targetItem, ObjectDescription(objId));
+    if (txtContent == "-") txtContent = "";
+    ObjectSetText(targetItem, txtContent);
     ObjectSetText(objId, "");
     onItemDrag(itemId, objId);
 }

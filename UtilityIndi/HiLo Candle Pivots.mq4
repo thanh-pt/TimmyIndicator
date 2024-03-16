@@ -128,7 +128,8 @@ int OnCalculate(const int       rates_total,
 void pivotConfig(const string& objName, bool isHi, const datetime& time, const double& price){
     if (ObjectFind(objName) < 0) {
         ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
-        ObjectSet(objName, OBJPROP_BACK, true);
+        //ObjectSet(objName, OBJPROP_BACK, true);
+        ObjectSet(objName, OBJPROP_BACK, false);
         ObjectSet(objName, OBJPROP_SELECTABLE, false);
         ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
         ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
@@ -160,4 +161,5 @@ void loadPivotDrawing(){
         objName  = APP_TAG + IntegerToString(pIdx++);
         ObjectSet(objName, OBJPROP_TIME1, 0);
     } while (ObjectFind(objName) >= 0);
+    // TODO: Tạo một lablel current Orderflow!!!
 }

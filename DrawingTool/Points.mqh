@@ -3,7 +3,7 @@
 
 input string     _0 = "Point Config";
 input string     Point_1______Name  = "Swing Point";
-input color      Point_1_Color      = clrPink;
+input color      Point_1_Color      = clrThistle;
 input string     Point_1_Charecter  = "n";
 input int        Point_1_Size       = 10;
 input string     Point_1_Font       = "webdings";
@@ -109,7 +109,7 @@ void Point::refreshData()
 {
     int shift = iBarShift(ChartSymbol(), ChartPeriod(), time);
     bool isUp = (price >= High[shift]);
-    ObjectSet(cPoint, OBJPROP_COLOR, mColor[mIndexType]);
+    // ObjectSet(cPoint, OBJPROP_COLOR, mColor[mIndexType]);
     // ObjectSetInteger(ChartID(), cPoint, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
     ObjectSetInteger(ChartID(), cPoint, OBJPROP_ANCHOR, ANCHOR_CENTER);
     ObjectSetString(ChartID(), cPoint, OBJPROP_TOOLTIP, DoubleToString(price, 5));
