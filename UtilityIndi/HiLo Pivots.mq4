@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                            Pivot Candlestick.mq4 |
+//|                                                  HiLo Pivots.mq4 |
 //|                                                    Timmy Ham Hoc |
 //|                       https://www.youtube.com/@TimmyTraderHamHoc |
 //+------------------------------------------------------------------+
@@ -18,12 +18,12 @@
 
 #define APP_TAG "HiLoPivots"
 
-input color HiPivotColor = clrBlack;
 input string HiPivotCharecter = "●";
-input color LoPivotColor = clrBlack;
+input color  HiPivotColor     = clrBlack;
 input string LoPivotCharecter = "●";
-input int HiLoPivotSize = 4;
-input int VisibilityChartScale = 3;
+input color  LoPivotColor     = clrBlack;
+input int HiLoPivotSize = 5;
+input int VisibilityChartScale = 2;
 
 //--- indicator buffers
 double hiPivotBuffer[];
@@ -128,13 +128,12 @@ int OnCalculate(const int       rates_total,
 void pivotConfig(const string& objName, bool isHi, const datetime& time, const double& price){
     if (ObjectFind(objName) < 0) {
         ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
-        //ObjectSet(objName, OBJPROP_BACK, true);
         ObjectSet(objName, OBJPROP_BACK, false);
         ObjectSet(objName, OBJPROP_SELECTABLE, false);
-        ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
         ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
     }
     ObjectSetText(objName, isHi ? HiPivotCharecter : LoPivotCharecter, HiLoPivotSize, NULL, isHi ? HiPivotColor : LoPivotColor);
+    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, DoubleToString(price, 5));
     ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, isHi ? ANCHOR_LOWER : ANCHOR_UPPER);
     ObjectSet(objName, OBJPROP_TIME1, time);
     ObjectSet(objName, OBJPROP_PRICE1, price);
