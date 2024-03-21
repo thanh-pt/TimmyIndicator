@@ -626,6 +626,7 @@ struct ObjectProperty
     int         objRay         ;
     int         objArrowCode   ;
     int         objAnchorPoint ;
+    int         objCornerPoint ;
     string      objText        ;
     string      objFontName    ;
     string      objTooltip     ;
@@ -660,6 +661,7 @@ void syncItem(ObjectProperty &objProperty, long currChart, bool objectExit)
     if (objType == OBJ_TEXT || objType == OBJ_LABEL) {
         ObjectSetInteger(currChart, objProperty.objName, OBJPROP_FONTSIZE   , objProperty.objFontSize   );
         ObjectSetInteger(currChart, objProperty.objName, OBJPROP_ANCHOR     , objProperty.objAnchorPoint);
+        ObjectSetInteger(currChart, objProperty.objName, OBJPROP_CORNER     , objProperty.objCornerPoint);
         ObjectSetString(currChart , objProperty.objName, OBJPROP_FONT       , objProperty.objFontName   );
     }
     if (objType == OBJ_LABEL) {
@@ -709,6 +711,7 @@ void syncSelectedItem()
                 gListSelectedObjProp[selectedItemNum].objFontName   = ObjectGetString(chartID, objName, OBJPROP_FONT);
                 gListSelectedObjProp[selectedItemNum].objFontSize   = (int)ObjectGet(objName, OBJPROP_FONTSIZE  );
                 gListSelectedObjProp[selectedItemNum].objAnchorPoint= (int)ObjectGet(objName, OBJPROP_ANCHOR    );
+                gListSelectedObjProp[selectedItemNum].objCornerPoint= (int)ObjectGet(objName, OBJPROP_CORNER    );
             }
             if (objType == OBJ_LABEL) {
                 gListSelectedObjProp[selectedItemNum].objPrice1     = ObjectGet(objName, OBJPROP_XDISTANCE);

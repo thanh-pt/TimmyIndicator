@@ -158,10 +158,14 @@ void LabelText::onItemChange(const string &itemId, const string &objId)
     string font = ObjectGetString(ChartID(), objId, OBJPROP_FONT);
     color c     = (color)ObjectGet(objId, OBJPROP_COLOR);
     int size    = (int)  ObjectGet(objId, OBJPROP_FONTSIZE);
+    int anchor  = (int)  ObjectGetInteger(ChartID(), cLbText, OBJPROP_ANCHOR);
+    int corner  = (int)  ObjectGetInteger(ChartID(), cLbText, OBJPROP_CORNER);
     
     ObjectSet(cLbText, OBJPROP_COLOR, c);
     ObjectSet(cLbText, OBJPROP_FONTSIZE, size);
     ObjectSetString(ChartID(), cLbText, OBJPROP_FONT, font);
+    ObjectSetInteger(ChartID(), cLbText, OBJPROP_ANCHOR, anchor);
+    ObjectSetInteger(ChartID(), cLbText, OBJPROP_CORNER, corner);
 
     int idx = 0;
     string additionalText = cLbText +"#"+ IntegerToString(idx);
@@ -170,6 +174,8 @@ void LabelText::onItemChange(const string &itemId, const string &objId)
         ObjectSet(additionalText, OBJPROP_COLOR, c);
         ObjectSet(additionalText, OBJPROP_FONTSIZE, size);
         ObjectSetString(ChartID(), additionalText, OBJPROP_FONT, font);
+        ObjectSetInteger(ChartID(), additionalText, OBJPROP_ANCHOR, anchor);
+        ObjectSetInteger(ChartID(), additionalText, OBJPROP_CORNER, corner);
         idx++;
         additionalText = cLbText +"#"+ IntegerToString(idx);
     }
@@ -202,9 +208,13 @@ void LabelText::onUserRequest(const string &itemId, const string &objId)
     string font = ObjectGetString(ChartID(), cLbText, OBJPROP_FONT);
     color c     = (color)ObjectGet(cLbText, OBJPROP_COLOR);
     int size    = (int)  ObjectGet(cLbText, OBJPROP_FONTSIZE);
+    int anchor  = (int)  ObjectGetInteger(ChartID(), cLbText, OBJPROP_ANCHOR);
+    int corner  = (int)  ObjectGetInteger(ChartID(), cLbText, OBJPROP_CORNER);
     ObjectSet(objName, OBJPROP_COLOR, c);
     ObjectSet(objName, OBJPROP_FONTSIZE, size);
     ObjectSetString(ChartID(), objName, OBJPROP_FONT, font);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, anchor);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_CORNER, corner);
     ObjectSet(objName, OBJPROP_XDISTANCE, posX);
     ObjectSet(objName, OBJPROP_YDISTANCE, posY+(newIdx+1)*spaceSize);
 
