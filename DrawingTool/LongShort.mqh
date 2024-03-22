@@ -529,7 +529,6 @@ void LongShort::onUserRequest(const string &itemId, const string &objId)
 
 void LongShort::createTrade(int id, datetime _time1, datetime _time2, double _priceEN, double _priceSL, double _priceTP, double _priceBE)
 {
-    Print(id);
     string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(id);
     activateItem(itemId);
     createItem();
