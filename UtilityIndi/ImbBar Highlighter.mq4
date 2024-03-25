@@ -23,7 +23,8 @@
 #property indicator_style2  STYLE_SOLID
 #property indicator_width2  1
 //--- input parameters
-input color    ImbColor=clrSilver;
+input color    ImbColor=clrGoldenrod;
+input bool     ImbFullBody = false;
 //--- indicator buffers
 double         ImbHiBuffer[];
 double         ImbLoBuffer[];
@@ -51,7 +52,10 @@ int OnInit()
 void fillHiLo(int idx, double hiCandle, double loCandle, double hiGap, double loGap)
 {
     if (hiCandle - loCandle == 0) return;
-    if ((hiGap-loGap)/(hiCandle-loCandle) > 0.6){
+    if (ImbFullBody == true) {
+        ImbHiBuffer[idx] = hiCandle;
+        ImbLoBuffer[idx] = loCandle;
+    } else if ((hiGap-loGap)/(hiCandle-loCandle) > 0.6){
         ImbHiBuffer[idx] = hiCandle;
         ImbLoBuffer[idx] = loCandle;
     } else {
