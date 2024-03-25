@@ -160,5 +160,11 @@ void loadPivotDrawing(){
         objName  = APP_TAG + IntegerToString(pIdx++);
         ObjectSet(objName, OBJPROP_TIME1, 0);
     } while (ObjectFind(objName) >= 0);
-    // TODO: Tạo một lablel current Orderflow!!!
+}
+void OnChartEvent(const int id,
+                  const long &lparam,
+                  const double &dparam,
+                  const string &sparam)
+{
+    if (id == CHARTEVENT_CHART_CHANGE) loadPivotDrawing();
 }
