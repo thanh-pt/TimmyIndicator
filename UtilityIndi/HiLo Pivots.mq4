@@ -34,6 +34,7 @@ double gPreHi, gPreLo;
 int gCurDir = 0, gPreDir = 0;
 bool gIsInsideBar, gIsOutsideBar;
 long gChartScale = 0;
+bool gInitCalculation = false;
 
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
@@ -121,6 +122,7 @@ int OnCalculate(const int       rates_total,
         }
     }
     loadPivotDrawing();
+    gInitCalculation = true;
     //--- return value of prev_calculated for next call
     return (rates_total);
 }
@@ -166,5 +168,6 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
+    if (gInitCalculation == false) return;
     if (id == CHARTEVENT_CHART_CHANGE) loadPivotDrawing();
 }
