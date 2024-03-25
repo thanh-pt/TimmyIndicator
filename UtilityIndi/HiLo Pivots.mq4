@@ -36,6 +36,8 @@ bool gIsInsideBar, gIsOutsideBar;
 long gChartScale = 0;
 bool gInitCalculation = false;
 
+int gPrevCalculated = -1;
+
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -69,6 +71,8 @@ int OnCalculate(const int       rates_total,
                 const long&     volume[],
                 const int&      spread[])
 {
+    if (gPrevCalculated == prev_calculated && prev_calculated != 0) return (rates_total);
+    gPrevCalculated = prev_calculated;
     // gPos = prev_calculated;
     // if (prev_calculated == 0) {
     //     gPreHi = high[rates_total-1];
