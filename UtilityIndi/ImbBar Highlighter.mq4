@@ -120,6 +120,10 @@ int OnCalculate(const int rates_total,
         bodyLow  = MathMin(open[idx], close[idx]);
         ImbHiBuffer[idx-1] = EMPTY_VALUE;
         ImbLoBuffer[idx-1] = EMPTY_VALUE;
+        ImbH1Buffer[idx-1] = EMPTY_VALUE;
+        ImbL1Buffer[idx-1] = EMPTY_VALUE;
+        ImbH2Buffer[idx-1] = EMPTY_VALUE;
+        ImbL2Buffer[idx-1] = EMPTY_VALUE;
 
         if (low[idx+1] > high[idx-1]) { // Down
             fillHiLo(idx, bodyHigh, bodyLow, low[idx+1], high[idx-1]);
