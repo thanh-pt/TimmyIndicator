@@ -25,8 +25,8 @@ input color           LS_TpBkgrdColor  = clrWhiteSmoke;     // TpBg Color
 input string          LS_calc; //→ Tính toán:
 input double          LS_Cost          = 5;     //Cost ($)
 input e_display       LS_ShowStats     = SHOW;  //Show Stats
-input e_display       LS_ShowPrice     = OPTION;//Show Price
-input e_display       LS_ShowDollar    = OPTION;//Show Dollar
+input e_display       LS_ShowPrice     = HIDE;  //Show Price
+input e_display       LS_ShowDollar    = HIDE;  //Show Dollar
 
 int LS_StlSpace = 2;
 

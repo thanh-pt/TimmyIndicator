@@ -7,32 +7,32 @@ input color           Fib_Bkgrd_Color = clrNONE;    // Bg Color
 input LINE_STYLE      Fib_Style     = STYLE_SOLID;  // Style
 input int             Fib_Width     = 1;            // Width
 //--------------------------------------------
-input string          Fib_0;    //→ Fib 0
-input double          Fib_0_Ratio = 0;              // Ratio
-input string          Fib_0_Text  = "0";            // Text
-input color           Fib_0_Color = clrGray;        // Color
+string          Fib_0;    //→ Fib 0
+double          Fib_0_Ratio = 0;              // Ratio
+string          Fib_0_Text  = "0";            // Text
+color           Fib_0_Color = clrGray;        // Color
 //--------------------------------------------
-input string          Fib_1;    //→ Fib 1
-input double          Fib_1_Ratio = 1;              // Ratio
-input string          Fib_1_Text  = "1";            // Text
-input color           Fib_1_Color = clrGray;        // Color
+string          Fib_1;    //→ Fib 1
+double          Fib_1_Ratio = 1;              // Ratio
+string          Fib_1_Text  = "1";            // Text
+color           Fib_1_Color = clrGray;        // Color
 //--------------------------------------------
-input string          Fib_2;    //→ Fib 2
-input double          Fib_2_Ratio = 0.5;            // Ratio
-input string          Fib_2_Text  = "0.5";          // Text
-input color           Fib_2_Color = clrLightGray;   // Color
+string          Fib_2;    //→ Fib 2
+double          Fib_2_Ratio = 0.5;            // Ratio
+string          Fib_2_Text  = "0.5";          // Text
+color           Fib_2_Color = clrLightGray;   // Color
 //--------------------------------------------
-      string          Fib_3_Text  = "0.382";
-      double          Fib_3_Ratio = 0.382;
-      color           Fib_3_Color = clrLightGray;
+string          Fib_3_Text  = "0.382";
+double          Fib_3_Ratio = 0.382;
+color           Fib_3_Color = clrLightGray;
 //--------------------------------------------
-      string          Fib_4_Text  = "-0.27";
-      double          Fib_4_Ratio = -0.27;
-      color           Fib_4_Color = clrDarkOrange;
+string          Fib_4_Text  = "-0.27";
+double          Fib_4_Ratio = -0.27;
+color           Fib_4_Color = clrDarkOrange;
 //--------------------------------------------
-      string          Fib_5_Text  = "-0.62";
-      double          Fib_5_Ratio = -0.62;
-      color           Fib_5_Color = clrRed;
+string          Fib_5_Text  = "-0.62";
+double          Fib_5_Ratio = -0.62;
+color           Fib_5_Color = clrRed;
 
 enum FibType
 {

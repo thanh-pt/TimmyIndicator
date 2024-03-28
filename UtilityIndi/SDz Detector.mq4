@@ -16,23 +16,23 @@
 
 enum eBdStyle {
     BDSolid = 0, // Solid
-    BDDot = 2,   // Dot
+    BDDot   = 2, // Dot
     BDNone  = 3, // No Boder
 };
 
 
 input int       QueryMgtNum  = 3;
-input int       QuerySdzNum  = 5;
+input int       QuerySdzNum  = 4;
 input string    OnOffShortCut = "I";
 input string    _1;                             // ● Boder ●
 input eBdStyle  BorderStyle  = BDDot;           // Style
-input color     SzBdColor     = clrRed;         // Supply
-input color     DzBdColor     = clrGreen;       // Demand
+input color     SzBdColor     = clrIndianRed;   // Supply
+input color     DzBdColor     = clrRoyalBlue;   // Demand
 
 input string    _2;                             // ● Background ●
 input bool      DrawBkGrnd    = true;           // Has Bg?
-input color     SzBgColor     = clrMistyRose;   // Supply
-input color     DzBgColor     = clrAliceBlue;   // Demand
+input color     SzBgColor     = C'255,236,234'; // Supply
+input color     DzBgColor     = C'244,250,255'; // Demand
 
 bool   gInit            = false;
 string gIndiStage       = INDI_ON;
@@ -229,7 +229,7 @@ void loadSDzDetector()
                     if (sdzBar - bar > QuerySdzNum || sdzBar >= lastSz) {
                         sdzBar = (High[bar+1] > High[bar]) ? bar+1 : bar;
                     }
-                    lastSz = sdzBar;
+                    lastSz = bar;
                     drawSDz(IntegerToString(pIdx++),
                             Time[sdzBar], Time[mtgBar],
                             High[sdzBar], Low[bar+1],
@@ -258,10 +258,10 @@ void loadSDzDetector()
                         sdzBar++;
                     }
                     // Check xem SDz có lố quá không
-                    if (sdzBar - bar > QuerySdzNum || sdzBar >= lastSz) {
+                    if (sdzBar - bar > QuerySdzNum || sdzBar >= lastDz) {
                         sdzBar = (Low[bar+1] < Low[bar]) ? bar+1 : bar;
                     }
-                    lastDz = sdzBar;
+                    lastDz = bar;
                     drawSDz(IntegerToString(pIdx++),
                             Time[sdzBar], Time[mtgBar],
                             Low[sdzBar], High[bar+1],
