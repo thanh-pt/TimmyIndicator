@@ -143,6 +143,7 @@ void drawSDz(string id, datetime time1, datetime time2, double price1, double pr
     if (DrawBkGrnd) {
         ObjectCreate(backgrnd, OBJ_RECTANGLE , 0, 0, 0);
         updateObj(backgrnd, time1, time2, price1, price2, bgColor);
+        ObjectSetInteger(ChartID(), backgrnd, OBJPROP_HIDDEN, true);
     } else {
         hideObj(backgrnd);
     }
@@ -150,6 +151,9 @@ void drawSDz(string id, datetime time1, datetime time2, double price1, double pr
         ObjectCreate(brderTop, OBJ_TREND , 0, 0, 0);
         ObjectCreate(brderBot, OBJ_TREND , 0, 0, 0);
         ObjectCreate(brderRig, OBJ_TREND , 0, 0, 0);
+        ObjectSetInteger(ChartID(), brderTop, OBJPROP_HIDDEN, true);
+        ObjectSetInteger(ChartID(), brderBot, OBJPROP_HIDDEN, true);
+        ObjectSetInteger(ChartID(), brderRig, OBJPROP_HIDDEN, true);
         updateObj(brderTop, time1, time2, price1, price1, bdColor);
         updateObj(brderBot, time1, time2, price2, price2, bdColor);
         updateObj(brderRig, time2, time2, price1, price2, bdColor);
