@@ -9,19 +9,20 @@
 #property strict
 #property indicator_chart_window
 
-#define APP_TAG "SDzDetector"
+#define APP_TAG  "SDzDetector"
 #define INDI_ON  "SDz Detector ON"
 #define INDI_OFF "SDz Detector OFF"
 
-input int QueryMgtNum  = 10;
-input int QueryHiLoNum = 2;
-input color SupplyColor = clrRed;
-input color DemandColor = clrDodgerBlue;
-input bool  SDzBackGround = false;
+input int       QueryMgtNum  = 3;
+input int       QuerySdzNum = 3;
+input color     SzColor = clrMistyRose;
+input color     DzColor = clrAliceBlue;
+input bool      SDzBgDraw = true;
+input string    OnOffShortCut = "O";
 
-bool gInitCalculation = false;
-string gIndiStage = INDI_ON;
-string gBtnIndiSwitch = APP_TAG + "BtnIndiSwitch";
+bool   gInit            = false;
+string gIndiStage       = INDI_ON;
+string gBtnIndiSwitch   = APP_TAG + "BtnIndiSwitch";
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -51,8 +52,8 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
 //---
-    reloadSDzDetector();
-    gInitCalculation = true;
+    loadSDzDetector();
+    gInit = true;
 //--- return value of prev_calculated for next call
     return(rates_total);
 }
@@ -65,29 +66,36 @@ void OnChartEvent(const int id,
                   const string &sparam)
 {
 //---
-    if (gInitCalculation == false) return;
-    if (id == CHARTEVENT_CHART_CHANGE) reloadSDzDetector();
+    if (gInit == false) return;
+    if (id == CHARTEVENT_CHART_CHANGE) loadSDzDetector();
     else if (id == CHARTEVENT_OBJECT_CLICK) {
         if (sparam == gBtnIndiSwitch) {
-            if (gIndiStage == INDI_ON) {
-                gIndiStage = INDI_OFF;
-            } else {
-                gIndiStage = INDI_ON;
-            }
-            ObjectSetText(gBtnIndiSwitch, gIndiStage);
-            reloadSDzDetector();
+            toggleOnOff();
         }
     } else if (id == CHARTEVENT_OBJECT_DELETE){
         if (sparam == gBtnIndiSwitch) {
             createBtnIndiSwitch();
         }
+    } else if (id == CHARTEVENT_KEYDOWN){
+        if (lparam == OnOffShortCut[0]) toggleOnOff();
     }
 }
 //+------------------------------------------------------------------+
 
-void drawRectangle(string objName, double price1, double price2, datetime time1, datetime time2, color c){
+void toggleOnOff(){
+    if (gIndiStage == INDI_ON) {
+        gIndiStage = INDI_OFF;
+    } else {
+        gIndiStage = INDI_ON;
+    }
+    ObjectSetText(gBtnIndiSwitch, gIndiStage);
+    loadSDzDetector();
+}
+
+void drawRectangle(string objName, datetime time1, datetime time2, double price1, double price2, color c){
     ObjectCreate(objName, OBJ_RECTANGLE , 0, 0, 0);
-    ObjectSet(objName, OBJPROP_BACK , SDzBackGround);
+    ObjectSet(objName, OBJPROP_SELECTABLE, false);
+    ObjectSet(objName, OBJPROP_BACK , SDzBgDraw);
     ObjectSet(objName, OBJPROP_STYLE, 2);
     ObjectSet(objName, OBJPROP_COLOR, c);
     ObjectSet(objName, OBJPROP_TIME1 , time1);
@@ -96,67 +104,89 @@ void drawRectangle(string objName, double price1, double price2, datetime time1,
     ObjectSet(objName, OBJPROP_PRICE2, price2);
 }
 
-void reloadSDzDetector()
+bool isInsideBar(int barIdx){
+    if (Low[barIdx] > Low[barIdx+1] && High[barIdx] < High[barIdx+1]) return true;
+    return false;
+}
+
+bool isPivotHi(int barIdx){
+    if (High[barIdx] > High[barIdx-1] && High[barIdx] > High[barIdx+1]) return true;
+    return false;
+}
+
+bool isPivotLo(int barIdx){
+    if (Low[barIdx] < Low[barIdx-1] && Low[barIdx] < Low[barIdx+1]) return true;
+    return false;
+}
+
+void loadSDzDetector()
 {
     int pIdx = 0;
     if (gIndiStage == INDI_ON){
         int bars_count=WindowBarsPerChart();
         int bar=WindowFirstVisibleBar();
+        int lastBar = MathMax(bar - bars_count, 1);
 
-        bool isStillImb = true;
+        int mtgBar = 0;
+        int sdzBar = 0;
+        int lastSz = bar+1;
+        int lastDz = bar+1;
+        bool isClearImb = false;
 
         for(int i=0; i<bars_count && bar>1; i++,bar--) {
-            if (Low[bar+1] > High[bar-1]) { // Down IMB
-                // Check Previous not IMB
-                if (Low[bar+2] <= High[bar]) {
-                    isStillImb = true;
-                    for (int j = 1; j < QueryMgtNum && bar-j > 0; j++){
-                        if (Low[bar+1] <= High[bar-j]){
-                            isStillImb = false;
-                            break;
-                        }
+            if (Low[bar+1] > High[bar-1] && Low[bar+2] <= High[bar]) { // Down IMB
+                isClearImb = false;
+                mtgBar = bar-1;
+                while (mtgBar >= lastBar){
+                    if (High[mtgBar] >= Low[bar+1]){
+                        if (bar - mtgBar < QueryMgtNum) isClearImb = true;
+                        break;
                     }
-                    if (isStillImb) {
-                        // find last top
-                        int hiLoPos = bar;
-                        while (true){
-                            if (High[hiLoPos] > High[hiLoPos-1] && High[hiLoPos] > High[hiLoPos+1]) break;
-                            if (Low[hiLoPos] > Low[hiLoPos+1] && High[hiLoPos] < High[hiLoPos+1]) break;
-                            hiLoPos++;
-                        }
-                        // Check xem imb có xa không ấy
-                        if (hiLoPos - bar > QueryHiLoNum) hiLoPos = bar+1;
-                        drawRectangle(APP_TAG + IntegerToString(pIdx++),
-                                    High[hiLoPos], Low[bar+1],
-                                    Time[hiLoPos], Time[MathMax(bar-QueryMgtNum, 0)],
-                                    SupplyColor);
-                    }
+                    mtgBar--;
                 }
-            } else if (High[bar+1] < Low[bar-1]) { // Up IMB
-                // Check Previous not IMB
-                if (High[bar+2] >= Low[bar]) {
-                    isStillImb = true;
-                    for (int j = 1; j < QueryMgtNum && bar-j > 0; j++){
-                        if (High[bar+1] >= Low[bar-j]){
-                            isStillImb = false;
-                            break;
-                        }
+                if (isClearImb == false) {
+                    // find Sdz
+                    sdzBar = bar;
+                    while (sdzBar){
+                        if (isInsideBar(sdzBar)) break;
+                        if (isPivotHi(sdzBar)) break;
+                        sdzBar++;
                     }
-                    if (isStillImb) {
-                        // find last top
-                        int hiLoPos = bar;
-                        while (true){
-                            if (Low[hiLoPos] < Low[hiLoPos-1] && Low[hiLoPos] < Low[hiLoPos+1]) break;
-                            if (Low[hiLoPos] > Low[hiLoPos+1] && High[hiLoPos] < High[hiLoPos+1]) break;
-                            hiLoPos++;
-                        }
-                        // Check xem imb có xa không ấy
-                        if (hiLoPos - bar > QueryHiLoNum) hiLoPos = bar+1;
-                        drawRectangle(APP_TAG + IntegerToString(pIdx++),
-                                    Low[hiLoPos], High[bar+1],
-                                    Time[hiLoPos], Time[MathMax(bar-QueryMgtNum, 0)],
-                                    DemandColor);
+                    // Check xem SDz có lố quá không
+                    if (sdzBar - bar > QuerySdzNum) sdzBar = bar+1;
+                    else if (sdzBar >= lastSz) sdzBar = bar+1;
+                    lastSz = sdzBar;
+                    drawRectangle(APP_TAG + IntegerToString(pIdx++),
+                                Time[sdzBar], Time[mtgBar],
+                                High[sdzBar], Low[bar+1],
+                                SzColor);
+                }
+            } else if (High[bar+1] < Low[bar-1] && High[bar+2] >= Low[bar]) { // Up IMB
+                isClearImb = false;
+                mtgBar = bar-1;
+                while (mtgBar >= lastBar){
+                    if (Low[mtgBar] <= High[bar+1]){
+                        if (bar - mtgBar < QueryMgtNum) isClearImb = true;
+                        break;
                     }
+                    mtgBar--;
+                }
+                if (isClearImb == false) {
+                    // find Sdz
+                    sdzBar = bar;
+                    while (true){
+                        if (isInsideBar(sdzBar)) break;
+                        if (isPivotLo(sdzBar)) break;
+                        sdzBar++;
+                    }
+                    // Check xem SDz có lố quá không
+                    if (sdzBar - bar > QuerySdzNum) sdzBar = bar+1;
+                    else if (sdzBar >= lastDz) sdzBar = bar+1;
+                    lastDz = sdzBar;
+                    drawRectangle(APP_TAG + IntegerToString(pIdx++),
+                                Time[sdzBar], Time[mtgBar],
+                                Low[sdzBar], High[bar+1],
+                                DzColor);
                 }
             }
         }
@@ -173,9 +203,9 @@ void reloadSDzDetector()
 void createBtnIndiSwitch()
 {
     ObjectCreate(gBtnIndiSwitch, OBJ_LABEL, 0, 0, 0);
-    ObjectSetText(gBtnIndiSwitch, gIndiStage, 10, "Consolas", clrBlack);
     ObjectSet(gBtnIndiSwitch, OBJPROP_XDISTANCE, 5);
     ObjectSet(gBtnIndiSwitch, OBJPROP_YDISTANCE, 15);
     ObjectSet(gBtnIndiSwitch, OBJPROP_SELECTABLE, false);
+    ObjectSetText(gBtnIndiSwitch, gIndiStage, 10, "Consolas", clrBlack);
     ObjectSetString(ChartID(), gBtnIndiSwitch, OBJPROP_TOOLTIP, "\n");
 }
