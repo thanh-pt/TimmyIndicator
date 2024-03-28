@@ -1,10 +1,10 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          _5 = "";
-input color           Zz_Color = clrMidnightBlue;
-input LINE_STYLE      Zz_Style = STYLE_SOLID;
-input int             Zz_Width = 1;
+input string          Zz_;                          // ● Zigzag ●
+input color           Zz_Color = clrMidnightBlue;   // Color
+input LINE_STYLE      Zz_Style = STYLE_SOLID;       // Style
+input int             Zz_Width = 1;                 // Width
 
 class ZigZag : public BaseItem
 {

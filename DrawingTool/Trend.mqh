@@ -3,84 +3,85 @@
 
 enum TEXT_POS
 {
-    TXT_LEFT,
-    TXT_CENTER,
-    TXT_RIGHT,
+    TXT_LEFT,   // Left
+    TXT_CENTER, // Center
+    TXT_RIGHT,  // Right
 };
 
-input string _2 = "";
+input string Trend_; // ● Trend ●
+input int        Trend_amount       = 6;            // Trend amount:
 //--------------------------------------------
-input string     Trend_1______Name  = "bos";
-input color      Trend_1_Color      = clrNavy;
-input string     Trend_1_Text       = "bos";
-input TEXT_POS   Trend_1_TxtPos     = TXT_CENTER;
-input LINE_STYLE Trend_1_Style      = STYLE_SOLID;
-input int        Trend_1_Width      = 2;
-input bool       Trend_1_Arrow      = false;
+input string     Trend_1______Name  = "BOS";        // → Trend 1
+input color      Trend_1_Color      = clrNavy;      // Color
+input string     Trend_1_Text       = "";           // Text
+input TEXT_POS   Trend_1_TxtPos     = TXT_CENTER;   // Position
+input LINE_STYLE Trend_1_Style      = STYLE_SOLID;  // Style
+input int        Trend_1_Width      = 1;            // Width
+input bool       Trend_1_Arrow      = false;        // Arrow
 //--------------------------------------------
-input string     Trend_2______Name  = "xLq";
-input color      Trend_2_Color      = clrBlack;
-input string     Trend_2_Text       = "x";
-input TEXT_POS   Trend_2_TxtPos     = TXT_CENTER;
-input LINE_STYLE Trend_2_Style      = STYLE_SOLID;
-input int        Trend_2_Width      = 1;
-input bool       Trend_2_Arrow      = false;
+input string     Trend_2______Name  = "Break";      // → Trend 2
+input color      Trend_2_Color      = clrNavy;      // Color
+input string     Trend_2_Text       = "";           // Text
+input TEXT_POS   Trend_2_TxtPos     = TXT_CENTER;   // Position
+input LINE_STYLE Trend_2_Style      = STYLE_DOT;    // Style
+input int        Trend_2_Width      = 1;            // Width
+input bool       Trend_2_Arrow      = false;        // Arrow
 //--------------------------------------------
-input string     Trend_3______Name  = "b/lg";
-input color      Trend_3_Color      = clrCrimson;
-input string     Trend_3_Text       = "b/lg";
-input TEXT_POS   Trend_3_TxtPos     = TXT_CENTER;
-input LINE_STYLE Trend_3_Style      = STYLE_SOLID;
-input int        Trend_3_Width      = 2;
-input bool       Trend_3_Arrow      = false;
+input string     Trend_3______Name  = "Swept";      // → Trend 3
+input color      Trend_3_Color      = clrNavy;      // Color
+input string     Trend_3_Text       = "x";          // Text
+input TEXT_POS   Trend_3_TxtPos     = TXT_CENTER;   // Position
+input LINE_STYLE Trend_3_Style      = STYLE_SOLID;  // Style
+input int        Trend_3_Width      = 1;            // Width
+input bool       Trend_3_Arrow      = false;        // Arrow
 //--------------------------------------------
-input string     Trend_4______Name  = "Break";
-input color      Trend_4_Color      = clrBlack;
-input string     Trend_4_Text       = "";
-input TEXT_POS   Trend_4_TxtPos     = TXT_CENTER;
-input LINE_STYLE Trend_4_Style      = STYLE_DOT;
-input int        Trend_4_Width      = 1;
-input bool       Trend_4_Arrow      = false;
+input string     Trend_4______Name  = "IRL";        // → Trend 4
+input color      Trend_4_Color      = clrGreen;     // Color
+input string     Trend_4_Text       = "$";          // Text
+input TEXT_POS   Trend_4_TxtPos     = TXT_CENTER;   // Position
+input LINE_STYLE Trend_4_Style      = STYLE_SOLID;  // Style
+input int        Trend_4_Width      = 1;            // Width
+input bool       Trend_4_Arrow      = false;        // Arrow
 //--------------------------------------------
-input string     Trend_5______Name  = "lq";
-input color      Trend_5_Color      = clrBlack;
-input string     Trend_5_Text       = "$";
-input TEXT_POS   Trend_5_TxtPos     = TXT_CENTER;
-input LINE_STYLE Trend_5_Style      = STYLE_SOLID;
-input int        Trend_5_Width      = 1;
-input bool       Trend_5_Arrow      = false;
+input string     Trend_5______Name  = "ERL";        // → Trend 5
+input color      Trend_5_Color      = clrGreen;     // Color
+input string     Trend_5_Text       = "  $$$";      // Text
+input TEXT_POS   Trend_5_TxtPos     = TXT_RIGHT;    // Position
+input LINE_STYLE Trend_5_Style      = STYLE_SOLID;  // Style
+input int        Trend_5_Width      = 2;            // Width
+input bool       Trend_5_Arrow      = false;        // Arrow
 //--------------------------------------------
-input string     Trend_6______Name  = "sbos";
-input color      Trend_6_Color      = clrNavy;
-input string     Trend_6_Text       = "sbos";
-input TEXT_POS   Trend_6_TxtPos     = TXT_CENTER;
-input LINE_STYLE Trend_6_Style      = STYLE_SOLID;
-input int        Trend_6_Width      = 1;
-input bool       Trend_6_Arrow      = false;
+input string     Trend_6______Name  = "Arw";      // → Trend 6
+input color      Trend_6_Color      = clrNavy;      // Color
+input string     Trend_6_Text       = "sbos";       // Text
+input TEXT_POS   Trend_6_TxtPos     = TXT_CENTER;   // Position
+input LINE_STYLE Trend_6_Style      = STYLE_SOLID;  // Style
+input int        Trend_6_Width      = 1;            // Width
+input bool       Trend_6_Arrow      = true;         // Arrow
 //--------------------------------------------
-input string     Trend_7______Name  = "eof";
-input color      Trend_7_Color      = clrGreen;
-input string     Trend_7_Text       = "eof";
-input TEXT_POS   Trend_7_TxtPos     = TXT_RIGHT;
-input LINE_STYLE Trend_7_Style      = STYLE_SOLID;
-input int        Trend_7_Width      = 1;
-input bool       Trend_7_Arrow      = false;
+input string     Trend_7______Name  = "---";        // → Trend 7
+input color      Trend_7_Color      = clrGreen;     // Color
+input string     Trend_7_Text       = "";           // Text
+input TEXT_POS   Trend_7_TxtPos     = TXT_CENTER;   // Position
+input LINE_STYLE Trend_7_Style      = STYLE_SOLID;  // Style
+input int        Trend_7_Width      = 1;            // Width
+input bool       Trend_7_Arrow      = false;        // Arrow
 //--------------------------------------------
-input string     Trend_8______Name  = "be";
-input color      Trend_8_Color      = clrGreen;
-input string     Trend_8_Text       = "be";
-input TEXT_POS   Trend_8_TxtPos     = TXT_RIGHT;
-input LINE_STYLE Trend_8_Style      = STYLE_SOLID;
-input int        Trend_8_Width      = 1;
-input bool       Trend_8_Arrow      = false;
+input string     Trend_8______Name  = "---";        // → Trend 8
+input color      Trend_8_Color      = clrGreen;     // Color
+input string     Trend_8_Text       = "";           // Text
+input TEXT_POS   Trend_8_TxtPos     = TXT_CENTER;   // Position
+input LINE_STYLE Trend_8_Style      = STYLE_SOLID;  // Style
+input int        Trend_8_Width      = 1;            // Width
+input bool       Trend_8_Arrow      = false;        // Arrow
 //--------------------------------------------
-input string     Trend_9______Name  = "Arw";
-input color      Trend_9_Color      = clrNavy;
-input string     Trend_9_Text       = "";
-input TEXT_POS   Trend_9_TxtPos     = TXT_CENTER;
-input LINE_STYLE Trend_9_Style      = STYLE_SOLID;
-input int        Trend_9_Width      = 1;
-input bool       Trend_9_Arrow      = true;
+input string     Trend_9______Name  = "---";        // → Trend 9
+input color      Trend_9_Color      = clrNavy;      // Color
+input string     Trend_9_Text       = "";           // Text
+input TEXT_POS   Trend_9_TxtPos     = TXT_CENTER;   // Position
+input LINE_STYLE Trend_9_Style      = STYLE_SOLID;  // Style
+input int        Trend_9_Width      = 1;            // Width
+input bool       Trend_9_Arrow      = false;        // Arrow
 
 enum TrendType
 {
@@ -230,17 +231,11 @@ Trend::Trend(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mShowArrow[TREND_9] = Trend_9_Arrow    ;
     //--------------------------------------------
     mIndexType = 0;
-    mTypeNum = TREND_NUM;
-    for (int i = 0; i < TREND_NUM; i++)
+    mTypeNum = MathMin(Trend_amount, TREND_NUM);
+    for (int i = 0; i < mTypeNum; i++)
     {
         mTemplateTypes += mNameType[i];
-        if (i < mTypeNum-1) {
-            if (mColorType[i+1] == clrNONE) {
-                mTypeNum = i+1;
-                break;
-            }
-            mTemplateTypes += ",";
-        }
+        if (i < mTypeNum-1) mTemplateTypes += ",";
     }
 }
 

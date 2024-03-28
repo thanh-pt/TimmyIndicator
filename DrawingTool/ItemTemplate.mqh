@@ -1,7 +1,7 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          ItemTemplate_ = "ItemTemplate Config";
+// input string          ItemTemplate_ = "ItemTemplate Config";
 
 enum ItemTemplateType
 {

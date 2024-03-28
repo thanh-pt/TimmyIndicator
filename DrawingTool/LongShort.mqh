@@ -5,26 +5,28 @@
 
 enum e_display
 {
-    HIDE,
-    SHOW,
-    OPTION,
+    HIDE, // Hide
+    SHOW, // Show
+    OPTION, // Selected → Show
 };
 
-input string          _7 = "";
+input string          LS_; // ● Long Short ●
+input string          LS_apperence; //→ Giao diện:
 //-------------------------------------------------
-input color           LS_TextColor     = clrMidnightBlue;
-input int             LS_TextSize      = 8;
-input color           LS_TpColor       = clrSteelBlue;
-input color           LS_SlColor       = clrChocolate;
-input color           LS_EnColor       = clrChocolate;
-input int             LS_LineWidth     = 1;
-input color           LS_SlBkgrdColor  = clrLavenderBlush;
-input color           LS_TpBkgrdColor  = clrWhiteSmoke;
+input color           LS_TextColor     = clrMidnightBlue;   // Text Color
+input int             LS_TextSize      = 8;                 // Text Size
+input color           LS_TpColor       = clrSteelBlue;      // TP Color
+input color           LS_SlColor       = clrChocolate;      // SL Color
+input color           LS_EnColor       = clrChocolate;      // EN Color
+input int             LS_LineWidth     = 1;                 // Line Width
+input color           LS_SlBkgrdColor  = clrLavenderBlush;  // SlBg Color
+input color           LS_TpBkgrdColor  = clrWhiteSmoke;     // TpBg Color
 //-------------------------------------------------
-input double          LS_Cost          = 5;
-input e_display       LS_ShowStats     = SHOW;
-input e_display       LS_ShowPrice     = OPTION;
-input e_display       LS_ShowDollar    = OPTION;
+input string          LS_calc; //→ Tính toán:
+input double          LS_Cost          = 5;     //Cost ($)
+input e_display       LS_ShowStats     = SHOW;  //Show Stats
+input e_display       LS_ShowPrice     = OPTION;//Show Price
+input e_display       LS_ShowDollar    = OPTION;//Show Dollar
 
 int LS_StlSpace = 2;
 

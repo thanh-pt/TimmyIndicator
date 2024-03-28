@@ -1,20 +1,20 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string            _3 = "";
-input color             Rect_Text_Color  = clrDarkGray;
+input string            Rect_;                              //● Supply & Demand ●
+input color             Rect_Text_Color  = clrMidnightBlue; //Text Color
 //-----------------------------------------------------------
       string            Rect_Sz_Name       = "Sz";
-input color             Rect_Sz_Color      = C'255,200,200';
+input color             Rect_Sz_Color      = C'255,200,200'; // Sz Color
 //-----------------------------------------------------------
       string            Rect_SzLight_Name  = "lSz";
-input color             Rect_SzLight_Color = C'255,234,234';
+input color             Rect_SzLight_Color = C'255,234,234'; // Sz Light Color
 //-----------------------------------------------------------
       string            Rect_Dz_Name       = "Dz";
-input color             Rect_Dz_Color      = C'209,225,237';
+input color             Rect_Dz_Color      = C'209,225,237'; // Dz Color
 //-----------------------------------------------------------
       string            Rect_DzLight_Name  = "lDz";
-input color             Rect_DzLight_Color = C'232,240,247';
+input color             Rect_DzLight_Color = C'232,240,247'; // Dz Light Color
 //-----------------------------------------------------------
 
 enum RectangleType

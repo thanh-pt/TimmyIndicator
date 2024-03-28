@@ -1,9 +1,10 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string  _9 = "";
-input int  Chartutil_WorkBeg = 13 - 07;
-input int  Chartutil_WorkEnd = 18 - 07;
+// input string  _9 = "";
+// TODO: Indi nay dang su dung moi Alert
+int  Chartutil_WorkBeg   = 13 - 07; 
+int  Chartutil_WorkEnd   = 18 - 07; 
 int Chartutil_Asian_Beg  = 07 - 07;
 int Chartutil_Asian_End  = 13 - 07;
 int Chartutil_London_Beg = 14 - 07;

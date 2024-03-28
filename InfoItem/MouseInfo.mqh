@@ -1,7 +1,7 @@
 #include "../CommonData.mqh"
 #include "../Utility.mqh"
 
-input color MouseInfo_Color = clrBlack;
+input color MouseInfo_Color = clrBlack; // Mouse Color
 
 class MouseInfo
 {

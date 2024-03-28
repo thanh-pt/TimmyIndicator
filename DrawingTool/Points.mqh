@@ -1,12 +1,12 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string     _0 = "Point Config";
-input string     Point_1______Name  = "Swing Point";
-input color      Point_1_Color      = clrThistle;
-input string     Point_1_Charecter  = "n";
-input int        Point_1_Size       = 10;
-input string     Point_1_Font       = "webdings";
+input string     Point_; //● Point ●
+input string     Point_1______Name  = "Swing Point"; // → Point 1:
+input string     Point_1_Charecter  = "n";           // Charecter
+input string     Point_1_Font       = "webdings";    // Font
+input int        Point_1_Size       = 10;            // Size
+input color      Point_1_Color      = clrThistle;    // Color
 
 enum PointType
 {

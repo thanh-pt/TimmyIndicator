@@ -1,7 +1,7 @@
 #property strict
 
-input bool  gAlertActive = false;
-input color gColorMousePoint = clrSlateGray;
+input bool  gAlertActive = false; // Alert Active
+color gColorMousePoint = clrSlateGray;
 #include "InfoItem/CrossHair.mqh"
 #include "InfoItem/MouseInfo.mqh"
 #include "InfoItem/Templates.mqh"

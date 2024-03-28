@@ -1,8 +1,8 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string _10 = "";
-input color Label_Color = clrMidnightBlue;
+input string Label_; // ● Label ●
+input color  Label_Color = clrMidnightBlue; // Color
 
 enum LabelTextType
 {

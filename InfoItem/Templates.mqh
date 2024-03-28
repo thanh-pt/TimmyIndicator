@@ -1,9 +1,9 @@
 #include "../Utility.mqh"
 
-input string _1 = "";
-input color Templ_TextColor = clrBlack;
-input color Templ_BgColor1  = clrGray;
-input color Templ_BgColor2  = clrLightGray;
+input string Templ_; // ● Template ●
+input color Templ_TextColor = clrBlack;     // Text Color
+input color Templ_BgColor1  = clrGray;      // Bg Color
+input color Templ_BgColor2  = clrLightGray; // Selected Color
 
 #define TEXT_FULL_BLOCK "██████████████████████████████████████████████████████████████████"
 #define MAX_ROW 4

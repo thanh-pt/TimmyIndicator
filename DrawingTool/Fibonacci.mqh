@@ -1,23 +1,26 @@
 #include "../Base/BaseItem.mqh"
 #include "../Utility.mqh"
 
-input string          _8 = "";
+input string          Fib_;    //● Fibonacii ●
 //--------------------------------------------
-input color           Fib_Bkgrd_Color = clrNONE;
-input LINE_STYLE      Fib_Style     = STYLE_SOLID;
-input int             Fib_Width     = 1;
+input color           Fib_Bkgrd_Color = clrNONE;    // Bg Color
+input LINE_STYLE      Fib_Style     = STYLE_SOLID;  // Style
+input int             Fib_Width     = 1;            // Width
 //--------------------------------------------
-input string          Fib_0_Text  = "0";
-input double          Fib_0_Ratio = 0;
-input color           Fib_0_Color = clrGray;
+input string          Fib_0;    //→ Fib 0
+input double          Fib_0_Ratio = 0;              // Ratio
+input string          Fib_0_Text  = "0";            // Text
+input color           Fib_0_Color = clrGray;        // Color
 //--------------------------------------------
-input string          Fib_1_Text  = "1";
-input double          Fib_1_Ratio = 1;
-input color           Fib_1_Color = clrGray;
+input string          Fib_1;    //→ Fib 1
+input double          Fib_1_Ratio = 1;              // Ratio
+input string          Fib_1_Text  = "1";            // Text
+input color           Fib_1_Color = clrGray;        // Color
 //--------------------------------------------
-input string          Fib_2_Text  = "0.5";
-input double          Fib_2_Ratio = 0.5;
-input color           Fib_2_Color = clrLightGray;
+input string          Fib_2;    //→ Fib 2
+input double          Fib_2_Ratio = 0.5;            // Ratio
+input string          Fib_2_Text  = "0.5";          // Text
+input color           Fib_2_Color = clrLightGray;   // Color
 //--------------------------------------------
       string          Fib_3_Text  = "0.382";
       double          Fib_3_Ratio = 0.382;
