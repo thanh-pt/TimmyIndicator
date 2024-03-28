@@ -16,6 +16,7 @@ input int BeginHour = 7;
 input int EndHour = 10;
 input color BoxColor = clrSlateGray;
 input ENUM_LINE_STYLE BoxStyle = STYLE_DOT;
+input bool  DrawTodayLine = true;
 input color PreSSColor   = clrSlateGray;
 input color StartSSColor = clrDarkGreen;
 input color PreEndColor  = clrCrimson;
@@ -25,6 +26,7 @@ input color EODColor     = clrSlateGray;
 int chartPeriod;
 int barBoxCount;
 bool chartReady;
+long gShowPeriodSep;
 int prev_totalRate;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
@@ -74,7 +76,9 @@ void OnChartEvent(const int id,
                 const double & dparam,
                 const string & sparam) {
     //---
+    Print(id);
     if (id == CHARTEVENT_CHART_CHANGE) {
+        ChartGetInteger(ChartID(),CHART_SHOW_PERIOD_SEP,0,gShowPeriodSep);
         scanAndDrawTimeBox();
     }
 }
@@ -83,7 +87,7 @@ void OnChartEvent(const int id,
 void scanAndDrawTimeBox(){
     if (!chartReady) return;
     int timeBoxIdx = 0;
-    if (chartPeriod <= PERIOD_M15){
+    if (chartPeriod <= PERIOD_M15 && gShowPeriodSep == 1){
         int bar = WindowFirstVisibleBar();
         int bars_count = WindowBarsPerChart();
 
@@ -115,7 +119,7 @@ void scanAndDrawTimeBox(){
                 }
             }
         }
-        if (bar == 0){
+        if (bar == 0 && DrawTodayLine){
             // Draw current box
             MqlDateTime  dt_struct;
             TimeToStruct(Time[0], dt_struct);
