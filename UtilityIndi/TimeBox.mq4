@@ -76,7 +76,7 @@ void OnChartEvent(const int id,
                 const double & dparam,
                 const string & sparam) {
     //---
-    if (id == CHARTEVENT_CHART_CHANGE) {
+    if (id == CHARTEVENT_CHART_CHANGE && chartPeriod <= PERIOD_M15) {
         ChartGetInteger(ChartID(),CHART_SHOW_PERIOD_SEP,0,gShowPeriodSep);
         scanAndDrawTimeBox();
     }
@@ -86,7 +86,7 @@ void OnChartEvent(const int id,
 void scanAndDrawTimeBox(){
     if (!chartReady) return;
     int timeBoxIdx = 0;
-    if (chartPeriod <= PERIOD_M15 && gShowPeriodSep == 1){
+    if (gShowPeriodSep == 1){
         int bar = WindowFirstVisibleBar();
         int bars_count = WindowBarsPerChart();
 

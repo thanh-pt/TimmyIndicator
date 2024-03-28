@@ -14,10 +14,10 @@
 #define INDI_OFF "SDz Detector OFF"
 
 input int       QueryMgtNum  = 3;
-input int       QuerySdzNum = 3;
-input color     SzColor = clrMistyRose;
-input color     DzColor = clrAliceBlue;
-input bool      SDzBgDraw = true;
+input int       QuerySdzNum  = 5;
+input color     SzColor     = clrMistyRose;
+input color     DzColor     = clrAliceBlue;
+input bool      SDzBgDraw   = true;
 input string    OnOffShortCut = "O";
 
 bool   gInit            = false;
@@ -105,7 +105,7 @@ void drawRectangle(string objName, datetime time1, datetime time2, double price1
 }
 
 bool isInsideBar(int barIdx){
-    if (Low[barIdx] > Low[barIdx+1] && High[barIdx] < High[barIdx+1]) return true;
+    if (Low[barIdx] >= Low[barIdx+1] && High[barIdx] <= High[barIdx+1]) return true;
     return false;
 }
 
@@ -132,6 +132,7 @@ void loadSDzDetector()
         int lastSz = bar+1;
         int lastDz = bar+1;
         bool isClearImb = false;
+        double hiLo = 0;
 
         for(int i=0; i<bars_count && bar>1; i++,bar--) {
             if (Low[bar+1] > High[bar-1] && Low[bar+2] <= High[bar]) { // Down IMB
@@ -146,10 +147,14 @@ void loadSDzDetector()
                 }
                 if (isClearImb == false) {
                     // find Sdz
-                    sdzBar = bar;
-                    while (sdzBar){
-                        if (isInsideBar(sdzBar)) break;
-                        if (isPivotHi(sdzBar)) break;
+                    sdzBar = bar+1;
+                    hiLo = High[bar];
+                    while (sdzBar - bar <= QuerySdzNum){
+                        if (High[sdzBar] >= hiLo){
+                            hiLo = High[sdzBar];
+                            if (isInsideBar(sdzBar)) break;
+                            if (isPivotHi(sdzBar)) break;
+                        }
                         sdzBar++;
                     }
                     // Check xem SDz có lố quá không
@@ -173,10 +178,14 @@ void loadSDzDetector()
                 }
                 if (isClearImb == false) {
                     // find Sdz
-                    sdzBar = bar;
-                    while (true){
-                        if (isInsideBar(sdzBar)) break;
-                        if (isPivotLo(sdzBar)) break;
+                    sdzBar = bar+1;
+                    hiLo = Low[bar];
+                    while (sdzBar - bar <= QuerySdzNum){
+                        if (Low[sdzBar] <= hiLo){
+                            hiLo = Low[sdzBar];
+                            if (isInsideBar(sdzBar)) break;
+                            if (isPivotLo(sdzBar)) break;
+                        }
                         sdzBar++;
                     }
                     // Check xem SDz có lố quá không
