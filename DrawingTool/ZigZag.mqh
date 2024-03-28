@@ -12,11 +12,16 @@ class ZigZag : public BaseItem
 private:
     int    mLineIndex;
     string mTempLine;
+    
 // Component name
 private:
     string cline;
 // Value define for Item
 private:
+    datetime time1;
+    datetime time2;
+    double price1;
+    double price2;
 
 public:
     ZigZag(const string name, CommonData* commonData, MouseInfo* mouseInfo);
@@ -110,12 +115,26 @@ void ZigZag::onItemDrag(const string &itemId, const string &objId)
     }
     while (ObjectFind(objName) >= 0);
 
+    time1   = (datetime)ObjectGet(objId, OBJPROP_TIME1);
+    time2   = (datetime)ObjectGet(objId, OBJPROP_TIME2);
+    price1  =           ObjectGet(objId, OBJPROP_PRICE1);
+    price2  =           ObjectGet(objId, OBJPROP_PRICE2);
+    if (pCommonData.mCtrlHold == true) {
+        if (pCommonData.mMouseTime == time1){
+            price1 = pCommonData.mMousePrice;
+            ObjectSet(objId, OBJPROP_PRICE1, price1);
+        } else if (pCommonData.mMouseTime == time2){
+            price2 = pCommonData.mMousePrice;
+            ObjectSet(objId, OBJPROP_PRICE2, price2);
+        }
+    }
+
     string nextObj = cline + "#" + IntegerToString(i+1);
     string prevObj = cline + "#" + IntegerToString(i-1);
-    ObjectSet(nextObj, OBJPROP_TIME1,  ObjectGet(objId, OBJPROP_TIME2));
-    ObjectSet(nextObj, OBJPROP_PRICE1, ObjectGet(objId, OBJPROP_PRICE2));
-    ObjectSet(prevObj, OBJPROP_TIME2,  ObjectGet(objId, OBJPROP_TIME1));
-    ObjectSet(prevObj, OBJPROP_PRICE2, ObjectGet(objId, OBJPROP_PRICE1));
+    ObjectSet(nextObj, OBJPROP_TIME1,  time2 );
+    ObjectSet(nextObj, OBJPROP_PRICE1, price2);
+    ObjectSet(prevObj, OBJPROP_TIME2,  time1 );
+    ObjectSet(prevObj, OBJPROP_PRICE2, price1);
 }
 void ZigZag::onItemClick(const string &itemId, const string &objId)
 {
