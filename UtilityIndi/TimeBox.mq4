@@ -76,7 +76,6 @@ void OnChartEvent(const int id,
                 const double & dparam,
                 const string & sparam) {
     //---
-    Print(id);
     if (id == CHARTEVENT_CHART_CHANGE) {
         ChartGetInteger(ChartID(),CHART_SHOW_PERIOD_SEP,0,gShowPeriodSep);
         scanAndDrawTimeBox();
@@ -151,7 +150,11 @@ void scanAndDrawTimeBox(){
         ObjectSet(objName, OBJPROP_TIME1, 0);
         ObjectSet(objName, OBJPROP_TIME2, 0);
         
-        objName = APP_TAG + "4" + IntegerToString(timeBoxIdx++);
+        objName = APP_TAG + "4" + IntegerToString(timeBoxIdx);
+        ObjectSet(objName, OBJPROP_TIME2, 0);
+        ObjectSet(objName, OBJPROP_TIME1, 0);
+
+        objName = APP_TAG + "5" + IntegerToString(timeBoxIdx++);
         ObjectSet(objName, OBJPROP_TIME2, 0);
         ObjectSet(objName, OBJPROP_TIME1, 0);
     } while (ObjectFind(objName) >= 0);
