@@ -7,11 +7,16 @@ input string     Point_1_Charecter  = "n";           // Charecter
 input string     Point_1_Font       = "webdings";    // Font
 input int        Point_1_Size       = 10;            // Size
 input color      Point_1_Color      = clrThistle;    // Color
+input string     Point_2______Name  = "Small Point"; // → Point 2:
+input string     Point_2_Charecter  = "n";           // Charecter
+input string     Point_2_Font       = "webdings";    // Font
+input int        Point_2_Size       = 6;             // Size
+input color      Point_2_Color      = clrThistle;    // Color
 
 enum PointType
 {
     POINT_1,
-    // POINT_2,
+    POINT_2,
     // POINT_3,
     // POINT_4,
     POINT_NUM,
@@ -70,6 +75,11 @@ Point::Point(const string name, CommonData* commonData, MouseInfo* mouseInfo)
     mCharecter[POINT_1] = Point_1_Charecter;
     mSize     [POINT_1] = Point_1_Size     ;
     mFont     [POINT_1] = Point_1_Font     ;
+    mNameType [POINT_2] = Point_2______Name;
+    mColor    [POINT_2] = Point_2_Color  ;
+    mCharecter[POINT_2] = Point_2_Charecter;
+    mSize     [POINT_2] = Point_2_Size     ;
+    mFont     [POINT_2] = Point_2_Font     ;
 
     mIndexType = 0;
     mTypeNum = POINT_NUM;
