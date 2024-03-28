@@ -12,17 +12,37 @@
 #define APP_TAG  "SDzDetector"
 #define INDI_ON  "SDz Detector ON"
 #define INDI_OFF "SDz Detector OFF"
+#define LineSTYLE ENUM_LINE_STYLE
+
+enum eBdStyle {
+    BDSolid = 0, // Solid
+    BDDot = 2,   // Dot
+    BDNone  = 3, // No Boder
+};
+
 
 input int       QueryMgtNum  = 3;
 input int       QuerySdzNum  = 5;
-input color     SzColor     = clrMistyRose;
-input color     DzColor     = clrAliceBlue;
-input bool      SDzBgDraw   = true;
-input string    OnOffShortCut = "O";
+input string    OnOffShortCut = "I";
+input string    _1;                             // ● Boder ●
+input eBdStyle  BorderStyle  = BDDot;           // Style
+input color     SzBdColor     = clrRed;         // Supply
+input color     DzBdColor     = clrGreen;       // Demand
+
+input string    _2;                             // ● Background ●
+input bool      DrawBkGrnd    = true;           // Has Bg?
+input color     SzBgColor     = clrMistyRose;   // Supply
+input color     DzBgColor     = clrAliceBlue;   // Demand
 
 bool   gInit            = false;
 string gIndiStage       = INDI_ON;
 string gBtnIndiSwitch   = APP_TAG + "BtnIndiSwitch";
+
+// Component
+string backgrnd;
+string brderTop;
+string brderBot;
+string brderRig;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -92,16 +112,64 @@ void toggleOnOff(){
     loadSDzDetector();
 }
 
-void drawRectangle(string objName, datetime time1, datetime time2, double price1, double price2, color c){
-    ObjectCreate(objName, OBJ_RECTANGLE , 0, 0, 0);
-    ObjectSet(objName, OBJPROP_SELECTABLE, false);
-    ObjectSet(objName, OBJPROP_BACK , SDzBgDraw);
-    ObjectSet(objName, OBJPROP_STYLE, 2);
-    ObjectSet(objName, OBJPROP_COLOR, c);
-    ObjectSet(objName, OBJPROP_TIME1 , time1);
-    ObjectSet(objName, OBJPROP_TIME2 , time2);
-    ObjectSet(objName, OBJPROP_PRICE1, price1);
-    ObjectSet(objName, OBJPROP_PRICE2, price2);
+void loadComponent(string id){
+    backgrnd = APP_TAG + id + "backgrnd";
+    brderTop = APP_TAG + id + "brderTop";
+    brderBot = APP_TAG + id + "brderBot";
+    brderRig = APP_TAG + id + "brderRig";
+}
+
+void hideObj(string obj){
+    ObjectSet(obj, OBJPROP_TIME1 , 0);
+    ObjectSet(obj, OBJPROP_TIME2 , 0);
+}
+
+void updateObj(string obj, datetime time1, datetime time2, double price1, double price2, color c){
+    ObjectSet(obj, OBJPROP_SELECTABLE, false);
+    ObjectSet(obj, OBJPROP_BACK , true);
+    ObjectSet(obj, OBJPROP_RAY  , false);
+    ObjectSet(obj, OBJPROP_WIDTH, 0);
+    ObjectSet(obj, OBJPROP_STYLE, BorderStyle);
+    ObjectSet(obj, OBJPROP_COLOR, c);
+    ObjectSet(obj, OBJPROP_TIME1 , time1);
+    ObjectSet(obj, OBJPROP_TIME2 , time2);
+    ObjectSet(obj, OBJPROP_PRICE1, price1);
+    ObjectSet(obj, OBJPROP_PRICE2, price2);
+    ObjectSetString( 0, obj, OBJPROP_TOOLTIP,"\n");
+}
+
+void drawSDz(string id, datetime time1, datetime time2, double price1, double price2, color bgColor, color bdColor){
+    loadComponent(id);
+    if (DrawBkGrnd) {
+        ObjectCreate(backgrnd, OBJ_RECTANGLE , 0, 0, 0);
+        updateObj(backgrnd, time1, time2, price1, price2, bgColor);
+    } else {
+        hideObj(backgrnd);
+    }
+    if (BorderStyle != BDNone){
+        ObjectCreate(brderTop, OBJ_TREND , 0, 0, 0);
+        ObjectCreate(brderBot, OBJ_TREND , 0, 0, 0);
+        ObjectCreate(brderRig, OBJ_TREND , 0, 0, 0);
+        updateObj(brderTop, time1, time2, price1, price1, bdColor);
+        updateObj(brderBot, time1, time2, price2, price2, bdColor);
+        updateObj(brderRig, time2, time2, price1, price2, bdColor);
+    } else {
+        hideObj(brderTop);
+        hideObj(brderBot);
+        hideObj(brderRig);
+    }
+}
+
+bool hideSDz(string id){
+    loadComponent(id);
+    if (ObjectFind(backgrnd) >= 0 || ObjectFind(brderTop) >= 0){
+        hideObj(backgrnd);
+        hideObj(brderTop);
+        hideObj(brderBot);
+        hideObj(brderRig);
+        return true;
+    }
+    return false;
 }
 
 bool isInsideBar(int barIdx){
@@ -140,7 +208,7 @@ void loadSDzDetector()
                 mtgBar = bar-1;
                 while (mtgBar >= lastBar){
                     if (High[mtgBar] >= Low[bar+1]){
-                        if (bar - mtgBar < QueryMgtNum) isClearImb = true;
+                        if (bar - mtgBar <= QueryMgtNum) isClearImb = true;
                         break;
                     }
                     mtgBar--;
@@ -158,20 +226,21 @@ void loadSDzDetector()
                         sdzBar++;
                     }
                     // Check xem SDz có lố quá không
-                    if (sdzBar - bar > QuerySdzNum) sdzBar = bar+1;
-                    else if (sdzBar >= lastSz) sdzBar = bar+1;
+                    if (sdzBar - bar > QuerySdzNum || sdzBar >= lastSz) {
+                        sdzBar = (High[bar+1] > High[bar]) ? bar+1 : bar;
+                    }
                     lastSz = sdzBar;
-                    drawRectangle(APP_TAG + IntegerToString(pIdx++),
-                                Time[sdzBar], Time[mtgBar],
-                                High[sdzBar], Low[bar+1],
-                                SzColor);
+                    drawSDz(IntegerToString(pIdx++),
+                            Time[sdzBar], Time[mtgBar],
+                            High[sdzBar], Low[bar+1],
+                            SzBgColor, SzBdColor);
                 }
             } else if (High[bar+1] < Low[bar-1] && High[bar+2] >= Low[bar]) { // Up IMB
                 isClearImb = false;
                 mtgBar = bar-1;
                 while (mtgBar >= lastBar){
                     if (Low[mtgBar] <= High[bar+1]){
-                        if (bar - mtgBar < QueryMgtNum) isClearImb = true;
+                        if (bar - mtgBar <= QueryMgtNum) isClearImb = true;
                         break;
                     }
                     mtgBar--;
@@ -189,24 +258,20 @@ void loadSDzDetector()
                         sdzBar++;
                     }
                     // Check xem SDz có lố quá không
-                    if (sdzBar - bar > QuerySdzNum) sdzBar = bar+1;
-                    else if (sdzBar >= lastDz) sdzBar = bar+1;
+                    if (sdzBar - bar > QuerySdzNum || sdzBar >= lastSz) {
+                        sdzBar = (Low[bar+1] < Low[bar]) ? bar+1 : bar;
+                    }
                     lastDz = sdzBar;
-                    drawRectangle(APP_TAG + IntegerToString(pIdx++),
-                                Time[sdzBar], Time[mtgBar],
-                                Low[sdzBar], High[bar+1],
-                                DzColor);
+                    drawSDz(IntegerToString(pIdx++),
+                            Time[sdzBar], Time[mtgBar],
+                            Low[sdzBar], High[bar+1],
+                            DzBgColor, DzBdColor);
                 }
             }
         }
     }
 
-    string objName;
-    do {
-        objName  = APP_TAG + IntegerToString(pIdx++);
-        ObjectSet(objName, OBJPROP_PRICE1, 0);
-        ObjectSet(objName, OBJPROP_PRICE2, 0);
-    } while (ObjectFind(objName) >= 0);
+    while (hideSDz(IntegerToString(pIdx++))){}
 }
 
 void createBtnIndiSwitch()
