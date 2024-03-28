@@ -1,7 +1,6 @@
 #include "Base/BaseItem.mqh"
 #include "InfoItem/MouseInfo.mqh"
 #include "DrawingTool/Trend.mqh"
-#include "DrawingTool/Structure.mqh"
 #include "DrawingTool/ZigZag.mqh"
 #include "DrawingTool/Rectangle.mqh"
 #include "DrawingTool/CallOut.mqh"
@@ -23,8 +22,7 @@
 #define IDX_LONGSHORT   5
 #define IDX_CHARTUTIL   6
 #define IDX_POINT       7
-#define IDX_STRUCTURE   8
-#define IDX_LABEL       9
+#define IDX_LABEL       8
 
 #define ITEM_TREND      ".Trend"
 #define ITEM_ZIGZAG     ".ZigZag"
@@ -34,7 +32,6 @@
 #define ITEM_LONGSHORT  ".LongShort"
 #define ITEM_CHARTUTIL  ".ChartUtil"
 #define ITEM_POINT      ".Point"
-#define ITEM_STRUCTURE  ".Structure"
 #define ITEM_LABEL      ".Label"
 
 class Controller
@@ -74,7 +71,6 @@ void Controller::Controller(CommonData* commonData, MouseInfo* mouseInfo)
     mListItem[IDX_LONGSHORT ]    = new LongShort ( ITEM_LONGSHORT , commonData, mouseInfo);
     mListItem[IDX_CHARTUTIL ]    = new ChartUtil ( ITEM_CHARTUTIL , commonData, mouseInfo);
     mListItem[IDX_POINT]         = new Point     ( ITEM_POINT     , commonData, mouseInfo);
-    mListItem[IDX_STRUCTURE]     = new Structure ( ITEM_STRUCTURE , commonData, mouseInfo);
     mListItem[IDX_LABEL]         = new LabelText ( ITEM_LABEL     , commonData, mouseInfo);
 
     gpLongShort = (LongShort*)mListItem[IDX_LONGSHORT];
@@ -90,7 +86,6 @@ Controller::~Controller()
     delete mListItem[IDX_LONGSHORT ];
     delete mListItem[IDX_CHARTUTIL ];
     delete mListItem[IDX_POINT     ];
-    delete mListItem[IDX_STRUCTURE ];
     delete mListItem[IDX_LABEL     ];
 }
 
@@ -109,31 +104,15 @@ void Controller::finishedJob()
 
 int Controller::findItemIdByKey(const int key)
 {
-    /// Left Keyboard
-    // Q: Lower TF
     if (key == 'W') return IDX_LONGSHORT ;
-    // E: Erase
     if (key == 'R') return IDX_RECTANGLE ;
     if (key == 'T') return IDX_TREND     ;
-    // A: Chart Free
-    if (key == 'I') return IDX_STRUCTURE ;
-    // D: Chart Force
     if (key == 'F') return IDX_FIBONACI  ;
     if (key == 'G') return IDX_LABEL     ;
     if (key == 'Z') return IDX_ZIGZAG    ;
     if (key == 'X') return IDX_CHARTUTIL ;
     if (key == 'C') return IDX_CALLOUT   ;
-    // V: Sync Item
-    // B: Delete Item
-    
-    /// Right Keyboard
-    // Y : Show LongShort History
-    // U : Hide LongShort History
     if (key == 'S') return IDX_POINT     ;
-    // O : Not Use
-    // P: Higher TF
-    // H J K L : Not Use
-    // N M : Not Use
     return IDX_NONE;
 }
 
@@ -147,7 +126,6 @@ int Controller::findItemIdByName(const string& name)
     if (name == ITEM_LONGSHORT ) return IDX_LONGSHORT ;
     if (name == ITEM_CHARTUTIL ) return IDX_CHARTUTIL ;
     if (name == ITEM_POINT     ) return IDX_POINT     ;
-    if (name == ITEM_STRUCTURE ) return IDX_STRUCTURE ;
     if (name == ITEM_LABEL     ) return IDX_LABEL     ;
     return IDX_NONE;
 }
@@ -159,10 +137,9 @@ void Controller::handleKeyEvent(const long &key)
     bool bFunctionKey = true;
     switch ((int)key)
     {
-    case 27:
+    case 27: // Esc
         finishedJob();
         unSelectAll();
-        ((Structure*)mListItem[IDX_STRUCTURE]).updateCandle();
         break;
     // Number Line
     case '1':
