@@ -19,11 +19,12 @@ input color             Rect_DzLight_Color = C'232,240,247'; // Dz Light Color
 
 enum RectangleType
 {
-    SZ_LIGHT_TYPE,
     SZ_POI_TYPE,
-    DZ_LIGHT_TYPE,
     DZ_POI_TYPE,
     RECT_NUM,
+    //Disable Light Type
+    SZ_LIGHT_TYPE,
+    DZ_LIGHT_TYPE,
 };
 
 class Rectangle : public BaseItem

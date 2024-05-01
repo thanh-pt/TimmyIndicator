@@ -61,6 +61,43 @@ return
 	Left::^Left
 	$]::^Right
 	$[::^Left
+	u::
+		WinActivate, ahk_exe terminal.exe
+		Send u
+	return
+	p::
+		Send {Down}
+		Send {Down}
+		Send {Down}
+		Send {Down}
+		Send {Down}
+		Send {Down}
+		Send {Down}
+		Send {Down} ; Daily
+		sleep, 300
+		Send ^{Right}
+		sleep, 300
+		Send {Up} ; H4
+		sleep, 300
+		Send ^{Right}
+		sleep, 300
+		Send {Up} ; H1
+		sleep, 300
+		Send ^{Right}
+		sleep, 300
+		Send ^{Right}
+		sleep, 300
+		Send ^{Right}
+		sleep, 300
+		Send {Up}
+		Send {Up}
+		Send {Up}
+		Send {Up}
+		Send {Up}
+		Send {Up}
+		Send {Up}
+		Send {Up}
+	return
 #IfWinActive
 
 ;------------------------------------------------------------ Chrome Hotkey --------------------------------------------------------------------------------

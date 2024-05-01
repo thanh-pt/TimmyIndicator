@@ -177,7 +177,7 @@ bool hideSDz(string id){
 }
 
 bool isInsideBar(int barIdx){
-    if (Low[barIdx] >= Low[barIdx+1] && High[barIdx] <= High[barIdx+1]) return true;
+    // if (Low[barIdx] >= Low[barIdx+1] && High[barIdx] <= High[barIdx+1]) return true;
     return false;
 }
 
@@ -207,7 +207,7 @@ void loadSDzDetector()
         double hiLo = 0;
 
         for(int i=0; i<bars_count && bar>1; i++,bar--) {
-            if (Low[bar+1] > High[bar-1] && Low[bar+2] <= High[bar]) { // Down IMB
+            if (Low[bar+1] > High[bar-1] && Low[bar+2] <= High[bar]) { // Down IMB => Supply Zone
                 isClearImb = false;
                 mtgBar = bar-1;
                 while (mtgBar >= lastBar){
@@ -239,7 +239,7 @@ void loadSDzDetector()
                             High[sdzBar], Low[bar+1],
                             SzBgColor, SzBdColor);
                 }
-            } else if (High[bar+1] < Low[bar-1] && High[bar+2] >= Low[bar]) { // Up IMB
+            } else if (High[bar+1] < Low[bar-1] && High[bar+2] >= Low[bar]) { // Up IMB => Demand Zone
                 isClearImb = false;
                 mtgBar = bar-1;
                 while (mtgBar >= lastBar){

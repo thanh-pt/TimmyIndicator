@@ -231,7 +231,11 @@ void displayData()
     }
     {// Other data
         setTableTextLine(tbLn++, "Chỉ số TRUNG BÌNH");
-        setTableTextLine(tbLn++, "TP pip:" + NumToStr(tpPipSum/tpAll, 5, 1) + "   RR:" + NumToStr(tpRRSum/tpAll, 5, 1));
+        if (tpAll != 0){
+            setTableTextLine(tbLn++, "TP pip:" + NumToStr(tpPipSum/tpAll, 5, 1) + "   RR:" + NumToStr(tpRRSum/tpAll, 5, 1));
+        } else {
+            setTableTextLine(tbLn++, "TP pip:" + NumToStr(0, 5, 1) + "   RR:" + NumToStr(0, 5, 1));
+        }
         setTableTextLine(tbLn++, "SL pip:" + NumToStr(costPipSum/gTradeCount, 5, 1));
     }
 }

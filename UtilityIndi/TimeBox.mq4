@@ -118,7 +118,7 @@ void scanAndDrawTimeBox(){
                 }
             }
         }
-        if (bar == 0 && DrawTodayLine){
+        if (bar == 0 && DrawTodayLine && chartPeriod < PERIOD_M15){
             // Draw current box
             MqlDateTime  dt_struct;
             TimeToStruct(Time[0], dt_struct);
