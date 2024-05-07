@@ -95,21 +95,21 @@ void loadPivotDrawing(){
     if (gChartScale >= VisibilityChartScale) {
         for(int i=0; i<bars_count && bar>=0; i++,bar--) {
             if (QueryBar == E_3BAR && bar >= 1){
-                if (High[bar] > High[bar+1] && High[bar] > High[bar-1]){
+                if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
                     objName = APP_TAG + IntegerToString(pIdx++);
                     pivotConfig(objName, true, Time[bar], High[bar]);
                 }
-                if (Low[bar] < Low[bar+1] && Low[bar] < Low[bar-1]){
+                if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1]){
                     objName = APP_TAG + IntegerToString(pIdx++);
                     pivotConfig(objName, false, Time[bar], Low[bar]);
                 }
             } else if (QueryBar == E_5BAR && bar >= 2){
-                if ((High[bar] > High[bar+1] && High[bar] > High[bar-1])
+                if ((High[bar] > High[bar+1] && High[bar] >= High[bar-1])
                  && (High[bar] > High[bar+2] && High[bar] > High[bar-2])){
                     objName = APP_TAG + IntegerToString(pIdx++);
                     pivotConfig(objName, true, Time[bar], High[bar]);
                 }
-                if ((Low[bar] < Low[bar+1] && Low[bar] < Low[bar-1])
+                if ((Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1])
                  && (Low[bar] < Low[bar+2] && Low[bar] < Low[bar-2])){
                     objName = APP_TAG + IntegerToString(pIdx++);
                     pivotConfig(objName, false, Time[bar], Low[bar]);
