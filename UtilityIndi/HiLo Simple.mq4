@@ -11,12 +11,24 @@
 
 #define APP_TAG "HiLoSimple"
 
-input string HiPivotCharecter = "•";
-input color  HiPivotColor     = clrBlack;
-input string LoPivotCharecter = "•";
-input color  LoPivotColor     = clrBlack;
-input int HiLoPivotSize = 9;
-input int VisibilityChartScale = 2;
+
+enum EQueryBar {
+    E_3BAR, // 3 bars
+    E_5BAR, // 5 bars
+};
+
+input string CommomConfig;                  // Common Config:
+input int HiLoPivotSize = 9;                // →   Pivot Size
+input int VisibilityChartScale = 2;         // →   Scale Visibility
+input EQueryBar QueryBar = E_3BAR;          // →   Query Bar
+input string _separateLine;                 // ------------------------------------------------------------------------
+input string HiConfig;                      // High Pivot Config:
+input string HiPivotCharecter = "•";        // →   Charecter
+input color  HiPivotColor     = clrBlack;   // →   Color
+input string LoConfig;                      // Low Pivot Config:
+input string LoPivotCharecter = "•";        // →   Charecter
+input color  LoPivotColor     = clrBlack;   // →   Color
+
 
 //---
 long gChartScale = 0;
@@ -81,14 +93,27 @@ void loadPivotDrawing(){
     int pIdx = 0;
     string objName;
     if (gChartScale >= VisibilityChartScale) {
-        for(int i=0; i<bars_count && bar>0; i++,bar--) {
-            if (High[bar] > High[bar+1] && High[bar] > High[bar-1]){
-                objName = APP_TAG + IntegerToString(pIdx++);
-                pivotConfig(objName, true, Time[bar], High[bar]);
-            }
-            if (Low[bar] < Low[bar+1] && Low[bar] < Low[bar-1]){
-                objName = APP_TAG + IntegerToString(pIdx++);
-                pivotConfig(objName, false, Time[bar], Low[bar]);
+        for(int i=0; i<bars_count && bar>=0; i++,bar--) {
+            if (QueryBar == E_3BAR && bar >= 1){
+                if (High[bar] > High[bar+1] && High[bar] > High[bar-1]){
+                    objName = APP_TAG + IntegerToString(pIdx++);
+                    pivotConfig(objName, true, Time[bar], High[bar]);
+                }
+                if (Low[bar] < Low[bar+1] && Low[bar] < Low[bar-1]){
+                    objName = APP_TAG + IntegerToString(pIdx++);
+                    pivotConfig(objName, false, Time[bar], Low[bar]);
+                }
+            } else if (QueryBar == E_5BAR && bar >= 2){
+                if ((High[bar] > High[bar+1] && High[bar] > High[bar-1])
+                 && (High[bar] > High[bar+2] && High[bar] > High[bar-2])){
+                    objName = APP_TAG + IntegerToString(pIdx++);
+                    pivotConfig(objName, true, Time[bar], High[bar]);
+                }
+                if ((Low[bar] < Low[bar+1] && Low[bar] < Low[bar-1])
+                 && (Low[bar] < Low[bar+2] && Low[bar] < Low[bar-2])){
+                    objName = APP_TAG + IntegerToString(pIdx++);
+                    pivotConfig(objName, false, Time[bar], Low[bar]);
+                }
             }
         }
     }
