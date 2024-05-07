@@ -15,9 +15,10 @@ int Chartutil_NY_End     = 23 - 07;
 enum ChartUtilType
 {
     CREATE_ALERT,
-    SESSION_LINE,
-    WORKING_AREA,
+    TEST_ALERT,
     CUTIL_NUM,
+    SESSION_LINE, // Not use
+    WORKING_AREA, // Not use
 };
 
 class ChartUtil : public BaseItem
@@ -67,9 +68,8 @@ ChartUtil::ChartUtil(const string name, CommonData* commonData, MouseInfo* mouse
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [WORKING_AREA] = "Working Area";
-    mNameType [SESSION_LINE] = "Session";
     mNameType [CREATE_ALERT] = (gAlertActive ? "Alert" : "Alert disabled");
+    mNameType [TEST_ALERT]   = "Test Alert";
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
 }
@@ -152,6 +152,9 @@ void ChartUtil::onMouseClick()
         ObjectSetText(cAlert, mAlertIndi + "Alert");
         // Add Alert to gListAlert
         gListAlert += cAlert + ",";
+    }
+    else if (mIndexType == TEST_ALERT){
+        SendNotification(Symbol()+":\n" + "Test Alert");
     }
     mFinishedJobCb();
 }

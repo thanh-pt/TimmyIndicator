@@ -37,6 +37,7 @@ color           Fib_5_Color = clrRed;
 enum FibType
 {
     FIB_RANGE,
+    FIB_RANGE2,
     FIB_FULL,
     FIB_RANGE_EXT,
     FIB_NUM,
@@ -112,6 +113,7 @@ Fibonacci::Fibonacci(const string name, CommonData* commonData, MouseInfo* mouse
     // Init variable type
     mIndexType = 0;
     mNameType[FIB_RANGE]     = "Range";
+    mNameType[FIB_RANGE2]    = "Range2";
     mNameType[FIB_RANGE_EXT] = "RangeExt";
     mNameType[FIB_FULL]      = "Fib";
     mTypeNum = FIB_NUM;
@@ -156,7 +158,6 @@ void Fibonacci::createItem()
 }
 void Fibonacci::updateDefaultProperty()
 {
-    multiSetProp(OBJPROP_WIDTH        , Fib_Width , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     multiSetProp(OBJPROP_STYLE        , Fib_Style , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     multiSetProp(OBJPROP_BACK         , true      , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     multiSetProp(OBJPROP_SELECTABLE   , false     , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5
@@ -180,6 +181,7 @@ void Fibonacci::updateTypeProperty()
     //------------------------------------------
     SetRectangleBackground(ckLne, Fib_Bkgrd_Color);
     multiSetProp(OBJPROP_RAY, false, iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
+    multiSetProp(OBJPROP_WIDTH     , Fib_Width , iFib0+iFib1+iFib2+iFib3+iFib4+iFib5);
     //------------------------------------------
     ObjectSet(iFib0, OBJPROP_COLOR, Fib_0_Color);
     ObjectSet(iFib1, OBJPROP_COLOR, Fib_1_Color);
@@ -197,6 +199,13 @@ void Fibonacci::updateTypeProperty()
     }
     if (mIndexType == FIB_RANGE_EXT) {
         multiSetProp(OBJPROP_RAY, true, iFib0+iFib1);
+    }
+    if (mIndexType == FIB_RANGE2){
+        ObjectSetText(iTxt0, "   ");
+        ObjectSetText(iTxt1, "   ");
+        ObjectSetText(iTxt2, "   ");
+        SetRectangleBackground(ckLne, clrOldLace);
+        multiSetProp(OBJPROP_WIDTH, Fib_Width+1, iFib0+iFib1+iFib2);
     }
 }
 void Fibonacci::activateItem(const string& itemId)
