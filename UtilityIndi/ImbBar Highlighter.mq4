@@ -1,23 +1,23 @@
 //+------------------------------------------------------------------+
-//|                                           ImbBar Highlighter.mq4 |
+//|                                                Imbalance Bar.mq4 |
 //|                                                    Timmy Ham Hoc |
 //|                       https://www.youtube.com/@TimmyTraderHamHoc |
 //+------------------------------------------------------------------+
 #property copyright "Timmy Ham Hoc"
 #property link      "https://www.youtube.com/@TimmyTraderHamHoc"
-#property version   "1.00"
+#property version   "1.01"
 #property strict
 #property indicator_chart_window
 #property indicator_buffers 6
 #property indicator_plots   6
-//--- plot ImbHi
-#property indicator_label1  "ImbHi"
+//--- plot ImbOpen
+#property indicator_label1  "ImbOpen"
 #property indicator_type1   DRAW_HISTOGRAM
 #property indicator_color1  clrSilver
 #property indicator_style1  STYLE_SOLID
 #property indicator_width1  1
-//--- plot ImbLo
-#property indicator_label2  "ImbLo"
+//--- plot ImbClose
+#property indicator_label2  "ImbClose"
 #property indicator_type2   DRAW_HISTOGRAM
 #property indicator_color2  clrSilver
 #property indicator_style2  STYLE_SOLID
@@ -46,13 +46,19 @@
 #property indicator_color6  clrBlack
 #property indicator_style6  STYLE_SOLID
 #property indicator_width6  1
+//--- Enum Define
+enum EImbStyle {
+    EFullBody, // Full Body
+    EImbOnly,  // Imbalance Only
+};
+
 //--- input parameters
-//--- input parameters
-input color    ImbColor=clrGoldenrod;
-input bool     ImbFullBody = false;
+input color     ImbColorUp  = clrGoldenrod; // Up Bar Color
+input color     ImbColorDn  = clrGoldenrod; // Down Bar Color
+input EImbStyle ImbStyle    = EFullBody;    // Style:
 //--- indicator buffers
-double         ImbHiBuffer[];
-double         ImbLoBuffer[];
+double         ImbOpBuffer[];
+double         ImbClBuffer[];
 double         ImbH1Buffer[];
 double         ImbH2Buffer[];
 double         ImbL1Buffer[];
@@ -67,36 +73,37 @@ long gPreChartScale = 0;
 int OnInit()
 {
 //--- indicator buffers mapping
-    SetIndexBuffer(0,ImbHiBuffer);
-    SetIndexBuffer(1,ImbLoBuffer);
+    SetIndexBuffer(0,ImbOpBuffer);
+    SetIndexBuffer(1,ImbClBuffer);
     SetIndexBuffer(2,ImbH1Buffer);
     SetIndexBuffer(3,ImbH2Buffer);
     SetIndexBuffer(4,ImbL1Buffer);
     SetIndexBuffer(5,ImbL2Buffer);
 
-    SetIndexStyle(0, DRAW_HISTOGRAM, 0, BarWidth, ImbColor);
-    SetIndexStyle(1, DRAW_HISTOGRAM, 0, BarWidth, ImbColor);
+    SetIndexStyle(0, DRAW_HISTOGRAM, 0, BarWidth, ImbColorDn);
+    SetIndexStyle(1, DRAW_HISTOGRAM, 0, BarWidth, ImbColorUp);
+    SetIndexStyle(2, DRAW_HISTOGRAM, 0, BarWidth+1);
+    SetIndexStyle(3, DRAW_HISTOGRAM, 0, BarWidth+1);
+    SetIndexStyle(4, DRAW_HISTOGRAM, 0, BarWidth+1);
+    SetIndexStyle(5, DRAW_HISTOGRAM, 0, BarWidth+1);
    
 //---
     return(INIT_SUCCEEDED);
 }
 
-void fillHiLo(int idx, double hiCandle, double loCandle, double hiGap, double loGap)
+void fillHiLo(int idx, double openPrice, double closePrice, double prePriceGap, double nextPriceGap)
 {
-    if (hiCandle - loCandle == 0) return;
-    ImbH1Buffer[idx] = hiCandle;
-    ImbH2Buffer[idx] = hiCandle;
-    ImbL1Buffer[idx] = loCandle;
-    ImbL2Buffer[idx] = loCandle;
-    if (ImbFullBody == true) {
-        ImbHiBuffer[idx] = hiCandle;
-        ImbLoBuffer[idx] = loCandle;
-    } else if ((hiGap-loGap)/(hiCandle-loCandle) > 0.6){
-        ImbHiBuffer[idx] = hiCandle;
-        ImbLoBuffer[idx] = loCandle;
+    if (openPrice - closePrice == 0) return;
+    ImbH1Buffer[idx] = openPrice;
+    ImbH2Buffer[idx] = openPrice;
+    ImbL1Buffer[idx] = closePrice;
+    ImbL2Buffer[idx] = closePrice;
+    if (ImbStyle == EFullBody) {
+        ImbOpBuffer[idx] = openPrice;
+        ImbClBuffer[idx] = closePrice;
     } else {
-        ImbHiBuffer[idx] = MathMin(hiCandle, hiGap);
-        ImbLoBuffer[idx] = MathMax(loCandle, loGap);
+        ImbOpBuffer[idx] = prePriceGap;
+        ImbClBuffer[idx] = nextPriceGap;
     }
 }
 //+------------------------------------------------------------------+
@@ -114,21 +121,18 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
   {
 //---
-    double bodyHigh, bodyLow;
     for (int idx = rates_total - 2; idx > 0; idx--) {
-        bodyHigh = MathMax(open[idx], close[idx]);
-        bodyLow  = MathMin(open[idx], close[idx]);
-        ImbHiBuffer[idx-1] = EMPTY_VALUE;
-        ImbLoBuffer[idx-1] = EMPTY_VALUE;
+        ImbOpBuffer[idx-1] = EMPTY_VALUE;
+        ImbClBuffer[idx-1] = EMPTY_VALUE;
         ImbH1Buffer[idx-1] = EMPTY_VALUE;
         ImbL1Buffer[idx-1] = EMPTY_VALUE;
         ImbH2Buffer[idx-1] = EMPTY_VALUE;
         ImbL2Buffer[idx-1] = EMPTY_VALUE;
 
         if (low[idx+1] > high[idx-1]) { // Down
-            fillHiLo(idx, bodyHigh, bodyLow, low[idx+1], high[idx-1]);
+            fillHiLo(idx, open[idx], close[idx], low[idx+1], high[idx-1]);
         } else if (high[idx+1] < low[idx-1]){ // Up
-            fillHiLo(idx, bodyHigh, bodyLow, low[idx-1], high[idx+1]);
+            fillHiLo(idx, open[idx], close[idx], high[idx+1], low[idx-1]);
         }
     }
 //--- return value of prev_calculated for next call
@@ -160,8 +164,8 @@ void OnChartEvent(const int id,
             SetIndexStyle(5, DRAW_HISTOGRAM, 0, 0);
             return;
         }
-        SetIndexStyle(0, DRAW_HISTOGRAM, 0, BarWidth, ImbColor);
-        SetIndexStyle(1, DRAW_HISTOGRAM, 0, BarWidth, ImbColor);
+        SetIndexStyle(0, DRAW_HISTOGRAM, 0, BarWidth, ImbColorDn);
+        SetIndexStyle(1, DRAW_HISTOGRAM, 0, BarWidth, ImbColorUp);
         SetIndexStyle(2, DRAW_HISTOGRAM, 0, BarWidth+1);
         SetIndexStyle(3, DRAW_HISTOGRAM, 0, BarWidth+1);
         SetIndexStyle(4, DRAW_HISTOGRAM, 0, BarWidth+1);
