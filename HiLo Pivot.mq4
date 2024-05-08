@@ -89,7 +89,7 @@ void OnChartEvent(const int id,
 void loadPivotDrawing(){
     ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
     int bars_count=WindowBarsPerChart();
-    int bar=WindowFirstVisibleBar();
+    int bar=WindowFirstVisibleBar()-2;
     int pIdx = 0;
     string objName;
     if (gChartScale >= InpChartScaleDisplay) {
