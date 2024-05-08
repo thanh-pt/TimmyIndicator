@@ -53,9 +53,9 @@ enum EImbStyle {
 };
 
 //--- input parameters
-input color     ImbColorUp  = clrGoldenrod; // Up Bar Color
-input color     ImbColorDn  = clrGoldenrod; // Down Bar Color
-input EImbStyle ImbStyle    = EFullBody;    // Style:
+input color     InpColorUp  = clrGoldenrod; // Up Color
+input color     InpColorDn  = clrGoldenrod; // Down Color
+input EImbStyle InpStyle    = EFullBody;    // Style
 //--- indicator buffers
 double         ImbOpBuffer[];
 double         ImbClBuffer[];
@@ -64,7 +64,7 @@ double         ImbH2Buffer[];
 double         ImbL1Buffer[];
 double         ImbL2Buffer[];
 
-int BarWidth = 13;
+int  gBarWidth = 13;
 long gChartScale = 0;
 long gPreChartScale = 0;
 //+------------------------------------------------------------------+
@@ -80,25 +80,25 @@ int OnInit()
     SetIndexBuffer(4,ImbL1Buffer);
     SetIndexBuffer(5,ImbL2Buffer);
 
-    SetIndexStyle(0, DRAW_HISTOGRAM, 0, BarWidth, ImbColorDn);
-    SetIndexStyle(1, DRAW_HISTOGRAM, 0, BarWidth, ImbColorUp);
-    SetIndexStyle(2, DRAW_HISTOGRAM, 0, BarWidth+1);
-    SetIndexStyle(3, DRAW_HISTOGRAM, 0, BarWidth+1);
-    SetIndexStyle(4, DRAW_HISTOGRAM, 0, BarWidth+1);
-    SetIndexStyle(5, DRAW_HISTOGRAM, 0, BarWidth+1);
+    SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpColorDn);
+    SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpColorUp);
+    SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth+1);
+    SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth+1);
+    SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1);
+    SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1);
    
 //---
     return(INIT_SUCCEEDED);
 }
 
-void fillHiLo(int idx, double openPrice, double closePrice, double prePriceGap, double nextPriceGap)
+void fillImbalanceData(int idx, double openPrice, double closePrice, double prePriceGap, double nextPriceGap)
 {
     if (openPrice - closePrice == 0) return;
     ImbH1Buffer[idx] = openPrice;
     ImbH2Buffer[idx] = openPrice;
     ImbL1Buffer[idx] = closePrice;
     ImbL2Buffer[idx] = closePrice;
-    if (ImbStyle == EFullBody) {
+    if (InpStyle == EFullBody) {
         ImbOpBuffer[idx] = openPrice;
         ImbClBuffer[idx] = closePrice;
     } else {
@@ -130,9 +130,9 @@ int OnCalculate(const int rates_total,
         ImbL2Buffer[idx-1] = EMPTY_VALUE;
 
         if (low[idx+1] > high[idx-1]) { // Down
-            fillHiLo(idx, open[idx], close[idx], low[idx+1], high[idx-1]);
+            fillImbalanceData(idx, open[idx], close[idx], low[idx+1], high[idx-1]);
         } else if (high[idx+1] < low[idx-1]){ // Up
-            fillHiLo(idx, open[idx], close[idx], high[idx+1], low[idx-1]);
+            fillImbalanceData(idx, open[idx], close[idx], high[idx+1], low[idx-1]);
         }
     }
 //--- return value of prev_calculated for next call
@@ -151,11 +151,12 @@ void OnChartEvent(const int id,
         ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
         if (gChartScale == gPreChartScale) return;
         gPreChartScale = gChartScale;
-        if (gChartScale == 2) BarWidth = 1;
-        else if (gChartScale == 3) BarWidth = 2;
-        else if (gChartScale == 4) BarWidth = 5;
-        else if (gChartScale == 5) BarWidth = 12;
+        if (gChartScale == 2) gBarWidth = 1;
+        else if (gChartScale == 3) gBarWidth = 2;
+        else if (gChartScale == 4) gBarWidth = 5;
+        else if (gChartScale == 5) gBarWidth = 12;
         else {
+            // Hide Indicator
             SetIndexStyle(0, DRAW_HISTOGRAM, 0, 0, clrNONE);
             SetIndexStyle(1, DRAW_HISTOGRAM, 0, 0, clrNONE);
             SetIndexStyle(2, DRAW_HISTOGRAM, 0, 0);
@@ -164,12 +165,13 @@ void OnChartEvent(const int id,
             SetIndexStyle(5, DRAW_HISTOGRAM, 0, 0);
             return;
         }
-        SetIndexStyle(0, DRAW_HISTOGRAM, 0, BarWidth, ImbColorDn);
-        SetIndexStyle(1, DRAW_HISTOGRAM, 0, BarWidth, ImbColorUp);
-        SetIndexStyle(2, DRAW_HISTOGRAM, 0, BarWidth+1);
-        SetIndexStyle(3, DRAW_HISTOGRAM, 0, BarWidth+1);
-        SetIndexStyle(4, DRAW_HISTOGRAM, 0, BarWidth+1);
-        SetIndexStyle(5, DRAW_HISTOGRAM, 0, BarWidth+1);
+        // Show Indicator
+        SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpColorDn);
+        SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpColorUp);
+        SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth+1);
+        SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth+1);
+        SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1);
+        SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1);
     }
 }
 //+------------------------------------------------------------------+

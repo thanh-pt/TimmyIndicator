@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                  HiLo Simple.mq4 |
+//|                                                  HiLo Pivot.mq4 |
 //|                                                    Timmy Ham Hoc |
 //|                       https://www.youtube.com/@TimmyTraderHamHoc |
 //+------------------------------------------------------------------+
@@ -17,11 +17,11 @@ enum EQueryBar {
     E_5BAR, // 5 bars
 };
 
-input string CommomConfig;                  // Common Config:
-input int HiLoPivotSize = 9;                // →   Pivot Size
-input int VisibilityChartScale = 2;         // →   Scale Visibility
-input EQueryBar QueryBar = E_3BAR;          // →   Query Bar
-input string _separateLine;                 // ------------------------------------------------------------------------
+input string    CommomConfig;                   // Common Config:
+input int       InpPivotSize = 9;               // →   Pivot Size
+input int       InpChartScaleDisplay = 2;       // →   Scale Visibility
+input EQueryBar InpQueryBar = E_5BAR;           // →   Query Bar
+input string _separateLine;                     // ------------------------------------------------------------------------
 input string HiConfig;                      // High Pivot Config:
 input string HiPivotCharecter = "•";        // →   Charecter
 input color  HiPivotColor     = clrBlack;   // →   Color
@@ -92,28 +92,30 @@ void loadPivotDrawing(){
     int bar=WindowFirstVisibleBar();
     int pIdx = 0;
     string objName;
-    if (gChartScale >= VisibilityChartScale) {
+    if (gChartScale >= InpChartScaleDisplay) {
         for(int i=0; i<bars_count && bar>=0; i++,bar--) {
-            if (QueryBar == E_3BAR && bar >= 1){
+            if (InpQueryBar == E_3BAR){
                 if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
                     objName = APP_TAG + IntegerToString(pIdx++);
-                    pivotConfig(objName, true, Time[bar], High[bar]);
+                    drawPivot(objName, true, Time[bar], High[bar]);
                 }
                 if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1]){
                     objName = APP_TAG + IntegerToString(pIdx++);
-                    pivotConfig(objName, false, Time[bar], Low[bar]);
+                    drawPivot(objName, false, Time[bar], Low[bar]);
                 }
-            } else if (QueryBar == E_5BAR && bar >= 2){
+                if (bar == 1) break;
+            } else if (InpQueryBar == E_5BAR){
                 if ((High[bar] > High[bar+1] && High[bar] >= High[bar-1])
                  && (High[bar] > High[bar+2] && High[bar] > High[bar-2])){
                     objName = APP_TAG + IntegerToString(pIdx++);
-                    pivotConfig(objName, true, Time[bar], High[bar]);
+                    drawPivot(objName, true, Time[bar], High[bar]);
                 }
                 if ((Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1])
                  && (Low[bar] < Low[bar+2] && Low[bar] < Low[bar-2])){
                     objName = APP_TAG + IntegerToString(pIdx++);
-                    pivotConfig(objName, false, Time[bar], Low[bar]);
+                    drawPivot(objName, false, Time[bar], Low[bar]);
                 }
+                if (bar == 2) break;
             }
         }
     }
@@ -123,14 +125,14 @@ void loadPivotDrawing(){
     } while (ObjectFind(objName) >= 0);
 }
 
-void pivotConfig(const string& objName, bool isHi, const datetime& time, const double& price){
+void drawPivot(const string& objName, bool isHi, const datetime& time, const double& price){
     if (ObjectFind(objName) < 0) {
         ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
         ObjectSet(objName, OBJPROP_BACK, false);
         ObjectSet(objName, OBJPROP_SELECTABLE, false);
         ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
     }
-    ObjectSetText(objName, isHi ? HiPivotCharecter : LoPivotCharecter, HiLoPivotSize, NULL, isHi ? HiPivotColor : LoPivotColor);
+    ObjectSetText(objName, isHi ? HiPivotCharecter : LoPivotCharecter, InpPivotSize, NULL, isHi ? HiPivotColor : LoPivotColor);
     ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, DoubleToString(price, 5));
     ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, isHi ? ANCHOR_LOWER : ANCHOR_UPPER);
     ObjectSet(objName, OBJPROP_TIME1, time);
