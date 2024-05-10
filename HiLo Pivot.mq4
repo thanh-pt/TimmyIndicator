@@ -91,41 +91,34 @@ void loadPivotDrawing(){
     int bars_count=WindowBarsPerChart();
     int bar=WindowFirstVisibleBar()-2;
     int pIdx = 0;
-    string objName;
     if (gChartScale >= InpChartScaleDisplay) {
         for(int i=0; i<bars_count && bar>=0; i++,bar--) {
             if (InpQueryBar == E_3BAR){
                 if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
-                    objName = APP_TAG + IntegerToString(pIdx++);
-                    drawPivot(objName, true, Time[bar], High[bar]);
+                    drawPivot(pIdx++, true, Time[bar], High[bar]);
                 }
                 if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1]){
-                    objName = APP_TAG + IntegerToString(pIdx++);
-                    drawPivot(objName, false, Time[bar], Low[bar]);
+                    drawPivot(pIdx++, false, Time[bar], Low[bar]);
                 }
                 if (bar == 1) break;
             } else if (InpQueryBar == E_5BAR){
                 if ((High[bar] > High[bar+1] && High[bar] >= High[bar-1])
                  && (High[bar] > High[bar+2] && High[bar] > High[bar-2])){
-                    objName = APP_TAG + IntegerToString(pIdx++);
-                    drawPivot(objName, true, Time[bar], High[bar]);
+                    drawPivot(pIdx++, true, Time[bar], High[bar]);
                 }
                 if ((Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1])
                  && (Low[bar] < Low[bar+2] && Low[bar] < Low[bar-2])){
-                    objName = APP_TAG + IntegerToString(pIdx++);
-                    drawPivot(objName, false, Time[bar], Low[bar]);
+                    drawPivot(pIdx++, false, Time[bar], Low[bar]);
                 }
                 if (bar == 2) break;
             }
         }
     }
-    do {
-        objName  = APP_TAG + IntegerToString(pIdx++);
-        ObjectSet(objName, OBJPROP_TIME1, 0);
-    } while (ObjectFind(objName) >= 0);
+    while(hidePivot(pIdx++) == true){}
 }
 
-void drawPivot(const string& objName, bool isHi, const datetime& time, const double& price){
+void drawPivot(int index, bool isHi, const datetime& time, const double& price){
+    string objName = APP_TAG + IntegerToString(index);
     if (ObjectFind(objName) < 0) {
         ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
         ObjectSet(objName, OBJPROP_BACK, false);
@@ -137,4 +130,10 @@ void drawPivot(const string& objName, bool isHi, const datetime& time, const dou
     ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, isHi ? ANCHOR_LOWER : ANCHOR_UPPER);
     ObjectSet(objName, OBJPROP_TIME1, time);
     ObjectSet(objName, OBJPROP_PRICE1, price);
+}
+
+bool hidePivot(int index){
+    string objName = APP_TAG + IntegerToString(index);
+    ObjectSet(objName, OBJPROP_TIME1, 0);
+    return (ObjectFind(objName) >= 0);
 }
