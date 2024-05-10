@@ -19,8 +19,9 @@ enum EQueryBar {
 
 input string    CommomConfig;                   // Common Config:
 input int       InpPivotSize = 9;               // →   Pivot Size
+input int       InpSmallSize = 6;               // →   Small Size
 input int       InpChartScaleDisplay = 2;       // →   Scale Visibility
-input EQueryBar InpQueryBar = E_5BAR;           // →   Query Bar
+input EQueryBar InpQueryBar = E_3BAR;           // →   Query Bar
 input string _separateLine;                     // ------------------------------------------------------------------------
 input string HiConfig;                      // High Pivot Config:
 input string HiPivotCharecter = "•";        // →   Charecter
@@ -92,6 +93,8 @@ void loadPivotDrawing(){
     int bar=WindowFirstVisibleBar()-2;
     int pIdx = 0;
     if (gChartScale >= InpChartScaleDisplay) {
+        gPreState = 0;
+        gPrePrice = Open[bar];
         for(int i=0; i<bars_count && bar>=0; i++,bar--) {
             if (InpQueryBar == E_3BAR){
                 if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
@@ -117,6 +120,9 @@ void loadPivotDrawing(){
     while(hidePivot(pIdx++) == true){}
 }
 
+int gPreState = 0;
+double gPrePrice = 0;
+
 void drawPivot(int index, bool isHi, const datetime& time, const double& price){
     string objName = APP_TAG + IntegerToString(index);
     if (ObjectFind(objName) < 0) {
@@ -130,10 +136,36 @@ void drawPivot(int index, bool isHi, const datetime& time, const double& price){
     ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, isHi ? ANCHOR_LOWER : ANCHOR_UPPER);
     ObjectSet(objName, OBJPROP_TIME1, time);
     ObjectSet(objName, OBJPROP_PRICE1, price);
+
+    if (isHi){
+        if (gPreState == 2) {
+            if (price > gPrePrice){
+                resizePivot(index-1, InpSmallSize);
+            } else {
+                resizePivot(index, InpSmallSize);
+            }
+        }
+        gPrePrice = price;
+    } else {
+        if (gPreState == 3){
+            if (price < gPrePrice){
+                resizePivot(index-1, InpSmallSize);
+            } else {
+                resizePivot(index, InpSmallSize);
+            }
+        }
+        gPrePrice = price;
+    }
+    gPreState = (isHi ? 2 : 3);
 }
 
 bool hidePivot(int index){
     string objName = APP_TAG + IntegerToString(index);
     ObjectSet(objName, OBJPROP_TIME1, 0);
     return (ObjectFind(objName) >= 0);
+}
+
+void resizePivot(int index, int size){
+    string objName = APP_TAG + IntegerToString(index);
+    ObjectSet(objName, OBJPROP_FONTSIZE, size);
 }
