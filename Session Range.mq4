@@ -18,28 +18,36 @@ enum eSession{
 };
 
 enum eStyle{
-    eStyleHiLoLine, // Ｈｉ/Ｌｏ Ｌｉｎｅ
-    eStyleHiLoChar, // Ｈｉ/Ｌｏ Ｃｈａｒ Ｌｉｎｅ
-    eStyleLineBox,  // Ｌｉｎｅ Ｂｏｘ
-    eStyleColorBox, // Ｃｏｌｏｒ Ｂｏｘ
+    eStyleHiLoLine,     // Ｈｉ/Ｌｏ Ｌｉｎｅ
+    eStyleHiLoChar,     // Ｈｉ/Ｌｏ Ｃｈａｒ Ｌｉｎｅ
+    eStyleLineBox,      // Ｌｉｎｅ Ｂｏｘ
+    eStyleColorBox,     // Ｃｏｌｏｒ Ｂｏｘ
+    eStyleBorderLine,   // Ｂｏｄｅｒ Ｌｉｎｅ
+    eStyleBorderColor,  // Ｂｏｄｅｒ Ｃｏｌｏｒ
 };
 
 
-input eStyle inpStyle = eStyleHiLoLine; // => Ｓｅｓｓｉｏｎ Ｓｔｙｌｅ <=
+input eStyle inpStyle = eStyleBorderColor;      // => Ｓｅｓｓｉｏｎ Ｓｔｙｌｅ <=
 
-input string _mainColor; // - - - Main Color - - -
-input color inpAsColor = clrTeal;       // Asian Color
-input color inpLoColor = clrForestGreen;// London Color
-input color inpNyColor = clrBrown;      // NewYork Color
+input string _display;                          // - - - Display - - -
+input bool inpDisplayAs = true;                 // Asian Display
+input bool inpDisplayLd = true;                 // London Display
+input bool inpDisplayNy = true;                 // NewYork Display
 
-input string _charLine; // - - - Hi/Lo Char Line Configuration - - -
-input string inpChPoint = "•";  // Charecter
-input int    inpChSize  = 7;    // Size
+input string _lineColor;                        // - - - Main Color - - -
+input color inpAsColor = clrTeal;               // Asian Color
+input color inpLdColor = clrForestGreen;        // London Color
+input color inpNyColor = clrBrown;              // NewYork Color
 
-input string _colorBox; // - - - Color Box Confignuration - - -
-input color inpAsBgColor = clrAliceBlue;     // Asian Color
-input color inpLoBgColor = clrHoneydew;      // London Color
-input color inpNyBgColor = clrLavenderBlush; // NewYork Color
+input string _bgBox;                            // - - - Background Color - - -
+input color inpAsBgColor = clrAliceBlue;        // Asian Color
+input color inpLdBgColor = clrHoneydew;         // London Color
+input color inpNyBgColor = clrLavenderBlush;    // NewYork Color
+
+input string _charLine;                         // - - - Hi/Lo Char Line Configuration - - -
+input string inpChPoint = "•";                  // Charecter
+input int    inpChSize  = 7;                    // Size
+
 
 int asBegHour = 0;
 int asEndHour = 6;
@@ -72,10 +80,10 @@ int OnInit()
     gLdBar = (ldEndHour - ldBegHour) * 60 / gChartPeriod;
     gNyBar = (nyEndHour - nyBegHour) * 60 / gChartPeriod;
     gSsColor[0] = inpAsColor;
-    gSsColor[1] = inpLoColor;
+    gSsColor[1] = inpLdColor;
     gSsColor[2] = inpNyColor;
     gSsBgColor[0] = inpAsBgColor;
-    gSsBgColor[1] = inpLoBgColor;
+    gSsBgColor[1] = inpLdBgColor;
     gSsBgColor[2] = inpNyBgColor;
     if (ChartPeriod() >= PERIOD_H4) Print("This Indi is only work on lower H4 timeframe!!!");
     return(INIT_SUCCEEDED);
@@ -140,15 +148,15 @@ void scanWindow(){
         if (gMonth >= winterBeg || gMonth < winterEnd) { // Winter Time
             gHour = gHour - 1;
         }
-        if (gHour == asBegHour){
+        if (inpDisplayAs && gHour == asBegHour){
             drawSession(eAs, bar, bar-gAsBar);
             bar -= gAsBar;
         }
-        else if (gHour == ldBegHour){
+        else if (inpDisplayLd && gHour == ldBegHour){
             drawSession(eLo, bar, bar-gLdBar);
             bar -= gLdBar;
         }
-        else if (gHour == nyBegHour){
+        else if (inpDisplayNy && gHour == nyBegHour){
             drawSession(eNy, bar, bar-gLdBar);
             bar -= gLdBar;
         }
@@ -193,8 +201,32 @@ void drawSession(eSession ss, int beginBar, int endBar)
     else if (inpStyle == eStyleColorBox){
         createRectangle(gRectIdx++, Time[beginBar], Time[endBar], gHi, gLo, gSsBgColor[ss]);
     }
+    else if (inpStyle == eStyleBorderLine){
+        double currHi = High[beginBar];
+        double currLo = Low[beginBar];
+        for (int i = beginBar-1; i >= 0 && i >= endBar; i--){
+            createLine(gLineIdx++, Time[i+1], Time[i], currHi, MathMax(currHi, High[i]), gSsColor[ss]);
+            createLine(gLineIdx++, Time[i+1], Time[i], currLo, MathMin(currLo, Low[i]), gSsColor[ss]);
+            if (High[i] > currHi) currHi = High[i];
+            if (Low[i] < currLo) currLo = Low[i];
+        }
+        createLine(gLineIdx++, Time[endBar], Time[endBar], gHi, gLo, gSsColor[ss]);
+    }
+    else if (inpStyle == eStyleBorderColor){
+        double currHi = High[beginBar];
+        double currLo = Low[beginBar];
+        for (int i = beginBar-1; i >= 0 && i >= endBar; i--){
+            createRectangle(gRectIdx++, Time[i+1], Time[i], currHi, currLo, gSsBgColor[ss]);
+            if (High[i] > currHi) currHi = High[i];
+            if (Low[i] < currLo) currLo = Low[i];
+        }
+    }
     createLabel(gLabelIdx++, (isSsRunning ? "►" : "") + gSsLableMap[ss],
             Time[endBar], gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+    
+    hideItem(gLabelIdx, "Label");
+    hideItem(gLineIdx, "Line");
+    hideItem(gRectIdx, "Rectangle");
 }
 
 void createLabel(int index, string label, datetime time1, double price1, int size, int anchor, color cl){
@@ -247,4 +279,13 @@ void createRectangle(int index, datetime time1, datetime time2, double price1, d
     ObjectSet(objName, OBJPROP_TIME2, time2);
     ObjectSet(objName, OBJPROP_PRICE1, price1);
     ObjectSet(objName, OBJPROP_PRICE2, price2);
+}
+
+void hideItem(int index, string tag){
+    string objName = APP_TAG + tag + IntegerToString(index);
+    while(ObjectFind(objName) >= 0){
+        ObjectSet(objName, OBJPROP_TIME1, 0);
+        ObjectSet(objName, OBJPROP_TIME2, 0);
+        objName = APP_TAG + tag + IntegerToString(index++);
+    }
 }
