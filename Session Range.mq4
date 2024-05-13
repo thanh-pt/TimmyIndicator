@@ -135,13 +135,13 @@ int gHour ;
 int gMin  ;
 
 void scanWindow(){
-    int bars_count = WindowBarsPerChart();
     int bar = WindowFirstVisibleBar();
+    int barLimit = bar - WindowBarsPerChart();
 
     gLineIdx = 0;
     gLabelIdx = 0;
     gRectIdx = 0;
-    while(bar >= 0) {
+    while(bar >= 0 && bar > barLimit) {
         gMonth = TimeMonth(Time[bar]);
         gHour  = TimeHour(Time[bar]);
         gMin   = TimeMinute(Time[bar]);
