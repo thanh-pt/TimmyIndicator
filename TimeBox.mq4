@@ -268,6 +268,10 @@ void drawHorizontalLine(string lablel, color c, datetime dt)
         ObjectSet(objName, OBJPROP_COLOR, c);
     }
     ObjectSet(objName, OBJPROP_TIME1, dt);
+
+    if (c == clrNONE) {
+        ObjectSet(objName , OBJPROP_TIME1, 0);
+    }
 }
 
 void drawTodayTimeBox(datetime dt)
