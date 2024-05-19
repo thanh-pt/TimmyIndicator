@@ -425,4 +425,9 @@ void removeAllItem()
         string objName = ObjectName(i);
         if (StringFind(objName, APP_TAG) != -1) ObjectDelete(objName);
     }
+
+    int i = 1;
+    while (PnLBuffer[i] != EMPTY_VALUE){
+        PnLBuffer[i++] = EMPTY_VALUE;
+    }
 }
