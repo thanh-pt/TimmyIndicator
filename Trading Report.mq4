@@ -7,10 +7,22 @@
 #property link      "https://www.youtube.com/@TimmyTraderHamHoc"
 #property version   "1.00"
 #property strict
-#property indicator_chart_window
+#property indicator_separate_window
+#property indicator_buffers 1
+#property indicator_plots   1
+//--- plot PnL
+#property indicator_label1  "PnL"
+#property indicator_type1   DRAW_LINE
+#property indicator_color1  clrBlack
+#property indicator_style1  STYLE_SOLID
+#property indicator_width1  1
+//--- indicator buffers
+double         PnLBuffer[];
 
 #define MAXTRADE 1000
+#define TXT_SPACING 20
 #define TXT_SPACE_BLOCK "                    "
+#define BGBLOCK "██████████████████████████████████████████████████████████████████"
 
 string APP_TAG = "TradingReport";
 
@@ -21,13 +33,18 @@ struct TradeInfo
     bool        IsBuy;
     double      CostPip;
     double      PlPip;
-    double      PlDola;
-    double      PlRR;
+    double      PnL;
+    double      RR;
     int         DayOfWk;
     int         WeekNum;
 };
 
-bool  gIsRun = false;
+enum eBtnId{
+    eBtnNone,
+    eBtnReloadGraph,
+    eBtnRemoveAll,
+};
+
 color gTextColor=clrBlack;
 
 int       gTradeCount = 0;
@@ -39,7 +56,8 @@ double    gWkData[7];
 int OnInit()
 {
 //--- indicator buffers mapping
-   
+    SetIndexBuffer(0,PnLBuffer);
+    drawHmi();
 //---
     long foregroundColor=clrBlack;
     ChartGetInteger(ChartID(),CHART_COLOR_FOREGROUND,0,foregroundColor);
@@ -122,8 +140,8 @@ void loadData()
         gListTrades[gTradeCount].IsBuy   = isBuy;
         gListTrades[gTradeCount].CostPip = pipSL;
         gListTrades[gTradeCount].PlPip   = plPip;
-        gListTrades[gTradeCount].PlDola  = plDola;
-        gListTrades[gTradeCount].PlRR    = plPip/pipSL;
+        gListTrades[gTradeCount].PnL  = plDola;
+        gListTrades[gTradeCount].RR    = plDola/RiskPerTrade;
         gListTrades[gTradeCount].DayOfWk = TimeDayOfWeek(time1);
         gListTrades[gTradeCount].WeekNum = WeeknumOfYear(time1);
         gTradeCount++;
@@ -133,7 +151,7 @@ void loadData()
 void setTableTextLine(int idx, string text)
 {
     string objName = APP_TAG+"Table"+IntegerToString(idx);
-    ObjectCreate(objName, OBJ_LABEL, 0, 0, 0);
+    ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);
     ObjectSetText(objName, text, 12, "Consolas", gTextColor);
     ObjectSet(objName, OBJPROP_XDISTANCE, 5);
     ObjectSet(objName, OBJPROP_YDISTANCE, 10 + idx * 19);
@@ -197,16 +215,16 @@ void displayData()
             gWkData[0] = 0; gWkData[1] = 0; gWkData[2] = 0; gWkData[3] = 0; gWkData[4] = 0; gWkData[5] = 0; gWkData[6] = 0;
             wkNum = gListTrades[i].WeekNum;
         }
-        if (gListTrades[i].PlDola > RiskPerTrade){
+        if (gListTrades[i].PnL > RiskPerTrade){
             tp++;
             tpPipSum += gListTrades[i].PlPip;
-            tpRRSum  += gListTrades[i].PlRR;
+            tpRRSum  += gListTrades[i].RR;
         }
-        else if (gListTrades[i].PlDola < 0) sl++;
+        else if (gListTrades[i].PnL < 0) sl++;
         else be++;
-        gWkData[gListTrades[i].DayOfWk] += gListTrades[i].PlRR;
+        gWkData[gListTrades[i].DayOfWk] += gListTrades[i].RR;
         costPipSum += gListTrades[i].CostPip;
-        plAll   += gListTrades[i].PlRR;
+        plAll   += gListTrades[i].RR;
     }
     if (wkNum != -1){
         //print last data
@@ -247,11 +265,164 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
-//---
-    if (id == CHARTEVENT_OBJECT_CLICK || gIsRun == false){
-        loadData();
-        displayData();
-        gIsRun = true;
+    //---
+    if (id == CHARTEVENT_OBJECT_CLICK){
+        string sparamItems[];
+        int k = StringSplit(sparam,':',sparamItems);
+        if (k != 2) return;
+        handleButtonEvent(StrToInteger(sparamItems[1]));
+    }
+    else if (id == CHARTEVENT_OBJECT_DELETE){
+        drawHmi();
     }
 }
-//+------------------------------------------------------------------+
+
+void handleButtonEvent(int btnIdx)
+{
+    switch (btnIdx){
+        case eBtnReloadGraph:
+            removeAllItem();
+            loadData();
+            drawGraph();
+            displayData();
+            break;
+        case eBtnRemoveAll:
+            removeAllItem();
+            break;
+    }
+}
+
+int gTextLabelIdx = 0;
+int gVerticalLineIdx = 0;
+int gDotIdx = 0;
+
+void drawGraph()
+{
+    gTextLabelIdx = 0;
+    gVerticalLineIdx = 0;
+    gDotIdx = 0;
+    double currRR = 0;
+    double contLoss = 0;
+    double contProfit = 0;
+    int curCW = gListTrades[0].WeekNum;
+    drawVerticalLine(gVerticalLineIdx++, "Wk"+IntegerToString(curCW), Time[gTradeCount]);
+    for (int i = 0; i < gTradeCount; i++){
+        currRR += gListTrades[i].RR;
+        PnLBuffer[gTradeCount-i] = currRR;
+        drawDot(gDotIdx++, Time[gTradeCount-i], currRR);
+        if (gListTrades[i].RR < 0){ // loss
+            contLoss += gListTrades[i].RR;
+            if (contProfit > 1){
+                drawTextLabel(gTextLabelIdx++, DoubleToString(contProfit, 1), Time[gTradeCount-i+1], PnLBuffer[gTradeCount-i+1], ANCHOR_RIGHT_LOWER);
+            }
+            contProfit = 0;
+        }
+        else if (gListTrades[i].RR > 0.8){ // Profit
+            contProfit += gListTrades[i].RR;
+            if (contLoss != 0){
+                drawTextLabel(gTextLabelIdx++, DoubleToString(contLoss, 1), Time[gTradeCount-i+1], PnLBuffer[gTradeCount-i+1], ANCHOR_RIGHT_UPPER);
+            }
+            contLoss = 0;
+        }
+        // Wk separate
+        if (gListTrades[i].WeekNum != curCW){
+            curCW = gListTrades[i].WeekNum;
+            drawVerticalLine(gVerticalLineIdx++, "Wk"+IntegerToString(curCW), Time[gTradeCount-i+1]);
+        }
+    }
+    // Draw last contPnL
+    if (contLoss != 0){
+        drawTextLabel(gTextLabelIdx++, DoubleToString(contLoss, 1), Time[1], PnLBuffer[1], ANCHOR_RIGHT_UPPER);
+        contLoss = 0;
+    }
+    if (contProfit != 0){
+        drawTextLabel(gTextLabelIdx++, DoubleToString(contProfit, 1), Time[1], PnLBuffer[1], ANCHOR_RIGHT_LOWER);
+        contProfit = 0;
+    }
+}
+
+void drawHmi()
+{
+    drawButton(eBtnReloadGraph, "Reload Graph");
+    drawButton(eBtnRemoveAll, "Remove All");
+}
+
+void drawButton(int index, string text)
+{
+    string objName = APP_TAG + "BtnBg:" + IntegerToString(index);
+    ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);// TODO: using find window index https://docs.mql4.com/chart_operations/windowfind
+    ObjectSet(objName, OBJPROP_SELECTABLE, false);
+    ObjectSetText(objName, StringSubstr(BGBLOCK, 0, StringLen(text)), 10, "Consolas", clrGray);
+    ObjectSet(objName, OBJPROP_XDISTANCE, 5);
+    ObjectSet(objName, OBJPROP_YDISTANCE, index * TXT_SPACING);
+    ObjectSetString(ChartID() , objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSetInteger(ChartID(), objName, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR , ANCHOR_RIGHT_UPPER);
+    //--------------------------------------------
+    objName = APP_TAG + "Btn:" + IntegerToString(index);
+    ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);
+    ObjectSetText(objName, text, 8, "Consolas");
+    ObjectSet(objName, OBJPROP_SELECTABLE, false);
+    ObjectSet(objName, OBJPROP_COLOR, clrBlack);
+    ObjectSet(objName, OBJPROP_XDISTANCE, 5+2);
+    ObjectSet(objName, OBJPROP_YDISTANCE, index * TXT_SPACING);
+    ObjectSetString(ChartID() , objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSetInteger(ChartID(), objName, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR , ANCHOR_RIGHT_UPPER);
+}
+
+void drawTextLabel(int index, string text, datetime time1, double price1, int anchor)
+{
+    string objName = APP_TAG + "TextLabel" + IntegerToString(index);
+    ObjectCreate(objName, OBJ_TEXT, 1, 0, 0);
+    // Default
+    ObjectSet(objName, OBJPROP_BACK, true);
+    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    // Basic
+    ObjectSet(objName, OBJPROP_TIME1, time1);
+    ObjectSet(objName, OBJPROP_PRICE1, price1);
+    ObjectSetText(objName, text, 7, NULL, clrBlack);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, anchor);
+}
+
+void drawDot(int index, datetime time1, double price1)
+{
+    string objName = APP_TAG + "Dot" + IntegerToString(index);
+    ObjectCreate(objName, OBJ_TEXT, 1, 0, 0);
+    // Default
+    // ObjectSet(objName, OBJPROP_BACK, true);
+    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, DoubleToString(price1, 1));
+    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    // Basic
+    ObjectSet(objName, OBJPROP_TIME1, time1);
+    ObjectSet(objName, OBJPROP_PRICE1, price1);
+    ObjectSetText(objName, "●", 6, NULL, clrBlack);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, ANCHOR_CENTER);
+}
+
+void drawVerticalLine(int index, string text, datetime time1)
+{
+    string objName = APP_TAG + "VerticalLine" + IntegerToString(index);
+    ObjectCreate(objName, OBJ_VLINE, 1, 0, 0);
+    // Default
+    ObjectSet(objName, OBJPROP_BACK, true);
+    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    // Basic
+    ObjectSet(objName, OBJPROP_TIME1, time1);
+    ObjectSetText(objName, text);
+    // Style
+    ObjectSet(objName, OBJPROP_STYLE, STYLE_DOT);
+    ObjectSet(objName, OBJPROP_WIDTH, 0);
+    // Basic
+    ObjectSet(objName, OBJPROP_COLOR, clrGray);
+}
+
+void removeAllItem()
+{
+    for (int i = ObjectsTotal() - 1; i >= 0; i--) {
+        string objName = ObjectName(i);
+        if (StringFind(objName, APP_TAG) != -1) ObjectDelete(objName);
+    }
+}
