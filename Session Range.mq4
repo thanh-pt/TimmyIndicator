@@ -136,6 +136,11 @@ int gMin  ;
 
 void scanWindow(){
     int bar = WindowFirstVisibleBar();
+    gMin   = TimeMinute(Time[bar]);
+    if (gMin != 0) {
+        bar = bar + gMin/gChartPeriod;
+    }
+
     int barLimit = bar - WindowBarsPerChart();
 
     gLineIdx = 0;
@@ -144,7 +149,6 @@ void scanWindow(){
     while(bar >= 0 && bar > barLimit) {
         gMonth = TimeMonth(Time[bar]);
         gHour  = TimeHour(Time[bar]);
-        gMin   = TimeMinute(Time[bar]);
         if (gMonth >= winterBeg || gMonth < winterEnd) { // Winter Time
             gHour = gHour - 1;
         }
