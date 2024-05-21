@@ -13,7 +13,7 @@
 
 enum eSession{
     eAs,
-    eLo,
+    eLd,
     eNy
 };
 
@@ -59,15 +59,30 @@ int winterBeg = 10;
 int winterEnd = 4;
 
 
-int gChartPeriod;
+int          gChartPeriod;
+string       gSymbol;
 
-int gAsBar;
-int gLdBar;
-int gNyBar;
+MqlDateTime  gDtStruct;
+datetime     gBegTime;
+int          gBegDayBar;
+int          gWtrOffset;
+int          gMonth;
 
-string gSsLableMap[] = {"As", "Ld", "Ny"};
-color gSsColor[3];
-color gSsBgColor[3];
+int gLineIdx;
+int gLabelIdx;
+int gRectIdx;
+
+int gAsBarNum;
+int gLdBarNum;
+int gNyBarNum;
+
+int gBarAs;
+int gBarLd;
+int gBarNy;
+
+string  gSsLableMap[] = {"As", "Ld", "Ny"};
+color   gSsColor[3];
+color   gSsBgColor[3];
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -76,9 +91,10 @@ int OnInit()
 //--- indicator buffers mapping
 //---
     gChartPeriod = ChartPeriod();
-    gAsBar = (asEndHour - asBegHour) * 60 / gChartPeriod;
-    gLdBar = (ldEndHour - ldBegHour) * 60 / gChartPeriod;
-    gNyBar = (nyEndHour - nyBegHour) * 60 / gChartPeriod;
+    gSymbol = Symbol();
+    gAsBarNum = (asEndHour - asBegHour) * 60 / gChartPeriod;
+    gLdBarNum = (ldEndHour - ldBegHour) * 60 / gChartPeriod;
+    gNyBarNum = (nyEndHour - nyBegHour) * 60 / gChartPeriod;
     gSsColor[0] = inpAsColor;
     gSsColor[1] = inpLdColor;
     gSsColor[2] = inpNyColor;
@@ -127,46 +143,36 @@ void OnChartEvent(const int id,
 }
 //+------------------------------------------------------------------+
 
-int gLineIdx;
-int gLabelIdx;
-int gRectIdx;
-int gMonth;
-int gHour ;
-int gMin  ;
-
 void scanWindow(){
-    int bar = WindowFirstVisibleBar();
-    gMin   = TimeMinute(Time[bar]);
-    if (gMin != 0) {
-        bar = bar + gMin/gChartPeriod;
+    gLineIdx    = 0;
+    gLabelIdx   = 0;
+    gRectIdx    = 0;
+    // Step 1: Xác định ngày
+    TimeToStruct(Time[WindowFirstVisibleBar()], gDtStruct);
+    gDtStruct.sec   = 0;
+    gDtStruct.min   = 0;
+    gDtStruct.hour  = 0;
+    gBegTime = StructToTime(gDtStruct);
+    // Step 2: Xác định nến bắt đầu ngày
+    gBegDayBar = iBarShift(gSymbol, gChartPeriod, gBegTime);
+    if (gDtStruct.day_of_week == 0) { // Shift 3 tiếng
+        gBegDayBar -= (3 * 60 / gChartPeriod + 1);
     }
-
-    int barLimit = bar - WindowBarsPerChart();
-
-    gLineIdx = 0;
-    gLabelIdx = 0;
-    gRectIdx = 0;
-    while(bar >= 0 && bar > barLimit) {
-        gMonth = TimeMonth(Time[bar]);
-        gHour  = TimeHour(Time[bar]);
+    while (gBegDayBar >= 0){
+        // Step 3: Tính toán nến index của Session -> Draw
+        gMonth = TimeMonth(Time[gBegDayBar]);
+        gWtrOffset = 0;
         if (gMonth >= winterBeg || gMonth < winterEnd) { // Winter Time
-            gHour = gHour - 1;
+            gWtrOffset = 60/gChartPeriod;
         }
-        if (inpDisplayAs && gHour == asBegHour){
-            drawSession(eAs, bar, bar-gAsBar);
-            bar -= gAsBar;
-        }
-        else if (inpDisplayLd && gHour == ldBegHour){
-            drawSession(eLo, bar, bar-gLdBar);
-            bar -= gLdBar;
-        }
-        else if (inpDisplayNy && gHour == nyBegHour){
-            drawSession(eNy, bar, bar-gLdBar);
-            bar -= gLdBar;
-        }
-        else {
-            bar--;
-        }
+        gBarAs = gBegDayBar - asBegHour*60/gChartPeriod - gWtrOffset;
+        gBarLd = gBegDayBar - ldBegHour*60/gChartPeriod - gWtrOffset;
+        gBarNy = gBegDayBar - nyBegHour*60/gChartPeriod - gWtrOffset;
+        drawSession(eAs, gBarAs, gBarAs-gAsBarNum);
+        drawSession(eLd, gBarLd, gBarLd-gLdBarNum);
+        drawSession(eNy, gBarNy, gBarNy-gNyBarNum);
+        // Step 4: Nến ngày tiếp theo
+        gBegDayBar -= 24 * 60 / gChartPeriod;
     }
 }
 
