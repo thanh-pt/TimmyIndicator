@@ -61,6 +61,7 @@ int winterEnd = 4;
 
 int          gChartPeriod;
 string       gSymbol;
+bool         gInit = false;
 
 MqlDateTime  gDtStruct;
 datetime     gBegTime;
@@ -109,6 +110,7 @@ void OnDeinit(const int reason) {
         string objName = ObjectName(i);
         if (StringFind(objName, APP_TAG) != -1) ObjectDelete(objName);
     }
+    gInit = false;
 }
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |
@@ -125,6 +127,7 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
 //---
+    gInit = true;
 
 //--- return value of prev_calculated for next call
     return(rates_total);
@@ -138,6 +141,7 @@ void OnChartEvent(const int id,
                   const string &sparam)
 {
 //---
+    if (gInit == false) return;
     if (ChartPeriod() >= PERIOD_H4) return;
     if (id == CHARTEVENT_CHART_CHANGE) scanWindow();
 }
@@ -180,13 +184,14 @@ double gHi, gLo;
 void drawSession(eSession ss, int beginBar, int endBar)
 {
     // Find HiLo
-    gHi = High[beginBar];
-    gLo = Low [beginBar];
+    if (beginBar < 0) return;
     bool isSsRunning = false;
     if (endBar < 0){
         endBar = 0;
         isSsRunning = true;
     }
+    gHi = High[beginBar];
+    gLo = Low [beginBar];
     for (int i = beginBar; i >= 0 && i >= endBar; i--){
         if (High[i] > gHi)  gHi = High[i];
         if (Low[i]  < gLo)  gLo = Low[i];
