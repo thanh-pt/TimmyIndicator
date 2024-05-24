@@ -28,6 +28,7 @@ enum eStyle{
 
 
 input eStyle inpStyle = eStyleBorderColor;      // => Ｓｅｓｓｉｏｎ Ｓｔｙｌｅ <=
+input bool inpDisplayLable = false;              // Label Display
 
 input string _display;                          // - - - Display - - -
 input bool inpDisplayAs = true;                 // Asian Display
@@ -236,12 +237,17 @@ void drawSession(eSession ss, int beginBar, int endBar)
             if (Low[i] < currLo) currLo = Low[i];
         }
     }
-    createLabel(gLabelIdx++, (isSsRunning ? "►" : "") + gSsLableMap[ss],
-            Time[endBar], gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+    if (inpDisplayLable){
+        createLabel(gLabelIdx++, (isSsRunning ? "►" : "") + gSsLableMap[ss],
+                Time[endBar], gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+    } else if (isSsRunning){
+        createLabel(gLabelIdx++, "►" + gSsLableMap[ss],
+                Time[endBar], gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+    }
     
     hideItem(gLabelIdx, "Label");
-    hideItem(gLineIdx, "Line");
-    hideItem(gRectIdx, "Rectangle");
+    hideItem(gLineIdx,  "Line");
+    hideItem(gRectIdx,  "Rectangle");
 }
 
 void createLabel(int index, string label, datetime time1, double price1, int size, int anchor, color cl){
