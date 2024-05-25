@@ -18,32 +18,33 @@ enum eSession{
 };
 
 enum eStyle{
-    eStyleHiLoLine,     // Ｈｉ/Ｌｏ Ｌｉｎｅ
-    eStyleHiLoChar,     // Ｈｉ/Ｌｏ Ｃｈａｒ Ｌｉｎｅ
-    eStyleLineBox,      // Ｌｉｎｅ Ｂｏｘ
-    eStyleColorBox,     // Ｃｏｌｏｒ Ｂｏｘ
-    eStyleBorderLine,   // Ｂｏｄｅｒ Ｌｉｎｅ
-    eStyleBorderColor,  // Ｂｏｄｅｒ Ｃｏｌｏｒ
+    eStyleHiLoLine,     // H I / L O   L I N E
+    eStyleHiLoChar,     // H I / L O   C H A R   L I N E
+    eStyleLineBox,      // L I N E   B O X
+    eStyleColorBox,     // C O L O R   B O X
+    eStyleBorderLine,   // B O D E R   L I N E
+    eStyleBorderColor,  // B O D E R   C O L O R
 };
 
 
-input eStyle inpStyle = eStyleBorderColor;      // => Ｓｅｓｓｉｏｎ Ｓｔｙｌｅ <=
-input bool inpDisplayLable = false;              // Label Display
+input string _config;                          // - - - Configuration - - -
+input eStyle inpStyle = eStyleBorderColor;      // S T Y L E
+input bool inpDisplayLable = false;             // L A B E L
 
-input string _display;                          // - - - Display - - -
-input bool inpDisplayAs = true;                 // Asian Display
-input bool inpDisplayLd = true;                 // London Display
-input bool inpDisplayNy = true;                 // NewYork Display
+input string _display;                          // - - - Display Option - - -
+input bool inpDisplayAs = true;                 // Asian
+input bool inpDisplayLd = true;                 // London
+input bool inpDisplayNy = true;                 // NewYork
 
 input string _lineColor;                        // - - - Main Color - - -
-input color inpAsColor = clrTeal;               // Asian Color
-input color inpLdColor = clrForestGreen;        // London Color
-input color inpNyColor = clrBrown;              // NewYork Color
+input color inpAsColor = clrTeal;               // Asian
+input color inpLdColor = clrForestGreen;        // London
+input color inpNyColor = clrBrown;              // NewYork
 
 input string _bgBox;                            // - - - Background Color - - -
-input color inpAsBgColor = clrAliceBlue;        // Asian Color
-input color inpLdBgColor = clrHoneydew;         // London Color
-input color inpNyBgColor = clrLavenderBlush;    // NewYork Color
+input color inpAsBgColor = clrAliceBlue;        // Asian
+input color inpLdBgColor = clrHoneydew;         // London
+input color inpNyBgColor = clrLavenderBlush;    // NewYork
 
 input string _charLine;                         // - - - Hi/Lo Char Line Configuration - - -
 input string inpChPoint = "•";                  // Charecter
