@@ -30,6 +30,7 @@ enum eStyle{
 input string _config;                          // - - - Configuration - - -
 input eStyle inpStyle = eStyleBorderColor;      // S T Y L E
 input bool inpDisplayLable = false;             // L A B E L
+input bool inpHiFreqUpdate = false;             // Update Frequency
 
 input string _display;                          // - - - Display Option - - -
 input bool inpDisplayAs = true;                 // Asian
@@ -130,7 +131,7 @@ int OnCalculate(const int rates_total,
 {
 //---
     gInit = true;
-
+    if (inpHiFreqUpdate) scanWindow();
 //--- return value of prev_calculated for next call
     return(rates_total);
 }
@@ -144,12 +145,12 @@ void OnChartEvent(const int id,
 {
 //---
     if (gInit == false) return;
-    if (ChartPeriod() >= PERIOD_H4) return;
     if (id == CHARTEVENT_CHART_CHANGE) scanWindow();
 }
 //+------------------------------------------------------------------+
 
 void scanWindow(){
+    if (ChartPeriod() >= PERIOD_H4) return;
     gLineIdx    = 0;
     gLabelIdx   = 0;
     gRectIdx    = 0;
@@ -240,10 +241,10 @@ void drawSession(eSession ss, int beginBar, int endBar)
     }
     if (inpDisplayLable){
         createLabel(gLabelIdx++, (isSsRunning ? "►" : "") + gSsLableMap[ss],
-                Time[endBar], gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+                Time[endBar], gHi, 7, isSsRunning ? ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_LOWER, gSsColor[ss]);
     } else if (isSsRunning){
         createLabel(gLabelIdx++, "►" + gSsLableMap[ss],
-                Time[endBar], gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+                Time[endBar], gHi, 7, ANCHOR_LEFT_LOWER, gSsColor[ss]);
     }
     
     hideItem(gLabelIdx, "Label");

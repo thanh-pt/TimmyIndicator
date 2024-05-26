@@ -17,18 +17,18 @@ enum EQueryBar {
     E_5BAR, // 5 bars
 };
 
-input string    CommomConfig;                   // Common Config:
-input int       InpPivotSize = 9;               // →   Pivot Size
-input int       InpSmallSize = 6;               // →   Small Size
-input int       InpChartScaleDisplay = 2;       // →   Scale Visibility
+input string    CommomConfig;                   // C O M M O N   C O N F I G
 input EQueryBar InpQueryBar = E_3BAR;           // →   Query Bar
-input string _separateLine;                     // ------------------------------------------------------------------------
-input string HiConfig;                      // High Pivot Config:
-input string HiPivotCharecter = "•";        // →   Charecter
-input color  HiPivotColor     = clrBlack;   // →   Color
-input string LoConfig;                      // Low Pivot Config:
-input string LoPivotCharecter = "•";        // →   Charecter
-input color  LoPivotColor     = clrBlack;   // →   Color
+input int       InpPivotSize = 12;              // →   Pivot Size
+input int       InpSmallSize = 3;               // →   Small Size
+input int       InpChartScaleDisplay = 2;       // →   Scale Visibility
+input string _separateLine;                     // D I S P L A Y   C O N F I G
+input string _charecter;                        // → Pivot Charecter:
+input string HiPivotCharecter = "•";            // Hi
+input string LoPivotCharecter = "•";            // Lo
+input string _cl;                               // → Charecter:
+input color  HiPivotColor     = clrCrimson;     // Hi
+input color  LoPivotColor     = clrRoyalBlue;   // Lo
 
 
 //---
@@ -122,6 +122,7 @@ void loadPivotDrawing(){
 
 int gPreState = 0;
 double gPrePrice = 0;
+int gPreIdx = 0;
 
 void drawPivot(int index, bool isHi, const datetime& time, const double& price){
     string objName = APP_TAG + IntegerToString(index);
@@ -140,21 +141,29 @@ void drawPivot(int index, bool isHi, const datetime& time, const double& price){
     if (isHi){
         if (gPreState == 2) {
             if (price > gPrePrice){
-                resizePivot(index-1, InpSmallSize);
+                resizePivot(gPreIdx, InpSmallSize);
+                gPrePrice = price;
+                gPreIdx = index;
             } else {
                 resizePivot(index, InpSmallSize);
             }
+        } else {
+            gPrePrice = price;
+            gPreIdx = index;
         }
-        gPrePrice = price;
     } else {
         if (gPreState == 3){
             if (price < gPrePrice){
                 resizePivot(index-1, InpSmallSize);
+                gPrePrice = price;
+                gPreIdx = index;
             } else {
                 resizePivot(index, InpSmallSize);
             }
+        } else{
+            gPrePrice = price;
+            gPreIdx = index;
         }
-        gPrePrice = price;
     }
     gPreState = (isHi ? 2 : 3);
 }
@@ -166,6 +175,10 @@ bool hidePivot(int index){
 }
 
 void resizePivot(int index, int size){
+    if (size == 0) {
+        hidePivot(index);
+        return;
+    }
     string objName = APP_TAG + IntegerToString(index);
     ObjectSet(objName, OBJPROP_FONTSIZE, size);
 }
