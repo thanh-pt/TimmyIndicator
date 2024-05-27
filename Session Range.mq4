@@ -175,9 +175,9 @@ void scanWindow(){
         gBarAs = gBegDayBar - asBegHour*60/gChartPeriod - gWtrOffset;
         gBarLd = gBegDayBar - ldBegHour*60/gChartPeriod - gWtrOffset;
         gBarNy = gBegDayBar - nyBegHour*60/gChartPeriod - gWtrOffset;
-        drawSession(eAs, gBarAs, gBarAs-gAsBarNum);
-        drawSession(eLd, gBarLd, gBarLd-gLdBarNum);
-        drawSession(eNy, gBarNy, gBarNy-gNyBarNum);
+        if (inpDisplayAs) drawSession(eAs, gBarAs, gBarAs-gAsBarNum);
+        if (inpDisplayLd) drawSession(eLd, gBarLd, gBarLd-gLdBarNum);
+        if (inpDisplayNy) drawSession(eNy, gBarNy, gBarNy-gNyBarNum);
         // Step 4: Nến ngày tiếp theo
         gBegDayBar -= 24 * 60 / gChartPeriod;
     }

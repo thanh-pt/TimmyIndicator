@@ -18,10 +18,11 @@ enum EQueryBar {
 };
 
 input string    CommomConfig;                   // C O M M O N   C O N F I G
-input EQueryBar InpQueryBar = E_3BAR;           // →   Query Bar
-input int       InpPivotSize = 12;              // →   Pivot Size
-input int       InpSmallSize = 3;               // →   Small Size
-input int       InpChartScaleDisplay = 2;       // →   Scale Visibility
+input EQueryBar InpQueryBar = E_3BAR;           // →    Query Bar
+input int       InpPivotSize = 12;              // →    Pivot Size
+input int       InpSmallSize = 3;               // →    Small Size
+input int       InpChartScaleDisplay = 2;       // →    Scale Visibility
+input string    InpOnOffHotkey = "K";           // →    On/Off Hotkey
 input string _separateLine;                     // D I S P L A Y   C O N F I G
 input string _charecter;                        // → Pivot Charecter:
 input string HiPivotCharecter = "•";            // Hi
@@ -34,6 +35,7 @@ input color  LoPivotColor     = clrRoyalBlue;   // Lo
 //---
 long gChartScale = 0;
 bool gInitCalculation = false;
+bool gOnState = true;
 
 
 //+------------------------------------------------------------------+
@@ -84,24 +86,41 @@ void OnChartEvent(const int id,
 //---
     if (gInitCalculation == false) return;
     if (id == CHARTEVENT_CHART_CHANGE) loadPivotDrawing();
+    else if (id == CHARTEVENT_KEYDOWN && lparam == InpOnOffHotkey[0]) {
+        gOnState = !gOnState;
+        loadPivotDrawing();
+    }
 }
 //+------------------------------------------------------------------+
 
 void loadPivotDrawing(){
+    int pIdx = 0;
+    if (gOnState == false) {
+        while(hidePivot(pIdx++) == true){}
+        return;
+    }
     ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
     int bars_count=WindowBarsPerChart();
     int bar=WindowFirstVisibleBar()-2;
-    int pIdx = 0;
     if (gChartScale >= InpChartScaleDisplay) {
         gPreState = 0;
         gPrePrice = Open[bar];
         for(int i=0; i<bars_count && bar>=0; i++,bar--) {
             if (InpQueryBar == E_3BAR){
-                if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
-                    drawPivot(pIdx++, true, Time[bar], High[bar]);
-                }
-                if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1]){
-                    drawPivot(pIdx++, false, Time[bar], Low[bar]);
+                if (gPreState == 2){
+                    if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1]){
+                        drawPivot(pIdx++, false, Time[bar], Low[bar]);
+                    }
+                    if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
+                        drawPivot(pIdx++, true, Time[bar], High[bar]);
+                    }
+                } else {
+                    if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
+                        drawPivot(pIdx++, true, Time[bar], High[bar]);
+                    }
+                    if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1]){
+                        drawPivot(pIdx++, false, Time[bar], Low[bar]);
+                    }
                 }
                 if (bar == 1) break;
             } else if (InpQueryBar == E_5BAR){
@@ -141,7 +160,8 @@ void drawPivot(int index, bool isHi, const datetime& time, const double& price){
     if (isHi){
         if (gPreState == 2) {
             if (price > gPrePrice){
-                resizePivot(gPreIdx, InpSmallSize);
+                hidePivot(gPreIdx);
+                // resizePivot(gPreIdx, InpSmallSize);
                 gPrePrice = price;
                 gPreIdx = index;
             } else {
@@ -154,7 +174,8 @@ void drawPivot(int index, bool isHi, const datetime& time, const double& price){
     } else {
         if (gPreState == 3){
             if (price < gPrePrice){
-                resizePivot(index-1, InpSmallSize);
+                hidePivot(gPreIdx);
+                // resizePivot(index-1, InpSmallSize);
                 gPrePrice = price;
                 gPreIdx = index;
             } else {
