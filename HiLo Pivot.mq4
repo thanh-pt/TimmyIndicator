@@ -15,6 +15,7 @@
 enum EQueryBar {
     E_3BAR, // 3 bars
     E_5BAR, // 5 bars
+    E_4BAR, // 4 bars
 };
 
 input string    CommomConfig;                   // C O M M O N   C O N F I G
@@ -123,7 +124,8 @@ void loadPivotDrawing(){
                     }
                 }
                 if (bar == 1) break;
-            } else if (InpQueryBar == E_5BAR){
+            }
+            else if (InpQueryBar == E_5BAR){
                 if ((High[bar] > High[bar+1] && High[bar] >= High[bar-1])
                  && (High[bar] > High[bar+2] && High[bar] > High[bar-2])){
                     drawPivot(pIdx++, true, Time[bar], High[bar]);
@@ -133,6 +135,25 @@ void loadPivotDrawing(){
                     drawPivot(pIdx++, false, Time[bar], Low[bar]);
                 }
                 if (bar == 2) break;
+            }
+            else if (InpQueryBar == E_4BAR){
+                if (gPreState == 2){
+                    if (High[bar] > High[bar+1] && High[bar] >= High[bar-1] && (High[bar] > High[bar-2])){
+                        drawPivot(pIdx++, true, Time[bar], High[bar]);
+                    }
+                    if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1] && (Low[bar] < Low[bar-2])){
+                        drawPivot(pIdx++, false, Time[bar], Low[bar]);
+                    }
+                }
+                else {
+                    if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1] && (Low[bar] < Low[bar-2])){
+                        drawPivot(pIdx++, false, Time[bar], Low[bar]);
+                    }
+                    if (High[bar] > High[bar+1] && High[bar] >= High[bar-1] && (High[bar] > High[bar-2])){
+                        drawPivot(pIdx++, true, Time[bar], High[bar]);
+                    }
+                }
+                if (bar == 3) break;
             }
         }
     }
@@ -160,8 +181,8 @@ void drawPivot(int index, bool isHi, const datetime& time, const double& price){
     if (isHi){
         if (gPreState == 2) {
             if (price > gPrePrice){
-                hidePivot(gPreIdx);
-                // resizePivot(gPreIdx, InpSmallSize);
+                // hidePivot(gPreIdx);
+                resizePivot(gPreIdx, InpSmallSize);
                 gPrePrice = price;
                 gPreIdx = index;
             } else {
@@ -174,8 +195,8 @@ void drawPivot(int index, bool isHi, const datetime& time, const double& price){
     } else {
         if (gPreState == 3){
             if (price < gPrePrice){
-                hidePivot(gPreIdx);
-                // resizePivot(index-1, InpSmallSize);
+                // hidePivot(gPreIdx);
+                resizePivot(index-1, InpSmallSize);
                 gPrePrice = price;
                 gPreIdx = index;
             } else {
