@@ -205,7 +205,7 @@ void drawSession(eSession ss, int beginBar, int endBar)
         createLine(gLineIdx++, Time[beginBar], Time[endBar], gLo, gLo, gSsColor[ss]);
         if (inpStyle == eStyleLineBox){
             createLine(gLineIdx++, Time[beginBar], Time[beginBar], gHi, gLo, gSsColor[ss]);
-            createLine(gLineIdx++, Time[endBar], Time[endBar], gHi, gLo, gSsColor[ss]);
+            if (isSsRunning == false) createLine(gLineIdx++, Time[endBar], Time[endBar], gHi, gLo, gSsColor[ss]);
         }
     }
     else if (inpStyle == eStyleHiLoChar){
@@ -228,7 +228,7 @@ void drawSession(eSession ss, int beginBar, int endBar)
             if (High[i] > currHi) currHi = High[i];
             if (Low[i] < currLo) currLo = Low[i];
         }
-        createLine(gLineIdx++, Time[endBar], Time[endBar], gHi, gLo, gSsColor[ss]);
+        if (isSsRunning == false) createLine(gLineIdx++, Time[endBar], Time[endBar], gHi, gLo, gSsColor[ss]);
     }
     else if (inpStyle == eStyleBorderColor){
         double currHi = High[beginBar];

@@ -18,19 +18,20 @@ enum EQueryBar {
     E_4BAR, // 4 bars
 };
 
-input string    CommomConfig;                   // C O M M O N   C O N F I G
-input EQueryBar InpQueryBar = E_3BAR;           // →    Query Bar
-input int       InpPivotSize = 12;              // →    Pivot Size
-input int       InpSmallSize = 3;               // →    Small Size
-input int       InpChartScaleDisplay = 2;       // →    Scale Visibility
-input string    InpOnOffHotkey = "K";           // →    On/Off Hotkey
-input string _separateLine;                     // D I S P L A Y   C O N F I G
-input string _charecter;                        // → Pivot Charecter:
-input string HiPivotCharecter = "•";            // Hi
-input string LoPivotCharecter = "•";            // Lo
-input string _cl;                               // → Charecter:
-input color  HiPivotColor     = clrCrimson;     // Hi
-input color  LoPivotColor     = clrRoyalBlue;   // Lo
+input string    CommomConfig;                   // - - - C O M M O N   C O N F I G - - -
+// input EQueryBar InpQueryBar = E_3BAR;        // →    Query Bar:
+input int       InpChartScaleDisplay    = 2;    // →    Scale Visibility:
+input string    InpOnOffHotkey          = "K";  // →    On/Off Hotkey:
+input string _pivot;                            // - - - P I V O T - - -
+input int    InpPivotSize       = 9;           // Size:
+input string InpPivotCharecter  = "•";          // Charecter:
+input color  InpHiPivotColor    = clrBlack;     // Color Hi:
+input color  InpLoPivotColor    = clrBlack;     // Color Lo:
+input string _small;                            // - - - S M A L L - - -
+input int    InpSmallSize       = 6;            // Size:
+input string InpSmallCharecter  = "×";          // Charecter:
+input color  InpHiSmallColor    = clrBlack;     // Color Hi:
+input color  InpLoSmallColor    = clrBlack;     // Color Lo:
 
 
 //---
@@ -38,6 +39,10 @@ long gChartScale = 0;
 bool gInitCalculation = false;
 bool gOnState = true;
 
+string gHiPivotCh;
+string gLoPivotCh;
+string gHiSmallCh;
+string gLoSmallCh;
 
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
@@ -45,6 +50,14 @@ bool gOnState = true;
 int OnInit()
 {
 //--- indicator buffers mapping
+    if (StringLen(InpPivotCharecter) == 1){
+        gHiPivotCh = InpPivotCharecter;
+        gLoPivotCh = InpPivotCharecter;
+    }
+    if (StringLen(InpSmallCharecter) == 1){
+        gHiSmallCh = InpSmallCharecter;
+        gLoSmallCh = InpSmallCharecter;
+    }
 
 //---
     return(INIT_SUCCEEDED);
@@ -107,54 +120,26 @@ void loadPivotDrawing(){
         gPreState = 0;
         gPrePrice = Open[bar];
         for(int i=0; i<bars_count && bar>=0; i++,bar--) {
-            if (InpQueryBar == E_3BAR){
-                if (gPreState == 2){
-                    if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1]){
-                        drawPivot(pIdx++, false, Time[bar], Low[bar]);
-                    }
-                    if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
-                        drawPivot(pIdx++, true, Time[bar], High[bar]);
-                    }
-                } else {
-                    if (High[bar] > High[bar+1] && High[bar] >= High[bar-1]){
-                        drawPivot(pIdx++, true, Time[bar], High[bar]);
-                    }
-                    if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1]){
-                        drawPivot(pIdx++, false, Time[bar], Low[bar]);
-                    }
+            if (ChartPeriod() == PERIOD_M1) Print(bar);
+            if ((Low[bar] < Low[bar+1] || (Low[bar] == Low[bar+1] && Low[bar] < Low[bar+2])) // Compare với bar trước đó
+                && Low[bar] < Low[bar-1] && (Low[bar] < Low[bar-2])){
+                if (Low[bar-1] < Low[bar-2]){
+                    drawPivot(pIdx++, gLoPivotCh, InpPivotSize, InpLoPivotColor, ANCHOR_UPPER, Time[bar], Low[bar]);
                 }
-                if (bar == 1) break;
+                else if (InpSmallSize!= 0){
+                    drawPivot(pIdx++, gLoSmallCh, InpSmallSize, InpLoSmallColor, ANCHOR_UPPER, Time[bar], Low[bar]);
+                }
             }
-            else if (InpQueryBar == E_5BAR){
-                if ((High[bar] > High[bar+1] && High[bar] >= High[bar-1])
-                 && (High[bar] > High[bar+2] && High[bar] > High[bar-2])){
-                    drawPivot(pIdx++, true, Time[bar], High[bar]);
+            if ((High[bar] > High[bar+1] || (High[bar] == High[bar+1] && High[bar] > High[bar+2])) // Compare với bar trước đó
+                && High[bar] > High[bar-1] && (High[bar] > High[bar-2])){
+                if (High[bar-1] > High[bar-2]){
+                    drawPivot(pIdx++, gHiPivotCh, InpPivotSize, InpHiPivotColor, ANCHOR_LOWER, Time[bar], High[bar]);
+                } 
+                else if (InpSmallSize!= 0){
+                    drawPivot(pIdx++, gHiSmallCh, InpSmallSize, InpHiSmallColor, ANCHOR_LOWER, Time[bar], High[bar]);
                 }
-                if ((Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1])
-                 && (Low[bar] < Low[bar+2] && Low[bar] < Low[bar-2])){
-                    drawPivot(pIdx++, false, Time[bar], Low[bar]);
-                }
-                if (bar == 2) break;
             }
-            else if (InpQueryBar == E_4BAR){
-                if (gPreState == 2){
-                    if (High[bar] > High[bar+1] && High[bar] >= High[bar-1] && (High[bar] > High[bar-2])){
-                        drawPivot(pIdx++, true, Time[bar], High[bar]);
-                    }
-                    if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1] && (Low[bar] < Low[bar-2])){
-                        drawPivot(pIdx++, false, Time[bar], Low[bar]);
-                    }
-                }
-                else {
-                    if (Low[bar] < Low[bar+1] && Low[bar] <= Low[bar-1] && (Low[bar] < Low[bar-2])){
-                        drawPivot(pIdx++, false, Time[bar], Low[bar]);
-                    }
-                    if (High[bar] > High[bar+1] && High[bar] >= High[bar-1] && (High[bar] > High[bar-2])){
-                        drawPivot(pIdx++, true, Time[bar], High[bar]);
-                    }
-                }
-                if (bar == 3) break;
-            }
+            if (bar == 3) break;
         }
     }
     while(hidePivot(pIdx++) == true){}
@@ -164,7 +149,7 @@ int gPreState = 0;
 double gPrePrice = 0;
 int gPreIdx = 0;
 
-void drawPivot(int index, bool isHi, const datetime& time, const double& price){
+void drawPivot(int index, string _text, int _size, color _color, int _anchor, const datetime& time, const double& price){
     string objName = APP_TAG + IntegerToString(index);
     if (ObjectFind(objName) < 0) {
         ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
@@ -172,55 +157,15 @@ void drawPivot(int index, bool isHi, const datetime& time, const double& price){
         ObjectSet(objName, OBJPROP_SELECTABLE, false);
         ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
     }
-    ObjectSetText(objName, isHi ? HiPivotCharecter : LoPivotCharecter, InpPivotSize, NULL, isHi ? HiPivotColor : LoPivotColor);
+    ObjectSetText(objName, _text, _size, NULL, _color);
     ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, DoubleToString(price, 5));
-    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, isHi ? ANCHOR_LOWER : ANCHOR_UPPER);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, _anchor);
     ObjectSet(objName, OBJPROP_TIME1, time);
     ObjectSet(objName, OBJPROP_PRICE1, price);
-
-    if (isHi){
-        if (gPreState == 2) {
-            if (price > gPrePrice){
-                // hidePivot(gPreIdx);
-                resizePivot(gPreIdx, InpSmallSize);
-                gPrePrice = price;
-                gPreIdx = index;
-            } else {
-                resizePivot(index, InpSmallSize);
-            }
-        } else {
-            gPrePrice = price;
-            gPreIdx = index;
-        }
-    } else {
-        if (gPreState == 3){
-            if (price < gPrePrice){
-                // hidePivot(gPreIdx);
-                resizePivot(index-1, InpSmallSize);
-                gPrePrice = price;
-                gPreIdx = index;
-            } else {
-                resizePivot(index, InpSmallSize);
-            }
-        } else{
-            gPrePrice = price;
-            gPreIdx = index;
-        }
-    }
-    gPreState = (isHi ? 2 : 3);
 }
 
 bool hidePivot(int index){
     string objName = APP_TAG + IntegerToString(index);
     ObjectSet(objName, OBJPROP_TIME1, 0);
     return (ObjectFind(objName) >= 0);
-}
-
-void resizePivot(int index, int size){
-    if (size == 0) {
-        hidePivot(index);
-        return;
-    }
-    string objName = APP_TAG + IntegerToString(index);
-    ObjectSet(objName, OBJPROP_FONTSIZE, size);
 }
