@@ -204,7 +204,8 @@ void drawSession(eSession ss, int beginBar, int endBar)
         createLine(gLineIdx++, Time[beginBar], Time[endBar], gHi, gHi, gSsColor[ss]);
         createLine(gLineIdx++, Time[beginBar], Time[endBar], gLo, gLo, gSsColor[ss]);
         if (inpStyle == eStyleLineBox){
-            createLine(gLineIdx++, Time[beginBar], Time[beginBar], gHi, gLo, gSsColor[ss]);
+            createLine(gLineIdx++, Time[beginBar], Time[beginBar], gHi, (gHi+9*High[beginBar])/10, gSsColor[ss]);
+            createLine(gLineIdx++, Time[beginBar], Time[beginBar], (gLo + 9*Low[beginBar])/10, gLo, gSsColor[ss]);
             if (isSsRunning == false) createLine(gLineIdx++, Time[endBar], Time[endBar], gHi, gLo, gSsColor[ss]);
         }
     }

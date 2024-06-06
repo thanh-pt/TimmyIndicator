@@ -37,14 +37,17 @@ return
 	return
 #IfWinActive
 
-; Vô hiệu hoá phím backspace -> Khắc phục lỗi xung đột với Unikey
 #IfWinActive, ahk_class MetaQuotes::MetaTrader::4.00
+; Begin:: Vô hiệu hoá phím backspace -> Khắc phục lỗi xung đột với Unikey
 	BackSpace::
 	return
-	+Q::Send, P
+; End
+	+Q::Send, P ;Phìm tắt này hoạt động với Timmy maker
 	^Right::
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
+
+	
 	$]::
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
