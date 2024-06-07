@@ -23,11 +23,64 @@ input int    InpWkSize      = 6;            // Size:
 input string InpWkSymbol    = "×";          // Symbol:
 input color  InpWkClr       = clrDarkGray;  // Color:
 
+int InpPreQuery = 5;
+
 
 //---
 long gChartScale = 0;
 bool gInitCalculation = false;
 bool gOnState = true;
+
+
+bool isHigherNext(int index){
+    int query = 1;
+    while (true){
+        if (index < query) return false;
+        if (High[index] > High[index-query]) return true;
+        else if (High[index] < High[index-query]) return false;
+        query++;
+        if (query >= InpPreQuery) return false;
+    }
+
+    return false;
+}
+
+bool isLowerNext(int index){
+    int query = 1;
+    while (true){
+        if (index < query) return false;
+        if (Low[index] < Low[index-query]) return true;
+        else if (Low[index] > Low[index-query]) return false;
+        query++;
+        if (query >= InpPreQuery) return false;
+    }
+
+    return false;
+}
+
+bool isHigherPrevious(int index){
+    int query = 1;
+    while (true){
+        if (High[index] > High[index+query]) return true;
+        else if (High[index] < High[index+query]) return false;
+        query++;
+        if (query >= InpPreQuery) return false;
+    }
+
+    return false;
+}
+
+bool isLowerPrevious(int index){
+    int query = 1;
+    while (true){
+        if (Low[index] < Low[index+query]) return true;
+        else if (Low[index] > Low[index+query]) return false;
+        query++;
+        if (query >= InpPreQuery) return false;
+    }
+
+    return false;
+}
 
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
@@ -96,20 +149,18 @@ void loadPivotDrawing()
     int bar=WindowFirstVisibleBar()-2;
     if (gChartScale >= InpChartScaleDisplay) {
         for(int i=0; i<bars_count && bar>=0; i++,bar--) {
-            if ((Low[bar] < Low[bar+1] || (Low[bar] == Low[bar+1] && Low[bar] < Low[bar+2])) // Compare với bar trước đó
-                && Low[bar] < Low[bar-1]){
-                if (Low[bar-1] < Low[bar-2] || (bar-3 > 0 && Low[bar-1] == Low[bar-2] && Low[bar-2] < Low[bar-3])){
+            if (Low[bar] < Low[bar-1] && isLowerPrevious(bar)){
+                if (isLowerNext(bar-1)){
                     drawPivot(pIdx++, InpStSymbol, InpStSize, InpStClr, ANCHOR_UPPER, Time[bar], Low[bar]);
                 }
                 else if (InpWkSize!= 0){
                     drawPivot(pIdx++, InpWkSymbol, InpWkSize, InpWkClr, ANCHOR_UPPER, Time[bar], Low[bar]);
                 }
             }
-            if ((High[bar] > High[bar+1] || (High[bar] == High[bar+1] && High[bar] > High[bar+2])) // Compare với bar trước đó
-                && High[bar] > High[bar-1]){
-                if (High[bar-1] > High[bar-2] || (bar-3 > 0 && High[bar-1] == High[bar-2] && High[bar-2] > High[bar-3])){
+            if (High[bar] > High[bar-1] && isHigherPrevious(bar)) {
+                if (isHigherNext(bar-1)){
                     drawPivot(pIdx++, InpStSymbol, InpStSize, InpStClr, ANCHOR_LOWER, Time[bar], High[bar]);
-                } 
+                }
                 else if (InpWkSize!= 0){
                     drawPivot(pIdx++, InpWkSymbol, InpWkSize, InpWkClr, ANCHOR_LOWER, Time[bar], High[bar]);
                 }
