@@ -11,26 +11,17 @@
 
 #define APP_TAG "HiLoSimple"
 
-
-enum EQueryBar {
-    E_3BAR, // 3 bars
-    E_5BAR, // 5 bars
-    E_4BAR, // 4 bars
-};
-
 input string    CommomConfig;                   // - - - C O M M O N   C O N F I G - - -
 input int       InpChartScaleDisplay    = 2;    // →    Scale Visibility:
 input string    InpOnOffHotkey          = "K";  // →    On/Off Hotkey:
-input string _pivot;                            // - - - P I V O T - - -
-input int    InpPivotSize       = 9;            // Size:
-input string InpPivotCharecter  = "•";          // Charecter:
-input color  InpHiPivotColor    = clrBlack;     // Color Hi:
-input color  InpLoPivotColor    = clrBlack;     // Color Lo:
-input string _small;                            // - - - S M A L L - - -
-input int    InpSmallSize       = 6;            // Size:
-input string InpSmallCharecter  = "×";          // Charecter:
-input color  InpHiSmallColor    = clrBlack;     // Color Hi:
-input color  InpLoSmallColor    = clrBlack;     // Color Lo:
+input string _st;                           // - - - S T R O N G   P I V O T - - -
+input int    InpStSize      = 11;           // Size:
+input string InpStSymbol    = "•";          // Symbol:
+input color  InpStClr       = clrBlack;     // Color:
+input string _wk;                           // - - - W E A K   P I V O T - - -
+input int    InpWkSize      = 6;            // Size:
+input string InpWkSymbol    = "×";          // Symbol:
+input color  InpWkClr       = clrDarkGray;  // Color:
 
 
 //---
@@ -38,30 +29,12 @@ long gChartScale = 0;
 bool gInitCalculation = false;
 bool gOnState = true;
 
-string gHiPivotCh;
-string gLoPivotCh;
-string gHiSmallCh;
-string gLoSmallCh;
-
-string getSubStr(string str, int start, int len)
-{
-    string result = "";
-    result = StringSubstr(str, start, len);
-    if (result == "") return StringSubstr(str, 0, len);
-    
-    return result;
-}
-
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
 int OnInit()
 {
 //--- indicator buffers mapping
-    gHiPivotCh = getSubStr(InpPivotCharecter, 0, 1);
-    gLoPivotCh = getSubStr(InpPivotCharecter, 1, 1);
-    gHiSmallCh = getSubStr(InpSmallCharecter, 0, 1);
-    gLoSmallCh = getSubStr(InpSmallCharecter, 1, 1);
 
 //---
     return(INIT_SUCCEEDED);
@@ -111,7 +84,8 @@ void OnChartEvent(const int id,
 }
 //+------------------------------------------------------------------+
 
-void loadPivotDrawing(){
+void loadPivotDrawing()
+{
     int pIdx = 0;
     if (gOnState == false) {
         while(hidePivot(pIdx++) == true){}
@@ -125,19 +99,19 @@ void loadPivotDrawing(){
             if ((Low[bar] < Low[bar+1] || (Low[bar] == Low[bar+1] && Low[bar] < Low[bar+2])) // Compare với bar trước đó
                 && Low[bar] < Low[bar-1]){
                 if (Low[bar-1] < Low[bar-2] || (bar-3 > 0 && Low[bar-1] == Low[bar-2] && Low[bar-2] < Low[bar-3])){
-                    drawPivot(pIdx++, gLoPivotCh, InpPivotSize, InpLoPivotColor, ANCHOR_UPPER, Time[bar], Low[bar]);
+                    drawPivot(pIdx++, InpStSymbol, InpStSize, InpStClr, ANCHOR_UPPER, Time[bar], Low[bar]);
                 }
-                else if (InpSmallSize!= 0){
-                    drawPivot(pIdx++, gLoSmallCh, InpSmallSize, InpLoSmallColor, ANCHOR_UPPER, Time[bar], Low[bar]);
+                else if (InpWkSize!= 0){
+                    drawPivot(pIdx++, InpWkSymbol, InpWkSize, InpWkClr, ANCHOR_UPPER, Time[bar], Low[bar]);
                 }
             }
             if ((High[bar] > High[bar+1] || (High[bar] == High[bar+1] && High[bar] > High[bar+2])) // Compare với bar trước đó
                 && High[bar] > High[bar-1]){
                 if (High[bar-1] > High[bar-2] || (bar-3 > 0 && High[bar-1] == High[bar-2] && High[bar-2] > High[bar-3])){
-                    drawPivot(pIdx++, gHiPivotCh, InpPivotSize, InpHiPivotColor, ANCHOR_LOWER, Time[bar], High[bar]);
+                    drawPivot(pIdx++, InpStSymbol, InpStSize, InpStClr, ANCHOR_LOWER, Time[bar], High[bar]);
                 } 
-                else if (InpSmallSize!= 0){
-                    drawPivot(pIdx++, gHiSmallCh, InpSmallSize, InpHiSmallColor, ANCHOR_LOWER, Time[bar], High[bar]);
+                else if (InpWkSize!= 0){
+                    drawPivot(pIdx++, InpWkSymbol, InpWkSize, InpWkClr, ANCHOR_LOWER, Time[bar], High[bar]);
                 }
             }
             if (bar == 3) break;
@@ -146,7 +120,8 @@ void loadPivotDrawing(){
     while(hidePivot(pIdx++) == true){}
 }
 
-void drawPivot(int index, string _text, int _size, color _color, int _anchor, const datetime& time, const double& price){
+void drawPivot(int index, string _text, int _size, color _color, int _anchor, const datetime& time, const double& price)
+{
     string objName = APP_TAG + IntegerToString(index);
     if (ObjectFind(objName) < 0) {
         ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
@@ -161,7 +136,8 @@ void drawPivot(int index, string _text, int _size, color _color, int _anchor, co
     ObjectSet(objName, OBJPROP_PRICE1, price);
 }
 
-bool hidePivot(int index){
+bool hidePivot(int index)
+{
     string objName = APP_TAG + IntegerToString(index);
     ObjectSet(objName, OBJPROP_TIME1, 0);
     return (ObjectFind(objName) >= 0);
