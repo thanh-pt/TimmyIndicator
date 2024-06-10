@@ -76,10 +76,6 @@ int gLineIdx;
 int gLabelIdx;
 int gRectIdx;
 
-int gAsBarNum;
-int gLdBarNum;
-int gNyBarNum;
-
 int gBarAs;
 int gBarLd;
 int gBarNy;
@@ -87,6 +83,7 @@ int gBarNy;
 string  gSsLableMap[] = {"As", "Ld", "Ny"};
 color   gSsColor[3];
 color   gSsBgColor[3];
+int     gSsBarNum[3];
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -96,9 +93,9 @@ int OnInit()
 //---
     gChartPeriod = ChartPeriod();
     gSymbol = Symbol();
-    gAsBarNum = (asEndHour - asBegHour) * 60 / gChartPeriod;
-    gLdBarNum = (ldEndHour - ldBegHour) * 60 / gChartPeriod;
-    gNyBarNum = (nyEndHour - nyBegHour) * 60 / gChartPeriod;
+    gSsBarNum[eAs] = (asEndHour - asBegHour) * 60 / gChartPeriod;
+    gSsBarNum[eLd] = (ldEndHour - ldBegHour) * 60 / gChartPeriod;
+    gSsBarNum[eNy] = (nyEndHour - nyBegHour) * 60 / gChartPeriod;
     gSsColor[0] = inpAsColor;
     gSsColor[1] = inpLdColor;
     gSsColor[2] = inpNyColor;
@@ -175,9 +172,9 @@ void scanWindow(){
         gBarAs = gBegDayBar - asBegHour*60/gChartPeriod - gWtrOffset;
         gBarLd = gBegDayBar - ldBegHour*60/gChartPeriod - gWtrOffset;
         gBarNy = gBegDayBar - nyBegHour*60/gChartPeriod - gWtrOffset;
-        if (inpDisplayAs) drawSession(eAs, gBarAs, gBarAs-gAsBarNum);
-        if (inpDisplayLd) drawSession(eLd, gBarLd, gBarLd-gLdBarNum);
-        if (inpDisplayNy) drawSession(eNy, gBarNy, gBarNy-gNyBarNum);
+        if (inpDisplayAs) drawSession(eAs, gBarAs, gBarAs-gSsBarNum[eAs]);
+        if (inpDisplayLd) drawSession(eLd, gBarLd, gBarLd-gSsBarNum[eLd]);
+        if (inpDisplayNy) drawSession(eNy, gBarNy, gBarNy-gSsBarNum[eNy]);
         // Step 4: Nến ngày tiếp theo
         gBegDayBar -= 24 * 60 / gChartPeriod;
     }
@@ -201,12 +198,13 @@ void drawSession(eSession ss, int beginBar, int endBar)
     }
     if (inpStyle == eStyleHiLoLine || inpStyle == eStyleLineBox){
         // Hi Line
-        createLine(gLineIdx++, Time[beginBar], Time[endBar], gHi, gHi, gSsColor[ss]);
-        createLine(gLineIdx++, Time[beginBar], Time[endBar], gLo, gLo, gSsColor[ss]);
+        datetime endTime = Time[beginBar] + gSsBarNum[ss]*gChartPeriod*60;
+        createLine(gLineIdx++, Time[beginBar], endTime, gHi, gHi, gSsColor[ss]);
+        createLine(gLineIdx++, Time[beginBar], endTime, gLo, gLo, gSsColor[ss]);
         if (inpStyle == eStyleLineBox){
             createLine(gLineIdx++, Time[beginBar], Time[beginBar], gHi, (gHi+9*High[beginBar])/10, gSsColor[ss]);
             createLine(gLineIdx++, Time[beginBar], Time[beginBar], (gLo + 9*Low[beginBar])/10, gLo, gSsColor[ss]);
-            if (isSsRunning == false) createLine(gLineIdx++, Time[endBar], Time[endBar], gHi, gLo, gSsColor[ss]);
+            createLine(gLineIdx++, endTime, endTime, gHi, gLo, gSsColor[ss]);
         }
     }
     else if (inpStyle == eStyleHiLoChar){
