@@ -205,6 +205,9 @@ void drawSession(eSession ss, int beginBar, int endBar)
             createLine(gLineIdx++, Time[beginBar], Time[beginBar], gHi, (gHi+9*High[beginBar])/10, gSsColor[ss]);
             createLine(gLineIdx++, Time[beginBar], Time[beginBar], (gLo + 9*Low[beginBar])/10, gLo, gSsColor[ss]);
             createLine(gLineIdx++, endTime, endTime, gHi, gLo, gSsColor[ss]);
+            if (isSsRunning == false && endBar*gChartPeriod < 15){
+                createLabel(gLabelIdx++, "● H Ế T   P H I Ê N ●", Time[0], High[0], 9, ANCHOR_LEFT_LOWER, gSsColor[ss]);
+            }
         }
     }
     else if (inpStyle == eStyleHiLoChar){
