@@ -153,7 +153,7 @@ void loadPivotDrawing()
                 if (isLowerNext(bar-1)){
                     drawPivot(pIdx++, InpStSymbol, InpStSize, InpStClr, ANCHOR_UPPER, Time[bar], Low[bar]);
                 }
-                else if (InpWkSize!= 0){
+                else if (Low[bar] < Low[bar-2] && InpWkSize!= 0){
                     drawPivot(pIdx++, InpWkSymbol, InpWkSize, InpWkClr, ANCHOR_UPPER, Time[bar], Low[bar]);
                 }
             }
@@ -161,7 +161,7 @@ void loadPivotDrawing()
                 if (isHigherNext(bar-1)){
                     drawPivot(pIdx++, InpStSymbol, InpStSize, InpStClr, ANCHOR_LOWER, Time[bar], High[bar]);
                 }
-                else if (InpWkSize!= 0){
+                else if (High[bar] > High[bar-2] && InpWkSize!= 0){
                     drawPivot(pIdx++, InpWkSymbol, InpWkSize, InpWkClr, ANCHOR_LOWER, Time[bar], High[bar]);
                 }
             }

@@ -94,30 +94,31 @@ void OnChartEvent(const int id,
 
 void loadSignal(){
     if (gInitCalculation == false) return;
-    int startBar = WindowFirstVisibleBar();
-    int endBar = startBar - WindowBarsPerChart();
-    if (endBar < 0) endBar = 0;
-    scanWindow(startBar, endBar, gCurSig);
-}
-
-void scanWindow(int start, int end, ESignalT eSig)
-{
-    if (eSig == eSignalNONE) {
+    if (gCurSig == eSignalNONE) {
         hideItem(0, "ChLine");
         hideItem(0, "Text");
         hideItem(0, "React");
         hideItem(0, "Pivot");
         return;
     }
+    int startBar = WindowFirstVisibleBar();
+    int endBar = startBar - WindowBarsPerChart();
+    if (endBar < 0) endBar = 0;
     gHLineIdx = 0;
     gLineIdx = 0;
     gTextIdx = 0;
     gReactIdx = 0;
     gPivotIdx = 0;
+    scanWindow(startBar, endBar, eSignalBUY);
+    scanWindow(startBar, endBar, eSignalSELL);
+}
+
+void scanWindow(int start, int end, ESignalT eSig)
+{
     int failCount;
     for (int barIdx = start; barIdx > end; barIdx--){
         if (eSig == eSignalBUY){
-            if (isStHi(barIdx) == false) continue;
+            if (isWkHi(barIdx) == false) continue;
             drawPivot(gPivotIdx++, true, barIdx);
             // Find next LOW!
             for (int loIdx = barIdx-1; loIdx>end; loIdx--){
@@ -153,7 +154,7 @@ void scanWindow(int start, int end, ESignalT eSig)
             }
         }
         else {
-            if (isStLo(barIdx) == false) continue;
+            if (isWkLo(barIdx) == false) continue;
             drawPivot(gPivotIdx++, false, barIdx);
             // Find next HIGHT!
             for (int hiIdx = barIdx-1; hiIdx>end; hiIdx--){
@@ -264,12 +265,14 @@ bool isStLo(int bar)
 bool isWkHi(int bar)
 {
     if (bar < 2) return false;
+    if (High[bar] <= High[bar-1]) return false;
     return isHigherPrevious(bar) && isHigherNext(bar);
 }
 
 bool isWkLo(int bar)
 {
     if (bar < 2) return false;
+    if (Low[bar] >= Low[bar-1]) return false;
     return isLowerPrevious(bar) && isLowerNext(bar);
 }
 
@@ -315,7 +318,7 @@ void drawText(int index, ESignalT eSig, int bar)
     ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSet(objName, OBJPROP_SELECTABLE, false);
     ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
-    ObjectSetText(objName, "Ch", 8, "Consolas", eSig == eSignalBUY ? clrGreen : clrRed);
+    ObjectSetText(objName, "ch", 6, "Consolas", eSig == eSignalBUY ? clrGreen : clrRed);
     ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
     ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, eSig == eSignalBUY ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
     ObjectSet(objName, OBJPROP_TIME1, Time[bar-1]);
