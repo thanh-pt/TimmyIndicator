@@ -15,12 +15,12 @@
 #property indicator_type1   DRAW_LINE
 #property indicator_color1  clrBlack
 #property indicator_style1  STYLE_SOLID
-#property indicator_width1  1
+#property indicator_width1  2
 //--- indicator buffers
 double         PnLBuffer[];
 
 #define MAXTRADE 1000
-#define TXT_SPACING 20
+#define TXT_SPACING 25
 #define TXT_SPACE_BLOCK "                    "
 #define BGBLOCK "██████████████████████████████████████████████████████████████████"
 
@@ -59,9 +59,6 @@ int OnInit()
     SetIndexBuffer(0,PnLBuffer);
     drawHmi();
 //---
-    long foregroundColor=clrBlack;
-    ChartGetInteger(ChartID(),CHART_COLOR_FOREGROUND,0,foregroundColor);
-    gTextColor = (color)foregroundColor;
     return(INIT_SUCCEEDED);
 }
 //+------------------------------------------------------------------+
@@ -153,8 +150,8 @@ void setTableTextLine(int idx, string text)
     string objName = APP_TAG+"Table"+IntegerToString(idx);
     ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);
     ObjectSetText(objName, text, 12, "Consolas", gTextColor);
-    ObjectSet(objName, OBJPROP_XDISTANCE, 5);
-    ObjectSet(objName, OBJPROP_YDISTANCE, 10 + idx * 19);
+    ObjectSet(objName, OBJPROP_XDISTANCE, 10);
+    ObjectSet(objName, OBJPROP_YDISTANCE, 10 + idx * 14);
     ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
 }
 
@@ -165,11 +162,11 @@ string composeTableLineText(int wkNum, int tp, int be, int sl)
     strData += NumToStr(gWkData[2], 4, 1) + "|";
     strData += NumToStr(gWkData[3], 4, 1) + "|";
     strData += NumToStr(gWkData[4], 4, 1) + "|";
-    strData += NumToStr(gWkData[5], 4, 1) + "|";
-    strData += NumToStr(gWkData[1] + gWkData[2] + gWkData[3] + gWkData[4] + gWkData[5], 5, 1) + "|";
+    strData += NumToStr(gWkData[5], 4, 1) + "||";
+    strData += NumToStr(gWkData[1] + gWkData[2] + gWkData[3] + gWkData[4] + gWkData[5], 5, 1) + "| |";
     strData += NumToStr(tp,2) + "|";
     strData += NumToStr(be,2) + "|";
-    strData += NumToStr(sl,2) + "|";
+    strData += NumToStr(sl,2) + "||";
     int allTrade = tp+be+sl;
     strData += NumToStr(allTrade,3) + "|";
     strData += NumToStr(100*(tp+be)/allTrade, 3) + "%|";
@@ -179,12 +176,19 @@ string composeTableLineText(int wkNum, int tp, int be, int sl)
 
 void displayData()
 {
+    // Background
+    string objName = APP_TAG+"#Background";
+    ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);
+    ObjectSetText(objName, "██", 400, "Consolas", clrWhiteSmoke);
+    ObjectSet(objName, OBJPROP_XDISTANCE, 0);
+    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+
     int tbLn = 0;
-    setTableTextLine(tbLn++, "+---------------------------------+----------------------+");
-    setTableTextLine(tbLn++, "|   W E E K L Y   R E P O R T     |      Performance     |");
-    setTableTextLine(tbLn++, "+---------------------------------+----------------------+");
-    setTableTextLine(tbLn++, "|Wk| T2 | T3 | T4 | T5 | T6 | P/L |TP|BE|SL|All| WR | PR |");
-    setTableTextLine(tbLn++, "+--+----+----+----+----+----+-----+--+--+--+---+----+----+");
+    setTableTextLine(tbLn++, "+----------------------------------+ +-----------------------+");
+    setTableTextLine(tbLn++, "|   W E E K L Y   R E P O R T      | |       Performance     |");
+    setTableTextLine(tbLn++, "+----------------------------------+ +-----------------------+");
+    setTableTextLine(tbLn++, "|Wk| T2 | T3 | T4 | T5 | T6 || P/L | |TP|BE|SL||All| WR | PR |");
+    setTableTextLine(tbLn++, "+--+----+----+----+----+----++-----+ +--+--+--++---+----+----+");
     if (gTradeCount == 0) return;
 
 
@@ -235,17 +239,17 @@ void displayData()
         slAll += sl;
     }
     { // Tổng kết
-        string sumupLine       = "|      T Ổ N G   K Ế T      |";
-        sumupLine += NumToStr(plAll, 5, 1) + "|";
+        string sumupLine       = "|                           ||";
+        sumupLine += NumToStr(plAll, 5, 1) + "| |";
         sumupLine += NumToStr(tpAll,2) + "|";
         sumupLine += NumToStr(beAll,2) + "|";
-        sumupLine += NumToStr(slAll,2) + "|";
+        sumupLine += NumToStr(slAll,2) + "||";
         sumupLine += NumToStr(gTradeCount,3) + "|";
         sumupLine += NumToStr((tpAll+beAll)*100/gTradeCount, 3) + "%|";
         sumupLine += NumToStr(tpAll*100/gTradeCount, 3) + "%|";
-        setTableTextLine(tbLn++, "+---------------------------+-----+--+--+--+---+----+----+");
+        setTableTextLine(tbLn++, "+---------------------------++-----+ +--+--+--++---+----+----+");
         setTableTextLine(tbLn++, sumupLine);
-        setTableTextLine(tbLn++, "+---------------------------+-----+--+--+--+---+----+----+");
+        setTableTextLine(tbLn++, "+---------------------------++-----+ +--+--+--++---+----+----+");
     }
     {// Other data
         setTableTextLine(tbLn++, "Chỉ số TRUNG BÌNH");
@@ -256,6 +260,7 @@ void displayData()
         }
         setTableTextLine(tbLn++, "SL pip:" + NumToStr(costPipSum/gTradeCount, 5, 1));
     }
+    ObjectSet(objName, OBJPROP_YDISTANCE, tbLn*14-600);
 }
 //+------------------------------------------------------------------+
 //| ChartEvent function                                              |
@@ -274,6 +279,11 @@ void OnChartEvent(const int id,
     }
     else if (id == CHARTEVENT_OBJECT_DELETE){
         drawHmi();
+        if (StringFind(sparam, "#Background") >= 0){
+            loadData();
+            drawGraph();
+            displayData();
+        }
     }
 }
 
@@ -349,22 +359,22 @@ void drawHmi()
 
 void drawButton(int index, string text)
 {
-    string objName = APP_TAG + "BtnBg:" + IntegerToString(index);
+    string objName = APP_TAG + "#BtnBg:" + IntegerToString(index);
     ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);// TODO: using find window index https://docs.mql4.com/chart_operations/windowfind
     ObjectSet(objName, OBJPROP_SELECTABLE, false);
-    ObjectSetText(objName, StringSubstr(BGBLOCK, 0, StringLen(text)), 10, "Consolas", clrGray);
+    ObjectSetText(objName, StringSubstr(BGBLOCK, 0, StringLen(text)), 15, "Consolas", clrGainsboro);
     ObjectSet(objName, OBJPROP_XDISTANCE, 5);
     ObjectSet(objName, OBJPROP_YDISTANCE, index * TXT_SPACING);
     ObjectSetString(ChartID() , objName, OBJPROP_TOOLTIP, "\n");
     ObjectSetInteger(ChartID(), objName, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
     ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR , ANCHOR_RIGHT_UPPER);
     //--------------------------------------------
-    objName = APP_TAG + "Btn:" + IntegerToString(index);
+    objName = APP_TAG + "#Btn:" + IntegerToString(index);
     ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);
-    ObjectSetText(objName, text, 8, "Consolas");
+    ObjectSetText(objName, text, 14, "Consolas");
     ObjectSet(objName, OBJPROP_SELECTABLE, false);
     ObjectSet(objName, OBJPROP_COLOR, clrBlack);
-    ObjectSet(objName, OBJPROP_XDISTANCE, 5+2);
+    ObjectSet(objName, OBJPROP_XDISTANCE, 5+3);
     ObjectSet(objName, OBJPROP_YDISTANCE, index * TXT_SPACING);
     ObjectSetString(ChartID() , objName, OBJPROP_TOOLTIP, "\n");
     ObjectSetInteger(ChartID(), objName, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
@@ -397,7 +407,7 @@ void drawDot(int index, datetime time1, double price1)
     // Basic
     ObjectSet(objName, OBJPROP_TIME1, time1);
     ObjectSet(objName, OBJPROP_PRICE1, price1);
-    ObjectSetText(objName, "●", 6, NULL, clrBlack);
+    ObjectSetText(objName, "n", 4, "webdings", clrBlack);
     ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, ANCHOR_CENTER);
 }
 
@@ -423,6 +433,7 @@ void removeAllItem()
 {
     for (int i = ObjectsTotal() - 1; i >= 0; i--) {
         string objName = ObjectName(i);
+        if (StringFind(objName, "#") != -1) continue;
         if (StringFind(objName, APP_TAG) != -1) ObjectDelete(objName);
     }
 

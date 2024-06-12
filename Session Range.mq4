@@ -102,7 +102,6 @@ int OnInit()
     gSsBgColor[0] = inpAsBgColor;
     gSsBgColor[1] = inpLdBgColor;
     gSsBgColor[2] = inpNyBgColor;
-    if (ChartPeriod() >= PERIOD_H4) Print("This Indi is only work on lower H4 timeframe!!!");
     return(INIT_SUCCEEDED);
 }
 void OnDeinit(const int reason) {
@@ -206,7 +205,7 @@ void drawSession(eSession ss, int beginBar, int endBar)
             createLine(gLineIdx++, Time[beginBar], Time[beginBar], (gLo + 9*Low[beginBar])/10, gLo, gSsColor[ss]);
             createLine(gLineIdx++, endTime, endTime, gHi, gLo, gSsColor[ss]);
             if (isSsRunning == false && endBar*gChartPeriod < 15){
-                createLabel(gLabelIdx++, "● H Ế T   P H I Ê N ●", Time[0], High[0], 9, ANCHOR_LEFT_LOWER, gSsColor[ss]);
+                createLabel(gLabelIdx++, "🏴 E N D", Time[0] + 120*gChartPeriod, High[0], 9, ANCHOR_LEFT_LOWER, gSsColor[ss]);
             }
         }
     }

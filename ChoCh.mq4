@@ -28,6 +28,7 @@ int gLineIdx = 0;
 int gTextIdx = 0;
 int gReactIdx = 0;
 int gPivotIdx = 0;
+int gTotalRate;
 ESignalT gCurSig = eSignalNONE;
 string gSignalIndi[] = {"Buy", "Sell", "NONE"};
 //+------------------------------------------------------------------+
@@ -64,6 +65,7 @@ int OnCalculate(const int rates_total,
    
 //--- return value of prev_calculated for next call
     gInitCalculation = true;
+    gTotalRate = rates_total;
     loadSignal();
     return(rates_total);
 }
@@ -88,7 +90,7 @@ void OnChartEvent(const int id,
             drawLabel(0, "Choch Indi: " + gSignalIndi[gCurSig], 10, 25);
         }
     }
-    else if (id == CHARTEVENT_CHART_CHANGE) loadSignal();
+    else if (id == CHARTEVENT_MOUSE_MOVE) loadSignal();
 }
 //+------------------------------------------------------------------+
 
@@ -104,6 +106,7 @@ void loadSignal(){
     int startBar = WindowFirstVisibleBar();
     int endBar = startBar - WindowBarsPerChart();
     if (endBar < 0) endBar = 0;
+    if (gTotalRate - startBar <= InpPreQuery) startBar = gTotalRate-InpPreQuery;
     gHLineIdx = 0;
     gLineIdx = 0;
     gTextIdx = 0;
