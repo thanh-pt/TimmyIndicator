@@ -279,11 +279,6 @@ void OnChartEvent(const int id,
     }
     else if (id == CHARTEVENT_OBJECT_DELETE){
         drawHmi();
-        if (StringFind(sparam, "#Background") >= 0){
-            loadData();
-            drawGraph();
-            displayData();
-        }
     }
 }
 

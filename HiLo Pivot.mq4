@@ -181,7 +181,7 @@ void drawPivot(int index, string _text, int _size, color _color, int _anchor, co
         ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
     }
     ObjectSetText(objName, _text, _size, NULL, _color);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, DoubleToString(price, 5));
+    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, IntegerToString((int)(price*100000)%100));
     ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, _anchor);
     ObjectSet(objName, OBJPROP_TIME1, time);
     ObjectSet(objName, OBJPROP_PRICE1, price);

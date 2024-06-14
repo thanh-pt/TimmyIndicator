@@ -30,7 +30,7 @@ int gReactIdx = 0;
 int gPivotIdx = 0;
 int gTotalRate;
 ESignalT gCurSig = eSignalNONE;
-string gSignalIndi[] = {"Buy", "Sell", "NONE"};
+string gSignalIndi[] = {"ON", "ON", "OFF"};
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -80,12 +80,7 @@ void OnChartEvent(const int id,
 //---
     if (id == CHARTEVENT_KEYDOWN) {
         if (lparam == 'M'){
-            gCurSig = (gCurSig == eSignalBUY) ? eSignalSELL : eSignalBUY;
-            loadSignal();
-            drawLabel(0, "Choch Indi: " + gSignalIndi[gCurSig], 10, 25);
-        }
-        else if(lparam == 'N'){
-            gCurSig = eSignalNONE;
+            gCurSig = (gCurSig == eSignalNONE) ? eSignalBUY : eSignalNONE;
             loadSignal();
             drawLabel(0, "Choch Indi: " + gSignalIndi[gCurSig], 10, 25);
         }
@@ -149,7 +144,7 @@ void scanWindow(int start, int end, ESignalT eSig)
                     }
                     if (hasReaction) {
                         drawChLine(gHLineIdx++, eSig, barIdx, chIdx);
-                        drawText(gTextIdx++, eSig, barIdx);
+                        drawText(gTextIdx++, eSig, barIdx, chIdx);
                     }
                     break;
                 }
@@ -185,7 +180,7 @@ void scanWindow(int start, int end, ESignalT eSig)
                     }
                     if (hasReaction){
                         drawChLine(gHLineIdx++, eSig, barIdx, chIdx);
-                        drawText(gTextIdx++, eSig, barIdx);
+                        drawText(gTextIdx++, eSig, barIdx, chIdx);
                     }
                     break;
                 }
@@ -314,7 +309,7 @@ void drawReact(int index, ESignalT eSig, int bar)
     ObjectSet(objName, OBJPROP_PRICE1, eSig == eSignalBUY ? High[bar] : Low[bar]);
 }
 
-void drawText(int index, ESignalT eSig, int bar)
+void drawText(int index, ESignalT eSig, int bar, int chBar)
 {
     string objName = APP_TAG + "Text" + IntegerToString(index);
     ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
@@ -323,8 +318,8 @@ void drawText(int index, ESignalT eSig, int bar)
     ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
     ObjectSetText(objName, "ch", 6, "Consolas", eSig == eSignalBUY ? clrGreen : clrRed);
     ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, eSig == eSignalBUY ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
-    ObjectSet(objName, OBJPROP_TIME1, Time[bar-1]);
+    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, eSig == eSignalBUY ? ANCHOR_RIGHT_LOWER : ANCHOR_RIGHT_UPPER);
+    ObjectSet(objName, OBJPROP_TIME1, Time[chBar+1]);
     ObjectSet(objName, OBJPROP_PRICE1, eSig == eSignalBUY ? High[bar] : Low[bar]);
 }
 

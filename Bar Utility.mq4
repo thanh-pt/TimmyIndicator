@@ -63,6 +63,8 @@
 //--- input parameters
 input color     InpImbClr  = clrGoldenrod;  // Imbalance Bar Color:
 input color     InpInsClr  = clrWhite;      // Inside Bar Color:
+color gBoderUp = (color)ChartGetInteger(ChartID(), CHART_COLOR_CHART_UP);
+color gBoderDn = (color)ChartGetInteger(ChartID(), CHART_COLOR_CHART_DOWN);
 //--- indicator buffers
 double         Imb1Buf[];
 double         Imb2Buf[];
@@ -75,6 +77,7 @@ double         Cls2Buf[];
 
 int  gBarWidth = 13;
 long gChartScale = 0;
+long gChartMode = 0;
 long gPreChartScale = 0;
 int  gChartPeriod = ChartPeriod();
 //+------------------------------------------------------------------+
@@ -96,10 +99,10 @@ int OnInit()
     SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
     SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
     SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
-    SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1);
-    SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1);
-    SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1);
-    SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1);
+    SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
+    SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
+    SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
+    SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
    
 //---
     gChartPeriod = ChartPeriod();
@@ -178,7 +181,30 @@ void OnChartEvent(const int id,
 {
 //---
     if (id == CHARTEVENT_CHART_CHANGE) {
-        ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
+        gChartScale = ChartGetInteger(ChartID(), CHART_SCALE);
+        gChartMode = ChartGetInteger(ChartID(), CHART_MODE);
+        // if (gChartMode != CHART_CANDLES){
+        //     // Hide Indicator
+        //     SetIndexStyle(0, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        //     SetIndexStyle(1, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        //     SetIndexStyle(2, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        //     SetIndexStyle(3, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        //     SetIndexStyle(4, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        //     SetIndexStyle(5, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        //     SetIndexStyle(6, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        //     SetIndexStyle(7, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        //     return;
+        // } else {
+        //     // Show Indicator
+        //     SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
+        //     SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
+        //     SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
+        //     SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
+        //     SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
+        //     SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
+        //     SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
+        //     SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
+        // }
         if (gChartScale == gPreChartScale) return;
         gPreChartScale = gChartScale;
         if (gChartScale == 2) gBarWidth = 1;
@@ -191,21 +217,21 @@ void OnChartEvent(const int id,
             SetIndexStyle(1, DRAW_HISTOGRAM, 0, 0, clrNONE);
             SetIndexStyle(2, DRAW_HISTOGRAM, 0, 0, clrNONE);
             SetIndexStyle(3, DRAW_HISTOGRAM, 0, 0, clrNONE);
-            SetIndexStyle(4, DRAW_HISTOGRAM, 0, 0);
-            SetIndexStyle(5, DRAW_HISTOGRAM, 0, 0);
-            SetIndexStyle(6, DRAW_HISTOGRAM, 0, 0);
-            SetIndexStyle(7, DRAW_HISTOGRAM, 0, 0);
+            SetIndexStyle(4, DRAW_HISTOGRAM, 0, 0, clrNONE);
+            SetIndexStyle(5, DRAW_HISTOGRAM, 0, 0, clrNONE);
+            SetIndexStyle(6, DRAW_HISTOGRAM, 0, 0, clrNONE);
+            SetIndexStyle(7, DRAW_HISTOGRAM, 0, 0, clrNONE);
             return;
         }
-        // Show Indicator
+            // Show Indicator
             SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
             SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
             SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
             SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
-            SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1);
-            SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1);
-            SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1);
-            SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1);
+            SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
+            SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
+            SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
+            SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
     }
 }
 //+------------------------------------------------------------------+

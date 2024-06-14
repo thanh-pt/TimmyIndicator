@@ -7,11 +7,6 @@
 #Space::Send, {PrintScreen}
 ; ^Space::Send, +{PrintScreen}
 
-^+n::
-	Run, Chrome.exe "https://www.youtube.com/watch?v=2y4r5_jPp8A"
-	WinClose, ahk_exe msedge.exe
-return
-
 ;------------------------------------------------------------ MT 4 Hotkey --------------------------------------------------------------------------------
 #IfWinActive, ahk_exe terminal.exe
 	XButton1::End
@@ -54,7 +49,7 @@ return
 	$[::
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
-	$/::
+	$Tab::
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
 #IfWinActive
