@@ -150,7 +150,7 @@ void loadPivotDrawing()
     if (gChartScale >= InpChartScaleDisplay) {
         for(int i=0; i<bars_count && bar>=0; i++,bar--) {
             if (Low[bar] < Low[bar-1] && isLowerPrevious(bar)){
-                if (isLowerNext(bar-1)){
+                if (isLowerNext(bar-1) && High[bar-1] > High[bar]){
                     drawPivot(pIdx++, InpStSymbol, InpStSize, InpStClr, ANCHOR_UPPER, Time[bar], Low[bar]);
                 }
                 else if (Low[bar] < Low[bar-2] && InpWkSize!= 0){
@@ -158,7 +158,7 @@ void loadPivotDrawing()
                 }
             }
             if (High[bar] > High[bar-1] && isHigherPrevious(bar)) {
-                if (isHigherNext(bar-1)){
+                if (isHigherNext(bar-1) && Low[bar-1] < Low[bar]){
                     drawPivot(pIdx++, InpStSymbol, InpStSize, InpStClr, ANCHOR_LOWER, Time[bar], High[bar]);
                 }
                 else if (High[bar] > High[bar-2] && InpWkSize!= 0){
