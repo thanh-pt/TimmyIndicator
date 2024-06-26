@@ -64,37 +64,26 @@
 		Send u
 	return
 	p::
-		Send {Down}
-		Send {Down}
-		Send {Down}
-		Send {Down}
-		Send {Down}
-		Send {Down}
-		Send {Down}
-		Send {Down} ; Daily
+		Loop, 8 ; Down to bottom <H1>
+		{
+			Send {Down}
+		}
+		sleep, 300
+		Send {Up} ; Back to <Daily>
 		sleep, 300
 		Send ^{Right}
 		sleep, 300
-		Send {Up} ; H4
+		Send {Down} ; Back to <H1>
 		sleep, 300
-		Send ^{Right}
-		sleep, 300
-		Send {Up} ; H1
-		sleep, 300
-		Send ^{Right}
-		sleep, 300
-		Send ^{Right}
-		sleep, 300
-		Send ^{Right}
-		sleep, 300
-		Send {Up}
-		Send {Up}
-		Send {Up}
-		Send {Up}
-		Send {Up}
-		Send {Up}
-		Send {Up}
-		Send {Up}
+		Loop, 8
+		{
+			sleep, 300
+			Send ^{Right}
+		}
+		Loop, 8 ; Up to first TF <m1>
+		{
+			Send {Up}
+		}
 	return
 #IfWinActive
 

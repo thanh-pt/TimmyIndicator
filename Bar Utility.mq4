@@ -61,8 +61,9 @@
 //--- Enum Define
 
 //--- input parameters
-input color     InpImbClr  = clrGoldenrod;  // Imbalance Bar Color:
-input color     InpInsClr  = clrWhite;      // Inside Bar Color:
+input color     InpImbClr       = clrGoldenrod;  // Imbalance Bar Color:
+input color     InpInsClr       = clrNONE;       // Inside Bar Color:
+input string    InpOnOffHotkey  = "M";           // On/Off Hotkey:
 color gBoderUp = (color)ChartGetInteger(ChartID(), CHART_COLOR_CHART_UP);
 color gBoderDn = (color)ChartGetInteger(ChartID(), CHART_COLOR_CHART_DOWN);
 //--- indicator buffers
@@ -80,6 +81,7 @@ long gChartScale = 0;
 long gChartMode = 0;
 long gPreChartScale = 0;
 int  gChartPeriod = ChartPeriod();
+bool gOnState = true;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -95,14 +97,7 @@ int OnInit()
     SetIndexBuffer(6,Cls1Buf);
     SetIndexBuffer(7,Cls2Buf);
 
-    SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
-    SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
-    SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
-    SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
-    SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
-    SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
-    SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
-    SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
+    updateStyle();
    
 //---
     gChartPeriod = ChartPeriod();
@@ -183,28 +178,6 @@ void OnChartEvent(const int id,
     if (id == CHARTEVENT_CHART_CHANGE) {
         gChartScale = ChartGetInteger(ChartID(), CHART_SCALE);
         gChartMode = ChartGetInteger(ChartID(), CHART_MODE);
-        // if (gChartMode != CHART_CANDLES){
-        //     // Hide Indicator
-        //     SetIndexStyle(0, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        //     SetIndexStyle(1, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        //     SetIndexStyle(2, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        //     SetIndexStyle(3, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        //     SetIndexStyle(4, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        //     SetIndexStyle(5, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        //     SetIndexStyle(6, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        //     SetIndexStyle(7, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        //     return;
-        // } else {
-        //     // Show Indicator
-        //     SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
-        //     SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
-        //     SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
-        //     SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
-        //     SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
-        //     SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
-        //     SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
-        //     SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
-        // }
         if (gChartScale == gPreChartScale) return;
         gPreChartScale = gChartScale;
         if (gChartScale == 2) gBarWidth = 1;
@@ -213,25 +186,41 @@ void OnChartEvent(const int id,
         else if (gChartScale == 5) gBarWidth = 12;
         else {
             // Hide Indicator
-            SetIndexStyle(0, DRAW_HISTOGRAM, 0, 0, clrNONE);
-            SetIndexStyle(1, DRAW_HISTOGRAM, 0, 0, clrNONE);
-            SetIndexStyle(2, DRAW_HISTOGRAM, 0, 0, clrNONE);
-            SetIndexStyle(3, DRAW_HISTOGRAM, 0, 0, clrNONE);
-            SetIndexStyle(4, DRAW_HISTOGRAM, 0, 0, clrNONE);
-            SetIndexStyle(5, DRAW_HISTOGRAM, 0, 0, clrNONE);
-            SetIndexStyle(6, DRAW_HISTOGRAM, 0, 0, clrNONE);
-            SetIndexStyle(7, DRAW_HISTOGRAM, 0, 0, clrNONE);
+            gBarWidth = 0;
+            updateStyle();
             return;
         }
-            // Show Indicator
-            SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
-            SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
-            SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
-            SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
-            SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
-            SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
-            SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
-            SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
+        updateStyle();
+    }
+    else if (id == CHARTEVENT_KEYDOWN && lparam == InpOnOffHotkey[0]) {
+        gOnState = !gOnState;
+        updateStyle();
     }
 }
 //+------------------------------------------------------------------+
+
+void updateStyle()
+{
+    if (gBarWidth == 0 || gOnState == false){
+        // Hide Indicator
+        SetIndexStyle(0, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(1, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(2, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(3, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(4, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(5, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(6, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(7, DRAW_HISTOGRAM, 0, 0, clrNONE);
+    }
+    else {
+        // Show Indicator
+        SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
+        SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
+        SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
+        SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
+        SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
+        SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
+        SetIndexStyle(6, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);
+        SetIndexStyle(7, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderDn);
+    }
+}
