@@ -27,7 +27,7 @@ enum eStyle{
 };
 
 
-input string _config;                          // - - - Configuration - - -
+input string _config;                           // - - - Configuration - - -
 input eStyle inpStyle = eStyleBorderColor;      // S T Y L E
 input bool inpDisplayLable = false;             // L A B E L
 input bool inpHiFreqUpdate = false;             // Update Frequency
@@ -155,13 +155,11 @@ void scanWindow(){
     gDtStruct.sec   = 0;
     gDtStruct.min   = 0;
     gDtStruct.hour  = 0;
-    gBegTime = StructToTime(gDtStruct);
     // Step 2: Xác định nến bắt đầu ngày
+    gBegTime = StructToTime(gDtStruct);
+    if (gDtStruct.day_of_week == 0) gBegTime += 86400;
     gBegDayBar = iBarShift(gSymbol, gChartPeriod, gBegTime);
-    if (gDtStruct.day_of_week == 0) { // Shift 3 tiếng
-        gBegDayBar -= (3 * 60 / gChartPeriod + 1);
-    }
-    while (gBegDayBar >= 0){
+    while (gBegDayBar > 0){
         // Step 3: Tính toán nến index của Session -> Draw
         gMonth = TimeMonth(Time[gBegDayBar]);
         gWtrOffset = 0;
@@ -175,7 +173,14 @@ void scanWindow(){
         if (inpDisplayLd) drawSession(eLd, gBarLd, gBarLd-gSsBarNum[eLd]);
         if (inpDisplayNy) drawSession(eNy, gBarNy, gBarNy-gSsBarNum[eNy]);
         // Step 4: Nến ngày tiếp theo
-        gBegDayBar -= 24 * 60 / gChartPeriod;
+        if (TimeDayOfWeek(Time[gBegDayBar]) == 5) { // Case Thứ 6
+            gBegTime += 86400 * 3;
+            gBegDayBar = iBarShift(gSymbol, gChartPeriod, gBegTime);
+        }
+        else {
+            gBegTime += 86400;
+            gBegDayBar = iBarShift(gSymbol, gChartPeriod, gBegTime);
+        }
     }
 }
 
