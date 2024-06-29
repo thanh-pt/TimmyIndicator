@@ -61,7 +61,8 @@
 //--- Enum Define
 
 //--- input parameters
-input color     InpImbClr       = clrGoldenrod;  // Imbalance Bar Color:
+input color     InpImbUpClr     = clrGoldenrod; // Imbalance Up:
+input color     InpImbDnClr     = clrGoldenrod; // Imbalance Down:
 input color     InpInsClr       = clrNONE;       // Inside Bar Color:
 input string    InpOnOffHotkey  = "M";           // On/Off Hotkey:
 color gBoderUp = (color)ChartGetInteger(ChartID(), CHART_COLOR_CHART_UP);
@@ -214,8 +215,8 @@ void updateStyle()
     }
     else {
         // Show Indicator
-        SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
-        SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbClr);
+        SetIndexStyle(0, DRAW_HISTOGRAM, 0, gBarWidth, InpImbDnClr);
+        SetIndexStyle(1, DRAW_HISTOGRAM, 0, gBarWidth, InpImbUpClr);
         SetIndexStyle(2, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
         SetIndexStyle(3, DRAW_HISTOGRAM, 0, gBarWidth, InpInsClr);
         SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBarWidth+1, gBoderUp);

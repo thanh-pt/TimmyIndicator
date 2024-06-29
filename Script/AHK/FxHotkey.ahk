@@ -64,18 +64,16 @@
 		Send u
 	return
 	p::
-		Loop, 8 ; Down to bottom <H1>
+		Loop, 8 ; Down to bottom <D1>
 		{
 			Send {Down}
 		}
 		sleep, 300
-		Send {Up} ; Back to <Daily>
-		sleep, 300
 		Send ^{Right}
 		sleep, 300
-		Send {Down} ; Back to <H1>
+		Send {Up} ; Back to <H1>
 		sleep, 300
-		Loop, 8
+		Loop, 7
 		{
 			sleep, 300
 			Send ^{Right}
