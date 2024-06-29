@@ -18,8 +18,8 @@ input string    InpOnOffHotkey  = "M";              // On/Off Hotkey:
 
 long gChartScale = 0;
 bool gOnState   = true;
-bool gInit      = false;
 int  gTimeOfset = 0;
+int  gTotalRate = 0;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -28,6 +28,12 @@ int OnInit()
 //---
     gTimeOfset = ChartPeriod() * 60;
     return(INIT_SUCCEEDED);
+}
+void OnDeinit(const int reason) {
+    for (int i = ObjectsTotal() - 1; i >= 0; i--) {
+        string objName = ObjectName(i);
+        if (StringFind(objName, APP_TAG) != -1) ObjectDelete(objName);
+    }
 }
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |
@@ -44,7 +50,10 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
   {
 //---
-    gInit = true;
+    if (gTotalRate != rates_total) {
+        loadImbalance();
+    }
+    gTotalRate = rates_total;
 //--- return value of prev_calculated for next call
     return(rates_total);
 }
@@ -71,7 +80,7 @@ void loadImbalance()
 {
     int pIdx = 0;
     gChartScale = ChartGetInteger(ChartID(), CHART_SCALE);
-    if (gOnState == false || gChartScale < 2 || gInit == false) {
+    if (gOnState == false || gChartScale < 2 || gTotalRate == 0) {
         while(hideImb(pIdx++) == true){}
         return;
     }

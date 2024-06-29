@@ -28,8 +28,9 @@ int InpPreQuery = 5;
 
 //---
 long gChartScale = 0;
-bool gInitCalculation = false;
+int  gTotalRate = 0;
 bool gOnState = true;
+
 
 
 bool isHigherNext(int index){
@@ -113,8 +114,10 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
 //---
-    loadPivotDrawing();
-    gInitCalculation = true;
+    if (gTotalRate != rates_total) {
+        loadPivotDrawing();
+    }
+    gTotalRate = rates_total;
 
 //--- return value of prev_calculated for next call
     return(rates_total);
@@ -128,7 +131,7 @@ void OnChartEvent(const int id,
                   const string &sparam)
 {
 //---
-    if (gInitCalculation == false) return;
+    if (gTotalRate == 0) return;
     if (id == CHARTEVENT_CHART_CHANGE) loadPivotDrawing();
     else if (id == CHARTEVENT_KEYDOWN && lparam == InpOnOffHotkey[0]) {
         gOnState = !gOnState;

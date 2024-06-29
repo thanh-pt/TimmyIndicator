@@ -64,7 +64,7 @@ int winterEnd = 4;
 
 int          gChartPeriod;
 string       gSymbol;
-bool         gInit = false;
+int          gTotalRate = 0;
 
 MqlDateTime  gDtStruct;
 datetime     gBegTime;
@@ -109,7 +109,7 @@ void OnDeinit(const int reason) {
         string objName = ObjectName(i);
         if (StringFind(objName, APP_TAG) != -1) ObjectDelete(objName);
     }
-    gInit = false;
+    gTotalRate = 0;
 }
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |
@@ -126,8 +126,10 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
 //---
-    gInit = true;
-    if (inpHiFreqUpdate) scanWindow();
+    if (gTotalRate != rates_total) {
+        if (inpHiFreqUpdate) scanWindow();
+    }
+    gTotalRate = rates_total;
 //--- return value of prev_calculated for next call
     return(rates_total);
 }
@@ -140,7 +142,7 @@ void OnChartEvent(const int id,
                   const string &sparam)
 {
 //---
-    if (gInit == false) return;
+    if (gTotalRate == 0) return;
     if (id == CHARTEVENT_CHART_CHANGE) scanWindow();
 }
 //+------------------------------------------------------------------+
@@ -203,11 +205,12 @@ void drawSession(eSession ss, int beginBar, int endBar)
     if (inpStyle == eStyleHiLoLine || inpStyle == eStyleLineBox){
         // Hi Line
         datetime endTime = Time[beginBar] + gSsBarNum[ss]*gChartPeriod*60;
-        createLine(gLineIdx++, Time[beginBar], endTime, gHi, gHi, gSsColor[ss]);
-        createLine(gLineIdx++, Time[beginBar], endTime, gLo, gLo, gSsColor[ss]);
+        if (isSsRunning == false) {
+            createLine(gLineIdx++, Time[beginBar], endTime, gHi, gHi, gSsColor[ss]);
+            createLine(gLineIdx++, Time[beginBar], endTime, gLo, gLo, gSsColor[ss]);
+        }
         if (inpStyle == eStyleLineBox){
-            createLine(gLineIdx++, Time[beginBar], Time[beginBar], gHi, (gHi+9*High[beginBar])/10, gSsColor[ss]);
-            createLine(gLineIdx++, Time[beginBar], Time[beginBar], (gLo + 9*Low[beginBar])/10, gLo, gSsColor[ss]);
+            createLine(gLineIdx++, Time[beginBar], Time[beginBar], gHi, gLo, gSsColor[ss]);
             createLine(gLineIdx++, endTime, endTime, gHi, gLo, gSsColor[ss]);
             if (isSsRunning == false && endBar*gChartPeriod < 15){
                 createLabel(gLabelIdx++, "🏴 E N D", Time[0] + 120*gChartPeriod, High[0], 9, ANCHOR_LEFT_LOWER, gSsColor[ss]);
