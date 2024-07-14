@@ -31,6 +31,7 @@ input string _config;                           // - - - Configuration - - -
 input eStyle inpStyle = eStyleBorderColor;      // S T Y L E
 input bool inpDisplayLable = false;             // L A B E L
 input bool inpHiFreqUpdate = false;             // Update Frequency
+input bool inpDaySaving    = false;             // Day Saving for winter
 
 input string _display;                          // - - - Display Option - - -
 input bool inpDisplayAs = true;                 // Asian
@@ -165,7 +166,7 @@ void scanWindow(){
         // Step 3: Tính toán nến index của Session -> Draw
         gMonth = TimeMonth(Time[gBegDayBar]);
         gWtrOffset = 0;
-        if (gMonth >= winterBeg || gMonth < winterEnd) { // Winter Time
+        if (inpDaySaving && (gMonth >= winterBeg || gMonth < winterEnd)) { // Winter Time
             gWtrOffset = 60/gChartPeriod;
         }
         gBarAs = gBegDayBar - asBegHour*60/gChartPeriod - gWtrOffset;
