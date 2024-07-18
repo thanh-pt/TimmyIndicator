@@ -10,6 +10,7 @@
 #define CTX_ADDSLTP     "Sl/TP"
 #define CTX_AUTOBE      "Auto BE"
 
+#define TAG_TRADEID     ".TMTrade_1#"
 #define LIVE_INDI       "ʟɪᴠᴇ"
 
 enum e_display
@@ -48,6 +49,7 @@ double mStlSpace;
 string mListLiveTradeStr;
 string mListLiveTradeArr[];
 string mLiveTradeCtx;
+bool   mUserActive;
 
 // Component name
 private:
@@ -127,6 +129,7 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     mListLiveTradeStr = "";
+    mUserActive = false;
 
     // Init variable type
     mNameType [0] = "Long";
@@ -168,7 +171,10 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
 }
 
 // Internal Event
-void Trade::prepareActive(){}
+void Trade::prepareActive()
+{
+    mUserActive = true;
+}
 void Trade::createItem()
 {
     ObjectCreate(iBgTP , OBJ_RECTANGLE , 0, 0, 0);
@@ -409,7 +415,7 @@ void Trade::refreshData()
 }
 void Trade::finishedJobDone()
 {
-    mFirstPoint = true;
+    mUserActive = false;
 }
 
 // Chart Event
@@ -560,34 +566,6 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
 {
     // Add Live Trade
     if (gContextMenu.mActiveItemStr == CTX_GOLIVE) {
-#ifdef EA
-        priceEN   = NormalizeDouble(priceEN, Digits);
-        priceSL   = NormalizeDouble(priceSL, Digits);
-        priceTP   = NormalizeDouble(priceTP, Digits);
-        mTradeLot = NormalizeDouble(mTradeLot, 2);
-        int Cmd = ((priceTP > priceEN) ? OP_BUYLIMIT : OP_SELLLIMIT);
-    
-        int OrderNumber;
-        int Slippage = 200;
-        OrderNumber=OrderSend(Symbol(),Cmd,mTradeLot,priceEN,Slippage,priceSL,priceTP);
-        if(OrderNumber>0){
-            Print("Order ",OrderNumber," open");
-            // Lấy những thông tin từ trade cũ
-            priceBE = ObjectGet(cPtBE, OBJPROP_PRICE1);
-            time1 = (datetime)ObjectGet(cPtEN, OBJPROP_TIME1);
-            time2 = (datetime)ObjectGet(cPtWD, OBJPROP_TIME1);
-            // Xoá trade item
-            ObjectDelete(cPtWD);
-            // Tạo trade mới theo Order number
-            createTrade(OrderNumber, time1, time2, priceEN, priceSL, priceTP, priceBE);
-            setTextContent(cPtWD, LIVE_INDI);
-            mListLiveTradeStr += IntegerToString(OrderNumber) + ",";
-        }
-        else{
-            Print("Order failed with error - ",GetLastError());
-            Alert("Order failed with error - "+IntegerToString(GetLastError()));
-        }
-#else
         priceEN   = NormalizeDouble(priceEN, Digits);
         priceSL   = NormalizeDouble(priceSL, Digits);
         priceTP   = NormalizeDouble(priceTP, Digits);
@@ -595,8 +573,6 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
         ObjectSet("sim#3d_visual_sl", OBJPROP_PRICE1, priceSL);
         ObjectSet("sim#3d_visual_ap", OBJPROP_PRICE1, priceEN);
         ObjectSet("sim#3d_visual_tp", OBJPROP_PRICE1, priceTP);
-    //
-#endif
     }
     // Add Spread Feature
     else if (gContextMenu.mActiveItemStr == CTX_SPR) {
@@ -633,15 +609,7 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     }
     // Add TP/SL if they don't have
     else if (gContextMenu.mActiveItemStr == CTX_ADDSLTP) {
-        string sparamItems[];
-        int k=StringSplit(itemId,'#',sparamItems);
-        if (k == 2){
-            if(OrderModify(OrderTicket(),OrderOpenPrice(),priceSL,priceTP,0) == true){
-                Print("OrderModify successfully.");
-            }
-            else
-                Print("Error in OrderModify. Error code=",GetLastError());
-        }
+        /// TradeWorker Handler this one
     }
     else if (gContextMenu.mActiveItemStr == CTX_AUTOBE) {
         setTextContent(cPtBE, "be");
@@ -652,7 +620,7 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
 
 void Trade::createTrade(int id, datetime _time1, datetime _time2, double _priceEN, double _priceSL, double _priceTP, double _priceBE)
 {
-    string itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + IntegerToString(id);
+    string itemId = TAG_TRADEID + IntegerToString(id);
     activateItem(itemId);
     createItem();
     time1 = _time1;
@@ -666,109 +634,37 @@ void Trade::createTrade(int id, datetime _time1, datetime _time2, double _priceE
 
 void Trade::scanLiveTrade()
 {
-#ifndef EA
-    return;
-#endif
-    if (Trd_Cost == 0) return;
-
-    // First scanning
-    if (mListLiveTradeStr == ""){
-        int openedTrade = 0;
-        int tradePos    = -1;
-        for( int i = 0 ; i < OrdersTotal() ; i++ ) { 
-            if (OrderSelect(i, SELECT_BY_POS, MODE_TRADES ) == false) continue;
-            if (OrderSymbol() != Symbol()) continue;
-            mListLiveTradeStr += IntegerToString(OrderTicket()) + ",";
-        }
-        return;
-    }
-
-    // Manage Trade
-    if (mFirstPoint == false) return; // User are trying to draw new trade
-    int k=StringSplit(mListLiveTradeStr,',',mListLiveTradeArr);
-    mListLiveTradeStr = "";
-    bool isBuy = false;
-    bool isBeManage = false;
-    int orderType = 0;
+    if (mUserActive == true) return; // User are trying to draw new trade
     string itemId = "";
-    for (int i = 0; i < k-1; i++){
-        itemId = mItemName + "_" +IntegerToString(ChartPeriod()) + "#" + mListLiveTradeArr[i];
+    for (int i = 0 ; i < OrdersTotal(); i++) {
+        if (OrderSelect(i, SELECT_BY_POS) == false) continue;
+        if (OrderSymbol() != Symbol()) continue;
+        itemId = TAG_TRADEID + IntegerToString(OrderTicket());
         activateItem(itemId);
-        // 1. Check lệnh đã cancel chưa?
-        if (OrderSelect(StrToInteger(mListLiveTradeArr[i]), SELECT_BY_TICKET, MODE_TRADES) == false) {
-            setTextContent(cPtWD, "");
-            setTextContent(iTxtE,"");
-            continue;
-        }
-        // 2. Lệnh đã đóng chưa?
-        if (OrderCloseTime() != 0){
-            setTextContent(cPtWD, "");
-            setTextContent(iTxtE,"");
-            continue;
-        }
-        // 3. Lệnh đang mở cần được control
-        /// A. Load data
-        priceTP = OrderTakeProfit();
         priceEN = OrderOpenPrice();
-        priceSL = OrderStopLoss();
-        orderType = OrderType();
-        isBuy = (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP);
-        // Lệnh chưa set SL
-        if (priceSL == 0.0) {
-            priceSL = NormalizeDouble(priceEN - (isBuy ? 1 : -1) * mNativeCost / OrderLots() / 100000, 5);
-        } 
-        // Lệnh đã đặt BE hoặc SL dương
-        else if ((isBuy ? 1 : -1) * (priceSL - priceEN) >= 0) {
-            isBeManage = true;
-            priceSL = NormalizeDouble(priceEN - (isBuy ? 1 : -1) * mNativeCost / OrderLots() / 100000, 5);
-        }
-        // Lệnh chưa set TP
-        if (priceTP <= 0.0){
-            priceTP = 4*priceEN - 3*priceSL; // Set TP = 3R
-        }
-
-        /// B. Kiểm tra Trade đã có trên đồ thị chưa
-        // Trade chưa tồn tại trên đồ thị -> Tạo mới
-        if (ObjectFind(ChartID(), cPtWD) != 0) {
-            time1 = OrderOpenTime();
-            time2 = time1 + ChartPeriod()*1800;
+        
+        int orderType = OrderType();
+        bool isBUY = (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP);
+        priceSL = priceEN + (isBUY ? -1 : +1) * mNativeCost/OrderLots() / pow(10, Digits);
+        priceTP = OrderTakeProfit();
+        if (ObjectFind(cPtWD) < 0) {
+            if (priceTP <= 0.0) {
+                priceTP = 5*priceEN - 4*priceSL; // Set TP = 4R
+            }
             priceBE = 2*priceEN - priceSL;
-            createTrade(OrderTicket(), time1, time2, priceEN, priceSL, priceTP, priceBE);
+            createTrade(OrderTicket(), OrderOpenTime(), OrderOpenTime()+getDistanceBar(10),
+                                    priceEN, priceSL, priceTP, priceBE);
+            setTextContent(cPtWD, LIVE_INDI);
+            refreshData();
+            continue;
         }
-        // Trade đã tồn tại trên đồ thị
-        else {
-            time1 = (datetime)ObjectGet(cPtEN, OBJPROP_TIME1);
-            time2 = (datetime)ObjectGet(cPtWD, OBJPROP_TIME1);
-            priceBE = ObjectGet(cPtBE, OBJPROP_PRICE1);
+        if (priceTP <= 0.0) {
+            priceTP = ObjectGet(cPtTP, OBJPROP_PRICE1);
         }
-
-        /// C. Chức năng Check Auto BE/Out
-        if (isBeManage == false && ObjectDescription(cPtBE) == "be") {
-            // Lệnh đã vào
-            if ((orderType == OP_BUY && Bid >= priceBE) || (orderType == OP_SELL && Bid <= priceBE)) {
-                if(OrderModify(OrderTicket(),OrderOpenPrice(),OrderOpenPrice(),OrderTakeProfit(),0) == true){
-                    Print("OrderModify successfully.");
-                    setTextContent(cPtBE, "");
-                }
-                else
-                    Print("Error in OrderModify. Error code=",GetLastError());
-            }
-            // Lệnh chưa vào
-            else if ((orderType == OP_BUYLIMIT && Bid >= priceBE) || (orderType == OP_SELLLIMIT && Bid <= priceBE)) {
-                if(OrderDelete(OrderTicket()) == true){
-                    Print("OrderDelete successfully.");
-                    setTextContent(cPtBE, "");
-                }
-                else
-                    Print("Error in OrderDelete. Error code=",GetLastError());
-            }
-        }
-
-        /// D. Reload & Others
-        setTextContent(cPtWD, LIVE_INDI);
+        priceBE = ObjectGet(cPtBE, OBJPROP_PRICE1);
+        time1 = (datetime)ObjectGet(cPtEN, OBJPROP_TIME1);
+        time2 = (datetime)ObjectGet(cPtWD, OBJPROP_TIME1);
         refreshData();
-        // Add remain Item
-        mListLiveTradeStr += mListLiveTradeArr[i] + ",";
     }
 }
 
