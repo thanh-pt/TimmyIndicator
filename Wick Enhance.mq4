@@ -131,15 +131,15 @@ void OnChartEvent(const int id,
         
         if (gChartScale == 3) {
             gWickWidth = 2;
-            gBodyWidth = gChartScale;
+            gBodyWidth = 4;
         }
         else if (gChartScale == 4) {
             gWickWidth = 2;
-            gBodyWidth = 6;
+            gBodyWidth = 8;
         }
         else if (gChartScale == 5) {
             gWickWidth = 3;
-            gBodyWidth = 12;
+            gBodyWidth = 15;
         }
         else {
             gWickWidth = 0;
