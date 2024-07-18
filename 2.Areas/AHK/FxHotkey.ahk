@@ -73,7 +73,7 @@
 		sleep, 300
 		Send {Up} ; Back to <H1>
 		sleep, 300
-		Loop, 8
+		Loop, 7
 		{
 			sleep, 300
 			Send ^{Right}
