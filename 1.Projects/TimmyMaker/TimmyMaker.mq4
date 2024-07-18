@@ -4,13 +4,7 @@
 //|                       https://www.youtube.com/@TimmyTraderHamHoc |
 //+------------------------------------------------------------------+
 #property strict
-
-// #define EA
-// - - - CONFIG BUILD - - - - - - - //
-#ifndef EA                          //
-#property indicator_chart_window    //
-#endif                              //
-// - - - - - - - - - - - - - - -    //
+#property indicator_chart_window
 
 #include "Home/Controller.mqh"
 #include "Home/CommonData.mqh"
@@ -27,9 +21,6 @@ Controller  gController(&gCommonData, &gMouseInfo);
 CrossHair   gCrossHair(&gCommonData);
 ContextMenu gContextMenu();
 
-//+------------------------------------------------------------------+
-//| Expert initialization function                                   |
-//+------------------------------------------------------------------+
 int OnInit()
 {
 //---
@@ -41,27 +32,12 @@ int OnInit()
 //---
     return(INIT_SUCCEEDED);
 }
-//+------------------------------------------------------------------+
-//| Expert deinitialization function                                 |
-//+------------------------------------------------------------------+
 void OnDeinit(const int reason)
 {
-//---
     gContextMenu.clearContextMenu();
     gContextMenu.clearStaticCtxMenu();
 }
-//+------------------------------------------------------------------+
-//| Expert tick function                                             |
-//+------------------------------------------------------------------+
-void OnTick()
-{
-//---
-    gController.handleOntick();
-}
 
-//// Function này được sử dụng trong Indi
-// Không thể sử dụng trong EA
-#ifndef EA
 int OnCalculate(const int rates_total,
                 const int prev_calculated,
                 const datetime &time[],
@@ -79,7 +55,7 @@ int OnCalculate(const int rates_total,
     gController.handleOntick();
     return(rates_total);
 }
-#endif
+
 //+------------------------------------------------------------------+
 //| ChartEvent function                                              |
 //+------------------------------------------------------------------+
@@ -88,8 +64,7 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
-//---
-       switch (id)
+    switch (id)
     {
     case CHARTEVENT_KEYDOWN:
         gController.handleKeyEvent(lparam);
