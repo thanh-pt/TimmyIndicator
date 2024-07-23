@@ -8,8 +8,8 @@
 #property version   "1.00"
 #property strict
 #property indicator_chart_window
-#property indicator_buffers 6
-#property indicator_plots   6
+#property indicator_buffers 8
+#property indicator_plots   8
 //--- buffers
 double         WickHi1Buf[];
 double         WickHi2Buf[];
@@ -17,34 +17,56 @@ double         WickLo1Buf[];
 double         WickLo2Buf[];
 double         Body1Buf[];
 double         Body2Buf[];
+double         ImbBuf1[];
+double         ImbBuf2[];
 
 int     gTotalRate = 1;
+
 int     gWickWidth = 0;
 int     gBodyWidth = 0;
+
 int     gChartScale = -1;
 int     gPreChartScale = -1;
+
 color   gUpClr;
 color   gDownClr;
 
-input color InpInsideBarClr = clrWhite; // Inside Bar Color
+bool    gbImbOn = false;
+
+
+enum EBarMap{
+    eBarHi01,
+    eBarHi02,
+    eBarLo01,
+    eBarLo02,
+    eBarBd01,
+    eBarBd02,
+    eBarImb1,
+    eBarImb2,
+};
+
+input color InpIsbClr = clrWhite;       // Inside Bar Color
+input color InpImbClr = clrGoldenrod;   // Imbalance Color
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
 int OnInit()
 {
 //--- indicator buffers mapping
-    SetIndexBuffer(0,WickHi1Buf);
-    SetIndexBuffer(1,WickHi2Buf);
-    SetIndexBuffer(2,WickLo1Buf);
-    SetIndexBuffer(3,WickLo2Buf);
-    SetIndexBuffer(4,Body1Buf);
-    SetIndexBuffer(5,Body2Buf);
+    SetIndexBuffer(eBarHi01,WickHi1Buf  );
+    SetIndexBuffer(eBarHi02,WickHi2Buf  );
+    SetIndexBuffer(eBarLo01,WickLo1Buf  );
+    SetIndexBuffer(eBarLo02,WickLo2Buf  );
+    SetIndexBuffer(eBarBd01,Body1Buf    );
+    SetIndexBuffer(eBarBd02,Body2Buf    );
+    SetIndexBuffer(eBarImb1,ImbBuf1     );
+    SetIndexBuffer(eBarImb2,ImbBuf2     );
 
     updateStyle();
 
-    if (InpInsideBarClr != clrNONE) {
-        ChartSetInteger(ChartID(),CHART_COLOR_CANDLE_BULL, InpInsideBarClr);
-        ChartSetInteger(ChartID(),CHART_COLOR_CANDLE_BEAR, InpInsideBarClr);
+    if (InpIsbClr != clrNONE) {
+        ChartSetInteger(ChartID(),CHART_COLOR_CANDLE_BULL, InpIsbClr);
+        ChartSetInteger(ChartID(),CHART_COLOR_CANDLE_BEAR, InpIsbClr);
     }
 //---
     return(INIT_SUCCEEDED);
@@ -65,58 +87,8 @@ int OnCalculate(const int rates_total,
   {
 //---
     if (gTotalRate == rates_total) return rates_total;
-    for (int idx = rates_total-2; idx > 0; idx--) { // ignore first cancel
-    
-        WickHi1Buf[idx] = EMPTY_VALUE;
-        WickHi2Buf[idx] = EMPTY_VALUE;
-        WickLo1Buf[idx] = EMPTY_VALUE;
-        WickLo2Buf[idx] = EMPTY_VALUE;
-        Body1Buf  [idx] = EMPTY_VALUE;
-        Body2Buf  [idx] = EMPTY_VALUE;
-        
-        WickHi1Buf[idx-1] = EMPTY_VALUE;
-        WickHi2Buf[idx-1] = EMPTY_VALUE;
-        WickLo1Buf[idx-1] = EMPTY_VALUE;
-        WickLo2Buf[idx-1] = EMPTY_VALUE;
-        Body1Buf  [idx-1] = EMPTY_VALUE;
-        Body2Buf  [idx-1] = EMPTY_VALUE;
-            
-        Body1Buf[idx] = open[idx];
-        Body2Buf[idx] = close[idx];
-
-        if (InpInsideBarClr != clrNONE && high[idx] <= high[idx+1] && low[idx] >= low[idx+1]){
-            Body1Buf[idx] = EMPTY_VALUE;
-            Body2Buf[idx] = EMPTY_VALUE;
-        }
-
-        if (open[idx] > close[idx]) { // case down
-            WickHi1Buf[idx] = high[idx];
-            WickHi2Buf[idx] = open[idx];
-            WickLo1Buf[idx] = close[idx];
-            WickLo2Buf[idx] = low[idx];
-        }
-        else if (open[idx] < close[idx]){ // case up
-            WickHi1Buf[idx] = close[idx];
-            WickHi2Buf[idx] = high[idx];
-            WickLo1Buf[idx] = low[idx];
-            WickLo2Buf[idx] = open[idx];
-        }
-        else {
-            if (open[idx+1] > close[idx+1]) {
-                WickHi1Buf[idx] = high[idx];
-                WickHi2Buf[idx] = open[idx];
-                WickLo1Buf[idx] = close[idx];
-                WickLo2Buf[idx] = low[idx];
-            }
-            else {
-                WickHi1Buf[idx] = close[idx];
-                WickHi2Buf[idx] = high[idx];
-                WickLo1Buf[idx] = low[idx];
-                WickLo2Buf[idx] = open[idx];
-            }
-        }
-    }
     gTotalRate = rates_total;
+    loadBarEnhance(gTotalRate);
 //--- return value of prev_calculated for next call
     return(rates_total);
 }
@@ -153,6 +125,10 @@ void OnChartEvent(const int id,
         }
         updateStyle();
     }
+    else if (id == CHARTEVENT_KEYDOWN && lparam == 'M') {
+        gbImbOn = !gbImbOn;
+        loadBarEnhance(gTotalRate);
+    }
 }
 //+------------------------------------------------------------------+
 //+------------------------------------------------------------------+
@@ -162,10 +138,71 @@ void updateStyle()
 {
     gUpClr      = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_UP);
     gDownClr    = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_DOWN);
-    SetIndexStyle(0, DRAW_HISTOGRAM, 0, gWickWidth, gDownClr);
-    SetIndexStyle(1, DRAW_HISTOGRAM, 0, gWickWidth, gUpClr  );
-    SetIndexStyle(2, DRAW_HISTOGRAM, 0, gWickWidth, gDownClr);
-    SetIndexStyle(3, DRAW_HISTOGRAM, 0, gWickWidth, gUpClr  );
-    SetIndexStyle(4, DRAW_HISTOGRAM, 0, gBodyWidth, gDownClr);
-    SetIndexStyle(5, DRAW_HISTOGRAM, 0, gBodyWidth, gUpClr  );
+    SetIndexStyle(eBarHi01, DRAW_HISTOGRAM, 0, gWickWidth, gDownClr);
+    SetIndexStyle(eBarHi02, DRAW_HISTOGRAM, 0, gWickWidth, gUpClr  );
+    SetIndexStyle(eBarLo01, DRAW_HISTOGRAM, 0, gWickWidth, gDownClr);
+    SetIndexStyle(eBarLo02, DRAW_HISTOGRAM, 0, gWickWidth, gUpClr  );
+    SetIndexStyle(eBarBd01, DRAW_HISTOGRAM, 0, gBodyWidth, gDownClr);
+    SetIndexStyle(eBarBd02, DRAW_HISTOGRAM, 0, gBodyWidth, gUpClr  );
+    SetIndexStyle(eBarImb1, DRAW_HISTOGRAM, 0, gBodyWidth, InpImbClr);
+    SetIndexStyle(eBarImb2, DRAW_HISTOGRAM, 0, gBodyWidth, InpImbClr);
+}
+
+void loadBarEnhance(int totalBar)
+{
+    for (int idx = totalBar-2; idx > 0; idx--) { // ignore first cancel
+        if (InpIsbClr != clrNONE && High[idx] <= High[idx+1] && Low[idx] >= Low[idx+1]){
+            Body1Buf[idx] = EMPTY_VALUE;
+            Body2Buf[idx] = EMPTY_VALUE;
+        }
+        else if (gbImbOn == true && InpImbClr != clrNONE && idx > 1 && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
+            ImbBuf1[idx] = Open[idx];
+            ImbBuf2[idx] = Close[idx];
+            Body1Buf[idx] = EMPTY_VALUE;
+            Body2Buf[idx] = EMPTY_VALUE;
+        }
+        else {
+            Body1Buf[idx] = Open[idx];
+            Body2Buf[idx] = Close[idx];
+            ImbBuf1[idx] = EMPTY_VALUE;
+            ImbBuf2[idx] = EMPTY_VALUE;
+        }
+
+        // Wick config
+        if (Open[idx] > Close[idx]) { // case down
+            WickHi1Buf[idx] = High[idx];
+            WickHi2Buf[idx] = Open[idx];
+            WickLo1Buf[idx] = Close[idx];
+            WickLo2Buf[idx] = Low[idx];
+        }
+        else if (Open[idx] < Close[idx]){ // case up
+            WickHi1Buf[idx] = Close[idx];
+            WickHi2Buf[idx] = High[idx];
+            WickLo1Buf[idx] = Low[idx];
+            WickLo2Buf[idx] = Open[idx];
+        }
+        else {
+            if (Open[idx+1] > Close[idx+1]) {
+                WickHi1Buf[idx] = High[idx];
+                WickHi2Buf[idx] = Open[idx];
+                WickLo1Buf[idx] = Close[idx];
+                WickLo2Buf[idx] = Low[idx];
+            }
+            else {
+                WickHi1Buf[idx] = Close[idx];
+                WickHi2Buf[idx] = High[idx];
+                WickLo1Buf[idx] = Low[idx];
+                WickLo2Buf[idx] = Open[idx];
+            }
+        }
+    }
+    WickHi1Buf[0] = EMPTY_VALUE;
+    WickHi2Buf[0] = EMPTY_VALUE;
+    WickLo1Buf[0] = EMPTY_VALUE;
+    WickLo2Buf[0] = EMPTY_VALUE;
+    Body1Buf  [0] = EMPTY_VALUE;
+    Body2Buf  [0] = EMPTY_VALUE;
+    ImbBuf1   [0] = EMPTY_VALUE;
+    ImbBuf2   [0] = EMPTY_VALUE;
+
 }
