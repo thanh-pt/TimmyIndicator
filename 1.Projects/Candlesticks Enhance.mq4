@@ -8,18 +8,18 @@
 #property version   "1.00"
 #property strict
 #property indicator_chart_window
-#property indicator_buffers 14
-#property indicator_plots   14
+#property indicator_buffers 16
+#property indicator_plots   16
 
 
-#define WICK_SIZE 0
-#define BODY_SIZE 1
-
-#define MACRO_WickSize gArrSizeMap[WICK_SIZE][gChartScale]
-#define MACRO_BodySize gArrSizeMap[BODY_SIZE][gChartScale]
+#define MACRO_WickSize gArrSizeMap[0][gChartScale]
+#define MACRO_BderSize gArrSizeMap[1][gChartScale]
+#define MACRO_BodySize gArrSizeMap[1][gChartScale]-1
 //--- buffers
 double         Wick1Buf[];
 double         Wick2Buf[];
+double         Bder1Buf[];
+double         Bder2Buf[];
 double         Body1Buf[];
 double         Body2Buf[];
 double         IsmbBuf1[];
@@ -39,10 +39,10 @@ int     gTotalRate = 1;
 int     gChartScale = (int)ChartGetInteger(ChartID(), CHART_SCALE);
 int     gPreChartScale = gChartScale;
 
-color   gBdUpClr;
-color   gBdDnClr;
-color   gIsUpClr; // Don't use currently
-color   gIsDnClr; // Don't use currently
+color   gBderUpClr;
+color   gBderDnClr;
+color   gBodyUpClr;
+color   gBodyDnClr;
 
 bool    gbImbOn = false;
 
@@ -51,6 +51,8 @@ int     gArrSizeMap[2][6];
 enum EBarMap{
     eBarWick1,
     eBarWick2,
+    eBarBder1,
+    eBarBder2,
     eBarBody1,
     eBarBody2,
     eBarIsmb1,
@@ -75,6 +77,8 @@ int OnInit()
 //--- indicator buffers mapping
     SetIndexBuffer(eBarWick1,Wick1Buf);
     SetIndexBuffer(eBarWick2,Wick2Buf);
+    SetIndexBuffer(eBarBder1,Bder1Buf);
+    SetIndexBuffer(eBarBder2,Bder2Buf);
     SetIndexBuffer(eBarBody1,Body1Buf);
     SetIndexBuffer(eBarBody2,Body2Buf);
     SetIndexBuffer(eBarIsmb1,IsmbBuf1);
@@ -88,19 +92,19 @@ int OnInit()
     SetIndexBuffer(eBarLnN11,LineDn11);
     SetIndexBuffer(eBarLnN12,LineDn12);
 
-    gArrSizeMap[WICK_SIZE][0] = 0;
-    gArrSizeMap[WICK_SIZE][1] = 0;
-    gArrSizeMap[WICK_SIZE][2] = 0;
-    gArrSizeMap[WICK_SIZE][3] = 2;
-    gArrSizeMap[WICK_SIZE][4] = 2;
-    gArrSizeMap[WICK_SIZE][5] = 3;
+    gArrSizeMap[0][0] = 0;
+    gArrSizeMap[0][1] = 0;
+    gArrSizeMap[0][2] = 0;
+    gArrSizeMap[0][3] = 2;
+    gArrSizeMap[0][4] = 2;
+    gArrSizeMap[0][5] = 3;
 
-    gArrSizeMap[BODY_SIZE][0] = 0;
-    gArrSizeMap[BODY_SIZE][1] = 1;
-    gArrSizeMap[BODY_SIZE][2] = 2;
-    gArrSizeMap[BODY_SIZE][3] = 4;
-    gArrSizeMap[BODY_SIZE][4] = 8;
-    gArrSizeMap[BODY_SIZE][5] = 15;
+    gArrSizeMap[1][0] = 0;
+    gArrSizeMap[1][1] = 1;
+    gArrSizeMap[1][2] = 2;
+    gArrSizeMap[1][3] = 4;
+    gArrSizeMap[1][4] = 8;
+    gArrSizeMap[1][5] = 15;
 
     updateStyle();
 
@@ -120,8 +124,7 @@ int OnCalculate(const int rates_total,
                 const long &tick_volume[],
                 const long &volume[],
                 const int &spread[])
-  {
-//---
+{
     if (gTotalRate == rates_total) return rates_total;
     gTotalRate = rates_total;
     loadBarEnhance(gTotalRate);
@@ -157,36 +160,46 @@ void updateStyle()
 {
     if (gChartScale == 0){
         ChartSetInteger(ChartID(), CHART_MODE, CHART_LINE);
-        gBdUpClr = clrNONE;
-        gBdDnClr = clrNONE;
+        gBderUpClr = clrNONE;
+        gBderDnClr = clrNONE;
+        gBodyUpClr = clrNONE;
+        gBodyDnClr = clrNONE;
     } else {
-        ChartSetInteger(ChartID(), CHART_MODE, CHART_BARS);
-        gBdUpClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_UP);
-        gBdDnClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_DOWN);
-        gIsUpClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CANDLE_BULL);
-        gIsDnClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CANDLE_BULL);
+        ChartSetInteger(ChartID(), CHART_MODE, CHART_CANDLES);
+        gBderUpClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_UP);
+        gBderDnClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_DOWN);
+        gBodyUpClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CANDLE_BULL);
+        gBodyDnClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CANDLE_BEAR);
     }
-    SetIndexStyle(eBarWick1, DRAW_HISTOGRAM, 0, MACRO_WickSize, gBdDnClr);
-    SetIndexStyle(eBarWick2, DRAW_HISTOGRAM, 0, MACRO_WickSize, gBdUpClr);
-    SetIndexStyle(eBarBody1, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdDnClr);
-    SetIndexStyle(eBarBody2, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdUpClr);
+    // Wick
+    SetIndexStyle(eBarWick1, DRAW_HISTOGRAM, 0, MACRO_WickSize, gBderDnClr);
+    SetIndexStyle(eBarWick2, DRAW_HISTOGRAM, 0, MACRO_WickSize, gBderUpClr);
+    // Boder
+    SetIndexStyle(eBarBder1, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderDnClr);
+    SetIndexStyle(eBarBder2, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderUpClr);
+    // Body
     if (gChartScale >= 2){
-        SetIndexStyle(eBarIsmb1, DRAW_HISTOGRAM, 0, MACRO_BodySize-1, InpIsbClr);
-        SetIndexStyle(eBarIsmb2, DRAW_HISTOGRAM, 0, MACRO_BodySize-1, InpImbClr);
+        SetIndexStyle(eBarBody1, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBodyDnClr);
+        SetIndexStyle(eBarBody2, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBodyUpClr);
+        SetIndexStyle(eBarIsmb1, DRAW_HISTOGRAM, 0, MACRO_BodySize, InpIsbClr);
+        SetIndexStyle(eBarIsmb2, DRAW_HISTOGRAM, 0, MACRO_BodySize, InpImbClr);
     }
     else {
+        SetIndexStyle(eBarBody1, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(eBarBody2, DRAW_HISTOGRAM, 0, 0, clrNONE);
         SetIndexStyle(eBarIsmb1, DRAW_HISTOGRAM, 0, 0, clrNONE);
         SetIndexStyle(eBarIsmb2, DRAW_HISTOGRAM, 0, 0, clrNONE);
     }
 
-    SetIndexStyle(eBarLnU01, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdUpClr);
-    SetIndexStyle(eBarLnU02, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdUpClr);
-    SetIndexStyle(eBarLnN01, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdUpClr);
-    SetIndexStyle(eBarLnN02, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdUpClr);
-    SetIndexStyle(eBarLnU11, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdDnClr);
-    SetIndexStyle(eBarLnU12, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdDnClr);
-    SetIndexStyle(eBarLnN11, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdDnClr);
-    SetIndexStyle(eBarLnN12, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBdDnClr);
+    // Line Up/down
+    SetIndexStyle(eBarLnU01, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderUpClr);
+    SetIndexStyle(eBarLnU02, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderUpClr);
+    SetIndexStyle(eBarLnN01, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderUpClr);
+    SetIndexStyle(eBarLnN02, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderUpClr);
+    SetIndexStyle(eBarLnU11, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderDnClr);
+    SetIndexStyle(eBarLnU12, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderDnClr);
+    SetIndexStyle(eBarLnN11, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderDnClr);
+    SetIndexStyle(eBarLnN12, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderDnClr);
 }
 
 void loadBarEnhance(int totalBar)
@@ -200,7 +213,9 @@ void loadBarEnhance(int totalBar)
         Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
         Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
 
-        // Layer 2 - Body
+        // Layer 2 - Boder/Body
+        Bder1Buf[idx] = Open[idx];
+        Bder2Buf[idx] = Close[idx];
         Body1Buf[idx] = Open[idx];
         Body2Buf[idx] = Close[idx];
 
@@ -239,6 +254,8 @@ void loadBarEnhance(int totalBar)
     }
     Wick1Buf[0] = EMPTY_VALUE;
     Wick2Buf[0] = EMPTY_VALUE;
+    Bder1Buf[0] = EMPTY_VALUE;
+    Bder2Buf[0] = EMPTY_VALUE;
     Body1Buf[0] = EMPTY_VALUE;
     Body2Buf[0] = EMPTY_VALUE;
     IsmbBuf1[0] = EMPTY_VALUE;
@@ -251,5 +268,4 @@ void loadBarEnhance(int totalBar)
     LineUp12[0] = EMPTY_VALUE;
     LineDn11[0] = EMPTY_VALUE;
     LineDn12[0] = EMPTY_VALUE;
-
 }
