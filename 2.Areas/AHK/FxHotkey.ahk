@@ -46,6 +46,9 @@
 	$]::
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
+	; RButton::
+	; 	WinActivate, ahk_exe Forex Simulator.exe
+	; return
 	$[::
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
@@ -55,10 +58,9 @@
 #IfWinActive
 
 #IfWinActive, ahk_exe Forex Simulator.exe
-	Right::^Right
-	Left::^Left
 	$]::^Right
 	$[::^Left
+	; RButton::^Right
 	u::
 		WinActivate, ahk_exe terminal.exe
 		Send u
