@@ -1,6 +1,5 @@
 import shutil
 import os
-import sys
 
 targetId = '2191F4A3D14D7B4B1EBB84F924777883'
 

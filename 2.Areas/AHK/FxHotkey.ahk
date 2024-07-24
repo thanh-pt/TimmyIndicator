@@ -5,7 +5,6 @@
 #Persistent
 
 #Space::Send, {PrintScreen}
-; ^Space::Send, +{PrintScreen}
 
 ;------------------------------------------------------------ MT 4 Hotkey --------------------------------------------------------------------------------
 #IfWinActive, ahk_exe terminal.exe
@@ -42,32 +41,41 @@
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
 
-	
-	$]::
-		WinActivate, ahk_exe Forex Simulator.exe
-	return
-	; RButton::
-	; 	WinActivate, ahk_exe Forex Simulator.exe
-	; return
+	; Soft4fx simulation
 	$[::
 		WinActivate, ahk_exe Forex Simulator.exe
 	return
-	$Tab::
+	$]::
 		WinActivate, ahk_exe Forex Simulator.exe
+	return
+	F1::
+		WinActivate, ahk_exe Forex Simulator.exe
+		Send ^{Left}
+	return
+	F2::
+		WinActivate, ahk_exe Forex Simulator.exe
+		Send ^{Right}
 	return
 #IfWinActive
 
 #IfWinActive, ahk_exe Forex Simulator.exe
-	$]::^Right
 	$[::^Left
-	; RButton::^Right
+	$]::^Right
+	F1::^Left
+	F2::^Right
+	F3::
+		WinActivate, ahk_exe terminal.exe
+		Send 5
+		WinActivate, ahk_exe Forex Simulator.exe
+	return
+	; Back to teminal and hide trade
 	u::
 		WinActivate, ahk_exe terminal.exe
 		Send u
 	return
-	p::
-		Loop, 8 ; Down to bottom <D1>
-		{
+	; Next day
+	^p::
+		Loop 8 { ; Down to bottom <D1>
 			Send {Down}
 		}
 		sleep, 300
@@ -75,13 +83,11 @@
 		sleep, 300
 		Send {Up} ; Back to <H1>
 		sleep, 300
-		Loop, 7
-		{
+		Loop 7 {
 			sleep, 300
 			Send ^{Right}
 		}
-		Loop, 8 ; Up to first TF <m1>
-		{
+		Loop 8 { ; Up to first TF <m1>
 			Send {Up}
 		}
 	return
