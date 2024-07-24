@@ -59,6 +59,8 @@
 #IfWinActive
 
 #IfWinActive, ahk_exe Forex Simulator.exe
+	Left::^Left
+	Right::^Right
 	$[::^Left
 	$]::^Right
 	F1::^Left
