@@ -1,5 +1,6 @@
 #property copyright "Timmy Ham Hoc"
 #property link      "https://www.youtube.com/@TimmyTraderHamHoc"
+#property icon      "../3.Resource/Timmy-Ham-học-Logo.ico"
 #property version   "1.00"
 #property strict
 #property indicator_chart_window
@@ -154,13 +155,11 @@ void OnChartEvent(const int id,
 void updateStyle()
 {
     if (gChartScale == 0){
-        ChartSetInteger(ChartID(), CHART_MODE, CHART_LINE);
         gBderUpClr = clrNONE;
         gBderDnClr = clrNONE;
         gBodyUpClr = clrNONE;
         gBodyDnClr = clrNONE;
     } else {
-        ChartSetInteger(ChartID(), CHART_MODE, CHART_CANDLES);
         gBderUpClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_UP);
         gBderDnClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_DOWN);
         gBodyUpClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CANDLE_BULL);
