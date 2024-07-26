@@ -272,19 +272,19 @@ void Alert::checkAlert()
 
         // Send notification or save remain Alert
         if (mIsAlertGoOver) {
-            StringReplace(mAlertText, ALERT_INDI_H, "");
-            StringReplace(mAlertText, ALERT_INDI_L, "");
-            sendNotification(   (isHighAlert ? ALERT_INDI_H : ALERT_INDI_L) + DoubleToString(mCurAlertPrice, Digits) + (mAlertText!="" ? "\n" : "")
-                                + mAlertText);
+            StringReplace(mCurAlertText, ALERT_INDI_H, "");
+            StringReplace(mCurAlertText, ALERT_INDI_L, "");
+            sendNotification(   (isHighAlert ? ALERT_INDI_H : ALERT_INDI_L) + DoubleToString(mCurAlertPrice, Digits) + (mCurAlertText!="" ? "\n" : "")
+                                + mCurAlertText);
             ObjectDelete(mListAlertArr[i]);
         }
         else {
             mListAlertRemainStr += mListAlertArr[i] + ",";
             if (Bid == mCurAlertPrice) {
-                StringReplace(mAlertText, ALERT_INDI_H, "");
-                StringReplace(mAlertText, ALERT_INDI_L, "");
-                sendNotification(   (isHighAlert ? "↑﹉" : "↓﹍") + DoubleToString(mCurAlertPrice, Digits) + (mAlertText!="" ? "\n" : "")
-                                    + mAlertText);
+                StringReplace(mCurAlertText, ALERT_INDI_H, "");
+                StringReplace(mCurAlertText, ALERT_INDI_L, "");
+                sendNotification(   (isHighAlert ? "↑﹉" : "↓﹍") + DoubleToString(mCurAlertPrice, Digits) + (mCurAlertText!="" ? "\n" : "")
+                                    + mCurAlertText);
             }
         }
     }
