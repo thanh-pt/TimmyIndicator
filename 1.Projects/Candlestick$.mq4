@@ -1,8 +1,3 @@
-//+------------------------------------------------------------------+
-//|                                         Candlesticks Enhance.mq4 |
-//|                                                    Timmy Ham Hoc |
-//|                       https://www.youtube.com/@TimmyTraderHamHoc |
-//+------------------------------------------------------------------+
 #property copyright "Timmy Ham Hoc"
 #property link      "https://www.youtube.com/@TimmyTraderHamHoc"
 #property version   "1.00"

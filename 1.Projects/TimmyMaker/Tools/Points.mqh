@@ -7,15 +7,15 @@ enum eAnchor{
 
 input string     Point_; // ●  P O I N T  ●
 input string     Point_1______Name  = "Swing";       // → Point 1:
-      string     Point_1_Charecter  = "n";           // Charecter
-      string     Point_1_Font       = "webdings";    // Font
-input int        Point_1_Size       = 10;            // Size
+      string     Point_1_Charecter  = "¡";           // Charecter
+      string     Point_1_Font       = "wingdings";   // Font
+input int        Point_1_Size       = 20;            // Size
 input color      Point_1_Color      = clrLightSkyBlue;    // Color
       eAnchor    Point_1_Anchor     = eAchCenter;
 input string     Point_2______Name  = "Sub";         // → Point 2:
-      string     Point_2_Charecter  = "n";           // Charecter
-      string     Point_2_Font       = "webdings";    // Font
-input int        Point_2_Size       = 6;             // Size
+      string     Point_2_Charecter  = "¡";           // Charecter
+      string     Point_2_Font       = "wingdings";   // Font
+input int        Point_2_Size       = 16;            // Size
 input color      Point_2_Color      = clrMediumPurple;    // Color
       eAnchor    Point_2_Anchor     = eAchCenter;
 input string     Point_3______Name  = "React";       // → Point 3:
@@ -134,7 +134,7 @@ void Point::createItem()
 }
 void Point::updateDefaultProperty()
 {
-    ObjectSet(cPtM0, OBJPROP_BACK , true);
+    ObjectSet(cPtM0, OBJPROP_BACK , false);
     setMultiStrs(OBJPROP_TOOLTIP, "\n", mAllItem);
 }
 void Point::updateTypeProperty()
