@@ -110,7 +110,7 @@ public:
     void restoreBacktestingTrade();
 private:
     void createTrade(int id, datetime _time1, datetime _time2, double _priceEN, double _priceSL, double _priceTP, double _priceBE);
-    void adjustRR(int rr);
+    void adjustRR(double rr);
 
 // Alpha feature
     void initData();
@@ -600,7 +600,7 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     // Auto adjust 3R
     else if (gContextMenu.mActiveItemStr == CTX_3R) {
         onItemDrag(itemId, objId);
-        adjustRR(3);
+        adjustRR(3.3);
     }
     // Auto adjust 4R
     else if (gContextMenu.mActiveItemStr == CTX_4R) {
@@ -700,7 +700,7 @@ void Trade::restoreBacktestingTrade()
     }
 }
 
-void Trade::adjustRR(int rr)
+void Trade::adjustRR(double rr)
 {
     priceEN = (priceTP + rr*priceSL) / (rr+1);
     refreshData();

@@ -154,6 +154,7 @@ void scanWindow(){
     gLabelIdx   = 0;
     gRectIdx    = 0;
     // Step 1: Xác định ngày
+    if (WindowFirstVisibleBar() <= 0) return;
     TimeToStruct(Time[WindowFirstVisibleBar()], gDtStruct);
     gDtStruct.sec   = 0;
     gDtStruct.min   = 0;
