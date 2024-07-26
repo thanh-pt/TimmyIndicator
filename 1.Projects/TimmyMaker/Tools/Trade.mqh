@@ -22,9 +22,10 @@ enum e_display
 
 input string          Trd_; // ●  T R A D E  ●
 //-------------------------------------------------
-input double          Trd_Cost          = 0;       //Cost ($)
+input double          Trd_Cost          = 1.5;     //Cost ($)
 input e_display       Trd_ShowStats     = OPTION;  //Show Stats
 input e_display       Trd_ShowDollar    = HIDE;    //Show Dollar
+input bool            Trd_TrackTrade    = false;   //Track Trade
 //-------------------------------------------------
 input string          Trd_apperence; //→ Color:
       int             Trd_TextSize      = 8;                 // Text Size
@@ -50,6 +51,8 @@ string mListLiveTradeStr;
 string mListLiveTradeArr[];
 string mLiveTradeCtx;
 bool   mUserActive;
+string mStrTradeItems;
+string mArrTradeItems[];
 
 // Component name
 private:
@@ -634,12 +637,16 @@ void Trade::createTrade(int id, datetime _time1, datetime _time2, double _priceE
 
 void Trade::scanLiveTrade()
 {
+    if (Trd_TrackTrade == false) return;
     if (mUserActive == true) return; // User are trying to draw new trade
     string itemId = "";
+    string strNewTradeItems = "";
     for (int i = 0 ; i < OrdersTotal(); i++) {
         if (OrderSelect(i, SELECT_BY_POS) == false) continue;
         if (OrderSymbol() != Symbol()) continue;
         itemId = TAG_TRADEID + IntegerToString(OrderTicket());
+        strNewTradeItems += itemId;
+        StringReplace(mStrTradeItems, itemId, "");
         activateItem(itemId);
         priceEN = OrderOpenPrice();
         
@@ -666,6 +673,17 @@ void Trade::scanLiveTrade()
         time2 = (datetime)ObjectGet(cPtWD, OBJPROP_TIME1);
         refreshData();
     }
+    if (mStrTradeItems != "") {
+        int k = StringSplit(mStrTradeItems, '.', mArrTradeItems);
+        for (int i = 0; i < k; i++) {
+            if (mArrTradeItems[i] == "") continue;
+            itemId = "." + mArrTradeItems[i];
+            activateItem(itemId);
+            setTextContent(cPtWD, "");
+            setTextContent(iTxtE, "---");
+        }
+    }
+    mStrTradeItems = strNewTradeItems;
 }
 
 void Trade::restoreBacktestingTrade()
