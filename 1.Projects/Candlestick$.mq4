@@ -183,10 +183,15 @@ void updateStyle()
 void loadBarEnhance(int totalBar)
 {
     bool isGreenBar = false;
+    bool isDoji = false;
     for (int idx = totalBar-2; idx > 0; idx--) { // ignore first cancel
+        isDoji = false;
         if      (Open[idx] > Close[idx]) isGreenBar = false;
         else if (Open[idx] < Close[idx]) isGreenBar = true;
-        else    isGreenBar = (Open[idx+1] > Close[idx+1]);
+        else    {
+            isGreenBar = (Open[idx+1] < Close[idx+1]);
+            isDoji = true;
+        }
         // Layer 1 - Wick
         Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
         Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
@@ -214,16 +219,18 @@ void loadBarEnhance(int totalBar)
         LineUp02[idx] = EMPTY_VALUE;
         LineDn01[idx] = EMPTY_VALUE;
         LineDn02[idx] = EMPTY_VALUE;
-        if (isGreenBar){
-            LineUp01[idx] = Open[idx];
-            LineUp02[idx] = Open[idx] + 0.00001;
-            LineDn01[idx] = Close[idx] - 0.00001;
-            LineDn02[idx] = Close[idx];
-        } else {
-            LineUp01[idx] = Open[idx] + 0.00001;
-            LineUp02[idx] = Open[idx];
-            LineDn01[idx] = Close[idx];
-            LineDn02[idx] = Close[idx] - 0.00001;
+        if (isDoji == false){
+            if (isGreenBar){
+                LineUp01[idx] = Open[idx];
+                LineUp02[idx] = Open[idx] + 0.00001;
+                LineDn01[idx] = Close[idx] - 0.00001;
+                LineDn02[idx] = Close[idx];
+            } else {
+                LineUp01[idx] = Open[idx];
+                LineUp02[idx] = Open[idx] - 0.00001;
+                LineDn01[idx] = Close[idx] + 0.00001;
+                LineDn02[idx] = Close[idx];
+            }
         }
     }
     Wick1Buf[0] = EMPTY_VALUE;
