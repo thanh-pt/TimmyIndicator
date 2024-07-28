@@ -4,6 +4,9 @@
 #UseHook
 #Persistent
 
+SetWorkingDir, %A_ScriptDir%
+Menu, Tray, Icon, FxHotkey.ico
+
 #Space::Send, {PrintScreen}
 
 ;------------------------------------------------------------ MT 4 Hotkey --------------------------------------------------------------------------------

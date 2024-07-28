@@ -598,7 +598,7 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     // Auto adjust 2R
     else if (gContextMenu.mActiveItemStr == CTX_2R) {
         onItemDrag(itemId, objId);
-        adjustRR(2);
+        adjustRR(2.3);
     }
     // Auto adjust 3R
     else if (gContextMenu.mActiveItemStr == CTX_3R) {
