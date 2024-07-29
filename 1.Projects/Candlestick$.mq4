@@ -222,13 +222,13 @@ void loadBarEnhance(int totalBar)
         if (isDoji == false){
             if (isGreenBar){
                 LineUp01[idx] = Open[idx];
-                LineUp02[idx] = Open[idx] + 0.00001;
-                LineDn01[idx] = Close[idx] - 0.00001;
+                LineUp02[idx] = Open[idx] + 0.0000001;
+                LineDn01[idx] = Close[idx] - 0.0000001;
                 LineDn02[idx] = Close[idx];
             } else {
                 LineUp01[idx] = Open[idx];
-                LineUp02[idx] = Open[idx] - 0.00001;
-                LineDn01[idx] = Close[idx] + 0.00001;
+                LineUp02[idx] = Open[idx] - 0.0000001;
+                LineDn01[idx] = Close[idx] + 0.0000001;
                 LineDn02[idx] = Close[idx];
             }
         }
