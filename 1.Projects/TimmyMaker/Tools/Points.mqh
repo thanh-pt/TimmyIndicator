@@ -9,20 +9,21 @@ input string     Point_; // ●  P O I N T  ●
 input string     Point_1______Name  = "Swing";       // → Point 1:
       string     Point_1_Charecter  = "¡";           // Charecter
       string     Point_1_Font       = "wingdings";   // Font
-input int        Point_1_Size       = 20;            // Size
-input color      Point_1_Color      = clrLightSkyBlue;    // Color
+input int        Point_1_Size       = 25;            // Size
+input color      Point_1_Color      = clrMidnightBlue; // Color
       eAnchor    Point_1_Anchor     = eAchCenter;
 input string     Point_2______Name  = "Sub";         // → Point 2:
       string     Point_2_Charecter  = "¡";           // Charecter
       string     Point_2_Font       = "wingdings";   // Font
-input int        Point_2_Size       = 16;            // Size
-input color      Point_2_Color      = clrMediumPurple;    // Color
+input int        Point_2_Size       = 20;            // Size
+input color      Point_2_Color      = clrDimGray;  // Color
       eAnchor    Point_2_Anchor     = eAchCenter;
-input string     Point_3______Name  = "React";       // → Point 3:
+// Reserved
+      string     Point_3______Name  = "React";       // → Point 3:
       string     Point_3_Charecter  = "▼▲";          // Charecter
       string     Point_3_Font       = FONT_TEXT;     // Font
-input int        Point_3_Size       = 10;            // Size
-input color      Point_3_Color      = clrMidnightBlue;// Color
+      int        Point_3_Size       = 10;            // Size
+      color      Point_3_Color      = clrMidnightBlue;// Color
       eAnchor    Point_3_Anchor     = eAchHiLoBar;
 
 enum PointType
