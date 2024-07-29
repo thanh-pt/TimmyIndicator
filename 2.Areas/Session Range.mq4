@@ -1,8 +1,5 @@
-//+------------------------------------------------------------------+
-//|                                                Session Range.mq4 |
-//|                                                    Timmy Ham Hoc |
-//|                       https://www.youtube.com/@TimmyTraderHamHoc |
-//+------------------------------------------------------------------+
+/* TODO:
+*/
 #property copyright "Timmy Ham Hoc"
 #property link      "https://www.youtube.com/@TimmyTraderHamHoc"
 #property version   "1.00"
@@ -64,6 +61,7 @@ int winterEnd = 4;
 
 
 int          gChartPeriod;
+bool         gPeriodSep;
 string       gSymbol;
 int          gTotalRate = 0;
 
@@ -150,6 +148,7 @@ void OnChartEvent(const int id,
 
 void scanWindow(){
     if (ChartPeriod() >= PERIOD_H4) return;
+    gPeriodSep = (bool)ChartGetInteger(ChartID(),CHART_SHOW_PERIOD_SEP);
     gLineIdx    = 0;
     gLabelIdx   = 0;
     gRectIdx    = 0;
@@ -186,6 +185,9 @@ void scanWindow(){
             gBegDayBar = iBarShift(gSymbol, gChartPeriod, gBegTime);
         }
     }
+    hideItem(gLabelIdx, "Label");
+    hideItem(gLineIdx,  "Line");
+    hideItem(gRectIdx,  "Rectangle");
 }
 
 double gHi, gLo;
@@ -198,6 +200,8 @@ void drawSession(eSession ss, int beginBar, int endBar)
         endBar = 0;
         isSsRunning = true;
     }
+    if (gPeriodSep == false && isSsRunning == false) return;
+    datetime endTime = Time[beginBar] + gSsBarNum[ss]*gChartPeriod*60;
     gHi = High[beginBar];
     gLo = Low [beginBar];
     for (int i = beginBar; i >= 0 && i >= endBar; i--){
@@ -206,7 +210,6 @@ void drawSession(eSession ss, int beginBar, int endBar)
     }
     if (inpStyle == eStyleHiLoLine || inpStyle == eStyleLineBox){
         // Hi Line
-        datetime endTime = Time[beginBar] + gSsBarNum[ss]*gChartPeriod*60;
         if (isSsRunning == false) {
             createLine(gLineIdx++, Time[beginBar], endTime, gHi, gHi, gSsColor[ss]);
             createLine(gLineIdx++, Time[beginBar], endTime, gLo, gLo, gSsColor[ss]);
@@ -228,7 +231,7 @@ void drawSession(eSession ss, int beginBar, int endBar)
         }
     }
     else if (inpStyle == eStyleColorBox){
-        createRectangle(gRectIdx++, Time[beginBar], Time[endBar], gHi, gLo, gSsBgColor[ss]);
+        createRectangle(gRectIdx++, Time[beginBar], endTime, gHi, gLo, gSsBgColor[ss]);
     }
     else if (inpStyle == eStyleBorderLine){
         double currHi = High[beginBar];
@@ -255,12 +258,8 @@ void drawSession(eSession ss, int beginBar, int endBar)
                 Time[endBar], gHi, 7, isSsRunning ? ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_LOWER, gSsColor[ss]);
     } else if (isSsRunning){
         createLabel(gLabelIdx++, "►" + gSsLableMap[ss],
-                Time[endBar], gHi, 7, ANCHOR_LEFT_LOWER, gSsColor[ss]);
+                Time[beginBar], gHi, 7, ANCHOR_LEFT_LOWER, gSsColor[ss]);
     }
-    
-    hideItem(gLabelIdx, "Label");
-    hideItem(gLineIdx,  "Line");
-    hideItem(gRectIdx,  "Rectangle");
 }
 
 void createLabel(int index, string label, datetime time1, double price1, int size, int anchor, color cl){
