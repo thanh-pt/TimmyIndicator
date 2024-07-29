@@ -9,7 +9,7 @@
 
 #define MACRO_WickSize gArrSizeMap[0][gChartScale]
 #define MACRO_BderSize gArrSizeMap[1][gChartScale]
-#define MACRO_BodySize gArrSizeMap[1][gChartScale]-2
+#define MACRO_BodySize gArrSizeMap[1][gChartScale]-1
 //--- buffers
 double         Wick1Buf[];
 double         Wick2Buf[];
@@ -56,8 +56,11 @@ enum EBarMap{
     eBarLnN02,
 };
 
-input color InpIsbClr = clrWhite;       // Inside Bar Color
-input color InpImbClr = clrGoldenrod;   // Imbalance Color
+input color InpIsbClr = clrNONE;    // Inside Bar Color
+input color InpImbClr = clrOrange;   // Imbalance Color (M)
+input int InpCandle5 = 13; // Candle 5 (13~17)
+input int InpCandle4 = 6;  // Candle 4 (6~9)
+input int InpCandle3 = 3;  // Candle 3 (3~5)
 
 int OnInit()
 {
@@ -85,9 +88,9 @@ int OnInit()
     gArrSizeMap[1][0] = 0;
     gArrSizeMap[1][1] = 1;
     gArrSizeMap[1][2] = 3;  // max 3 <- Inactive
-    gArrSizeMap[1][3] = 4;  // max 5
-    gArrSizeMap[1][4] = 8;  // max 9
-    gArrSizeMap[1][5] = 16; // max 17
+    gArrSizeMap[1][3] = InpCandle3; // max 5
+    gArrSizeMap[1][4] = InpCandle4; // max 9
+    gArrSizeMap[1][5] = InpCandle5; // max 17
 
     updateStyle();
 

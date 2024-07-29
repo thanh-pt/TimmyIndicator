@@ -20,8 +20,8 @@ double          Fib_2_Ratio = 0.5;            // Ratio
 string          Fib_2_Text  = "0.5";          // Text
 color           Fib_2_Color = clrLightGray;   // Color
 //--------------------------------------------
-string          Fib_3_Text  = "0.382";
-double          Fib_3_Ratio = 0.382;
+string          Fib_3_Text  = "0.618";
+double          Fib_3_Ratio = 0.618;
 color           Fib_3_Color = clrLightGray;
 //--------------------------------------------
 string          Fib_4_Text  = "-0.27";

@@ -16,9 +16,9 @@ enum eSession{
 
 enum eStyle{
     eStyleHiLoLine,     // H I / L O   L I N E
-    eStyleHiLoChar,     // H I / L O   C H A R   L I N E
-    eStyleLineBox,      // L I N E   B O X
-    eStyleColorBox,     // C O L O R   B O X
+    eStyleHiLoChar,     // H I / L O   C H A R
+    eStyleLineBox,      // B O X   L I N E
+    eStyleColorBox,     // B O X   C O L O R
     eStyleBorderLine,   // B O D E R   L I N E
     eStyleBorderColor,  // B O D E R   C O L O R
 };
