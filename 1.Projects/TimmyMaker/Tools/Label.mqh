@@ -154,6 +154,9 @@ void LabelText::refreshData()
         setTextContent(objiTBgX, bgBlock);
     }
     setTextContent(iTxBg, bgBlock);
+
+    if (ObjectGet(cTxtM, OBJPROP_SELECTED) == 1) gContextMenu.openStaticCtxMenu(cTxtM, mContextType);
+    else gContextMenu.clearStaticCtxMenu(cTxtM);
 }
 void LabelText::finishedJobDone(){}
 
@@ -205,6 +208,9 @@ void LabelText::onItemClick(const string &itemId, const string &objId)
         objCTxtX = cTxtX +"#"+ IntegerToString(idx);
     }
     if (selected == true && objId == lastItem && pCommonData.mShiftHold) gContextMenu.openContextMenu(cTxtM, mContextType);
+
+    if (selected) gContextMenu.openStaticCtxMenu(cTxtM, mContextType);
+    else gContextMenu.clearStaticCtxMenu(cTxtM);
 }
 void LabelText::onItemChange(const string &itemId, const string &objId)
 {
