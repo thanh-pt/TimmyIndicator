@@ -49,6 +49,7 @@ public:
     virtual void onItemChange(const string &itemId, const string &objId){};
     virtual void onItemDeleted(const string &itemId, const string &objId);
     virtual void onUserRequest(const string &itemId, const string &objId);
+    virtual void onUserRequest2(const string &itemId, const string &objId){};
 
 public:
     void startActivate(FinishedJob cb);
@@ -148,10 +149,15 @@ void BaseItem::storeTData()
 void BaseItem::onUserRequest(const string &itemId, const string &objId)
 {
     touchItem(itemId);
-    mIndexType = gContextMenu.mActivePos;
-    storeTData();
-    updateTypeProperty();
-    onItemDrag(itemId, objId);
+    if (gContextMenu.mActivePos < mTypeNum) {
+        mIndexType = gContextMenu.mActivePos;
+        storeTData();
+        updateTypeProperty();
+        onItemDrag(itemId, objId);
+    }
+    else {
+        onUserRequest2(itemId, objId);
+    }
 }
 
 void BaseItem::onItemDeleted(const string &itemId, const string &objId)

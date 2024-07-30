@@ -84,7 +84,7 @@ public:
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onItemDeleted(const string &itemId, const string &objId);
-    virtual void onUserRequest(const string &itemId, const string &objId);
+    virtual void onUserRequest2(const string &itemId, const string &objId);
 
 public:
     static string getAllItem(string itemId);
@@ -345,16 +345,9 @@ void Rectangle::onItemDeleted(const string &itemId, const string &objId)
     BaseItem::onItemDeleted(itemId, objId);
     removeBackgroundOverlap(cBgM0);
 }
-void Rectangle::onUserRequest(const string &itemId, const string &objId)
+void Rectangle::onUserRequest2(const string &itemId, const string &objId)
 {
-    touchItem(itemId);
-    if (gContextMenu.mActivePos < RECT_NUM) {
-        mIndexType = gContextMenu.mActivePos;
-        storeTData();
-        updateTypeProperty();
-        onItemDrag(itemId, objId);
-    }
-    else if (gContextMenu.mActiveItemStr == CTX_RANGE) {
+    if (gContextMenu.mActiveItemStr == CTX_RANGE) {
         // ObjectCreate(iLn01, OBJ_TREND, 0, 0, 0);
         ObjectCreate(iLn02, OBJ_TREND, 0, 0, 0);
         // ObjectCreate(iLn03, OBJ_TREND, 0, 0, 0);

@@ -7,32 +7,26 @@ enum eAnchor{
 
 input string     Point_; // ●  P O I N T  ●
 input string     Point_1______Name  = "Swing";       // → Point 1:
-      string     Point_1_Charecter  = "¡";           // Charecter
-      string     Point_1_Font       = "wingdings";   // Font
 input int        Point_1_Size       = 25;            // Size
 input color      Point_1_Color      = clrMidnightBlue; // Color
+      string     Point_1_Charecter  = "¡";           // Charecter
+      string     Point_1_Font       = "wingdings";   // Font
       eAnchor    Point_1_Anchor     = eAchCenter;
 input string     Point_2______Name  = "Sub";         // → Point 2:
-      string     Point_2_Charecter  = "¡";           // Charecter
-      string     Point_2_Font       = "wingdings";   // Font
 input int        Point_2_Size       = 20;            // Size
 input color      Point_2_Color      = clrDimGray;  // Color
+      string     Point_2_Charecter  = "¡";           // Charecter
+      string     Point_2_Font       = "wingdings";   // Font
       eAnchor    Point_2_Anchor     = eAchCenter;
-// Reserved
-      string     Point_3______Name  = "React";       // → Point 3:
-      string     Point_3_Charecter  = "▼▲";          // Charecter
-      string     Point_3_Font       = FONT_TEXT;     // Font
-      int        Point_3_Size       = 10;            // Size
-      color      Point_3_Color      = clrMidnightBlue;// Color
-      eAnchor    Point_3_Anchor     = eAchHiLoBar;
+
+#define CTX_IncSize "+Size"
+#define CTX_DecSize "-Size"
 
 enum PointType
 {
     POINT_1,
     POINT_2,
     POINT_NUM,
-    POINT_3,
-    // POINT_4,
 };
 
 class Point : public BaseItem
@@ -76,6 +70,7 @@ public:
     virtual void onItemDrag(const string &itemId, const string &objId);
     virtual void onItemClick(const string &itemId, const string &objId);
     virtual void onItemChange(const string &itemId, const string &objId);
+    virtual void onUserRequest2(const string &itemId, const string &objId);
 
 public:
     static string getAllItem(string itemId);
@@ -105,13 +100,6 @@ Point::Point(CommonData* commonData, MouseInfo* mouseInfo)
     mSize     [POINT_2] = Point_2_Size     ;
     mFont     [POINT_2] = Point_2_Font     ;
     mAnchor   [POINT_2] = Point_2_Anchor;
-    mNameType [POINT_3] = Point_3______Name;
-    mColor    [POINT_3] = Point_3_Color  ;
-    mSymbol   [POINT_3] = getSubStr(Point_3_Charecter, 0, 1);
-    mSymbol2  [POINT_3] = getSubStr(Point_3_Charecter, 1, 1);
-    mSize     [POINT_3] = Point_3_Size     ;
-    mFont     [POINT_3] = Point_3_Font     ;
-    mAnchor   [POINT_3] = Point_3_Anchor;
 
     mIndexType = 0;
     mTypeNum = POINT_NUM;
@@ -120,6 +108,8 @@ Point::Point(CommonData* commonData, MouseInfo* mouseInfo)
         mContextType += mNameType[i];
         if (i < mTypeNum-1) mContextType += ",";
     }
+    mContextType += "," + CTX_IncSize;
+    mContextType += "," + CTX_DecSize;
 }
 
 // Internal Event
@@ -168,7 +158,9 @@ void Point::refreshData()
     else if (mAnchor[mIndexType] == eAchHiLoBar) {
         ObjectSetInteger(0, cPtM0, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
     }
-
+    int selected = (int)ObjectGet(cPtM0, OBJPROP_SELECTED);
+    if (selected) gContextMenu.openStaticCtxMenu(cPtM0, mContextType);
+    else gContextMenu.clearStaticCtxMenu(cPtM0);
 }
 void Point::finishedJobDone(){}
 
@@ -202,5 +194,16 @@ void Point::onItemClick(const string &itemId, const string &objId)
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
     if (selected && pCommonData.mShiftHold) gContextMenu.openContextMenu(cPtM0, mContextType, mIndexType);
     // setCtrlItemSelectState(mAllItem, selected);
+    if (selected) gContextMenu.openStaticCtxMenu(cPtM0, mContextType);
+    else gContextMenu.clearStaticCtxMenu(cPtM0);
 }
 void Point::onItemChange(const string &itemId, const string &objId){}
+void Point::onUserRequest2(const string &itemId, const string &objId)
+{
+    if (gContextMenu.mActiveItemStr == CTX_IncSize) {
+        ObjectSetInteger(0, cPtM0, OBJPROP_FONTSIZE, ObjectGetInteger(0, cPtM0, OBJPROP_FONTSIZE)+5);
+    }
+    else if (gContextMenu.mActiveItemStr == CTX_DecSize) {
+        ObjectSetInteger(0, cPtM0, OBJPROP_FONTSIZE, ObjectGetInteger(0, cPtM0, OBJPROP_FONTSIZE)-5);
+    }
+}
