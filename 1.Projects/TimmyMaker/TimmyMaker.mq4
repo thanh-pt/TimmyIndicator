@@ -83,8 +83,9 @@ void OnChartEvent(const int id,
     case CHARTEVENT_OBJECT_CLICK:
         gContextMenu.onItemClick(sparam);
     case CHARTEVENT_OBJECT_DELETE:
-        gCrossHair.onObjectDeleted(sparam);
-        gMouseInfo.onObjectDeleted(sparam);
+        // Disable this 2 feature to reduce work load
+        // gCrossHair.onObjectDeleted(sparam);
+        // gMouseInfo.onObjectDeleted(sparam);
     case CHARTEVENT_OBJECT_DRAG:
     case CHARTEVENT_OBJECT_CHANGE:
         gController.handleSparamEvent(id, sparam);
