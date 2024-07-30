@@ -24,8 +24,8 @@ ContextMenu gContextMenu();
 int OnInit()
 {
 //---
-    ChartSetInteger(ChartID(), CHART_EVENT_MOUSE_MOVE, true);
-    ChartSetInteger(ChartID(), CHART_EVENT_OBJECT_DELETE, true);
+    ChartSetInteger(0, CHART_EVENT_MOUSE_MOVE, true);
+    ChartSetInteger(0, CHART_EVENT_OBJECT_DELETE, true);
     
     // Init global variable
     gController.setFinishedJobCB(FinishedJobFunc);

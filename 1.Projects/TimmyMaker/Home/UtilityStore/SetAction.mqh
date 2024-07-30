@@ -1,7 +1,7 @@
 
 void setChartFree(bool bFree)
 {
-    ChartSetInteger(ChartID(),CHART_SCALEFIX,0,bFree);
+    ChartSetInteger(0,CHART_SCALEFIX,0,bFree);
 }
 
 double gScaleRange   = 0;
@@ -10,12 +10,11 @@ void setScaleChart(bool isUp)
     if (gScaleRange == 0) {
         gScaleRange = ((High[1]-Low[1])+(High[2]-Low[2])+(High[3]-Low[3])+(High[4]-Low[4])+(High[5]-Low[5])+(High[6]-Low[6])+(High[7]-Low[7]))/35;
     }
-    ChartSetInteger(ChartID(), CHART_SCALEFIX, 0, 1);
+    ChartSetInteger(0, CHART_SCALEFIX, 0, 1);
     double chartMin = 0;
     double chartMax = 0;
-    long chart_ID = ChartID();
-    ChartGetDouble(chart_ID,CHART_FIXED_MAX,0,chartMax);
-    ChartGetDouble(chart_ID,CHART_FIXED_MIN,0,chartMin);
+    ChartGetDouble(0,CHART_FIXED_MAX,0,chartMax);
+    ChartGetDouble(0,CHART_FIXED_MIN,0,chartMin);
     if (isUp) {
         chartMax = chartMax + gScaleRange;
         chartMin = chartMin - gScaleRange;
@@ -24,8 +23,8 @@ void setScaleChart(bool isUp)
         chartMax = chartMax - gScaleRange;
         chartMin = chartMin + gScaleRange;
     }
-    ChartSetDouble(chart_ID,CHART_FIXED_MAX,chartMax);
-    ChartSetDouble(chart_ID,CHART_FIXED_MIN,chartMin);
+    ChartSetDouble(0,CHART_FIXED_MAX,chartMax);
+    ChartSetDouble(0,CHART_FIXED_MIN,chartMin);
 }
 
 void setItemPos(const string& objName, datetime time1, datetime time2, const double price1, const double price2)
@@ -95,18 +94,7 @@ void setMultiStrs(int property, string value, string listObj)
     for (int i = 0; i < k; i++)
     {
         if (sparamItems[i] == "") continue;
-        ObjectSetString(ChartID(), "."+sparamItems[i], property, value);
-    }
-}
-
-void setMultiInts(int property, int value, string listObj)
-{
-    string sparamItems[];
-    int k=StringSplit(listObj,'.',sparamItems);
-    for (int i = 0; i < k; i++)
-    {
-        if (sparamItems[i] == "") continue;
-        ObjectSetInteger(ChartID(), "."+sparamItems[i], property, value);
+        ObjectSetString(0, "."+sparamItems[i], property, value);
     }
 }
 

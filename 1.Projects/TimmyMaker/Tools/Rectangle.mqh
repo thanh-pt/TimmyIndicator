@@ -155,9 +155,9 @@ void Rectangle::updateDefaultProperty()
     setTextContent(iTxtL, "", 8, FONT_TEXT, Rect_Text_Color);
     setTextContent(iTxtR, "", 8, FONT_TEXT, Rect_Text_Color);
 
-    ObjectSetInteger(ChartID(), iTxtC, OBJPROP_ANCHOR, ANCHOR_CENTER);
-    ObjectSetInteger(ChartID(), iTxtL, OBJPROP_ANCHOR, ANCHOR_LEFT);
-    ObjectSetInteger(ChartID(), iTxtR, OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    ObjectSet(iTxtC, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    ObjectSet(iTxtL, OBJPROP_ANCHOR, ANCHOR_LEFT);
+    ObjectSet(iTxtR, OBJPROP_ANCHOR, ANCHOR_RIGHT);
 
     setMultiProp(OBJPROP_SELECTABLE, false         , iTxtC+iTxtL+iTxtR);
     setMultiStrs(OBJPROP_TOOLTIP   , "\n"          , mAllItem);

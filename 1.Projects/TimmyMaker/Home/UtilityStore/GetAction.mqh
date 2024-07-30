@@ -62,11 +62,11 @@ void getCenterPos(const datetime& time1, const datetime& time2, double price1, d
 {
     int x1,y1,x2,y2;
     int window = 0;
-    ChartTimePriceToXY(ChartID(), window, time1, price1, x1, y1);
-    ChartTimePriceToXY(ChartID(), window, time2, price2, x2, y2);
+    ChartTimePriceToXY(0, window, time1, price1, x1, y1);
+    ChartTimePriceToXY(0, window, time2, price2, x2, y2);
     x1 = (x1+x2)/2;
     y1 = (y1+y2)/2;
-    ChartXYToTimePrice(ChartID(), x1, y1, window, outTime, outPrice);
+    ChartXYToTimePrice(0, x1, y1, window, outTime, outPrice);
     outPrice = (price1+price2)/2;
 }
 
@@ -74,7 +74,7 @@ datetime getCenterTime(const datetime& time1, const datetime& time2)
 {
     datetime centerTime;
     double price;
-    double priceInp = ChartGetDouble(ChartID(),CHART_FIXED_MAX);
+    double priceInp = ChartGetDouble(0,CHART_FIXED_MAX);
     getCenterPos(time1, time2, priceInp, priceInp, centerTime, price);
     return centerTime;
 }

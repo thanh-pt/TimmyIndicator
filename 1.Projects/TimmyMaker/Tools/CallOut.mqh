@@ -131,8 +131,8 @@ void CallOut::refreshData()
     ObjectSet(cLn02, OBJPROP_TIME2 , time2);
     ObjectSet(cLn02, OBJPROP_PRICE2, price2);
     //-------------------------------------------------------------
-    if (time1 > time2) setMultiInts(OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER, cTxtM+iTxtU+iTxBg);
-    else setMultiInts(OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER, cTxtM+iTxtU+iTxBg);
+    if (time1 > time2) setMultiProp(OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER, cTxtM+iTxtU+iTxBg);
+    else setMultiProp(OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER, cTxtM+iTxtU+iTxBg);
 
     string callOutValue = ObjectDescription(cTxtM);
     int calloutLen = StringLen(callOutValue);

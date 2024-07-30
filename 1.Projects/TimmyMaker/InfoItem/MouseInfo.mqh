@@ -21,16 +21,16 @@ public:
     {
         // Background
         ObjectCreate(mObjMouseBgnd, OBJ_LABEL, 0, 0, 0);
-        setTextContent(mObjMouseBgnd, "", 20, FONT_TEXT, gClrTextBgnd);
         ObjectSet(mObjMouseBgnd, OBJPROP_SELECTABLE, false);
-        ObjectSetString( 0, mObjMouseBgnd, OBJPROP_TOOLTIP,"\n");
-        ObjectSetInteger(0, mObjMouseBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        ObjectSet(mObjMouseBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        setTextContent(mObjMouseBgnd, "", 20, FONT_TEXT, gClrTextBgnd);
+        ObjectSetString(0, mObjMouseBgnd, OBJPROP_TOOLTIP,"\n");
         // Content
         ObjectCreate(mObjMouseInfo, OBJ_LABEL, 0, 0, 0);
-        setTextContent(mObjMouseInfo, "", 10, FONT_TEXT, gClrForegrnd);
         ObjectSet(mObjMouseInfo, OBJPROP_SELECTABLE, false);
-        ObjectSetString( 0, mObjMouseInfo, OBJPROP_TOOLTIP,"\n");
-        ObjectSetInteger(0, mObjMouseInfo, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        ObjectSet(mObjMouseInfo, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        setTextContent(mObjMouseInfo, "", 10, FONT_TEXT, gClrForegrnd);
+        ObjectSetString(0, mObjMouseInfo, OBJPROP_TOOLTIP,"\n");
     }
     void onMouseMove()
     {

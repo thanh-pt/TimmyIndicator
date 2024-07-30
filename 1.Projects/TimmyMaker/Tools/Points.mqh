@@ -147,16 +147,16 @@ string Point::getAllItem(string itemId)
 void Point::updateItemAfterChangeType(){}
 void Point::refreshData()
 {
-    ObjectSetInteger(ChartID(), cPtM0, OBJPROP_ANCHOR, ANCHOR_CENTER);
-    ObjectSetString(ChartID(), cPtM0, OBJPROP_TOOLTIP, DoubleToString(price, 5));
+    ObjectSet(cPtM0, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    ObjectSetString(0, cPtM0, OBJPROP_TOOLTIP, DoubleToString(price, 5));
     setItemPos(cPtM0, time, price);
     bool isUp = (price >= High[iBarShift(ChartSymbol(), ChartPeriod(), time)]);
     setTextContent(cPtM0, isUp ? mSymbol[mIndexType] : mSymbol2[mIndexType]);
     if (mAnchor[mIndexType] == eAchCenter) {
-        ObjectSetInteger(0, cPtM0, OBJPROP_ANCHOR, ANCHOR_CENTER);
+        ObjectSet(cPtM0, OBJPROP_ANCHOR, ANCHOR_CENTER);
     }
     else if (mAnchor[mIndexType] == eAchHiLoBar) {
-        ObjectSetInteger(0, cPtM0, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+        ObjectSet(cPtM0, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
     }
     int selected = (int)ObjectGet(cPtM0, OBJPROP_SELECTED);
     if (selected) gContextMenu.openStaticCtxMenu(cPtM0, mContextType);
@@ -201,9 +201,9 @@ void Point::onItemChange(const string &itemId, const string &objId){}
 void Point::onUserRequest2(const string &itemId, const string &objId)
 {
     if (gContextMenu.mActiveItemStr == CTX_IncSize) {
-        ObjectSetInteger(0, cPtM0, OBJPROP_FONTSIZE, ObjectGetInteger(0, cPtM0, OBJPROP_FONTSIZE)+5);
+        ObjectSet(cPtM0, OBJPROP_FONTSIZE, ObjectGet(cPtM0, OBJPROP_FONTSIZE)+5);
     }
     else if (gContextMenu.mActiveItemStr == CTX_DecSize) {
-        ObjectSetInteger(0, cPtM0, OBJPROP_FONTSIZE, ObjectGetInteger(0, cPtM0, OBJPROP_FONTSIZE)-5);
+        ObjectSet(cPtM0, OBJPROP_FONTSIZE, ObjectGet(cPtM0, OBJPROP_FONTSIZE)-5);
     }
 }

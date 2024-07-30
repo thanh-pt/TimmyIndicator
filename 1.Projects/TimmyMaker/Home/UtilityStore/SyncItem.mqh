@@ -34,8 +34,7 @@ struct ObjectProperty
 ObjectProperty gListSyncProp[MAX_SYNC_ITEMS+1];
 void syncTimmyItem()
 {
-    // Find selected item
-    long chartID = ChartID();
+    // I. Find selected itemId
     int itemNum = 0;
     string objName      = "";
     string syncItemToTargetChartsStr = "";
@@ -95,7 +94,7 @@ void syncTimmyItem()
             break;
         }
     }
-
+    // II. Get all component of Item
     splitNum=StringSplit(syncItemToTargetChartsStr,'.',splitItems);
     for (int i = 0; i < splitNum; i++)
     {
@@ -112,17 +111,17 @@ void syncTimmyItem()
         gListSyncProp[itemNum].Width        = (int)ObjectGet(objName, OBJPROP_WIDTH);
         gListSyncProp[itemNum].Back         = (int)ObjectGet(objName, OBJPROP_BACK);
         gListSyncProp[itemNum].Selectable   = (int)ObjectGet(objName, OBJPROP_SELECTABLE);
-        gListSyncProp[itemNum].Hidden       = (int)ObjectGetInteger(chartID, objName, OBJPROP_HIDDEN);
+        gListSyncProp[itemNum].Hidden       = (int)ObjectGet(objName, OBJPROP_HIDDEN);
         gListSyncProp[itemNum].Color        = (color)ObjectGet(objName, OBJPROP_COLOR);
         gListSyncProp[itemNum].Text         = ObjectDescription(objName);
-        gListSyncProp[itemNum].Tooltip      = ObjectGetString(chartID, objName, OBJPROP_TOOLTIP);
+        gListSyncProp[itemNum].Tooltip      = ObjectGetString(0, objName, OBJPROP_TOOLTIP);
 
         if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE || objType == OBJ_RECTANGLE) {
             gListSyncProp[itemNum].Time2    = (datetime)ObjectGet(objName, OBJPROP_TIME2);
             gListSyncProp[itemNum].Price2   = ObjectGet(objName, OBJPROP_PRICE2);
         }
         if (objType == OBJ_TEXT || objType == OBJ_LABEL) {
-            gListSyncProp[itemNum].FontName = ObjectGetString(chartID, objName, OBJPROP_FONT);
+            gListSyncProp[itemNum].FontName = ObjectGetString(0, objName, OBJPROP_FONT);
             gListSyncProp[itemNum].FontSize = (int)ObjectGet(objName, OBJPROP_FONTSIZE);
             gListSyncProp[itemNum].Anchor   = (int)ObjectGet(objName, OBJPROP_ANCHOR);
             gListSyncProp[itemNum].Corner   = (int)ObjectGet(objName, OBJPROP_CORNER);
@@ -147,12 +146,14 @@ void syncTimmyItem()
         return;
     }
 
+    // III. Sync all component
+    
+    long chartID = ChartID();
     long curChart = ChartFirst();
     string chartSymbol = ChartSymbol();
     while(curChart > 0)
     {
         if (ChartSymbol(curChart) == chartSymbol && curChart != chartID) {
-            // bool objectExit = (ObjectFind(curChart, mainObj) >= 0);
             for (int i = 0; i < itemNum; i++) {
                 syncItemToTargetChart(gListSyncProp[i], curChart, false);
             }
@@ -164,45 +165,36 @@ void syncTimmyItem()
 void syncItemToTargetChart(ObjectProperty &objProp, long chartId, bool objectExit)
 {
     ENUM_OBJECT objType = objProp.Type;
-    if(objectExit == false) {
-        ObjectCreate(chartId,
-                    objProp.Name,
-                    objProp.Type,
-                    0,
-                    objProp.Time1,
-                    objProp.Price1);
-    }
-    else {
-    }
-    ObjectSetInteger(chartId, objProp.Name, OBJPROP_TIME1, objProp.Time1);
-    ObjectSetDouble (chartId, objProp.Name, OBJPROP_PRICE1, objProp.Price1);
+    if(objectExit == false) ObjectCreate(chartId, objProp.Name, objProp.Type, 0, 0, 0);
+    ObjectSetInteger(chartId, objProp.Name, OBJPROP_TIME1      , objProp.Time1      );
+    ObjectSetDouble (chartId, objProp.Name, OBJPROP_PRICE1     , objProp.Price1     );
     ObjectSetInteger(chartId, objProp.Name, OBJPROP_STYLE      , objProp.Style      );
     ObjectSetInteger(chartId, objProp.Name, OBJPROP_WIDTH      , objProp.Width      );
     ObjectSetInteger(chartId, objProp.Name, OBJPROP_BACK       , objProp.Back       );
     ObjectSetInteger(chartId, objProp.Name, OBJPROP_SELECTABLE , objProp.Selectable );
     ObjectSetInteger(chartId, objProp.Name, OBJPROP_HIDDEN     , objProp.Hidden     );
     ObjectSetInteger(chartId, objProp.Name, OBJPROP_COLOR      , objProp.Color      );
-    ObjectSetString(chartId , objProp.Name, OBJPROP_TEXT       , objProp.Text       );
-    ObjectSetString(chartId , objProp.Name, OBJPROP_TOOLTIP    , getTFString());
+    ObjectSetString (chartId, objProp.Name, OBJPROP_TEXT       , objProp.Text       );
+    ObjectSetString (chartId, objProp.Name, OBJPROP_TOOLTIP    , getTFString()      );
 
     if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE || objType == OBJ_RECTANGLE) {
         ObjectSetInteger(chartId, objProp.Name, OBJPROP_TIME2, objProp.Time2);
         ObjectSetDouble (chartId, objProp.Name, OBJPROP_PRICE2, objProp.Price2);
+        if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE) {
+            ObjectSetInteger(chartId, objProp.Name, OBJPROP_RAY, objProp.Ray);
+        }
     }
-    if (objType == OBJ_TEXT || objType == OBJ_LABEL) {
+    else if (objType == OBJ_TEXT || objType == OBJ_LABEL) {
         ObjectSetString(chartId , objProp.Name, OBJPROP_FONT       , objProp.FontName);
         ObjectSetInteger(chartId, objProp.Name, OBJPROP_FONTSIZE   , objProp.FontSize);
         ObjectSetInteger(chartId, objProp.Name, OBJPROP_ANCHOR     , objProp.Anchor);
         ObjectSetInteger(chartId, objProp.Name, OBJPROP_CORNER     , objProp.Corner);
+        if (objType == OBJ_LABEL) {
+            ObjectSetInteger(chartId, objProp.Name, OBJPROP_XDISTANCE, objProp.XDistance);
+            ObjectSetInteger(chartId, objProp.Name, OBJPROP_YDISTANCE, objProp.YDistance);
+        }
     }
-    if (objType == OBJ_LABEL) {
-        ObjectSetInteger(chartId, objProp.Name, OBJPROP_XDISTANCE, objProp.XDistance);
-        ObjectSetInteger(chartId, objProp.Name, OBJPROP_YDISTANCE, objProp.YDistance);
-    }
-    if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE) {
-        ObjectSetInteger(chartId, objProp.Name, OBJPROP_RAY        , objProp.Ray        );
-    }
-    if (objType == OBJ_ARROW) {
+    else if (objType == OBJ_ARROW) {
         ObjectSetInteger(chartId, objProp.Name, OBJPROP_ARROWCODE  , objProp.ArrowCode  );
         // Remove color of Arrow
         ObjectSetInteger(chartId, objProp.Name, OBJPROP_COLOR      , clrNONE);

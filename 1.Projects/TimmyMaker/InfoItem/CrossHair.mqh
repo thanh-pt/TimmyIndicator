@@ -44,7 +44,7 @@ public:
         ObjectSet(miDtBkgnd, OBJPROP_SELECTABLE, false);
         ObjectSet(miDtBkgnd, OBJPROP_COLOR, clrWhite);
         ObjectSet(miDtBkgnd, OBJPROP_YDISTANCE, CrossHair_DisplayDateInfo ? 25 : 15);
-        ObjectSetInteger(0, miDtBkgnd, OBJPROP_CORNER , CORNER_LEFT_LOWER);
+        ObjectSet(miDtBkgnd, OBJPROP_CORNER , CORNER_LEFT_LOWER);
         ObjectSetString( 0, miDtBkgnd, OBJPROP_TOOLTIP,"\n");
         // --- HPrice background ---
         ObjectCreate(miHPriceBg, OBJ_LABEL, 0, 0, 0);
@@ -52,8 +52,8 @@ public:
         ObjectSet(miHPriceBg, OBJPROP_SELECTABLE, false);
         ObjectSet(miHPriceBg, OBJPROP_COLOR, clrWhite);
         ObjectSet(miHPriceBg, OBJPROP_XDISTANCE, 0);
-        ObjectSetInteger(0, miHPriceBg, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
-        ObjectSetInteger(0, miHPriceBg, OBJPROP_ANCHOR , ANCHOR_RIGHT_LOWER);
+        ObjectSet(miHPriceBg, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
+        ObjectSet(miHPriceBg, OBJPROP_ANCHOR , ANCHOR_RIGHT_LOWER);
         ObjectSetString( 0, miHPriceBg, OBJPROP_TOOLTIP,"\n");
 
         ObjectCreate(mVCrossHair, OBJ_RECTANGLE, 0, 0, 0);
@@ -64,7 +64,7 @@ public:
         ObjectCreate(mHCrossHair, OBJ_FIBO, 0, 0, 0);
         ObjectSet(mHCrossHair, OBJPROP_RAY  , true);
         ObjectSet(mHCrossHair, OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(0, mHCrossHair,OBJPROP_LEVELS, 1);
+        ObjectSet(mHCrossHair,OBJPROP_LEVELS, 1);
         ObjectSetDouble (0, mHCrossHair,OBJPROP_LEVELVALUE,0, 0);
         ObjectSetInteger(0, mHCrossHair,OBJPROP_LEVELCOLOR,0, gClrPointer);
         ObjectSetInteger(0, mHCrossHair,OBJPROP_LEVELSTYLE,0, STYLE_DOT);
@@ -76,7 +76,7 @@ public:
         ObjectSet(mWeekInfo, OBJPROP_SELECTABLE, false);
         ObjectSet(mWeekInfo, OBJPROP_COLOR, gClrPointer);
         ObjectSet(mWeekInfo, OBJPROP_YDISTANCE, CrossHair_DisplayDateInfo ? 25 : 15);
-        ObjectSetInteger(0, mWeekInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
+        ObjectSet(mWeekInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
         ObjectSetString( 0, mWeekInfo, OBJPROP_TOOLTIP,"\n");
 
         // mDateInfo
@@ -85,7 +85,7 @@ public:
         ObjectSet(mDateInfo, OBJPROP_SELECTABLE, false);
         ObjectSet(mDateInfo, OBJPROP_COLOR, gClrPointer);
         ObjectSet(mDateInfo, OBJPROP_YDISTANCE, CrossHair_DisplayDateInfo ? 15 : 0);
-        ObjectSetInteger(0, mDateInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
+        ObjectSet(mDateInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
         ObjectSetString( 0, mDateInfo, OBJPROP_TOOLTIP,"\n");
 
     }
@@ -99,8 +99,8 @@ public:
         ObjectSetString(0, mHCrossHair,OBJPROP_LEVELTEXT ,0, DoubleToString(pCommonData.mMousePrice, Digits));
         ObjectSet(miHPriceBg , OBJPROP_YDISTANCE, pCommonData.mMouseY);
         // Vertical: Đường kẻ dọc
-        ObjectSet(mVCrossHair, OBJPROP_PRICE1, ChartGetDouble(ChartID(),CHART_FIXED_MIN)-10);
-        ObjectSet(mVCrossHair, OBJPROP_PRICE2, ChartGetDouble(ChartID(),CHART_FIXED_MAX)+10);
+        ObjectSet(mVCrossHair, OBJPROP_PRICE1, ChartGetDouble(0,CHART_FIXED_MIN)-10);
+        ObjectSet(mVCrossHair, OBJPROP_PRICE2, ChartGetDouble(0,CHART_FIXED_MAX)+10);
         ObjectSet(mVCrossHair, OBJPROP_TIME1,  pCommonData.mMouseTime);   //-> time
         
         // mWeekInfo and mDateInfo

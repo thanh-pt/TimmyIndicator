@@ -165,11 +165,11 @@ void Controller::handleKeyEvent(const long &key)
         deleteTimmyItem();
         break;
     case 'Q':
-        ChartSetSymbolPeriod(ChartID(), ChartSymbol(), getLowerTF());
+        ChartSetSymbolPeriod(0, ChartSymbol(), getLowerTF());
         setChartFree(false);
         break;
     case 'P': // Using AHK to combine 'Shift+Q'='P'
-        ChartSetSymbolPeriod(ChartID(), ChartSymbol(), getHigerTF());
+        ChartSetSymbolPeriod(0, ChartSymbol(), getHigerTF());
         setChartFree(false);
         break;
     case 188: // ','

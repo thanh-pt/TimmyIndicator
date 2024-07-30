@@ -144,7 +144,7 @@ void removeBackgroundOverlap(string target)
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
-        if (ObjectFind(ChartID(), objName) != 0) continue;
+        if (ObjectFind(objName) != 0) continue;
         if (ObjectType(objName) != OBJ_RECTANGLE) continue;
         if (ObjectGet (objName, OBJPROP_BACK) == false) continue;
         if (StringFind(objName, TAG_BGOVL) != -1) continue;
@@ -286,7 +286,7 @@ void scanBackgroundOverlap(string target)
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
     {
         string objName = ObjectName(i);
-        if (ObjectFind(ChartID(), objName) != 0) continue;
+        if (ObjectFind(objName) != 0) continue;
         if (ObjectType(objName) != OBJ_RECTANGLE) continue;
         if (ObjectGet (objName, OBJPROP_BACK) == false) continue;
         if (ObjectGet (objName, OBJPROP_COLOR) == clrNONE) continue;
@@ -329,7 +329,7 @@ void scanBackgroundOverlap(string target)
         {
             ObjectCreate(bgItem, OBJ_RECTANGLE , 0, 0, 0);
             ObjectSet(bgItem   , OBJPROP_SELECTABLE, false);
-            ObjectSetString(ChartID(), bgItem, OBJPROP_TOOLTIP, "\n");
+            ObjectSetString(0, bgItem, OBJPROP_TOOLTIP, "\n");
         }
         if (colorBgColor == targetColor)
         {

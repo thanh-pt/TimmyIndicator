@@ -72,7 +72,7 @@ void ZigZag::createItem()
     if (mLineIndex == 0){
         ObjectCreate(cPtM0, OBJ_ARROW, 0, pCommonData.mMouseTime, pCommonData.mMousePrice);
         ObjectSet(cPtM0, OBJPROP_COLOR, clrNONE);
-        ObjectSetString(ChartID(), cPtM0 ,OBJPROP_TOOLTIP,"\n");
+        ObjectSetString(0, cPtM0 ,OBJPROP_TOOLTIP,"\n");
     }
     mTempLine = cLnXX + "#" + IntegerToString(mLineIndex++);
     ObjectCreate(mTempLine, OBJ_TREND, 0, pCommonData.mMouseTime, pCommonData.mMousePrice);
@@ -82,7 +82,7 @@ void ZigZag::updateDefaultProperty()
 {
     setObjectStyle(mTempLine, Zz_Color, getLineStyle(Zz_Style), getLineWidth(Zz_Style));
     ObjectSet(mTempLine, OBJPROP_BACK , true);
-    ObjectSetString(ChartID(), mTempLine ,OBJPROP_TOOLTIP,"\n");
+    ObjectSetString(0, mTempLine ,OBJPROP_TOOLTIP,"\n");
 }
 void ZigZag::updateTypeProperty(){}
 void ZigZag::activateItem(const string& itemId)

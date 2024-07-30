@@ -120,10 +120,10 @@ public:
             setTextContent(itemName, mContextMenu[i]+getSpaceBL((mMaxLength-StringLen(mContextMenu[i]))/2), 10, FONT_BLOCK, gClrForegrnd);
             ObjectSetString( 0, itemBgnd, OBJPROP_TOOLTIP,"\n");
             ObjectSetString( 0, itemName, OBJPROP_TOOLTIP,"\n");
-            ObjectSetInteger(0, itemName, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-            ObjectSetInteger(0, itemBgnd, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-            ObjectSetInteger(0, itemName, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
-            ObjectSetInteger(0, itemBgnd, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
+            ObjectSet(itemName, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+            ObjectSet(itemBgnd, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+            ObjectSet(itemName, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
+            ObjectSet(itemBgnd, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
             ObjectSet(itemName, OBJPROP_XDISTANCE, 5);
             ObjectSet(itemBgnd, OBJPROP_XDISTANCE, 5);
 
@@ -192,8 +192,8 @@ private:
         setTextContent(itemName, getSpaceBL((mMaxLength-StringLen(name))/2)+name, 8, FONT_BLOCK, gClrForegrnd);
         ObjectSetString( 0, itemBgnd, OBJPROP_TOOLTIP,name);
         ObjectSetString( 0, itemName, OBJPROP_TOOLTIP,name);
-        ObjectSetInteger(0, itemName, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
-        ObjectSetInteger(0, itemBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+        ObjectSet(itemName, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+        ObjectSet(itemBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
         
 
         int topOffset  = gCommonData.mMouseY + 10 + (pos%MAX_ROW)*14;

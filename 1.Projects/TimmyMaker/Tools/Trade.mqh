@@ -207,7 +207,7 @@ void Trade::initData()
     time1   = pCommonData.mMouseTime;
     priceEN = pCommonData.mMousePrice;
     static int wd = 0;
-    ChartXYToTimePrice(ChartID(), (int)pCommonData.mMouseX+100, (int)pCommonData.mMouseY+(mIndexType == LONG_IDX ? 50:-50), wd,  time2, priceSL);
+    ChartXYToTimePrice(0, (int)pCommonData.mMouseX+100, (int)pCommonData.mMouseY+(mIndexType == LONG_IDX ? 50:-50), wd,  time2, priceSL);
     priceTP = 4*priceEN - 3*priceSL;
     priceBE = 2*priceEN - 1*priceSL;
 }
@@ -320,22 +320,22 @@ void Trade::refreshData()
     setItemPos(iTxE2, centerTime, priceEN);
     setItemPos(iTxS2, centerTime, priceSL);
     //-------------------------------------------------
-    ObjectSetInteger(0, iTxtE, OBJPROP_ANCHOR, ANCHOR_LOWER);
+    ObjectSet(iTxtE, OBJPROP_ANCHOR, ANCHOR_LOWER);
     if (priceTP > priceSL) {
-        ObjectSetInteger(0,iTxtS, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        ObjectSetInteger(0,iTxtT, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        ObjectSetInteger(0,iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-        ObjectSetInteger(0,iTxT2, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        ObjectSetInteger(0,iTxE2, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        ObjectSetInteger(0,iTxS2, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        ObjectSet(iTxtS, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(iTxtT, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_LOWER);
     }
     else {
-        ObjectSetInteger(0,iTxtS, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        ObjectSetInteger(0,iTxtT, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        ObjectSetInteger(0,iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
-        ObjectSetInteger(0,iTxT2, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        ObjectSetInteger(0,iTxE2, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        ObjectSetInteger(0,iTxS2, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(iTxtS, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        ObjectSet(iTxtT, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_UPPER);
     }
     //-------------------------------------------------
     //            TÍNH TOÁN CÁC THỨ
@@ -402,11 +402,11 @@ void Trade::refreshData()
     setTextContent(iTxtS, strSlInfo);
     setTextContent(iTxtB, strBeInfo);
     //-----------POINT TOOLTIP-------------------------
-    ObjectSetString(ChartID(), cPtTP, OBJPROP_TOOLTIP, DoubleToString(priceTP, Digits));
-    ObjectSetString(ChartID(), cPtSL, OBJPROP_TOOLTIP, DoubleToString(priceSL, Digits));
-    ObjectSetString(ChartID(), cPtEN, OBJPROP_TOOLTIP, DoubleToString(priceEN, Digits));
-    ObjectSetString(ChartID(), cPtWD, OBJPROP_TOOLTIP, DoubleToString(priceEN, Digits));
-    ObjectSetString(ChartID(), cPtBE, OBJPROP_TOOLTIP, DoubleToString(priceBE, Digits));
+    ObjectSetString(0, cPtTP, OBJPROP_TOOLTIP, DoubleToString(priceTP, Digits));
+    ObjectSetString(0, cPtSL, OBJPROP_TOOLTIP, DoubleToString(priceSL, Digits));
+    ObjectSetString(0, cPtEN, OBJPROP_TOOLTIP, DoubleToString(priceEN, Digits));
+    ObjectSetString(0, cPtWD, OBJPROP_TOOLTIP, DoubleToString(priceEN, Digits));
+    ObjectSetString(0, cPtBE, OBJPROP_TOOLTIP, DoubleToString(priceBE, Digits));
 
     int selected = (int)ObjectGet(cPtWD, OBJPROP_SELECTED);
     setMultiProp(OBJPROP_COLOR, selected ? gClrPointer : clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
@@ -688,7 +688,6 @@ void Trade::scanLiveTrade()
 
 void Trade::restoreBacktestingTrade()
 {
-    long chartID = ChartID();
     string objEn = "";
     string enData = "";
 
@@ -702,7 +701,7 @@ void Trade::restoreBacktestingTrade()
         if (ObjectFind(objEn) < 0) continue;
 
         // Step 2: extract data
-        enData = ObjectGetString(chartID, objEn, OBJPROP_TOOLTIP);
+        enData = ObjectGetString(0, objEn, OBJPROP_TOOLTIP);
         StringSplit(enData,'\n',sparamItems);
         size    = StrToDouble(StringSubstr(sparamItems[1], 6, 4));
         time1   = (datetime)ObjectGet(objEn, OBJPROP_TIME1);

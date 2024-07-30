@@ -146,7 +146,7 @@ void Alert::refreshData(){
 
     int barT1 = iBarShift(ChartSymbol(), ChartPeriod(), time1);
     bool isUp = (price1 >= High[barT1]);
-    ObjectSetInteger(0, iTxtR, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
+    ObjectSet(iTxtR, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER : ANCHOR_LEFT_UPPER);
 
     int selected = (int)ObjectGet(cPtM0, OBJPROP_SELECTED);
     setMultiProp(OBJPROP_COLOR, selected ? gClrForegrnd : InpAlertColor, cLn01+cPtM0+iTxtR);
@@ -192,7 +192,7 @@ void Alert::onItemDrag(const string &itemId, const string &objId)
         price1 =          ObjectGet(objId, OBJPROP_PRICE2);
     }
 
-    mAlertText = ObjectGetString(ChartID(), cPtM0, OBJPROP_TEXT);
+    mAlertText = ObjectGetString(0, cPtM0, OBJPROP_TEXT);
     StringReplace(mAlertText, ALERT_INDI_H, "");
     StringReplace(mAlertText, ALERT_INDI_L, "");
     mAlertIndi = (price1 > Bid ? ALERT_INDI_H : ALERT_INDI_L);
@@ -259,7 +259,7 @@ void Alert::checkAlert()
         // Get Alert information
         mIsAlertGoOver  = false;
         mCurAlertPrice = ObjectGet(mListAlertArr[i], OBJPROP_PRICE1);
-        mCurAlertText  = ObjectGetString(ChartID(), mListAlertArr[i], OBJPROP_TEXT);
+        mCurAlertText  = ObjectGetString(0, mListAlertArr[i], OBJPROP_TEXT);
         // Check Alert Price
         if (StringFind(mCurAlertText,ALERT_INDI_H) != -1) {
             mIsAlertGoOver  = (Bid > mCurAlertPrice);

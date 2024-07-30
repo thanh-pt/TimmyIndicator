@@ -209,21 +209,21 @@ void LabelText::onItemClick(const string &itemId, const string &objId)
 void LabelText::onItemChange(const string &itemId, const string &objId)
 {
     // font color size
-    string font = ObjectGetString(ChartID(), objId, OBJPROP_FONT);
+    string font = ObjectGetString(0, objId, OBJPROP_FONT);
     color c     = (color)ObjectGet(objId, OBJPROP_COLOR);
     int size    = (int)  ObjectGet(objId, OBJPROP_FONTSIZE);
-    int anchor  = (int)  ObjectGetInteger(ChartID(), cTxtM, OBJPROP_ANCHOR);
-    int corner  = (int)  ObjectGetInteger(ChartID(), cTxtM, OBJPROP_CORNER);
+    int anchor  = (int)  ObjectGet(cTxtM, OBJPROP_ANCHOR);
+    int corner  = (int)  ObjectGet(cTxtM, OBJPROP_CORNER);
     
     ObjectSet(cTxtM, OBJPROP_COLOR, c);
     ObjectSet(cTxtM, OBJPROP_FONTSIZE, size);
-    ObjectSetString(ChartID(), cTxtM, OBJPROP_FONT, font);
-    ObjectSetInteger(ChartID(), cTxtM, OBJPROP_ANCHOR, anchor);
-    ObjectSetInteger(ChartID(), cTxtM, OBJPROP_CORNER, corner);
+    ObjectSetString(0, cTxtM, OBJPROP_FONT, font);
+    ObjectSet(cTxtM, OBJPROP_ANCHOR, anchor);
+    ObjectSet(cTxtM, OBJPROP_CORNER, corner);
     ObjectSet(iTxBg, OBJPROP_FONTSIZE, size*2);
-    ObjectSetString(ChartID(),  iTxBg, OBJPROP_FONT, font);
-    ObjectSetInteger(ChartID(), iTxBg, OBJPROP_ANCHOR, anchor);
-    ObjectSetInteger(ChartID(), iTxBg, OBJPROP_CORNER, corner);
+    ObjectSetString(0,  iTxBg, OBJPROP_FONT, font);
+    ObjectSet(iTxBg, OBJPROP_ANCHOR, anchor);
+    ObjectSet(iTxBg, OBJPROP_CORNER, corner);
 
     int idx = 1;
     string objCTxtX = cTxtX +"#"+ IntegerToString(idx);
@@ -232,14 +232,14 @@ void LabelText::onItemChange(const string &itemId, const string &objId)
     {
         ObjectSet(objCTxtX, OBJPROP_COLOR, c);
         ObjectSet(objCTxtX, OBJPROP_FONTSIZE, size);
-        ObjectSetString(ChartID(), objCTxtX, OBJPROP_FONT, font);
-        ObjectSetInteger(ChartID(), objCTxtX, OBJPROP_ANCHOR, anchor);
-        ObjectSetInteger(ChartID(), objCTxtX, OBJPROP_CORNER, corner);
+        ObjectSet(objCTxtX, OBJPROP_ANCHOR, anchor);
+        ObjectSet(objCTxtX, OBJPROP_CORNER, corner);
+        ObjectSetString(0, objCTxtX, OBJPROP_FONT, font);
         
         ObjectSet(objiTBgX, OBJPROP_FONTSIZE, size*2);
-        ObjectSetString(ChartID(),  objiTBgX, OBJPROP_FONT, font);
-        ObjectSetInteger(ChartID(), objiTBgX, OBJPROP_ANCHOR, anchor);
-        ObjectSetInteger(ChartID(), objiTBgX, OBJPROP_CORNER, corner);
+        ObjectSet(objiTBgX, OBJPROP_ANCHOR, anchor);
+        ObjectSet(objiTBgX, OBJPROP_CORNER, corner);
+        ObjectSetString(0,  objiTBgX, OBJPROP_FONT, font);
         idx++;
         objCTxtX = cTxtX +"#"+ IntegerToString(idx);
         objiTBgX = iTBgX +"#"+ IntegerToString(idx);
@@ -277,25 +277,25 @@ void LabelText::onUserRequest(const string &itemId, const string &objId)
     }
     ObjectCreate(objiTBgX, OBJ_LABEL, 0, 0, 0);
     ObjectCreate(objCTxtX, OBJ_LABEL, 0, 0, 0);
-    string font = ObjectGetString(ChartID(), cTxtM, OBJPROP_FONT);
+    string font = ObjectGetString(0, cTxtM, OBJPROP_FONT);
     color c     = (color)ObjectGet(cTxtM, OBJPROP_COLOR);
     int size    = (int)  ObjectGet(cTxtM, OBJPROP_FONTSIZE);
-    int anchor  = (int)  ObjectGetInteger(ChartID(), cTxtM, OBJPROP_ANCHOR);
-    int corner  = (int)  ObjectGetInteger(ChartID(), cTxtM, OBJPROP_CORNER);
+    int anchor  = (int)  ObjectGet(cTxtM, OBJPROP_ANCHOR);
+    int corner  = (int)  ObjectGet(cTxtM, OBJPROP_CORNER);
 
     ObjectSet(objCTxtX, OBJPROP_SELECTED, true);
     ObjectSet(objCTxtX, OBJPROP_XDISTANCE, posX);
     ObjectSet(objCTxtX, OBJPROP_YDISTANCE, posY+(newIdx)*spaceSize);
     setTextContent(objCTxtX, getRandStr(), size, font, c);
-    ObjectSetInteger(ChartID(), objCTxtX, OBJPROP_ANCHOR, anchor);
-    ObjectSetInteger(ChartID(), objCTxtX, OBJPROP_CORNER, corner);
+    ObjectSet(objCTxtX, OBJPROP_ANCHOR, anchor);
+    ObjectSet(objCTxtX, OBJPROP_CORNER, corner);
 
     ObjectSet(objiTBgX, OBJPROP_XDISTANCE, posX);
     ObjectSet(objiTBgX, OBJPROP_YDISTANCE, posY+(newIdx)*spaceSize);
     // todo: case bottom left/ bottom right -> getHalfDwBL
     setTextContent(objiTBgX, getHalfUpBL(StringLen(ObjectDescription(objCTxtX))), size*2, font, gClrTextBgnd);
-    ObjectSetInteger(ChartID(), objiTBgX, OBJPROP_ANCHOR, anchor);
-    ObjectSetInteger(ChartID(), objiTBgX, OBJPROP_CORNER, corner);
+    ObjectSet(objiTBgX, OBJPROP_ANCHOR, anchor);
+    ObjectSet(objiTBgX, OBJPROP_CORNER, corner);
     ObjectSet(objiTBgX, OBJPROP_SELECTABLE, false);
 
     setMultiStrs(OBJPROP_TOOLTIP, "\n", objCTxtX+objiTBgX);

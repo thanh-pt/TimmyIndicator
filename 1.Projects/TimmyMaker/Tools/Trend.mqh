@@ -312,37 +312,37 @@ void Trend::refreshData()
     else if (barT2 > barT1 && price2 >= High[barT2]) isUp = true;
 
     if (angle > 000 && angle <=  90) {
-        ObjectSetInteger(0, iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
-        ObjectSetInteger(0, iTxtR, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
-        ObjectSetInteger(0, iTxtL, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        ObjectSet(iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
+        ObjectSet(iTxtR, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        ObjectSet(iTxtL, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
     }
     else if (angle > 090 && angle <  180) {
-        ObjectSetInteger(0, iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER);
-        ObjectSetInteger(0, iTxtR, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-        ObjectSetInteger(0, iTxtL, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+        ObjectSet(iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER);
+        ObjectSet(iTxtR, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        ObjectSet(iTxtL, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
     }
     else if (angle > 180 && angle <= 270) {
-        ObjectSetInteger(0, iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
-        ObjectSetInteger(0, iTxtR, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
-        ObjectSetInteger(0, iTxtL, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        ObjectSet(iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_RIGHT_LOWER : ANCHOR_LEFT_UPPER);
+        ObjectSet(iTxtR, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        ObjectSet(iTxtL, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
     }
     else if (angle > 270 && angle <  360) {
-        ObjectSetInteger(0, iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER);
-        ObjectSetInteger(0, iTxtR, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
-        ObjectSetInteger(0, iTxtL, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        ObjectSet(iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_LEFT_LOWER  : ANCHOR_RIGHT_UPPER);
+        ObjectSet(iTxtR, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+        ObjectSet(iTxtL, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
     }
     else if (angle == 0) 
     {
-        ObjectSetInteger(0, iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
-        ObjectSetInteger(0, iTxtR, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_LEFT : ANCHOR_RIGHT);
-        ObjectSetInteger(0, iTxtL, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_RIGHT: ANCHOR_LEFT);
+        ObjectSet(iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+        ObjectSet(iTxtR, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_LEFT : ANCHOR_RIGHT);
+        ObjectSet(iTxtL, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_RIGHT: ANCHOR_LEFT);
 
         if (barT1 < barT2) ObjectSet(iTxtA, OBJPROP_ANGLE,  90.0); // case 180*
     }
     if (price1 == price2){
-        ObjectSetInteger(0, iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
-        ObjectSetInteger(0, iTxtR, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_LEFT : ANCHOR_RIGHT);
-        ObjectSetInteger(0, iTxtL, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_RIGHT: ANCHOR_LEFT);
+        ObjectSet(iTxtC, OBJPROP_ANCHOR, isUp ? ANCHOR_LOWER : ANCHOR_UPPER);
+        ObjectSet(iTxtR, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_LEFT : ANCHOR_RIGHT);
+        ObjectSet(iTxtL, OBJPROP_ANCHOR, barT1 > barT2 ? ANCHOR_RIGHT: ANCHOR_LEFT);
     }
     // Customization
 
@@ -378,7 +378,7 @@ void Trend::updateDefaultProperty()
 
     setMultiProp(OBJPROP_BACK ,  true, cLnM0+iAng0);
     setMultiProp(OBJPROP_RAY  , false, cLnM0+iAng0);
-    ObjectSetInteger(ChartID(), iTxtA, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    ObjectSet(iTxtA, OBJPROP_ANCHOR, ANCHOR_CENTER);
     
     setTextContent(iTxtC, "", 8, FONT_TEXT, mColorType[mIndexType]);
     setTextContent(iTxtR, "", 8, FONT_TEXT, mColorType[mIndexType]);

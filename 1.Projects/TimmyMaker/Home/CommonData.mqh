@@ -26,13 +26,13 @@ public:
         mCtrlHold  = ((option & CTRL_HOLD) != 0);
         mMouseX = (int) x;
         mMouseY = (int) y;
-        ChartXYToTimePrice(ChartID(), (int)mMouseX, (int)mMouseY, mSubwindow, mMouseTime, mMousePrice);
-        ChartXYToTimePrice(ChartID(), 0, 0, mSubwindow, mBeginTime, mTopPrice);
+        ChartXYToTimePrice(0, (int)mMouseX, (int)mMouseY, mSubwindow, mMouseTime, mMousePrice);
+        ChartXYToTimePrice(0, 0, 0, mSubwindow, mBeginTime, mTopPrice);
         if(mCtrlHold) {
             controlHold();
         }
-        ChartGetInteger(ChartID(),CHART_WIDTH_IN_PIXELS ,mSubwindow, mChartWidth);
-        ChartSetDouble(ChartID(),CHART_FIXED_POSITION, (double)mMouseX/mChartWidth*100);
+        ChartGetInteger(0,CHART_WIDTH_IN_PIXELS ,mSubwindow, mChartWidth);
+        ChartSetDouble(0,CHART_FIXED_POSITION, (double)mMouseX/mChartWidth*100);
     }
     void controlHold()
     {
@@ -68,7 +68,7 @@ public:
 
         } while (false);
 
-        ChartTimePriceToXY(ChartID(), 0, mMouseTime, mMousePrice, mMouseX, mMouseY);
+        ChartTimePriceToXY(0, 0, mMouseTime, mMousePrice, mMouseX, mMouseY);
     }
 };
 

@@ -164,8 +164,8 @@ void Fibonacci::updateDefaultProperty()
     setMultiProp(OBJPROP_BACK         , true      , iLn00+iLn01+iLn02+iLn03+iLn04+iLn05);
     setMultiProp(OBJPROP_SELECTABLE   , false     , iLn00+iLn01+iLn02+iLn03+iLn04+iLn05
                                                    +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
-    setMultiInts(OBJPROP_ANCHOR, ANCHOR_RIGHT     , iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
-    setMultiInts(OBJPROP_HIDDEN, true, iLn00+iLn01+iLn02+iLn03+iLn04+iLn05
+    setMultiProp(OBJPROP_ANCHOR, ANCHOR_RIGHT     , iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
+    setMultiProp(OBJPROP_HIDDEN, true, iLn00+iLn01+iLn02+iLn03+iLn04+iLn05
                                       +iTxt0+iTxt1+iTxt2+iTxt3+iTxt4+iTxt5);
 
     setMultiProp(OBJPROP_ARROWCODE,       4, cPtL1+cPtL2+cPtR1+cPtR2+cPtC1+cPtC2);
