@@ -45,10 +45,11 @@ public:
         ObjectSet(miDtBkgnd, OBJPROP_COLOR, clrWhite);
         ObjectSet(miDtBkgnd, OBJPROP_YDISTANCE, CrossHair_DisplayDateInfo ? 25 : 15);
         ObjectSet(miDtBkgnd, OBJPROP_CORNER , CORNER_LEFT_LOWER);
+        ObjectSet(miDtBkgnd, OBJPROP_ANCHOR , ANCHOR_LEFT_UPPER);
         ObjectSetString( 0, miDtBkgnd, OBJPROP_TOOLTIP,"\n");
         // --- HPrice background ---
         ObjectCreate(miHPriceBg, OBJ_LABEL, 0, 0, 0);
-        setTextContent(miHPriceBg, "██████", 10, FONT_BLOCK);
+        setTextContent(miHPriceBg, "██████", 9, FONT_BLOCK);
         ObjectSet(miHPriceBg, OBJPROP_SELECTABLE, false);
         ObjectSet(miHPriceBg, OBJPROP_COLOR, clrWhite);
         ObjectSet(miHPriceBg, OBJPROP_XDISTANCE, 0);
@@ -77,6 +78,7 @@ public:
         ObjectSet(mWeekInfo, OBJPROP_COLOR, gClrPointer);
         ObjectSet(mWeekInfo, OBJPROP_YDISTANCE, CrossHair_DisplayDateInfo ? 25 : 15);
         ObjectSet(mWeekInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
+        ObjectSet(mWeekInfo, OBJPROP_ANCHOR , ANCHOR_LEFT_UPPER);
         ObjectSetString( 0, mWeekInfo, OBJPROP_TOOLTIP,"\n");
 
         // mDateInfo
@@ -86,6 +88,7 @@ public:
         ObjectSet(mDateInfo, OBJPROP_COLOR, gClrPointer);
         ObjectSet(mDateInfo, OBJPROP_YDISTANCE, CrossHair_DisplayDateInfo ? 15 : 0);
         ObjectSet(mDateInfo, OBJPROP_CORNER , CORNER_LEFT_LOWER);
+        ObjectSet(mDateInfo, OBJPROP_ANCHOR , ANCHOR_LEFT_UPPER);
         ObjectSetString( 0, mDateInfo, OBJPROP_TOOLTIP,"\n");
 
     }
