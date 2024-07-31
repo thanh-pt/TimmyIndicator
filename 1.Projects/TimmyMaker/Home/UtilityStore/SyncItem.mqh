@@ -116,7 +116,7 @@ void syncTimmyItem()
         gListSyncProp[itemNum].Text         = ObjectDescription(objName);
         gListSyncProp[itemNum].Tooltip      = ObjectGetString(0, objName, OBJPROP_TOOLTIP);
 
-        if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE || objType == OBJ_RECTANGLE) {
+        if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE || objType == OBJ_RECTANGLE || objType == OBJ_FIBO) {
             gListSyncProp[itemNum].Time2    = (datetime)ObjectGet(objName, OBJPROP_TIME2);
             gListSyncProp[itemNum].Price2   = ObjectGet(objName, OBJPROP_PRICE2);
         }
@@ -177,11 +177,19 @@ void syncItemToTargetChart(ObjectProperty &objProp, long chartId, bool objectExi
     ObjectSetString (chartId, objProp.Name, OBJPROP_TEXT       , objProp.Text       );
     ObjectSetString (chartId, objProp.Name, OBJPROP_TOOLTIP    , getTFString()      );
 
-    if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE || objType == OBJ_RECTANGLE) {
+    if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE || objType == OBJ_RECTANGLE || objType == OBJ_FIBO) {
         ObjectSetInteger(chartId, objProp.Name, OBJPROP_TIME2, objProp.Time2);
         ObjectSetDouble (chartId, objProp.Name, OBJPROP_PRICE2, objProp.Price2);
         if (objType == OBJ_TREND || objType == OBJ_TRENDBYANGLE) {
             ObjectSetInteger(chartId, objProp.Name, OBJPROP_RAY, objProp.Ray);
+        }
+        //Handle cho case Alert
+        else if (objType == OBJ_FIBO) {
+            ObjectSetInteger(chartId, objProp.Name, OBJPROP_LEVELS, 1);
+            ObjectSetDouble (chartId, objProp.Name,OBJPROP_LEVELVALUE,0, 0);
+            ObjectSetInteger(chartId, objProp.Name,OBJPROP_LEVELCOLOR,0, objProp.Color);
+            ObjectSetInteger(chartId, objProp.Name,OBJPROP_LEVELSTYLE,0, STYLE_DOT);
+            ObjectSetInteger(chartId, objProp.Name,OBJPROP_LEVELWIDTH,0, 1);
         }
     }
     else if (objType == OBJ_TEXT || objType == OBJ_LABEL) {
