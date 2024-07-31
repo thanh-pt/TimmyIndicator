@@ -13,46 +13,44 @@
 #define TAG_TRADEID     ".TMTrade_1#"
 #define LIVE_INDI       "ʟɪᴠᴇ"
 
-enum e_display
+enum eDisplay
 {
     HIDE,   // Hide
     SHOW,   // Always
-    OPTION, // When Select
+    OPTION, // Option
 };
 
 input string          Trd_; // ●  T R A D E  ●
 //-------------------------------------------------
 input double          Trd_Cost          = 1.5;     //Cost ($)
-input e_display       Trd_ShowStats     = OPTION;  //Show Stats
-input e_display       Trd_ShowDollar    = HIDE;    //Show Dollar
-input bool            Trd_TrackTrade    = false;   //Track Trade
+input double          Trd_Spread        = 0.0;     // Spread
+input bool            Trd_TrackTrade    = false;   // Track Trade
+double      Trd_SlSpace     = 0.2;
+eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
+eDisplay    Trd_ShowDollar  = OPTION;   //Show Dollar
 //-------------------------------------------------
 input string          Trd_apperence; //→ Color:
-      int             Trd_TextSize      = 8;                 // Text Size
+      int             Trd_TextSize      = 8;                   // Text Size
 input color           Trd_TpColor       = clrSteelBlue;      // TP Line
 input color           Trd_SlColor       = clrChocolate;      // SL Line
 input color           Trd_EnColor       = clrChocolate;      // EN Line
-      int             Trd_LineWidth     = 2;                 // Line Width
+      int             Trd_LineWidth     = 2;                   // Line Width
 input color           Trd_SlBkgrdColor  = clrLavenderBlush;  // SlBg
 input color           Trd_TpBkgrdColor  = clrWhiteSmoke;     // TpBg
 
-int Trd_StlSpace = 2;
 
 class Trade : public BaseItem
 {
 // Internal Value
 private:
-double mTradeLot;
-string mNativeCurrency;
-double mNativeCost;
-double mSymbolCode;
-double mStlSpace;
-string mListLiveTradeStr;
-string mListLiveTradeArr[];
-string mLiveTradeCtx;
-bool   mUserActive;
-string mStrTradeItems;
-string mArrTradeItems[];
+    double mTradeLot;
+    double mCost;
+    double mStlSpace;
+    double mSpread;
+    string mLiveTradeCtx;
+    bool   mUserActive;
+    string mStrTradeItems;
+    string mArrTradeItems[];
 
 // Component name
 private:
@@ -131,7 +129,6 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     pCommonData = commonData;
     pMouseInfo = mouseInfo;
 
-    mListLiveTradeStr = "";
     mUserActive = false;
 
     // Init variable type
@@ -150,27 +147,15 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     mLiveTradeCtx +=  "," + CTX_ADDSLTP;
 
     // Other initialize
-    string strSymbol = Symbol();
-    mSymbolCode = 0;
-    for (int i = 0; i < StringLen(strSymbol); i++)
-    {
-        mSymbolCode += strSymbol[i] * (i+1);
-    }
-
-    strSymbol = StringSubstr(strSymbol, 0, 6);
-    mNativeCurrency = StringSubstr(strSymbol, StringLen(strSymbol)-3, 3);
-    if (mNativeCurrency == "JPY")
-    {
-        mNativeCost = Trd_Cost * 1.49;
-    }
-    else if (strSymbol == "XAUUSD")
-    {
-        mNativeCost = Trd_Cost * 10;
-    }
-    else
-    {
-        mNativeCost = Trd_Cost;
-    }
+    mCost     = Trd_Cost;
+    mSpread   = 10*Trd_Spread / pow(10, Digits);
+    mStlSpace = 10*Trd_SlSpace / pow(10, Digits);
+    /* TODO: Chuyển đổi tỷ giá
+        string strSymbol = Symbol();
+        Example:
+            - xxxJPY: mCost = Trd_Cost * 1.49;
+            - XAUUSD: mCost = Trd_Cost * 10;
+    */
 }
 
 // Internal Event
@@ -347,7 +332,7 @@ void Trade::refreshData()
     double rr          = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
     
-    mTradeLot          = floor(mNativeCost / slPip * 10)/100;
+    mTradeLot          = floor(mCost / slPip * 10)/100;
     double tpPip       = slPip * rr;
     double realCost    = 0;
     // 2. Thông tin hiển thị
@@ -375,7 +360,7 @@ void Trade::refreshData()
     }
     //-------------------------------------------------
     if (showDollar) {
-        realCost = mTradeLot*slPip*10/mNativeCost*Trd_Cost;
+        realCost = mTradeLot*slPip*10/mCost*Trd_Cost;
         if (showStats) {
             strTpInfo += " ~ ";
             strSlInfo += " ~ ";
@@ -410,10 +395,7 @@ void Trade::refreshData()
 
     int selected = (int)ObjectGet(cPtWD, OBJPROP_SELECTED);
     setMultiProp(OBJPROP_COLOR, selected ? gClrPointer : clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
-    if (selected == true){
-        if (ObjectDescription(cPtWD) == LIVE_INDI) gContextMenu.openStaticCtxMenu(cPtWD, mLiveTradeCtx);
-        else gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
-    }
+    if (selected) gContextMenu.openStaticCtxMenu(cPtWD, ObjectDescription(cPtWD) == LIVE_INDI ? mLiveTradeCtx : mContextType);
     else gContextMenu.clearStaticCtxMenu(cPtWD);
 }
 void Trade::finishedJobDone()
@@ -480,22 +462,7 @@ void Trade::onItemClick(const string &itemId, const string &objId)
 {
     if (StringFind(objId, TAG_CTRL) < 0) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    if (selected) {
-        if (pCommonData.mShiftHold){
-            if (objId == cPtWD && ObjectDescription(cPtWD) == LIVE_INDI){
-                gContextMenu.openContextMenu(cPtWD, mLiveTradeCtx);
-            }
-            else{
-                gContextMenu.openContextMenu(cPtWD, mContextType);
-            }
-        }
-        if (ObjectDescription(cPtWD) == LIVE_INDI){
-            gContextMenu.openStaticCtxMenu(cPtWD, mLiveTradeCtx);
-        }
-        else{
-            gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
-        }
-    }
+    if (selected) gContextMenu.openStaticCtxMenu(cPtWD, ObjectDescription(cPtWD) == LIVE_INDI ? mLiveTradeCtx : mContextType);
     else gContextMenu.clearStaticCtxMenu(cPtWD);
     setCtrlItemSelectState(mAllItem, selected);
     setMultiProp(OBJPROP_COLOR, selected ? gClrPointer : clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
@@ -580,18 +547,15 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     // Add Spread Feature
     else if (gContextMenu.mActiveItemStr == CTX_SPR) {
         onItemDrag(itemId, objId);
-        double spread = (double)SymbolInfoInteger(Symbol(), SYMBOL_SPREAD);
-        mStlSpace = (double)Trd_StlSpace / pow(10, Digits);
-        spread = spread / pow(10, Digits);
 
         if (priceEN > priceSL) {
             // Buy order
-            priceEN += spread;
+            priceEN += mSpread;
             priceSL -= mStlSpace;
         } else {
             // Sell order
-            priceTP += spread;
-            priceSL += spread+mStlSpace;
+            priceTP += mSpread;
+            priceSL += mSpread+mStlSpace;
         }
         refreshData();
     }
@@ -652,7 +616,7 @@ void Trade::scanLiveTrade()
         
         int orderType = OrderType();
         bool isBUY = (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP);
-        priceSL = priceEN + (isBUY ? -1 : +1) * mNativeCost/OrderLots() / pow(10, Digits);
+        priceSL = priceEN + (isBUY ? -1 : +1) * mCost/OrderLots() / pow(10, Digits);
         priceTP = OrderTakeProfit();
         if (ObjectFind(cPtWD) < 0) {
             if (priceTP <= 0.0) {
