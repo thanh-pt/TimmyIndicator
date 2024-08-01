@@ -43,7 +43,7 @@ string getAltName(string name){
 
 
 input string Trend_; // ●  T R E N D  ●
-input int        Trend_amount       = 6;            // Trend amount:
+input int        Trend_amount       = 7;            // Trend amount:
 //--------------------------------------------
 input string     Trend_1_Name       = "Flow-";          // _ _ _ _ _ _ Trend 1 _ _ _ _ _ _
 input ELineStyle Trend_1_Style      = eLineSolid;       // |___ Style
@@ -75,13 +75,13 @@ input ELineStyle Trend_6_Style      = eLineSolid;       // |___ Style
 input color      Trend_6_Color      = clrNavy;        // |___ Color
 input ETrendText Trend_6_TxtPos     = ETrendTextCenterArr; // |___ Text Pos
 //--------------------------------------------
+input string     Trend_7_Name       = "sub";            // _ _ _ _ _ _ Trend 7_ _ _ _ _ _
+input ELineStyle Trend_7_Style      = eLineSolid;       // |___ Style
+input color      Trend_7_Color      = clrNavy;        // |___ Color
+input ETrendText Trend_7_TxtPos     = ETrendTextCenter; // |___ Text Pos
+//--------------------------------------------
 
 // --- Reserved ---
-string     Trend_7_Name       = "Arw-";               // _ _ _ _ _ _ Trend 7_ _ _ _ _ _
-ELineStyle Trend_7_Style      = eLineSolid;           // |___ Style
-color      Trend_7_Color      = clrNavy;            // |___ Color
-ETrendText Trend_7_TxtPos     = ETrendTextCenterArr;  // |___ Text Pos
-//--------------------------------------------
 string     Trend_8_Name       = "Reserved";           // → Trend 8
 ELineStyle Trend_8_Style      = eLineSolid;           // Style
 color      Trend_8_Color      = clrGreen;           // Color
@@ -455,7 +455,6 @@ void Trend::onItemClick(const string &itemId, const string &objId)
 {
     if (StringFind(objId, TAG_CTRL) < 0) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    if (selected && pCommonData.mShiftHold) gContextMenu.openContextMenu(cLnM0, mContextType, mIndexType);
     setCtrlItemSelectState(mAllItem, selected);
     setMultiProp(OBJPROP_COLOR, selected ? gClrPointer : clrNONE, cPt01+cPt02);
     

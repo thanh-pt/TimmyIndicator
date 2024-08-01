@@ -27,8 +27,8 @@ double         LineDn02[];
 
 int     gTotalRate = 1;
 
-int     gChartScale = (int)ChartGetInteger(ChartID(), CHART_SCALE);
-int     gChartMode  = (int)ChartGetInteger(ChartID(), CHART_MODE);
+int     gChartScale = (int)ChartGetInteger(0, CHART_SCALE);
+int     gChartMode  = (int)ChartGetInteger(0, CHART_MODE);
 int     gPreChartScale = gChartScale;
 int     gPreChartMode  = gChartMode;
 
@@ -122,31 +122,32 @@ void OnChartEvent(const int id,
                   const string &sparam)
 {
 //---
-    if (id == CHARTEVENT_CHART_CHANGE) {
-        gChartScale = (int)ChartGetInteger(ChartID(), CHART_SCALE);
-        if (gChartScale == gPreChartScale) return;
-        gPreChartScale = gChartScale;
-        updateStyle();
-    }
-    else if (id == CHARTEVENT_KEYDOWN) {
+    if (id == CHARTEVENT_KEYDOWN) {
         if (lparam == 'M'){
             gbImbOn = !gbImbOn;
             loadBarEnhance(gTotalRate);
         }
     }
-    gChartMode  = (int)ChartGetInteger(ChartID(), CHART_MODE);
-    if (gChartMode != gPreChartMode) updateStyle();
-    gPreChartMode = gChartMode;
+    gChartScale = (int)ChartGetInteger(0, CHART_SCALE);
+    if (gChartScale != gPreChartScale){
+        gPreChartScale = gChartScale;
+        updateStyle();
+    }
+    gChartMode  = (int)ChartGetInteger(0, CHART_MODE);
+    if (gChartMode != gPreChartMode) {
+        gPreChartMode = gChartMode;
+        updateStyle();
+    }
 }
 
 void updateStyle()
 {
     bool bVisible = (gChartScale > 2 && gChartMode == CHART_CANDLES);
     if (bVisible){
-        gBderUpClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_UP);
-        gBderDnClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CHART_DOWN);
-        gBodyUpClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CANDLE_BULL);
-        gBodyDnClr = (color)ChartGetInteger(ChartID(),CHART_COLOR_CANDLE_BEAR);
+        gBderUpClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_UP);
+        gBderDnClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_DOWN);
+        gBodyUpClr = (color)ChartGetInteger(0,CHART_COLOR_CANDLE_BULL);
+        gBodyDnClr = (color)ChartGetInteger(0,CHART_COLOR_CANDLE_BEAR);
 
         // Wick
         SetIndexStyle(eBarWick1, DRAW_HISTOGRAM, 0, MACRO_WickSize, gBderDnClr);

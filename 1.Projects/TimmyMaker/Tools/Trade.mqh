@@ -349,8 +349,11 @@ void Trade::refreshData()
     if (showStats) {
         strTpInfo += DoubleToString(absRR*point/10, 1) + "ᴘ";
         if (strBeInfo != "") strBeInfo += ": ";
-        strBeInfo += DoubleToString(be,1) + " ~ " + DoubleToString(be * point / 10, 1) + "ᴘ ";
+        strBeInfo += DoubleToString(be,1) + "r ~ " + DoubleToString(be * point / 10, 1) + "ᴘ ";
         strSlInfo += DoubleToString(point/10, 1) + "ᴘ";
+    }
+    else {
+        if (strBeInfo != "") strBeInfo += ": " + DoubleToString(be,1) + "r";
     }
     //-------------------------------------------------
     if (showDollar) {
