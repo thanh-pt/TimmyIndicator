@@ -22,7 +22,8 @@ enum eDisplay
 
 input string          Trd_; // ●  T R A D E  ●
 //-------------------------------------------------
-input double          Trd_Cost          = 1.5;     //Cost ($)
+input double          Trd_Cost          = 1.5;     // Cost ($)
+input double          Trd_Com           = 7;       // Commission ($)
 input double          Trd_Spread        = 0.0;     // Spread
 input bool            Trd_TrackTrade    = false;   // Track Trade
 double      Trd_SlSpace     = 0.2;
@@ -43,7 +44,7 @@ class Trade : public BaseItem
 {
 // Internal Value
 private:
-    double mTradeLot;
+    double mLot;
     double mCost;
     double mStlSpace;
     double mSpread;
@@ -326,57 +327,51 @@ void Trade::refreshData()
     //            TÍNH TOÁN CÁC THỨ
     //-------------------------------------------------
     // 1. Thông tin lệnh
-    double slPip       = floor(fabs(priceEN-priceSL) * (pow(10, Digits)))/10;
-    if (slPip <= 0.001) return;
-
-    double rr          = (priceTP-priceEN) / (priceEN-priceSL);
+    double point       = floor(fabs(priceEN-priceSL) * (pow(10, Digits)));
+    if (point <= 1) return;
+    mLot               = floor(mCost / (point + Trd_Com) * 100)/100;
+    double realCost    = mLot * (point + Trd_Com);
+    double absRR       = (priceTP-priceEN) / (priceEN-priceSL);
     double be          = (priceBE-priceEN) / (priceEN-priceSL);
-    
-    mTradeLot          = floor(mCost / slPip * 10)/100;
-    double tpPip       = slPip * rr;
-    double realCost    = 0;
+    double profit      = mLot * (absRR*point - Trd_Com);
+
     // 2. Thông tin hiển thị
     bool   selectState = (bool)ObjectGet(cPtWD, OBJPROP_SELECTED);
     bool   showStats   = (Trd_ShowStats  == SHOW) || (Trd_ShowStats  == OPTION && selectState);
     bool   showDollar  = (Trd_Cost != 0) && ((Trd_ShowDollar == SHOW) || (Trd_ShowDollar == OPTION && selectState));
     
     // 3. String Data để hiển thị
-    string strTpInfo   = ""; // pip + dola
-    string strSlInfo   = ""; // pip + dola
+    string strTpInfo   = ""; // point + dola
+    string strSlInfo   = ""; // point + dola
     string strEnInfo   = ObjectDescription(cPtWD); // Cmt + lot 
-    string strBeInfo   = ObjectDescription(cPtBE); // BE RR + pip
+    string strBeInfo   = ObjectDescription(cPtBE); // BE RR + point
     
-    if (strBeInfo != ""){
-        strBeInfo += ": ";
-        if (!showStats){
-            strBeInfo += DoubleToString(be,1) + "  ";
-        }
-    }
     if (showStats) {
-        double bePip = be * slPip;
-        strTpInfo += DoubleToString(tpPip, 1) + "ᴘ";
-        strBeInfo += DoubleToString(be,1) + " ~ " + DoubleToString(bePip, 1) + "ᴘ ";
-        strSlInfo += DoubleToString(slPip, 1) + "ᴘ";
+        strTpInfo += DoubleToString(absRR*point/10, 1) + "ᴘ";
+        if (strBeInfo != "") strBeInfo += ": ";
+        strBeInfo += DoubleToString(be,1) + " ~ " + DoubleToString(be * point / 10, 1) + "ᴘ ";
+        strSlInfo += DoubleToString(point/10, 1) + "ᴘ";
     }
     //-------------------------------------------------
     if (showDollar) {
-        realCost = mTradeLot*slPip*10/mCost*Trd_Cost;
         if (showStats) {
             strTpInfo += " ~ ";
             strSlInfo += " ~ ";
         }
-        strTpInfo += DoubleToString(rr*realCost, 2) + "$";
+        strTpInfo += DoubleToString(profit,   2) + "$";
         strSlInfo += DoubleToString(realCost, 2) + "$";
-        if (strEnInfo != "") strEnInfo += " ";
-        strEnInfo += DoubleToString(mTradeLot,2) + "lot";
+        if (strEnInfo != "") strEnInfo += ": ";
+        strEnInfo += DoubleToString(mLot,2) + "lot";
     }
     string strRRInfo = "";
-    string strRR = DoubleToString(rr,1);
+    string strRR = DoubleToString(absRR,1) + "r";
+    if (Trd_Com > 0) {
+        strRR += "/" + DoubleToString(profit/realCost,1) + "ʀ";
+    }
     for (int i = 0; i < StringLen(strRR); i++) {
         strRRInfo += StringSubstr(strRR, i, 1);
         strRRInfo += " ";
     }
-    strRRInfo += "ʀ";
     //-------------------------------------------------
     setTextContent(iTxT2, strTpInfo);
     setTextContent(iTxE2, STR_EMPTY);
