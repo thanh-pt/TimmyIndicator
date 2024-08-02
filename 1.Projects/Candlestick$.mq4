@@ -38,6 +38,7 @@ color   gBodyUpClr;
 color   gBodyDnClr;
 
 bool    gbImbOn = false;
+bool    gbIsbOn = false;
 
 int     gArrSizeMap[2][6];
 
@@ -56,8 +57,9 @@ enum EBarMap{
     eBarLnN02,
 };
 
-input color InpIsbClr = clrNONE;    // Inside Bar Color
+input color InpIsbClr = clrWhite;    // Inside Bar Color
 input color InpImbClr = clrOrange;   // Imbalance Color (M)
+input bool InpEnhanceWick = false; // Enhance Wick
 input int InpCandle5 = 13; // Candle 5 (13~17)
 input int InpCandle4 = 6;  // Candle 4 (6~9)
 input int InpCandle3 = 3;  // Candle 3 (3~5)
@@ -125,6 +127,10 @@ void OnChartEvent(const int id,
     if (id == CHARTEVENT_KEYDOWN) {
         if (lparam == 'M'){
             gbImbOn = !gbImbOn;
+            loadBarEnhance(gTotalRate);
+        }
+        else if (lparam == 'N'){
+            gbIsbOn = !gbIsbOn;
             loadBarEnhance(gTotalRate);
         }
     }
@@ -197,8 +203,10 @@ void loadBarEnhance(int totalBar)
             isDoji = true;
         }
         // Layer 1 - Wick
-        Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
-        Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
+        if (InpEnhanceWick) {
+            Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
+            Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
+        }
 
         // Layer 2 - Boder/Body
         Bder1Buf[idx] = Open[idx];
@@ -209,7 +217,7 @@ void loadBarEnhance(int totalBar)
         // Layer 3 - Isb/Imb
         IsmbBuf1[idx] = EMPTY_VALUE;
         IsmbBuf2[idx] = EMPTY_VALUE;
-        if (InpIsbClr != clrNONE && High[idx] <= High[idx+1] && Low[idx] >= Low[idx+1]){
+        if (gbIsbOn == true && InpIsbClr != clrNONE && High[idx] <= High[idx+1] && Low[idx] >= Low[idx+1]){
             IsmbBuf1[idx] = MathMax(Open[idx], Close[idx]);
             IsmbBuf2[idx] = MathMin(Open[idx], Close[idx]);
         }

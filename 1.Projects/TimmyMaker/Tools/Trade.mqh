@@ -603,6 +603,8 @@ void Trade::scanLiveTrade()
     if (mUserActive == true) return; // User are trying to draw new trade
     string itemId = "";
     string strNewTradeItems = "";
+    double point = 0;
+    double tradeSize = 0;
     for (int i = 0 ; i < OrdersTotal(); i++) {
         if (OrderSelect(i, SELECT_BY_POS) == false) continue;
         if (OrderSymbol() != Symbol()) continue;
@@ -611,10 +613,26 @@ void Trade::scanLiveTrade()
         StringReplace(mStrTradeItems, itemId, "");
         activateItem(itemId);
         priceEN = OrderOpenPrice();
-        
-        int orderType = OrderType();
-        bool isBUY = (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP);
-        priceSL = priceEN + (isBUY ? -1 : +1) * mCost/OrderLots() / pow(10, Digits);
+        priceSL = OrderStopLoss();
+
+        tradeSize = OrderLots();
+        point = floor(fabs(priceEN-priceSL) * (pow(10, Digits)));
+        mLot = 0;
+        if (point >= 1) {
+            mLot = floor(mCost / (point + Trd_Com) * 100)/100;
+        }
+        if (mLot != tradeSize) {
+            int orderType = OrderType();
+            if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
+                priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / pow(10, Digits);
+            } else {
+                priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / pow(10, Digits);
+            }
+        }
+        // TODO: Store original SL
+        // if stored original SL == "" -> find it
+        // else reload them
+
         priceTP = OrderTakeProfit();
         if (ObjectFind(cPtWD) < 0) {
             if (priceTP <= 0.0) {
