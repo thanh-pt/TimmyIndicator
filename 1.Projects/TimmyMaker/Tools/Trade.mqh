@@ -570,7 +570,7 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     // Auto adjust 4R
     else if (gContextMenu.mActiveItemStr == CTX_4R) {
         onItemDrag(itemId, objId);
-        adjustRR(4);
+        adjustRR(4.3);
     }
     // Add TP/SL if they don't have
     else if (gContextMenu.mActiveItemStr == CTX_ADDSLTP) {

@@ -102,7 +102,6 @@ string NumToStr(int num, int size)
 void loadData()
 {
     gTradeCount = 0;
-    long chartID = ChartID();
     string objEn = "";
     string objEx = "";
     string enData = "";
@@ -123,8 +122,8 @@ void loadData()
         objEx = "sim#3d_ex#" + IntegerToString(idx);
 
         // Step 2: extract data
-        enData = ObjectGetString(chartID, objEn, OBJPROP_TOOLTIP);
-        exData = ObjectGetString(chartID, objEx, OBJPROP_TOOLTIP);
+        enData = ObjectGetString(0, objEn, OBJPROP_TOOLTIP);
+        exData = ObjectGetString(0, objEx, OBJPROP_TOOLTIP);
         StringSplit(enData,'\n',sparamItems);
         lotSize = StrToDouble(StringSubstr(sparamItems[1], 6, 4));
         isBuy   = ((color)ObjectGet(objEn, OBJPROP_COLOR) == clrBlue);
@@ -152,7 +151,7 @@ void setTableTextLine(int idx, string text)
     ObjectSetText(objName, text, 12, "Consolas", gTextColor);
     ObjectSet(objName, OBJPROP_XDISTANCE, 10);
     ObjectSet(objName, OBJPROP_YDISTANCE, 10 + idx * 14);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
 }
 
 string composeTableLineText(int wkNum, int tp, int be, int sl)
@@ -181,7 +180,7 @@ void displayData()
     ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);
     ObjectSetText(objName, "██", 400, "Consolas", clrWhiteSmoke);
     ObjectSet(objName, OBJPROP_XDISTANCE, 0);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
 
     int tbLn = 0;
     setTableTextLine(tbLn++, "+----------------------------------+ +-----------------------+");
@@ -360,9 +359,9 @@ void drawButton(int index, string text)
     ObjectSetText(objName, StringSubstr(BGBLOCK, 0, StringLen(text)), 15, "Consolas", clrGainsboro);
     ObjectSet(objName, OBJPROP_XDISTANCE, 5);
     ObjectSet(objName, OBJPROP_YDISTANCE, index * TXT_SPACING);
-    ObjectSetString(ChartID() , objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(ChartID(), objName, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
-    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR , ANCHOR_RIGHT_UPPER);
+    ObjectSetString(0 , objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSet(objName, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
+    ObjectSet(objName, OBJPROP_ANCHOR , ANCHOR_RIGHT_UPPER);
     //--------------------------------------------
     objName = APP_TAG + "#Btn:" + IntegerToString(index);
     ObjectCreate(objName, OBJ_LABEL, 1, 0, 0);
@@ -371,9 +370,9 @@ void drawButton(int index, string text)
     ObjectSet(objName, OBJPROP_COLOR, clrBlack);
     ObjectSet(objName, OBJPROP_XDISTANCE, 5+3);
     ObjectSet(objName, OBJPROP_YDISTANCE, index * TXT_SPACING);
-    ObjectSetString(ChartID() , objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(ChartID(), objName, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
-    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR , ANCHOR_RIGHT_UPPER);
+    ObjectSetString(0 , objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSet(objName, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
+    ObjectSet(objName, OBJPROP_ANCHOR , ANCHOR_RIGHT_UPPER);
 }
 
 void drawTextLabel(int index, string text, datetime time1, double price1, int anchor)
@@ -382,13 +381,13 @@ void drawTextLabel(int index, string text, datetime time1, double price1, int an
     ObjectCreate(objName, OBJ_TEXT, 1, 0, 0);
     // Default
     ObjectSet(objName, OBJPROP_BACK, true);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSet(objName, OBJPROP_HIDDEN, true);
     // Basic
     ObjectSet(objName, OBJPROP_TIME1, time1);
     ObjectSet(objName, OBJPROP_PRICE1, price1);
     ObjectSetText(objName, text, 7, NULL, clrBlack);
-    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, anchor);
+    ObjectSet(objName, OBJPROP_ANCHOR, anchor);
 }
 
 void drawDot(int index, datetime time1, double price1)
@@ -397,13 +396,13 @@ void drawDot(int index, datetime time1, double price1)
     ObjectCreate(objName, OBJ_TEXT, 1, 0, 0);
     // Default
     // ObjectSet(objName, OBJPROP_BACK, true);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, DoubleToString(price1, 1));
-    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, DoubleToString(price1, 1));
+    ObjectSet(objName, OBJPROP_HIDDEN, true);
     // Basic
     ObjectSet(objName, OBJPROP_TIME1, time1);
     ObjectSet(objName, OBJPROP_PRICE1, price1);
     ObjectSetText(objName, "n", 4, "webdings", clrBlack);
-    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, ANCHOR_CENTER);
+    ObjectSet(objName, OBJPROP_ANCHOR, ANCHOR_CENTER);
 }
 
 void drawVerticalLine(int index, string text, datetime time1)
@@ -412,8 +411,8 @@ void drawVerticalLine(int index, string text, datetime time1)
     ObjectCreate(objName, OBJ_VLINE, 1, 0, 0);
     // Default
     ObjectSet(objName, OBJPROP_BACK, true);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSet(objName, OBJPROP_HIDDEN, true);
     // Basic
     ObjectSet(objName, OBJPROP_TIME1, time1);
     ObjectSetText(objName, text);

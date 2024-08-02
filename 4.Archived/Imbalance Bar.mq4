@@ -104,7 +104,7 @@ void drawImb(int index, const datetime& time, const double& price1, const double
         ObjectCreate(objName, OBJ_RECTANGLE, 0, 0, 0);
         ObjectSet(objName, OBJPROP_BACK, true);
         ObjectSet(objName, OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+        ObjectSet(objName, OBJPROP_HIDDEN, true);
     }
     ObjectSet(objName, OBJPROP_COLOR, clr);
     ObjectSet(objName, OBJPROP_TIME1, time);

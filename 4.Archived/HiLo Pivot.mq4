@@ -147,7 +147,7 @@ void loadPivotDrawing()
         while(hidePivot(pIdx++) == true){}
         return;
     }
-    ChartGetInteger(ChartID(), CHART_SCALE, 0, gChartScale);
+    ChartGetInteger(0, CHART_SCALE, 0, gChartScale);
     int bars_count=WindowBarsPerChart();
     int bar=WindowFirstVisibleBar()-2;
     if (gChartScale >= InpChartScaleDisplay) {
@@ -181,11 +181,11 @@ void drawPivot(int index, string _text, int _size, color _color, int _anchor, co
         ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
         ObjectSet(objName, OBJPROP_BACK, false);
         ObjectSet(objName, OBJPROP_SELECTABLE, false);
-        ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+        ObjectSet(objName, OBJPROP_HIDDEN, true);
     }
     ObjectSetText(objName, _text, _size, NULL, _color);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, IntegerToString((int)(price*100000)%100));
-    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, _anchor);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, IntegerToString((int)(price*100000)%100));
+    ObjectSet(objName, OBJPROP_ANCHOR, _anchor);
     ObjectSet(objName, OBJPROP_TIME1, time);
     ObjectSet(objName, OBJPROP_PRICE1, price);
 }

@@ -148,7 +148,7 @@ void OnChartEvent(const int id,
 
 void scanWindow(){
     if (ChartPeriod() >= PERIOD_H4) return;
-    gPeriodSep = (bool)ChartGetInteger(ChartID(),CHART_SHOW_PERIOD_SEP);
+    gPeriodSep = (bool)ChartGetInteger(0,CHART_SHOW_PERIOD_SEP);
     gLineIdx    = 0;
     gLabelIdx   = 0;
     gRectIdx    = 0;
@@ -268,13 +268,13 @@ void createLabel(int index, string label, datetime time1, double price1, int siz
     // Default
     ObjectSet(objName, OBJPROP_BACK, true);
     ObjectSet(objName, OBJPROP_SELECTABLE, false);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    ObjectSet(objName, OBJPROP_HIDDEN, true);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     // Basic
     ObjectSet(objName, OBJPROP_TIME1, time1);
     ObjectSet(objName, OBJPROP_PRICE1, price1);
+    ObjectSet(objName, OBJPROP_ANCHOR, anchor);
     ObjectSetText(objName, label, size, NULL, cl);
-    ObjectSetInteger(ChartID(), objName, OBJPROP_ANCHOR, anchor);
 }
 
 void createLine(int index, datetime time1, datetime time2, double price1, double price2, color cl){
@@ -284,8 +284,8 @@ void createLine(int index, datetime time1, datetime time2, double price1, double
     ObjectSet(objName, OBJPROP_BACK, true);
     ObjectSet(objName, OBJPROP_RAY, false);
     ObjectSet(objName, OBJPROP_SELECTABLE, false);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    ObjectSet(objName, OBJPROP_HIDDEN, true);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     // Style
     ObjectSet(objName, OBJPROP_STYLE, STYLE_DOT);
     ObjectSet(objName, OBJPROP_WIDTH, 0);
@@ -303,8 +303,8 @@ void createRectangle(int index, datetime time1, datetime time2, double price1, d
     // Default
     ObjectSet(objName, OBJPROP_BACK, true);
     ObjectSet(objName, OBJPROP_SELECTABLE, false);
-    ObjectSetString(ChartID(), objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(ChartID(), objName, OBJPROP_HIDDEN, true);
+    ObjectSet(objName, OBJPROP_HIDDEN, true);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     // Style
     // Basic
     ObjectSet(objName, OBJPROP_COLOR, cl);

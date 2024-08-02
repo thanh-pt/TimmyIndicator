@@ -12,7 +12,6 @@
 string gObjTimer = "CountdownTimer%";
 string gObjBkgnd = "CountdownTimer%Bkgnd";
 string gRemainTimeStr = "";
-long    gChartId = 0;
 bool    gInitTimer = false;
 bool    gInitChart = false;
 int     gX, gY;
@@ -23,7 +22,6 @@ int OnInit()
 {
 //--- indicator buffers mapping
     gInitTimer = false;
-    gChartId = ChartID();
     EventSetTimer(1);
     createTimerLabel();
 //---
@@ -83,9 +81,9 @@ void createTimerLabel(){
     ObjectSet(gObjBkgnd, OBJPROP_COLOR, clrLightGray);
     ObjectSet(gObjBkgnd, OBJPROP_XDISTANCE, 1);
     ObjectSet(gObjBkgnd, OBJPROP_YDISTANCE, 0);
-    ObjectSetString(gChartId , gObjBkgnd, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(gChartId, gObjBkgnd, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
-    ObjectSetInteger(gChartId, gObjBkgnd, OBJPROP_ANCHOR , ANCHOR_RIGHT);
+    ObjectSet(gObjBkgnd, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
+    ObjectSet(gObjBkgnd, OBJPROP_ANCHOR , ANCHOR_RIGHT);
+    ObjectSetString(0 , gObjBkgnd, OBJPROP_TOOLTIP, "\n");
     //--------------------------------------------
     ObjectCreate(gObjTimer, OBJ_LABEL, 0, 0, 0);
     ObjectSetText(gObjTimer, "", 8, "Consolas");
@@ -93,9 +91,9 @@ void createTimerLabel(){
     ObjectSet(gObjTimer, OBJPROP_COLOR, clrBlack);
     ObjectSet(gObjTimer, OBJPROP_XDISTANCE, 1);
     ObjectSet(gObjTimer, OBJPROP_YDISTANCE, 0);
-    ObjectSetString(gChartId , gObjTimer, OBJPROP_TOOLTIP, "\n");
-    ObjectSetInteger(gChartId, gObjTimer, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
-    ObjectSetInteger(gChartId, gObjTimer, OBJPROP_ANCHOR , ANCHOR_RIGHT);
+    ObjectSet(gObjTimer, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
+    ObjectSet(gObjTimer, OBJPROP_ANCHOR , ANCHOR_RIGHT);
+    ObjectSetString(0 , gObjTimer, OBJPROP_TOOLTIP, "\n");
 }
 
 void loadTimer(){
@@ -121,7 +119,7 @@ void loadTimer(){
 
 void updateTimerPosition(){
     if (gInitChart == false) return;
-    ChartTimePriceToXY(gChartId, 0, Time[0], Bid, gX, gY);
+    ChartTimePriceToXY(0, 0, Time[0], Bid, gX, gY);
     ObjectSet(gObjTimer, OBJPROP_YDISTANCE, gY);
     ObjectSet(gObjBkgnd, OBJPROP_YDISTANCE, gY);
 }
