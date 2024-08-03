@@ -206,24 +206,34 @@ void loadBarEnhance(int totalBar)
         if (InpEnhanceWick) {
             Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
             Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
+        } else {
+            Wick1Buf[idx] = EMPTY_VALUE;
+            Wick2Buf[idx] = EMPTY_VALUE;
         }
 
         // Layer 2 - Boder/Body
         Bder1Buf[idx] = Open[idx];
         Bder2Buf[idx] = Close[idx];
-        Body1Buf[idx] = Open[idx];
-        Body2Buf[idx] = Close[idx];
+        if (isDoji == false) {
+            Body1Buf[idx] = Open[idx];
+            Body2Buf[idx] = Close[idx];
+        } else {
+            Body1Buf[idx] = EMPTY_VALUE;
+            Body2Buf[idx] = EMPTY_VALUE;
+        }
 
         // Layer 3 - Isb/Imb
         IsmbBuf1[idx] = EMPTY_VALUE;
         IsmbBuf2[idx] = EMPTY_VALUE;
-        if (gbIsbOn == true && InpIsbClr != clrNONE && High[idx] <= High[idx+1] && Low[idx] >= Low[idx+1]){
-            IsmbBuf1[idx] = MathMax(Open[idx], Close[idx]);
-            IsmbBuf2[idx] = MathMin(Open[idx], Close[idx]);
-        }
-        else if (gbImbOn == true && InpImbClr != clrNONE && idx > 1 && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
-            IsmbBuf1[idx] = MathMin(Open[idx], Close[idx]);
-            IsmbBuf2[idx] = MathMax(Open[idx], Close[idx]);
+        if (isDoji == false) {
+            if (gbIsbOn == true && InpIsbClr != clrNONE && High[idx] <= High[idx+1] && Low[idx] >= Low[idx+1]){
+                IsmbBuf1[idx] = MathMax(Open[idx], Close[idx]);
+                IsmbBuf2[idx] = MathMin(Open[idx], Close[idx]);
+            }
+            else if (gbImbOn == true && InpImbClr != clrNONE && idx > 1 && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
+                IsmbBuf1[idx] = MathMin(Open[idx], Close[idx]);
+                IsmbBuf2[idx] = MathMax(Open[idx], Close[idx]);
+            }
         }
 
         // Layer 4 - Line UP/Down -> mang tính chất trang trí
