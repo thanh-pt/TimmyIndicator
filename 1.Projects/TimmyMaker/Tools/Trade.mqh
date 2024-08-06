@@ -48,6 +48,7 @@ private:
     double mCost;
     double mStlSpace;
     double mSpread;
+    double mComPoint;
     string mLiveTradeCtx;
     bool   mUserActive;
     string mStrTradeItems;
@@ -149,8 +150,9 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
 
     // Other initialize
     mCost     = Trd_Cost;
-    mSpread   = 10*Trd_Spread / pow(10, Digits);
-    mStlSpace = 10*Trd_SlSpace / pow(10, Digits);
+    mSpread   = Trd_Spread / pow(10, Digits-1);
+    mStlSpace = Trd_SlSpace / pow(10, Digits-1);
+    mComPoint = Trd_Com / pow(10, Digits);
     /* TODO: Chuyển đổi tỷ giá
         string strSymbol = Symbol();
         Example:
@@ -327,13 +329,13 @@ void Trade::refreshData()
     //            TÍNH TOÁN CÁC THỨ
     //-------------------------------------------------
     // 1. Thông tin lệnh
+    if (priceSL == priceBE) return;
     double point       = floor(fabs(priceEN-priceSL) * (pow(10, Digits)));
-    if (point <= 1) return;
-    mLot               = floor(mCost / (point + Trd_Com) * 100)/100;
-    double realCost    = mLot * (point + Trd_Com);
-    double absRR       = (priceTP-priceEN) / (priceEN-priceSL);
-    double be          = (priceBE-priceEN) / (priceEN-priceSL);
-    double profit      = mLot * (absRR*point - Trd_Com);
+    double absRR    = (priceTP-priceEN) / (priceEN-priceSL);
+    double absBe    = (priceBE-priceEN) / (priceEN-priceSL);
+    mLot = floor(mCost / (point + Trd_Com) * 100)/100;
+    double realCost = mLot * (point + Trd_Com);
+    double profit   = mLot * (absRR*point - Trd_Com);
 
     // 2. Thông tin hiển thị
     bool   selectState = (bool)ObjectGet(cPtWD, OBJPROP_SELECTED);
@@ -349,11 +351,11 @@ void Trade::refreshData()
     if (showStats) {
         strTpInfo += DoubleToString(absRR*point/10, 1) + "ᴘ";
         if (strBeInfo != "") strBeInfo += ": ";
-        strBeInfo += DoubleToString(be,1) + "r ~ " + DoubleToString(be * point / 10, 1) + "ᴘ ";
+        strBeInfo += DoubleToString(absBe,1) + "r ~ " + DoubleToString(absBe * point / 10, 1) + "ᴘ ";
         strSlInfo += DoubleToString(point/10, 1) + "ᴘ";
     }
     else {
-        if (strBeInfo != "") strBeInfo += ": " + DoubleToString(be,1) + "r";
+        if (strBeInfo != "") strBeInfo += ": " + DoubleToString(absBe,1) + "r";
     }
     //-------------------------------------------------
     if (showDollar) {
@@ -368,7 +370,7 @@ void Trade::refreshData()
     }
     string strRRInfo = "";
     string strRR = DoubleToString(absRR,1) + "r";
-    if (Trd_Com > 0) {
+    if (Trd_Com > 0 && realCost > 0) {
         strRR += "/" + DoubleToString(profit/realCost,1) + "ʀ";
     }
     for (int i = 0; i < StringLen(strRR); i++) {
@@ -560,17 +562,17 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     // Auto adjust 2R
     else if (gContextMenu.mActiveItemStr == CTX_2R) {
         onItemDrag(itemId, objId);
-        adjustRR(2.3);
+        adjustRR(2);
     }
     // Auto adjust 3R
     else if (gContextMenu.mActiveItemStr == CTX_3R) {
         onItemDrag(itemId, objId);
-        adjustRR(3.3);
+        adjustRR(3);
     }
     // Auto adjust 4R
     else if (gContextMenu.mActiveItemStr == CTX_4R) {
         onItemDrag(itemId, objId);
-        adjustRR(4.3);
+        adjustRR(4);
     }
     // Add TP/SL if they don't have
     else if (gContextMenu.mActiveItemStr == CTX_ADDSLTP) {
@@ -699,6 +701,7 @@ void Trade::restoreBacktestingTrade()
 
 void Trade::adjustRR(double rr)
 {
-    priceEN = (priceTP + rr*priceSL) / (rr+1);
+    bool isBUY = (priceTP > priceSL);
+    priceEN = (priceTP + rr*priceSL) / (rr+1) + (isBUY ? -1 : 1) * mComPoint;
     refreshData();
 }

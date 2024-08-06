@@ -37,8 +37,8 @@ color   gBderDnClr;
 color   gBodyUpClr;
 color   gBodyDnClr;
 
-bool    gbImbOn = false;
-bool    gbIsbOn = false;
+bool    gbImbOn = true;
+bool    gbIsbOn = true;
 
 int     gArrSizeMap[2][6];
 
@@ -57,12 +57,13 @@ enum EBarMap{
     eBarLnN02,
 };
 
-input color InpIsbClr = clrWhite;    // Inside Bar Color
-input color InpImbClr = clrOrange;   // Imbalance Color (M)
+input color InpIsbClr = clrRoyalBlue;    // Inside Bar Color
+input color InpImbClr = clrGoldenrod;   // Imbalance Color (M)
 input bool InpEnhanceWick = false; // Enhance Wick
-input int InpCandle5 = 13; // Candle 5 (13~17)
-input int InpCandle4 = 6;  // Candle 4 (6~9)
+input string _body; // Body configuration
 input int InpCandle3 = 3;  // Candle 3 (3~5)
+input int InpCandle4 = 6;  // Candle 4 (6~9)
+input int InpCandle5 = 13; // Candle 5 (13~17)
 
 int OnInit()
 {
@@ -90,9 +91,9 @@ int OnInit()
     gArrSizeMap[1][0] = 0;
     gArrSizeMap[1][1] = 1;
     gArrSizeMap[1][2] = 3;  // max 3 <- Inactive
-    gArrSizeMap[1][3] = InpCandle3; // max 5
-    gArrSizeMap[1][4] = InpCandle4; // max 9
-    gArrSizeMap[1][5] = InpCandle5; // max 17
+    gArrSizeMap[1][3] = MathMin(MathMax(InpCandle3, 3 ), 5);  // max 5
+    gArrSizeMap[1][4] = MathMin(MathMax(InpCandle4, 6 ), 9);  // max 9
+    gArrSizeMap[1][5] = MathMin(MathMax(InpCandle5, 13),17);  // max 17
 
     updateStyle();
 
@@ -241,16 +242,17 @@ void loadBarEnhance(int totalBar)
         LineUp02[idx] = EMPTY_VALUE;
         LineDn01[idx] = EMPTY_VALUE;
         LineDn02[idx] = EMPTY_VALUE;
+        double lineOffset = 0.00000001;
         if (isDoji == false){
             if (isGreenBar){
                 LineUp01[idx] = Open[idx];
-                LineUp02[idx] = Open[idx] + 0.0000001;
-                LineDn01[idx] = Close[idx] - 0.0000001;
+                LineUp02[idx] = Open[idx]   + lineOffset;
+                LineDn01[idx] = Close[idx]  - lineOffset;
                 LineDn02[idx] = Close[idx];
             } else {
                 LineUp01[idx] = Open[idx];
-                LineUp02[idx] = Open[idx] - 0.0000001;
-                LineDn01[idx] = Close[idx] + 0.0000001;
+                LineUp02[idx] = Open[idx]   - lineOffset;
+                LineDn01[idx] = Close[idx]  + lineOffset;
                 LineDn02[idx] = Close[idx];
             }
         }
