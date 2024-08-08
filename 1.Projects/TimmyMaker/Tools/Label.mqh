@@ -223,19 +223,18 @@ void LabelText::onItemChange(const string &itemId, const string &objId)
     
     ObjectSet(cTxtM, OBJPROP_COLOR, c);
     ObjectSet(cTxtM, OBJPROP_FONTSIZE, size);
-    ObjectSetString(0, cTxtM, OBJPROP_FONT, font);
     ObjectSet(cTxtM, OBJPROP_ANCHOR, anchor);
     ObjectSet(cTxtM, OBJPROP_CORNER, corner);
+    ObjectSetString(0, cTxtM, OBJPROP_FONT, font);
     ObjectSet(iTxBg, OBJPROP_FONTSIZE, size*2);
-    ObjectSetString(0,  iTxBg, OBJPROP_FONT, font);
     ObjectSet(iTxBg, OBJPROP_ANCHOR, anchor);
     ObjectSet(iTxBg, OBJPROP_CORNER, corner);
+    ObjectSetString(0,  iTxBg, OBJPROP_FONT, font);
 
     int idx = 1;
     string objCTxtX = cTxtX +"#"+ IntegerToString(idx);
     string objiTBgX = iTBgX +"#"+ IntegerToString(idx);
-    while (ObjectFind(objCTxtX) >= 0)
-    {
+    while (ObjectFind(objCTxtX) >= 0) {
         ObjectSet(objCTxtX, OBJPROP_COLOR, c);
         ObjectSet(objCTxtX, OBJPROP_FONTSIZE, size);
         ObjectSet(objCTxtX, OBJPROP_ANCHOR, anchor);
