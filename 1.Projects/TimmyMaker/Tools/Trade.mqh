@@ -20,24 +20,25 @@ enum eDisplay
     OPTION, // Option
 };
 
-input string          Trd_; // ●  T R A D E  ●
+input string    Trd_; // ●  T R A D E  ●
 //-------------------------------------------------
-input bool            Trd_TrackTrade    = false;   // Track Trade:
-input double          Trd_Cost          = 1.5;     // Cost ($)
-input double          Trd_Com           = 7;       // Commission ($)
-input double          Trd_Spread        = 0.0;     // Spread
-input double          Trd_SlSpace       = 0.1;     // Space for Price
+input bool      Trd_TrackTrade    = false;   // Track Trade
+input double    Trd_Cost          = 1.5;     // Cost ($)
+input double    Trd_Com           = 7;       // Commission ($)
+input double    Trd_Spread        = 0.0;     // Spread (pip)
+input double    Trd_SlSpace       = 0.1;     // Space for Price (pip)
+//-------------------------------------------------
 eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
 eDisplay    Trd_ShowDollar  = OPTION;   //Show Dollar
 //-------------------------------------------------
-input string          Trd_apperence; //→ Color:
-      int             Trd_TextSize      = 8;                   // Text Size
-input color           Trd_TpColor       = clrSteelBlue;      // TP Line
-input color           Trd_SlColor       = clrChocolate;      // SL Line
-input color           Trd_EnColor       = clrChocolate;      // EN Line
-      int             Trd_LineWidth     = 2;                   // Line Width
-input color           Trd_SlBkgrdColor  = clrLavenderBlush;  // SlBg
-input color           Trd_TpBkgrdColor  = clrWhiteSmoke;     // TpBg
+string      Trd_apperence; //→ Color:
+int         Trd_TextSize      = 8;                   // Text Size
+color       Trd_TpColor       = clrSteelBlue;      // TP Line
+color       Trd_SlColor       = clrChocolate;      // SL Line
+color       Trd_EnColor       = clrChocolate;      // EN Line
+int         Trd_LineWidth     = 2;                   // Line Width
+color       Trd_SlBkgrdColor  = clrLavenderBlush;  // SlBg
+color       Trd_TpBkgrdColor  = clrWhiteSmoke;     // TpBg
 
 
 class Trade : public BaseItem
