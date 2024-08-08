@@ -37,9 +37,7 @@ public:
     void controlHold()
     {
         int shift = iBarShift(ChartSymbol(), ChartPeriod(), mMouseTime);
-        if (shift <= 0) {
-            return;
-        }
+        if (mMouseTime > Time[0]) return;
         do
         {
             if (mMousePrice <= Low[shift]) {

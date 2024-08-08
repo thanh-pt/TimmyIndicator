@@ -608,6 +608,7 @@ void Trade::scanLiveTrade()
     string strNewTradeItems = "";
     double point = 0;
     double tradeSize = 0;
+    double orgSL = 0;
     for (int i = 0 ; i < OrdersTotal(); i++) {
         if (OrderSelect(i, SELECT_BY_POS) == false) continue;
         if (OrderSymbol() != Symbol()) continue;
@@ -616,25 +617,25 @@ void Trade::scanLiveTrade()
         StringReplace(mStrTradeItems, itemId, "");
         activateItem(itemId);
         priceEN = OrderOpenPrice();
-        priceSL = OrderStopLoss();
-
-        tradeSize = OrderLots();
-        point = floor(fabs(priceEN-priceSL) * (pow(10, Digits)));
-        mLot = 0;
-        if (point >= 1) {
-            mLot = floor(mCost / (point + Trd_Com) * 100)/100;
-        }
-        if (mLot != tradeSize) {
-            int orderType = OrderType();
-            if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
-                priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / pow(10, Digits);
-            } else {
-                priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / pow(10, Digits);
+        orgSL = StrToDouble(ObjectDescription(cPtSL));
+        if (orgSL <= 0.0) { //Invalid stored OrgSL
+            priceSL = OrderStopLoss();
+            tradeSize = OrderLots();
+            point = floor(fabs(priceEN-priceSL) * (pow(10, Digits)));
+            mLot = 0;
+            if (point != 0) mLot = floor(mCost / (point + Trd_Com) * 100)/100;
+            if (mLot != tradeSize) {
+                int orderType = OrderType();
+                if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
+                    priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / pow(10, Digits);
+                } else {
+                    priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / pow(10, Digits);
+                }
             }
+            setTextContent(cPtSL, DoubleToString(priceSL, Digits));
+        } else {
+            priceSL = orgSL;
         }
-        // TODO: Store original SL
-        // if stored original SL == "" -> find it
-        // else reload them
 
         priceTP = OrderTakeProfit();
         if (ObjectFind(cPtWD) < 0) {
