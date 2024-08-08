@@ -38,7 +38,7 @@ color   gBodyUpClr;
 color   gBodyDnClr;
 
 bool    gbImbOn = true;
-bool    gbIsbOn = true;
+bool    gbIsbOn = false;
 
 int     gArrSizeMap[2][6];
 
@@ -57,10 +57,11 @@ enum EBarMap{
     eBarLnN02,
 };
 
-input color InpIsbClr = clrRoyalBlue;    // Inside Bar Color
+input bool  InpFunctionCandle = true;     // Function Candle:
+input color InpIsbClr = clrRoyalBlue;   // Inside Bar Color (N)
 input color InpImbClr = clrGoldenrod;   // Imbalance Color (M)
-input bool InpEnhanceWick = false; // Enhance Wick
-input string _body; // Body configuration
+input bool InpWickEnhance = false; // Wick Enhance:
+input bool InpBodyEnhance = false; // Body Enhance:
 input int InpCandle3 = 3;  // Candle 3 (3~5)
 input int InpCandle4 = 6;  // Candle 4 (6~9)
 input int InpCandle5 = 13; // Candle 5 (13~17)
@@ -91,9 +92,14 @@ int OnInit()
     gArrSizeMap[1][0] = 0;
     gArrSizeMap[1][1] = 1;
     gArrSizeMap[1][2] = 3;  // max 3 <- Inactive
-    gArrSizeMap[1][3] = MathMin(MathMax(InpCandle3, 3 ), 5);  // max 5
-    gArrSizeMap[1][4] = MathMin(MathMax(InpCandle4, 6 ), 9);  // max 9
-    gArrSizeMap[1][5] = MathMin(MathMax(InpCandle5, 13),17);  // max 17
+    gArrSizeMap[1][3] = 3 ;
+    gArrSizeMap[1][4] = 6 ;
+    gArrSizeMap[1][5] = 13;
+    if (InpBodyEnhance) {
+        gArrSizeMap[1][3] = MathMin(MathMax(InpCandle3, 3 ), 5);  // max 5
+        gArrSizeMap[1][4] = MathMin(MathMax(InpCandle4, 6 ), 9);  // max 9
+        gArrSizeMap[1][5] = MathMin(MathMax(InpCandle5, 13),17);  // max 17
+    }
 
     updateStyle();
 
@@ -195,8 +201,25 @@ void loadBarEnhance(int totalBar)
 {
     bool isGreenBar = false;
     bool isDoji = false;
+    bool isFuncBar = false;
+    double lineOffset = 0.00000001;
     for (int idx = totalBar-2; idx > 0; idx--) { // ignore first cancel
-        isDoji = false;
+        // Clean Data:
+        Wick1Buf[idx] = EMPTY_VALUE;
+        Wick2Buf[idx] = EMPTY_VALUE;
+        Bder1Buf[idx] = EMPTY_VALUE;
+        Bder2Buf[idx] = EMPTY_VALUE;
+        Body1Buf[idx] = EMPTY_VALUE;
+        Body2Buf[idx] = EMPTY_VALUE;
+        IsmbBuf1[idx] = EMPTY_VALUE;
+        IsmbBuf2[idx] = EMPTY_VALUE;
+        LineUp01[idx] = EMPTY_VALUE;
+        LineUp02[idx] = EMPTY_VALUE;
+        LineDn01[idx] = EMPTY_VALUE;
+        LineDn02[idx] = EMPTY_VALUE;
+        // Define bar type
+        isDoji      = false;
+        isFuncBar   = false;
         if      (Open[idx] > Close[idx]) isGreenBar = false;
         else if (Open[idx] < Close[idx]) isGreenBar = true;
         else    {
@@ -204,46 +227,37 @@ void loadBarEnhance(int totalBar)
             isDoji = true;
         }
         // Layer 1 - Wick
-        if (InpEnhanceWick) {
+        if (InpWickEnhance) {
             Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
             Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
-        } else {
-            Wick1Buf[idx] = EMPTY_VALUE;
-            Wick2Buf[idx] = EMPTY_VALUE;
         }
 
         // Layer 2 - Boder/Body
-        Bder1Buf[idx] = Open[idx];
-        Bder2Buf[idx] = Close[idx];
-        if (isDoji == false) {
-            Body1Buf[idx] = Open[idx];
-            Body2Buf[idx] = Close[idx];
-        } else {
-            Body1Buf[idx] = EMPTY_VALUE;
-            Body2Buf[idx] = EMPTY_VALUE;
+        if (InpBodyEnhance) {
+            Bder1Buf[idx] = Open[idx];
+            Bder2Buf[idx] = Close[idx];
+            if (isDoji == false) {
+                Body1Buf[idx] = Open[idx];
+                Body2Buf[idx] = Close[idx];
+            }
         }
 
         // Layer 3 - Isb/Imb
-        IsmbBuf1[idx] = EMPTY_VALUE;
-        IsmbBuf2[idx] = EMPTY_VALUE;
-        if (isDoji == false) {
+        if (InpFunctionCandle && isDoji == false) {
             if (gbIsbOn == true && InpIsbClr != clrNONE && High[idx] <= High[idx+1] && Low[idx] >= Low[idx+1]){
                 IsmbBuf1[idx] = MathMax(Open[idx], Close[idx]);
                 IsmbBuf2[idx] = MathMin(Open[idx], Close[idx]);
+                isFuncBar = true;
             }
             else if (gbImbOn == true && InpImbClr != clrNONE && idx > 1 && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
                 IsmbBuf1[idx] = MathMin(Open[idx], Close[idx]);
                 IsmbBuf2[idx] = MathMax(Open[idx], Close[idx]);
+                isFuncBar = true;
             }
         }
 
         // Layer 4 - Line UP/Down -> mang tính chất trang trí
-        LineUp01[idx] = EMPTY_VALUE;
-        LineUp02[idx] = EMPTY_VALUE;
-        LineDn01[idx] = EMPTY_VALUE;
-        LineDn02[idx] = EMPTY_VALUE;
-        double lineOffset = 0.00000001;
-        if (isDoji == false){
+        if (isDoji == false && (InpBodyEnhance || isFuncBar)){
             if (isGreenBar){
                 LineUp01[idx] = Open[idx];
                 LineUp02[idx] = Open[idx]   + lineOffset;
