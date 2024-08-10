@@ -31,7 +31,7 @@ input bool inpHiFreqUpdate = false;             // Update Frequency
 input bool inpDaySaving    = false;             // Day Saving for winter
 
 input string _display;                          // - - - Display Option - - -
-input bool inpDisplayAs = true;                 // Asian
+input bool inpDisplayAs = false;                // Asian
 input bool inpDisplayLd = true;                 // London
 input bool inpDisplayNy = true;                 // NewYork
 
@@ -50,14 +50,14 @@ input string inpChPoint = "•";                  // Charecter
 input int    inpChSize  = 7;                    // Size
 
 
-int asBegHour = 0;
-int asEndHour = 6;
-int ldBegHour = 7;
-int ldEndHour = 11;
-int nyBegHour = 12;
-int nyEndHour = 16;
-int winterBeg = 10;
-int winterEnd = 4;
+input int asBegHour = 0;  // Asian Start
+input int asEndHour = 6;  // Asian End
+input int ldBegHour = 7;  // London Start
+input int ldEndHour = 11; // London End
+input int nyBegHour = 12; // NewYork Start
+input int nyEndHour = 16; // NewYork End
+input int winterBeg = 10;
+input int winterEnd = 4; 
 
 
 int          gChartPeriod;

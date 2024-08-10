@@ -249,7 +249,7 @@ void loadBarEnhance(int totalBar)
                 IsmbBuf2[idx] = MathMin(Open[idx], Close[idx]);
                 isFuncBar = true;
             }
-            else if (gbImbOn == true && InpImbClr != clrNONE && idx > 1 && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
+            else if (gbImbOn == true && InpImbClr != clrNONE && idx >= 1 && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
                 IsmbBuf1[idx] = MathMin(Open[idx], Close[idx]);
                 IsmbBuf2[idx] = MathMax(Open[idx], Close[idx]);
                 isFuncBar = true;
