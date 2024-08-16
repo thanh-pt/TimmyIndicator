@@ -24,28 +24,28 @@ enum eStyle{
 };
 
 input string _config;                           // - - - Configuration - - -
-input eStyle inpStyle = eStyleBorderColor;      // S T Y L E
-input bool inpDisplayLable = false;             // L A B E L
+input eStyle inpStyle = eStyleLineBox;          // S T Y L E
+input bool inpDisplayLable = true;              // L A B E L
 input bool inpHiFreqUpdate = false;             // Update Frequency
 
 input string _display;                          // - - - Display Option - - -
-input bool inpDisplayAs = false;                // Asian
+input bool inpDisplayAs = true;                 // Asian
 input bool inpDisplayLd = true;                 // London
 input bool inpDisplayNy = true;                 // NewYork
 
-input string _lineColor;                        // - - - Main Color - - -
+input string _lineColor;                          // - - - Main Color - - -
 input color inpAsColor = clrTeal;               // Asian
 input color inpLdColor = clrForestGreen;        // London
 input color inpNyColor = clrBrown;              // NewYork
 
-input string _bgBox;                            // - - - Background Color - - -
+input string _bgBox;                              // - - - Background Color - - -
 input color inpAsBgColor = clrAliceBlue;        // Asian
 input color inpLdBgColor = clrHoneydew;         // London
 input color inpNyBgColor = clrLavenderBlush;    // NewYork
 
-input string _charLine;                         // - - - Hi/Lo Char Line Configuration - - -
-input string inpChPoint = "•";                  // Charecter
-input int    inpChSize  = 7;                    // Size
+input string _charLine;           // - - - Hi/Lo Char Line Configuration - - -
+input string inpChPoint = "•";    // Charecter
+input int    inpChSize  = 7;      // Size
 
 input string _ssTimezone;         // - - - Timezone - - -
 input int inpServerTimeZone  = 0; // Server Timezone:
