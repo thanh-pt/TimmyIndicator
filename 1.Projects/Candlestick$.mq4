@@ -129,7 +129,7 @@ int OnCalculate(const int rates_total,
     if (gChartMode == CHART_LINE){
         gLastWaveIdx = (int)StringToInteger(ObjectDescription("LastWaveIndex*"));
         loadBarEnhance(gLastWaveIdx+2);
-        if (gTotalRate == rates_total) return rates_total;
+        gTotalRate = rates_total;
         return(rates_total);
     }
     if (gTotalRate == rates_total) return rates_total;
@@ -166,10 +166,10 @@ void OnChartEvent(const int id,
         updateStyle();
         if (gChartMode == CHART_LINE){
             gLastWaveIdx = (int)StringToInteger(ObjectDescription("LastWaveIndex*"));
-            if (Wick1Buf[gLastWaveIdx+1] != EMPTY_VALUE) {
-                clearBar(gTotalRate);
-            }
             loadBarEnhance(gLastWaveIdx+2);
+        }
+        else {
+            loadBarEnhance(gTotalRate);
         }
     }
 }
@@ -215,23 +215,6 @@ void updateStyle()
         SetIndexStyle(eBarLnU02, DRAW_HISTOGRAM, 0, 0, clrNONE);
         SetIndexStyle(eBarLnN01, DRAW_HISTOGRAM, 0, 0, clrNONE);
         SetIndexStyle(eBarLnN02, DRAW_HISTOGRAM, 0, 0, clrNONE);
-    }
-}
-
-void clearBar(int totalBar){
-    for (int idx = totalBar-2; idx > 0; idx--) {
-        Wick1Buf[idx] = EMPTY_VALUE;
-        Wick2Buf[idx] = EMPTY_VALUE;
-        Bder1Buf[idx] = EMPTY_VALUE;
-        Bder2Buf[idx] = EMPTY_VALUE;
-        Body1Buf[idx] = EMPTY_VALUE;
-        Body2Buf[idx] = EMPTY_VALUE;
-        IsmbBuf1[idx] = EMPTY_VALUE;
-        IsmbBuf2[idx] = EMPTY_VALUE;
-        LineUp01[idx] = EMPTY_VALUE;
-        LineUp02[idx] = EMPTY_VALUE;
-        LineDn01[idx] = EMPTY_VALUE;
-        LineDn02[idx] = EMPTY_VALUE;
     }
 }
 
@@ -307,17 +290,22 @@ void loadBarEnhance(int totalBar)
             }
         }
     }
-    if (gChartMode == CHART_LINE) return;
-    Wick1Buf[0] = EMPTY_VALUE;
-    Wick2Buf[0] = EMPTY_VALUE;
-    Bder1Buf[0] = EMPTY_VALUE;
-    Bder2Buf[0] = EMPTY_VALUE;
-    Body1Buf[0] = EMPTY_VALUE;
-    Body2Buf[0] = EMPTY_VALUE;
-    IsmbBuf1[0] = EMPTY_VALUE;
-    IsmbBuf2[0] = EMPTY_VALUE;
-    LineUp01[0] = EMPTY_VALUE;
-    LineUp02[0] = EMPTY_VALUE;
-    LineDn01[0] = EMPTY_VALUE;
-    LineDn02[0] = EMPTY_VALUE;
+    if (totalBar < gTotalRate) {
+        int i = totalBar;
+        while (Wick1Buf[i] != EMPTY_VALUE) {
+            Wick1Buf[i] = EMPTY_VALUE;
+            Wick2Buf[i] = EMPTY_VALUE;
+            Bder1Buf[i] = EMPTY_VALUE;
+            Bder2Buf[i] = EMPTY_VALUE;
+            Body1Buf[i] = EMPTY_VALUE;
+            Body2Buf[i] = EMPTY_VALUE;
+            IsmbBuf1[i] = EMPTY_VALUE;
+            IsmbBuf2[i] = EMPTY_VALUE;
+            LineUp01[i] = EMPTY_VALUE;
+            LineUp02[i] = EMPTY_VALUE;
+            LineDn01[i] = EMPTY_VALUE;
+            LineDn02[i] = EMPTY_VALUE;
+            i++;
+        }
+    }
 }
