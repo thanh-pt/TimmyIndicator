@@ -277,7 +277,8 @@ void Alert::checkAlert()
         if (mIsAlertGoOver) {
             StringReplace(mCurAlertText, ALERT_INDI_H, "");
             StringReplace(mCurAlertText, ALERT_INDI_L, "");
-            sendNotification(   (isHighAlert ? ALERT_INDI_H : ALERT_INDI_L) + DoubleToString(mCurAlertPrice, Digits) + (mCurAlertText!="" ? "\n" : "")
+            mCurAlertText = ChartSymbol() + mCurAlertText;
+            sendNotification(   (isHighAlert ? ALERT_INDI_H : ALERT_INDI_L) + DoubleToString(mCurAlertPrice, Digits) + "\n"
                                 + mCurAlertText);
             ObjectDelete(mListAlertArr[i]);
         }
@@ -286,7 +287,8 @@ void Alert::checkAlert()
             if (Bid == mCurAlertPrice) {
                 StringReplace(mCurAlertText, ALERT_INDI_H, "");
                 StringReplace(mCurAlertText, ALERT_INDI_L, "");
-                sendNotification(   (isHighAlert ? "↑﹉" : "↓﹍") + DoubleToString(mCurAlertPrice, Digits) + (mCurAlertText!="" ? "\n" : "")
+                mCurAlertText = ChartSymbol() + mCurAlertText;
+                sendNotification(   (isHighAlert ? "↑﹉" : "↓﹍") + DoubleToString(mCurAlertPrice, Digits) + "\n"
                                     + mCurAlertText);
             }
         }

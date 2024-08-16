@@ -23,12 +23,10 @@ enum eStyle{
     eStyleBorderColor,  // B O D E R   C O L O R
 };
 
-
 input string _config;                           // - - - Configuration - - -
 input eStyle inpStyle = eStyleBorderColor;      // S T Y L E
 input bool inpDisplayLable = false;             // L A B E L
 input bool inpHiFreqUpdate = false;             // Update Frequency
-input bool inpDaySaving    = false;             // Day Saving for winter
 
 input string _display;                          // - - - Display Option - - -
 input bool inpDisplayAs = false;                // Asian
@@ -49,16 +47,24 @@ input string _charLine;                         // - - - Hi/Lo Char Line Configu
 input string inpChPoint = "•";                  // Charecter
 input int    inpChSize  = 7;                    // Size
 
+input string _ssTimezone;         // - - - Timezone - - -
+input int inpServerTimeZone  = 0; // Server Timezone:
+input int inpLocalTimeZone   = 7; // Local Timezone:
+input string _ssTime;        // - - - Session Time (Local) - - -
+input int inpAsBegHour = 7;  // Asian Start
+input int inpAsEndHour = 11; // Asian End
+input int inpLdBegHour = 14; // London Start
+input int inpLdEndHour = 17; // London End
+input int inpNyBegHour = 19; // NewYork Start
+input int inpNyEndHour = 22; // NewYork End
 
-input int asBegHour = 0;  // Asian Start
-input int asEndHour = 6;  // Asian End
-input int ldBegHour = 7;  // London Start
-input int ldEndHour = 11; // London End
-input int nyBegHour = 12; // NewYork Start
-input int nyEndHour = 16; // NewYork End
-input int winterBeg = 10;
-input int winterEnd = 4; 
+bool inpDaySaving    = false; // Day Saving for winter:
+int winterBeg = 10; // Winter begin:
+int winterEnd = 4;  // Winter end:
 
+int asBegHour = 7;
+int ldBegHour = 14;
+int nyBegHour = 19;
 
 int          gChartPeriod;
 bool         gPeriodSep;
@@ -83,6 +89,12 @@ string  gSsLableMap[] = {"As", "Ld", "Ny"};
 color   gSsColor[3];
 color   gSsBgColor[3];
 int     gSsBarNum[3];
+
+int adjustTime(int t){
+    if (t > 24) t = t - 24;
+    else if (t < 0) t = t + 24;
+    return t;
+}
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -92,9 +104,12 @@ int OnInit()
 //---
     gChartPeriod = ChartPeriod();
     gSymbol = Symbol();
-    gSsBarNum[eAs] = (asEndHour - asBegHour) * 60 / gChartPeriod;
-    gSsBarNum[eLd] = (ldEndHour - ldBegHour) * 60 / gChartPeriod;
-    gSsBarNum[eNy] = (nyEndHour - nyBegHour) * 60 / gChartPeriod;
+    asBegHour = adjustTime(inpAsBegHour - inpLocalTimeZone + inpServerTimeZone);
+    ldBegHour = adjustTime(inpLdBegHour - inpLocalTimeZone + inpServerTimeZone);
+    nyBegHour = adjustTime(inpNyBegHour - inpLocalTimeZone + inpServerTimeZone);
+    gSsBarNum[eAs] = (inpAsEndHour - inpAsBegHour) * 60 / gChartPeriod;
+    gSsBarNum[eLd] = (inpLdEndHour - inpLdBegHour) * 60 / gChartPeriod;
+    gSsBarNum[eNy] = (inpNyEndHour - inpNyBegHour) * 60 / gChartPeriod;
     gSsColor[0] = inpAsColor;
     gSsColor[1] = inpLdColor;
     gSsColor[2] = inpNyColor;
@@ -253,12 +268,14 @@ void drawSession(eSession ss, int beginBar, int endBar)
             if (Low[i] < currLo) currLo = Low[i];
         }
     }
-    if (inpDisplayLable){
-        createLabel(gLabelIdx++, (isSsRunning ? "►" : "") + gSsLableMap[ss],
-                Time[endBar], gHi, 7, isSsRunning ? ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_LOWER, gSsColor[ss]);
-    } else if (isSsRunning){
+    
+    if (isSsRunning){
         createLabel(gLabelIdx++, "►" + gSsLableMap[ss],
                 Time[beginBar], gHi, 7, ANCHOR_LEFT_LOWER, gSsColor[ss]);
+    }
+    else if (inpDisplayLable){
+        createLabel(gLabelIdx++, gSsLableMap[ss],
+                Time[endBar], gHi, 7, isSsRunning ? ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_LOWER, gSsColor[ss]);
     }
 }
 

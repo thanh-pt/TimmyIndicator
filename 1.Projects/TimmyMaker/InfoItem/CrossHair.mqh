@@ -1,7 +1,8 @@
 #include "../Home/CommonData.mqh"
 #include "../Home/UtilityHeader.mqh"
 input string CrossHair_; // ●  C R O S S   H A I R  ●
-      int    CrossHair_LocalTimeZone   = 7;
+input int    CrossHair_ServerTimeZone  = 0; // Server Timezone
+input int    CrossHair_LocalTimeZone   = 7; // Local Timezone
 input bool   CrossHair_DisplayDateInfo = true; // Date Info
 
 class CrossHair
@@ -9,6 +10,7 @@ class CrossHair
 private:
     CommonData* pCommonData;
     string mStrTimeInfo;
+    int mOffsetTime;
 // COMPONENTS
 private:
     string mVCrossHair;
@@ -21,6 +23,7 @@ public:
     CrossHair(CommonData* commonData)
     {
         pCommonData = commonData;
+        mOffsetTime = CrossHair_LocalTimeZone - CrossHair_ServerTimeZone;
         // Init component
         mVCrossHair = "." + TAG_STATIC + TAG_CTRL + "mVCrossHair";
         mHCrossHair = "." + TAG_STATIC + TAG_CTRL + "mHCrossHair";
@@ -112,7 +115,7 @@ public:
         ObjectSet(mDateInfo, OBJPROP_XDISTANCE, pCommonData.mMouseX + 10);
         setTextContent(mDateInfo, TimeToStr(pCommonData.mMouseTime, TIME_DATE));
         if (ChartPeriod() <= PERIOD_H4) {
-            mStrTimeInfo = TimeToStr(pCommonData.mMouseTime + CrossHair_LocalTimeZone*3600, TIME_MINUTES);
+            mStrTimeInfo = TimeToStr(pCommonData.mMouseTime + mOffsetTime*3600, TIME_MINUTES);
             mStrTimeInfo += " · " + getDayOfWeekStr(pCommonData.mMouseTime);
         }
         else if (ChartPeriod() <= PERIOD_D1) {
