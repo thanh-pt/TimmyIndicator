@@ -40,6 +40,8 @@ color   gBodyDnClr;
 bool    gbImbOn = true;
 bool    gbIsbOn = false;
 
+int     gLastWaveIdx;
+
 int     gArrSizeMap[2][6];
 
 enum EBarMap{
@@ -61,7 +63,7 @@ input bool  InpFunctionCandle = true;     // Function Candle:
 input color InpIsbClr = clrRoyalBlue;   // Inside Bar Color (N)
 input color InpImbClr = clrGoldenrod;   // Imbalance Color (M)
 input bool InpWickEnhance = false; // Wick Enhance:
-input bool InpBodyEnhance = false; // Body Enhance:
+bool InpBodyEnhance = true; // Body Enhance:
 input int InpCandle3 = 3;  // Candle 3 (3~5)
 input int InpCandle4 = 6;  // Candle 4 (6~9)
 input int InpCandle5 = 13; // Candle 5 (13~17)
@@ -85,9 +87,15 @@ int OnInit()
     gArrSizeMap[0][0] = 0;
     gArrSizeMap[0][1] = 0;
     gArrSizeMap[0][2] = 0;
-    gArrSizeMap[0][3] = 2;
-    gArrSizeMap[0][4] = 2;
-    gArrSizeMap[0][5] = 3;
+    gArrSizeMap[0][3] = 0;
+    gArrSizeMap[0][4] = 0;
+    gArrSizeMap[0][5] = 0;
+    if (InpWickEnhance) {
+        gArrSizeMap[0][3] = 2;
+        gArrSizeMap[0][4] = 2;
+        gArrSizeMap[0][5] = 3;
+
+    }
     // Boder/body size
     gArrSizeMap[1][0] = 0;
     gArrSizeMap[1][1] = 1;
@@ -118,6 +126,12 @@ int OnCalculate(const int rates_total,
                 const long &volume[],
                 const int &spread[])
 {
+    if (gChartMode == CHART_LINE){
+        gLastWaveIdx = (int)StringToInteger(ObjectDescription("LastWaveIndex*"));
+        loadBarEnhance(gLastWaveIdx+2);
+        if (gTotalRate == rates_total) return rates_total;
+        return(rates_total);
+    }
     if (gTotalRate == rates_total) return rates_total;
     gTotalRate = rates_total;
     loadBarEnhance(gTotalRate);
@@ -150,12 +164,19 @@ void OnChartEvent(const int id,
     if (gChartMode != gPreChartMode) {
         gPreChartMode = gChartMode;
         updateStyle();
+        if (gChartMode == CHART_LINE){
+            gLastWaveIdx = (int)StringToInteger(ObjectDescription("LastWaveIndex*"));
+            if (Wick1Buf[gLastWaveIdx+1] != EMPTY_VALUE) {
+                clearBar(gTotalRate);
+            }
+            loadBarEnhance(gLastWaveIdx+2);
+        }
     }
 }
 
 void updateStyle()
 {
-    bool bVisible = (gChartScale > 2 && gChartMode == CHART_CANDLES);
+    bool bVisible = (gChartScale > 2);
     if (bVisible){
         gBderUpClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_UP);
         gBderDnClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_DOWN);
@@ -197,13 +218,30 @@ void updateStyle()
     }
 }
 
+void clearBar(int totalBar){
+    for (int idx = totalBar-2; idx > 0; idx--) {
+        Wick1Buf[idx] = EMPTY_VALUE;
+        Wick2Buf[idx] = EMPTY_VALUE;
+        Bder1Buf[idx] = EMPTY_VALUE;
+        Bder2Buf[idx] = EMPTY_VALUE;
+        Body1Buf[idx] = EMPTY_VALUE;
+        Body2Buf[idx] = EMPTY_VALUE;
+        IsmbBuf1[idx] = EMPTY_VALUE;
+        IsmbBuf2[idx] = EMPTY_VALUE;
+        LineUp01[idx] = EMPTY_VALUE;
+        LineUp02[idx] = EMPTY_VALUE;
+        LineDn01[idx] = EMPTY_VALUE;
+        LineDn02[idx] = EMPTY_VALUE;
+    }
+}
+
 void loadBarEnhance(int totalBar)
 {
     bool isGreenBar = false;
     bool isDoji = false;
     bool isFuncBar = false;
     double lineOffset = 0.00000001;
-    for (int idx = totalBar-2; idx > 0; idx--) { // ignore first cancel
+    for (int idx = totalBar-2; idx >= 0; idx--) { // ignore first cancel
         // Clean Data:
         Wick1Buf[idx] = EMPTY_VALUE;
         Wick2Buf[idx] = EMPTY_VALUE;
@@ -227,10 +265,8 @@ void loadBarEnhance(int totalBar)
             isDoji = true;
         }
         // Layer 1 - Wick
-        if (InpWickEnhance) {
-            Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
-            Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
-        }
+        Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
+        Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
 
         // Layer 2 - Boder/Body
         if (InpBodyEnhance) {
@@ -271,6 +307,7 @@ void loadBarEnhance(int totalBar)
             }
         }
     }
+    if (gChartMode == CHART_LINE) return;
     Wick1Buf[0] = EMPTY_VALUE;
     Wick2Buf[0] = EMPTY_VALUE;
     Bder1Buf[0] = EMPTY_VALUE;

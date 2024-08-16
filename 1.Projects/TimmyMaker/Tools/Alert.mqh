@@ -118,7 +118,7 @@ void Alert::updateDefaultProperty()
     ObjectSetInteger(0, cFb01,OBJPROP_LEVELWIDTH,0, 1);
     
     ObjectSet(cPtM0, OBJPROP_COLOR, gClrPointer);
-    ObjectSet(cPtM0, OBJPROP_ARROWCODE, 2);
+    ObjectSet(cPtM0, OBJPROP_ARROWCODE, 4);
 
     setMultiStrs(OBJPROP_TOOLTIP, "\n", mAllItem);
 }
