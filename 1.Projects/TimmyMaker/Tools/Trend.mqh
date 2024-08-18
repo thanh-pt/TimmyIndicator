@@ -43,16 +43,16 @@ string getAltName(string name){
 
 
 input string Trend_; // ●  T R E N D  ●
-input int        Trend_amount       = 7;            // Trend amount:
+int        Trend_amount       = 6;            // Trend amount:
 //--------------------------------------------
 input string     Trend_1_Name       = "Flow-";          // _ _ _ _ _ _ Trend 1 _ _ _ _ _ _
 input ELineStyle Trend_1_Style      = eLineSolid;       // |___ Style
 input color      Trend_1_Color      = clrNavy;        // |___ Color
 input ETrendText Trend_1_TxtPos     = ETrendTextCenter; // |___ Text Pos
 //--------------------------------------------
-input string     Trend_2_Name       = "ofs";            // _ _ _ _ _ _ Trend 2 _ _ _ _ _ _
-input ELineStyle Trend_2_Style      = eLineDash;        // |___ Style
-input color      Trend_2_Color      = clrGreen;       // |___ Color
+input string     Trend_2_Name       = "x";            // _ _ _ _ _ _ Trend 2 _ _ _ _ _ _
+input ELineStyle Trend_2_Style      = eLineDot;        // |___ Style
+input color      Trend_2_Color      = clrNavy;       // |___ Color
 input ETrendText Trend_2_TxtPos     = ETrendTextCenter; // |___ Text Pos
 //--------------------------------------------
 input string     Trend_3_Name       = "BoS-TF";         // _ _ _ _ _ _ Trend 3_ _ _ _ _ _
@@ -60,12 +60,12 @@ input ELineStyle Trend_3_Style      = eLineBold;        // |___ Style
 input color      Trend_3_Color      = clrNavy;        // |___ Color
 input ETrendText Trend_3_TxtPos     = ETrendTextCenter; // |___ Text Pos
 //--------------------------------------------
-input string     Trend_4_Name       = "x";              // _ _ _ _ _ _ Trend 4_ _ _ _ _ _
-input ELineStyle Trend_4_Style      = eLineDot;         // |___ Style
+input string     Trend_4_Name       = "sub";              // _ _ _ _ _ _ Trend 4_ _ _ _ _ _
+input ELineStyle Trend_4_Style      = eLineSolid;         // |___ Style
 input color      Trend_4_Color      = clrNavy;        // |___ Color
 input ETrendText Trend_4_TxtPos     = ETrendTextCenter; // |___ Text Pos
 //--------------------------------------------
-input string     Trend_5_Name       = "IRL";            // _ _ _ _ _ _ Trend 5_ _ _ _ _ _
+input string     Trend_5_Name       = "$$$";            // _ _ _ _ _ _ Trend 5_ _ _ _ _ _
 input ELineStyle Trend_5_Style      = eLineDot;         // |___ Style
 input color      Trend_5_Color      = clrGreen;       // |___ Color
 input ETrendText Trend_5_TxtPos     = ETrendTextCenter; // |___ Text Pos
@@ -75,13 +75,13 @@ input ELineStyle Trend_6_Style      = eLineSolid;       // |___ Style
 input color      Trend_6_Color      = clrNavy;        // |___ Color
 input ETrendText Trend_6_TxtPos     = ETrendTextCenterArr; // |___ Text Pos
 //--------------------------------------------
-input string     Trend_7_Name       = "sub";            // _ _ _ _ _ _ Trend 7_ _ _ _ _ _
-input ELineStyle Trend_7_Style      = eLineSolid;       // |___ Style
-input color      Trend_7_Color      = clrNavy;        // |___ Color
-input ETrendText Trend_7_TxtPos     = ETrendTextCenter; // |___ Text Pos
-//--------------------------------------------
 
 // --- Reserved ---
+string     Trend_7_Name       = "sub";                // _ _ _ _ _ _ Trend 7_ _ _ _ _ _
+ELineStyle Trend_7_Style      = eLineSolid;           // |___ Style
+color      Trend_7_Color      = clrNavy;            // |___ Color
+ETrendText Trend_7_TxtPos     = ETrendTextCenter;     // |___ Text Pos
+//--------------------------------------------
 string     Trend_8_Name       = "Reserved";           // → Trend 8
 ELineStyle Trend_8_Style      = eLineSolid;           // Style
 color      Trend_8_Color      = clrGreen;           // Color
