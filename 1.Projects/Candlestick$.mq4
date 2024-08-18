@@ -4,19 +4,17 @@
 #property version   "1.00"
 #property strict
 #property indicator_chart_window
-#property indicator_buffers 12
-#property indicator_plots   12
+#property indicator_buffers 10
+#property indicator_plots   10
 
-#define MACRO_WickSize gArrSizeMap[0][gChartScale]
-#define MACRO_BderSize gArrSizeMap[1][gChartScale]
-#define MACRO_BodySize gArrSizeMap[1][gChartScale]-1
+#define MACRO_BderSize gArrSizeMap[gChartScale]
+#define MACRO_BodySize gArrSizeMap[gChartScale]-1
 //--- buffers
-double         Wick1Buf[];
-double         Wick2Buf[];
-double         Bder1Buf[];
-double         Bder2Buf[];
-double         Body1Buf[];
-double         Body2Buf[];
+double         UWK01Buf[];
+double         UWK02Buf[];
+double         LWK01Buf[];
+double         LWK02Buf[];
+
 double         IsmbBuf1[];
 double         IsmbBuf2[];
 
@@ -34,23 +32,17 @@ int     gPreChartMode  = gChartMode;
 
 color   gBderUpClr;
 color   gBderDnClr;
-color   gBodyUpClr;
-color   gBodyDnClr;
 
 bool    gbImbOn = true;
 bool    gbIsbOn = false;
 
-int     gLastWaveIdx;
-
-int     gArrSizeMap[2][6];
+int     gArrSizeMap[6];
 
 enum EBarMap{
-    eBarWick1,
-    eBarWick2,
-    eBarBder1,
-    eBarBder2,
-    eBarBody1,
-    eBarBody2,
+    eBarUWK01,
+    eBarUWK02,
+    eBarULK01,
+    eBarULK02,
     eBarIsmb1,
     eBarIsmb2,
     eBarLnU01,
@@ -58,56 +50,35 @@ enum EBarMap{
     eBarLnN01,
     eBarLnN02,
 };
-
-bool  InpFunctionCandle = true;     // Function Candle:
-input color InpIsbClr = clrRoyalBlue;   // Inside Bar Color (N)
-input color InpImbClr = clrGoldenrod;   // Imbalance Color (M)
-bool InpWickEnhance = false; // Wick Enhance:
-bool InpBodyEnhance = true; // Body Enhance:
-int InpCandle3 = 3;  // Candle 3 (3~5)
-int InpCandle4 = 6;  // Candle 4 (6~9)
-int InpCandle5 = 13; // Candle 5 (13~17)
+input bool InpIsbDefaultOn = false;     // Inside bar default ON (N)
+input bool InpImbDefaultOn = true;      // Imbalance bar default ON (M)
+input color InpIsbClr = clrRoyalBlue; // Inside Bar Color
+input color InpImbClr = clrGoldenrod; // Imbalance Color
+input bool InpWickEnhance = true;       // Wick Enhance
 
 int OnInit()
 {
 //--- indicator buffers mapping
-    SetIndexBuffer(eBarWick1,Wick1Buf);
-    SetIndexBuffer(eBarWick2,Wick2Buf);
-    SetIndexBuffer(eBarBder1,Bder1Buf);
-    SetIndexBuffer(eBarBder2,Bder2Buf);
-    SetIndexBuffer(eBarBody1,Body1Buf);
-    SetIndexBuffer(eBarBody2,Body2Buf);
+    SetIndexBuffer(eBarUWK01,UWK01Buf);
+    SetIndexBuffer(eBarUWK02,UWK02Buf);
+    SetIndexBuffer(eBarULK01,LWK01Buf);
+    SetIndexBuffer(eBarULK02,LWK02Buf);
     SetIndexBuffer(eBarIsmb1,IsmbBuf1);
     SetIndexBuffer(eBarIsmb2,IsmbBuf2);
     SetIndexBuffer(eBarLnU01,LineUp01);
     SetIndexBuffer(eBarLnU02,LineUp02);
     SetIndexBuffer(eBarLnN01,LineDn01);
     SetIndexBuffer(eBarLnN02,LineDn02);
-    // Wick size
-    gArrSizeMap[0][0] = 0;
-    gArrSizeMap[0][1] = 0;
-    gArrSizeMap[0][2] = 0;
-    gArrSizeMap[0][3] = 0;
-    gArrSizeMap[0][4] = 0;
-    gArrSizeMap[0][5] = 0;
-    if (InpWickEnhance) {
-        gArrSizeMap[0][3] = 2;
-        gArrSizeMap[0][4] = 2;
-        gArrSizeMap[0][5] = 3;
-
-    }
     // Boder/body size
-    gArrSizeMap[1][0] = 0;
-    gArrSizeMap[1][1] = 1;
-    gArrSizeMap[1][2] = 3;  // max 3 <- Inactive
-    gArrSizeMap[1][3] = 3 ;
-    gArrSizeMap[1][4] = 6 ;
-    gArrSizeMap[1][5] = 13;
-    if (InpBodyEnhance) {
-        gArrSizeMap[1][3] = MathMin(MathMax(InpCandle3, 3 ), 5);  // max 5
-        gArrSizeMap[1][4] = MathMin(MathMax(InpCandle4, 6 ), 9);  // max 9
-        gArrSizeMap[1][5] = MathMin(MathMax(InpCandle5, 13),17);  // max 17
-    }
+    gArrSizeMap[0] = 0;
+    gArrSizeMap[1] = 1;
+    gArrSizeMap[2] = 3;
+    gArrSizeMap[3] = 3;
+    gArrSizeMap[4] = 6;
+    gArrSizeMap[5] = 13;
+    // Setup
+    gbIsbOn = InpIsbDefaultOn;
+    gbImbOn = InpImbDefaultOn;
 
     updateStyle();
 
@@ -167,18 +138,11 @@ void updateStyle()
     if (bVisible){
         gBderUpClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_UP);
         gBderDnClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_DOWN);
-        gBodyUpClr = (color)ChartGetInteger(0,CHART_COLOR_CANDLE_BULL);
-        gBodyDnClr = (color)ChartGetInteger(0,CHART_COLOR_CANDLE_BEAR);
-
         // Wick
-        SetIndexStyle(eBarWick1, DRAW_HISTOGRAM, 0, MACRO_WickSize, gBderDnClr);
-        SetIndexStyle(eBarWick2, DRAW_HISTOGRAM, 0, MACRO_WickSize, gBderUpClr);
-        // Boder
-        SetIndexStyle(eBarBder1, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderDnClr);
-        SetIndexStyle(eBarBder2, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderUpClr);
-        // Body
-        SetIndexStyle(eBarBody1, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBodyDnClr);
-        SetIndexStyle(eBarBody2, DRAW_HISTOGRAM, 0, MACRO_BodySize, gBodyUpClr);
+        SetIndexStyle(eBarUWK01, DRAW_HISTOGRAM, 0, 0, gBderDnClr);
+        SetIndexStyle(eBarUWK02, DRAW_HISTOGRAM, 0, 0, gBderUpClr);
+        SetIndexStyle(eBarULK01, DRAW_HISTOGRAM, 0, 0, gBderDnClr);
+        SetIndexStyle(eBarULK02, DRAW_HISTOGRAM, 0, 0, gBderUpClr);
         // Isb/Imb
         SetIndexStyle(eBarIsmb1, DRAW_HISTOGRAM, 0, MACRO_BodySize, InpIsbClr);
         SetIndexStyle(eBarIsmb2, DRAW_HISTOGRAM, 0, MACRO_BodySize, InpImbClr);
@@ -189,12 +153,10 @@ void updateStyle()
         SetIndexStyle(eBarLnN01, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderDnClr);
         SetIndexStyle(eBarLnN02, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderUpClr);
     } else {
-        SetIndexStyle(eBarWick1, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        SetIndexStyle(eBarWick2, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        SetIndexStyle(eBarBder1, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        SetIndexStyle(eBarBder2, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        SetIndexStyle(eBarBody1, DRAW_HISTOGRAM, 0, 0, clrNONE);
-        SetIndexStyle(eBarBody2, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(eBarUWK01, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(eBarUWK02, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(eBarULK01, DRAW_HISTOGRAM, 0, 0, clrNONE);
+        SetIndexStyle(eBarULK02, DRAW_HISTOGRAM, 0, 0, clrNONE);
         SetIndexStyle(eBarIsmb1, DRAW_HISTOGRAM, 0, 0, clrNONE);
         SetIndexStyle(eBarIsmb2, DRAW_HISTOGRAM, 0, 0, clrNONE);
 
@@ -208,17 +170,15 @@ void updateStyle()
 void loadBarEnhance(int totalBar)
 {
     bool isGreenBar = false;
-    bool isDoji = false;
-    bool isFuncBar = false;
+    bool isDoji     = false;
+    bool isFuncBar  = false;
     double lineOffset = 0.000000001;
     for (int idx = totalBar-2; idx >= 0; idx--) { // ignore first cancel
         // Clean Data:
-        Wick1Buf[idx] = EMPTY_VALUE;
-        Wick2Buf[idx] = EMPTY_VALUE;
-        Bder1Buf[idx] = EMPTY_VALUE;
-        Bder2Buf[idx] = EMPTY_VALUE;
-        Body1Buf[idx] = EMPTY_VALUE;
-        Body2Buf[idx] = EMPTY_VALUE;
+        UWK01Buf[idx] = EMPTY_VALUE;
+        UWK02Buf[idx] = EMPTY_VALUE;
+        LWK01Buf[idx] = EMPTY_VALUE;
+        LWK02Buf[idx] = EMPTY_VALUE;
         IsmbBuf1[idx] = EMPTY_VALUE;
         IsmbBuf2[idx] = EMPTY_VALUE;
         LineUp01[idx] = EMPTY_VALUE;
@@ -235,35 +195,37 @@ void loadBarEnhance(int totalBar)
             isDoji = true;
         }
         // Layer 1 - Wick
-        Wick1Buf[idx] = isGreenBar ? Low[idx]  : High[idx];
-        Wick2Buf[idx] = isGreenBar ? High[idx] : Low[idx];
-
-        // Layer 2 - Boder/Body
-        if (InpBodyEnhance) {
-            Bder1Buf[idx] = Open[idx];
-            Bder2Buf[idx] = Close[idx];
-            if (isDoji == false) {
-                Body1Buf[idx] = Open[idx];
-                Body2Buf[idx] = Close[idx];
+        if (InpWickEnhance){
+            if (isGreenBar) {
+                UWK01Buf[idx] = Close[idx];
+                UWK02Buf[idx] = High[idx];
+                LWK01Buf[idx] = Low[idx];
+                LWK02Buf[idx] = Open[idx];
+            }
+            else {
+                UWK01Buf[idx] = High[idx];
+                UWK02Buf[idx] = Open[idx];
+                LWK01Buf[idx] = Close[idx];
+                LWK02Buf[idx] = Low[idx];
             }
         }
 
-        // Layer 3 - Isb/Imb
-        if (InpFunctionCandle && isDoji == false) {
-            if (gbIsbOn == true && InpIsbClr != clrNONE && High[idx] <= High[idx+1] && Low[idx] >= Low[idx+1]){
+        // Layer 2 - Isb/Imb
+        if (isDoji == false) {
+            if (gbIsbOn == true && High[idx] <= High[idx+1] && Low[idx] >= Low[idx+1]){
                 IsmbBuf1[idx] = MathMax(Open[idx], Close[idx]);
                 IsmbBuf2[idx] = MathMin(Open[idx], Close[idx]);
                 isFuncBar = true;
             }
-            else if (gbImbOn == true && InpImbClr != clrNONE && idx >= 1 && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
+            else if (gbImbOn == true && idx >= 1 && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
                 IsmbBuf1[idx] = MathMin(Open[idx], Close[idx]);
                 IsmbBuf2[idx] = MathMax(Open[idx], Close[idx]);
                 isFuncBar = true;
             }
         }
 
-        // Layer 4 - Line UP/Down -> mang tính chất trang trí
-        if (isDoji == false && (InpBodyEnhance || isFuncBar)){
+        // Layer 3 - Line UP/Down -> mang tính chất trang trí
+        if (isFuncBar){
             if (isGreenBar){
                 LineUp01[idx] = Open[idx];
                 LineUp02[idx] = Open[idx]   + lineOffset;
