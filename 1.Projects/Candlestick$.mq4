@@ -59,14 +59,14 @@ enum EBarMap{
     eBarLnN02,
 };
 
-input bool  InpFunctionCandle = true;     // Function Candle:
+bool  InpFunctionCandle = true;     // Function Candle:
 input color InpIsbClr = clrRoyalBlue;   // Inside Bar Color (N)
 input color InpImbClr = clrGoldenrod;   // Imbalance Color (M)
-input bool InpWickEnhance = false; // Wick Enhance:
+bool InpWickEnhance = false; // Wick Enhance:
 bool InpBodyEnhance = true; // Body Enhance:
-input int InpCandle3 = 3;  // Candle 3 (3~5)
-input int InpCandle4 = 6;  // Candle 4 (6~9)
-input int InpCandle5 = 13; // Candle 5 (13~17)
+int InpCandle3 = 3;  // Candle 3 (3~5)
+int InpCandle4 = 6;  // Candle 4 (6~9)
+int InpCandle5 = 13; // Candle 5 (13~17)
 
 int OnInit()
 {
@@ -126,12 +126,6 @@ int OnCalculate(const int rates_total,
                 const long &volume[],
                 const int &spread[])
 {
-    if (gChartMode == CHART_LINE){
-        gLastWaveIdx = (int)StringToInteger(ObjectDescription("LastWaveIndex*"));
-        loadBarEnhance(gLastWaveIdx+2);
-        gTotalRate = rates_total;
-        return(rates_total);
-    }
     if (gTotalRate == rates_total) return rates_total;
     gTotalRate = rates_total;
     loadBarEnhance(gTotalRate);
@@ -164,19 +158,12 @@ void OnChartEvent(const int id,
     if (gChartMode != gPreChartMode) {
         gPreChartMode = gChartMode;
         updateStyle();
-        if (gChartMode == CHART_LINE){
-            gLastWaveIdx = (int)StringToInteger(ObjectDescription("LastWaveIndex*"));
-            loadBarEnhance(gLastWaveIdx+2);
-        }
-        else {
-            loadBarEnhance(gTotalRate);
-        }
     }
 }
 
 void updateStyle()
 {
-    bool bVisible = (gChartScale > 2);
+    bool bVisible = (gChartScale > 2 && gChartMode == CHART_CANDLES);
     if (bVisible){
         gBderUpClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_UP);
         gBderDnClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_DOWN);
@@ -223,7 +210,7 @@ void loadBarEnhance(int totalBar)
     bool isGreenBar = false;
     bool isDoji = false;
     bool isFuncBar = false;
-    double lineOffset = 0.00000001;
+    double lineOffset = 0.000000001;
     for (int idx = totalBar-2; idx >= 0; idx--) { // ignore first cancel
         // Clean Data:
         Wick1Buf[idx] = EMPTY_VALUE;
@@ -288,24 +275,6 @@ void loadBarEnhance(int totalBar)
                 LineDn01[idx] = Close[idx]  + lineOffset;
                 LineDn02[idx] = Close[idx];
             }
-        }
-    }
-    if (totalBar < gTotalRate) {
-        int i = totalBar;
-        while (Wick1Buf[i] != EMPTY_VALUE) {
-            Wick1Buf[i] = EMPTY_VALUE;
-            Wick2Buf[i] = EMPTY_VALUE;
-            Bder1Buf[i] = EMPTY_VALUE;
-            Bder2Buf[i] = EMPTY_VALUE;
-            Body1Buf[i] = EMPTY_VALUE;
-            Body2Buf[i] = EMPTY_VALUE;
-            IsmbBuf1[i] = EMPTY_VALUE;
-            IsmbBuf2[i] = EMPTY_VALUE;
-            LineUp01[i] = EMPTY_VALUE;
-            LineUp02[i] = EMPTY_VALUE;
-            LineDn01[i] = EMPTY_VALUE;
-            LineDn02[i] = EMPTY_VALUE;
-            i++;
         }
     }
 }
