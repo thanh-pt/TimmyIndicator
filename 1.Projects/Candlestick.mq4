@@ -2,6 +2,7 @@
 #property link      "https://www.youtube.com/@TimmyTraderHamHoc"
 #property icon      "../3.Resource/Timmy-Ham-học-Logo.ico"
 #property version   "1.00"
+#property description "Spot Inside/Imbalance Bar\nEnhance Wick for Candlestick Chart"
 #property strict
 #property indicator_chart_window
 #property indicator_buffers 10
