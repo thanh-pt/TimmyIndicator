@@ -97,6 +97,16 @@ public:
     }
     void onMouseMove()
     {
+        if (pCommonData.mOutBoundary) {
+            ObjectSet(mHCrossHair, OBJPROP_PRICE1, 0);
+            ObjectSet(mHCrossHair, OBJPROP_PRICE2, 0);
+            ObjectSet(miHPriceBg , OBJPROP_YDISTANCE, 0);
+            ObjectSet(mVCrossHair, OBJPROP_TIME1,  0);
+            ObjectSet(miDtBkgnd, OBJPROP_XDISTANCE,0);
+            ObjectSet(mWeekInfo, OBJPROP_XDISTANCE,0);
+            ObjectSet(mDateInfo, OBJPROP_XDISTANCE,0);
+            return;
+        }
         // Horizontal: Đường kẻ ngang
         ObjectSet(mHCrossHair, OBJPROP_TIME1, pCommonData.mBeginTime);
         ObjectSet(mHCrossHair, OBJPROP_TIME2, pCommonData.mBeginTime);

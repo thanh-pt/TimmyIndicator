@@ -17,7 +17,9 @@ public:
     int      mMouseY;
     bool     mShiftHold;
     bool     mCtrlHold;
+    bool     mOutBoundary;
     long     mChartWidth;
+    long     mChartHeight;
 public:
     void updateMousePosition(const long& x, const double& y, const string &sparam)
     {
@@ -28,10 +30,16 @@ public:
         mMouseY = (int) y;
         ChartXYToTimePrice(0, (int)mMouseX, (int)mMouseY, mSubwindow, mMouseTime, mMousePrice);
         ChartXYToTimePrice(0, 0, 0, mSubwindow, mBeginTime, mTopPrice);
-        if(mCtrlHold) {
-            controlHold();
+        if(mCtrlHold) controlHold();
+        mChartWidth  = ChartGetInteger(0,CHART_WIDTH_IN_PIXELS, 0);
+        mChartHeight = ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS,0);
+        if (mMouseX <= 0 || mMouseY <= 0 || mMouseX >= mChartWidth || mMouseY >= mChartHeight) {
+            if (mOutBoundary == false) FinishedJobFunc();
+            mOutBoundary = true;
         }
-        ChartGetInteger(0,CHART_WIDTH_IN_PIXELS ,mSubwindow, mChartWidth);
+        else {
+            mOutBoundary = false;
+        }
         ChartSetDouble(0,CHART_FIXED_POSITION, (double)mMouseX/mChartWidth*100);
     }
     void controlHold()
