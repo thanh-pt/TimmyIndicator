@@ -180,6 +180,7 @@ void scanWindow(){
                 gBegDatetime = StructToTime(gStDatetime);
                 gStDatetime.hour  = asEndHour;
                 gEndDatetime = StructToTime(gStDatetime);
+                if (asEndHour < asBegHour) gEndDatetime += 86400;
                 drawSession(eAs, gBegDatetime, gEndDatetime);
             }
             if (inpDisplayLd) {
@@ -187,6 +188,7 @@ void scanWindow(){
                 gBegDatetime = StructToTime(gStDatetime);
                 gStDatetime.hour  = ldEndHour;
                 gEndDatetime = StructToTime(gStDatetime);
+                if (ldEndHour < ldBegHour) gEndDatetime += 86400;
                 drawSession(eLd, gBegDatetime, gEndDatetime);
             }
             if (inpDisplayNy) {
@@ -194,6 +196,7 @@ void scanWindow(){
                 gBegDatetime = StructToTime(gStDatetime);
                 gStDatetime.hour  = nyEndHour;
                 gEndDatetime = StructToTime(gStDatetime);
+                if (nyEndHour < nyBegHour) gEndDatetime += 86400;
                 drawSession(eNy, gBegDatetime, gEndDatetime);
             }
         }
