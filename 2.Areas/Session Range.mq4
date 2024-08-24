@@ -62,6 +62,7 @@ int nyEndHour;
 
 int          gChartPeriod = ChartPeriod();
 bool         gPeriodSep;
+bool         gPrePeriodSep = false;
 string       gSymbol = Symbol();
 int          gTotalRate = 0;
 
@@ -148,6 +149,10 @@ void OnChartEvent(const int id,
     if (gTotalRate == 0) return;
     if (id == CHARTEVENT_CHART_CHANGE) {
         gPeriodSep = (bool)ChartGetInteger(0,CHART_SHOW_PERIOD_SEP);
+        if (gPeriodSep != gPrePeriodSep) {
+            gPrePeriodSep = gPeriodSep;
+            gPreFirstDay = 0;
+        }
         gFirstBar = WindowFirstVisibleBar();
         if (gFirstBar <= 0) return;
         if (gPreFirstDay != TimeDay(Time[gFirstBar])) {
