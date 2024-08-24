@@ -223,7 +223,7 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         return;
     }
     bool isSsRunning = (endBar == 0);
-    if (inpAlwaysDisplay || (gPeriodSep == false && isSsRunning == false)) return;
+    if (inpAlwaysDisplay == false && gPeriodSep == false && isSsRunning == false) return;
 
     gHi = High[beginBar];
     gLo = Low [beginBar];

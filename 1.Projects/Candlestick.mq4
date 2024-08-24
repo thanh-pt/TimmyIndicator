@@ -5,8 +5,8 @@
 #property description "Spot Inside/Imbalance Bar\nEnhance Wick for Candlestick Chart"
 #property strict
 #property indicator_chart_window
-#property indicator_buffers 10
-#property indicator_plots   10
+#property indicator_buffers 12
+#property indicator_plots   12
 
 #define MACRO_BderSize gArrSizeMap[gChartScale]
 #define MACRO_BodySize gArrSizeMap[gChartScale]-1
@@ -18,6 +18,9 @@ double         LWK02Buf[];
 
 double         IsmbBuf1[];
 double         IsmbBuf2[];
+
+double         HugeBuf1[];
+double         HugeBuf2[];
 
 double         LineUp01[];
 double         LineUp02[];
@@ -36,6 +39,7 @@ color   gBderDnClr;
 
 bool    gbImbOn = true;
 bool    gbIsbOn = false;
+bool    gbHugeOn = false;
 
 int     gArrSizeMap[6];
 
@@ -46,6 +50,8 @@ enum EBarMap{
     eBarULK02,
     eBarIsmb1,
     eBarIsmb2,
+    eBarHuge1,
+    eBarHuge2,
     eBarLnU01,
     eBarLnU02,
     eBarLnN01,
@@ -66,6 +72,8 @@ int OnInit()
     SetIndexBuffer(eBarULK02,LWK02Buf);
     SetIndexBuffer(eBarIsmb1,IsmbBuf1);
     SetIndexBuffer(eBarIsmb2,IsmbBuf2);
+    SetIndexBuffer(eBarHuge1,HugeBuf1);
+    SetIndexBuffer(eBarHuge2,HugeBuf2);
     SetIndexBuffer(eBarLnU01,LineUp01);
     SetIndexBuffer(eBarLnU02,LineUp02);
     SetIndexBuffer(eBarLnN01,LineDn01);
@@ -80,6 +88,7 @@ int OnInit()
     // Setup
     gbIsbOn = InpIsbDefaultOn;
     gbImbOn = InpImbDefaultOn;
+    gbHugeOn = false;
 
     updateStyle();
 
@@ -116,8 +125,12 @@ void OnChartEvent(const int id,
             gbImbOn = !gbImbOn;
             loadBarEnhance(gTotalRate);
         }
-        else if (lparam == 'N'){
+        else if (lparam == '?'){
             gbIsbOn = !gbIsbOn;
+            loadBarEnhance(gTotalRate);
+        }
+        else if (lparam == 'N'){
+            gbHugeOn = !gbHugeOn;
             loadBarEnhance(gTotalRate);
         }
     }
@@ -147,6 +160,8 @@ void updateStyle()
         // Isb/Imb
         SetIndexStyle(eBarIsmb1, DRAW_HISTOGRAM, 0, MACRO_BodySize, InpIsbClr);
         SetIndexStyle(eBarIsmb2, DRAW_HISTOGRAM, 0, MACRO_BodySize, InpImbClr);
+        SetIndexStyle(eBarHuge1, DRAW_HISTOGRAM, 0, MACRO_BodySize, clrTomato);
+        SetIndexStyle(eBarHuge2, DRAW_HISTOGRAM, 0, MACRO_BodySize, clrYellowGreen);
 
         // Line Up/down
         SetIndexStyle(eBarLnU01, DRAW_HISTOGRAM, 0, MACRO_BderSize, gBderDnClr);
@@ -182,6 +197,8 @@ void loadBarEnhance(int totalBar)
         LWK02Buf[idx] = EMPTY_VALUE;
         IsmbBuf1[idx] = EMPTY_VALUE;
         IsmbBuf2[idx] = EMPTY_VALUE;
+        HugeBuf1[idx] = EMPTY_VALUE;
+        HugeBuf2[idx] = EMPTY_VALUE;
         LineUp01[idx] = EMPTY_VALUE;
         LineUp02[idx] = EMPTY_VALUE;
         LineDn01[idx] = EMPTY_VALUE;
@@ -222,6 +239,14 @@ void loadBarEnhance(int totalBar)
                 IsmbBuf1[idx] = MathMin(Open[idx], Close[idx]);
                 IsmbBuf2[idx] = MathMax(Open[idx], Close[idx]);
                 isFuncBar = true;
+            }
+            if (gbHugeOn == true && MathAbs(Open[idx] - Close[idx]) >= (High[idx+1] - Low[idx+1])){
+                if (isGreenBar) isFuncBar = (Close[idx] > High[idx+1]);
+                else isFuncBar = (Close[idx] < Low[idx+1]);
+                if (isFuncBar) {
+                    HugeBuf1[idx] = Open[idx];
+                    HugeBuf2[idx] = Close[idx];
+                }
             }
         }
 
