@@ -1,8 +1,8 @@
 #include "../Home/CommonData.mqh"
 #include "../Home/UtilityHeader.mqh"
 input string CrossHair_; // ●  C R O S S   H A I R  ●
-input int    CrossHair_ServerTimeZone  = 0; // Server Timezone
-input int    CrossHair_LocalTimeZone   = 7; // Local Timezone
+input eTz    CrossHair_ServerTimeZone  = eTzAuto; // Server Timezone
+input int    CrossHair_LocalTimeZone   = 7;       // Local Timezone
 input bool   CrossHair_DisplayDateInfo = true; // Date Info
 
 class CrossHair
@@ -23,7 +23,14 @@ public:
     CrossHair(CommonData* commonData)
     {
         pCommonData = commonData;
-        mOffsetTime = CrossHair_LocalTimeZone - CrossHair_ServerTimeZone;
+        if (CrossHair_ServerTimeZone == eTzAuto) {
+            datetime serverTime = TimeCurrent();
+            datetime localTime = TimeLocal();
+            mOffsetTime = (int)(localTime - serverTime)/3600;
+        }
+        else {
+            mOffsetTime = CrossHair_LocalTimeZone - CrossHair_ServerTimeZone;
+        }
         // Init component
         mVCrossHair = "." + TAG_STATIC + TAG_CTRL + "mVCrossHair";
         mHCrossHair = "." + TAG_STATIC + TAG_CTRL + "mHCrossHair";

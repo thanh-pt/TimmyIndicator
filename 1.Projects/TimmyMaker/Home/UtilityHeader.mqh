@@ -76,6 +76,37 @@ string gStrRand[] = {
     "TUÂN THỦ nguyên tắc, QUẢN LÝ rủi ro.",
 };
 
+enum eTz{
+    eTzAuto = -99,  // <Auto>
+    eTzN12  = -12,  // <-12>
+    eTzN11  = -11,  // <-11>
+    eTzN10  = -10,  // <-10>
+    eTzN9   = -9,   // <-9>
+    eTzN8   = -8,   // <-8>
+    eTzN7   = -7,   // <-7>
+    eTzN6   = -6,   // <-6>
+    eTzN5   = -5,   // <-5>
+    eTzN4   = -4,   // <-4>
+    eTzN3   = -3,   // <-3>
+    eTzN2   = -2,   // <-2>
+    eTzN1   = -1,   // <-1>
+    eTz0    = 0,    // <0>
+    eTz1    = 1,    // <1>
+    eTz2    = 2,    // <2>
+    eTz3    = 3,    // <3>
+    eTz4    = 4,    // <4>
+    eTz5    = 5,    // <5>
+    eTz6    = 6,    // <6>
+    eTz7    = 7,    // <7>
+    eTz8    = 8,    // <8>
+    eTz9    = 9,    // <9>
+    eTz10   = 10,   // <10>
+    eTz11   = 11,   // <11>
+    eTz12   = 12,   // <12>
+    eTz13   = 13,   // <13>
+    eTz14   = 14,   // <14>
+};
+
 void EraseAll()
 {
     for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)

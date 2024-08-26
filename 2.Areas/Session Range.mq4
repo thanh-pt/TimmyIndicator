@@ -21,6 +21,37 @@ enum eStyle{
     eStyleBorderColor,  // B O D E R   C O L O R
 };
 
+enum eTz{
+    eTzAuto = -99,  // <Auto>
+    eTzN12  = -12,  // <-12>
+    eTzN11  = -11,  // <-11>
+    eTzN10  = -10,  // <-10>
+    eTzN9   = -9,   // <-9>
+    eTzN8   = -8,   // <-8>
+    eTzN7   = -7,   // <-7>
+    eTzN6   = -6,   // <-6>
+    eTzN5   = -5,   // <-5>
+    eTzN4   = -4,   // <-4>
+    eTzN3   = -3,   // <-3>
+    eTzN2   = -2,   // <-2>
+    eTzN1   = -1,   // <-1>
+    eTz0    = 0,    // <0>
+    eTz1    = 1,    // <1>
+    eTz2    = 2,    // <2>
+    eTz3    = 3,    // <3>
+    eTz4    = 4,    // <4>
+    eTz5    = 5,    // <5>
+    eTz6    = 6,    // <6>
+    eTz7    = 7,    // <7>
+    eTz8    = 8,    // <8>
+    eTz9    = 9,    // <9>
+    eTz10   = 10,   // <10>
+    eTz11   = 11,   // <11>
+    eTz12   = 12,   // <12>
+    eTz13   = 13,   // <13>
+    eTz14   = 14,   // <14>
+};
+
 input string _config;                           // - - - Configuration - - -
 input eStyle inpStyle = eStyleLineBox;          // S T Y L E
 input bool inpDisplayLable = true;              // L A B E L
@@ -42,7 +73,7 @@ input color inpLdBgColor = clrHoneydew;         // London
 input color inpNyBgColor = clrLavenderBlush;    // NewYork
 
 input string _ssTimezone;         // - - - Timezone - - -
-input int inpServerTimeZone  = 0; // Server Timezone:
+input eTz inpServerTimeZone  = eTzAuto; // Server Timezone:
 input int inpLocalTimeZone   = 7; // Local Timezone:
 input string _ssTime;        // - - - Session Time (Local) - - -
 input int inpAsBegHour = 7;  // Asian Start
@@ -92,13 +123,21 @@ int OnInit()
 {
 //--- indicator buffers mapping
 //---
-    asBegHour = adjustTime(inpAsBegHour - inpLocalTimeZone + inpServerTimeZone);
-    ldBegHour = adjustTime(inpLdBegHour - inpLocalTimeZone + inpServerTimeZone);
-    nyBegHour = adjustTime(inpNyBegHour - inpLocalTimeZone + inpServerTimeZone);
-
-    asEndHour = adjustTime(inpAsEndHour - inpLocalTimeZone + inpServerTimeZone);
-    ldEndHour = adjustTime(inpLdEndHour - inpLocalTimeZone + inpServerTimeZone);
-    nyEndHour = adjustTime(inpNyEndHour - inpLocalTimeZone + inpServerTimeZone);
+    int tzOffset;
+    if (inpServerTimeZone == eTzAuto) {
+        datetime serverTime = TimeCurrent();
+        datetime localTime = TimeLocal();
+        tzOffset = (int)(serverTime - localTime) / 3599;
+    }
+    else {
+        tzOffset = inpServerTimeZone - inpLocalTimeZone;
+    }
+    asBegHour = adjustTime(inpAsBegHour + tzOffset);
+    ldBegHour = adjustTime(inpLdBegHour + tzOffset);
+    nyBegHour = adjustTime(inpNyBegHour + tzOffset);
+    asEndHour = adjustTime(inpAsEndHour + tzOffset);
+    ldEndHour = adjustTime(inpLdEndHour + tzOffset);
+    nyEndHour = adjustTime(inpNyEndHour + tzOffset);
 
     gSsColor[eAs] = inpAsColor;
     gSsColor[eLd] = inpLdColor;
