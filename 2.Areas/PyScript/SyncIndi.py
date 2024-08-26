@@ -23,13 +23,13 @@ def move_files_with_extension(path_a, path_b, extension=".ex4"):
 script_path = os.path.dirname(os.path.abspath(__file__))
 source = os.path.abspath(os.path.join(script_path, "../../../../../")) + '/'
 
-targetId = '2191F4A3D14D7B4B1EBB84F924777883'
+targetId = '38FF69EE6A6C1E944100BD440671B133'
 target = os.path.abspath(os.path.join(source, "../"+targetId))      + '/'
 move_files_with_extension(source+'MQL4/Indicators/', target+'MQL4/Indicators/', ".ex4")
 move_files_with_extension(source+'MQL4/Experts/', target+'MQL4/Experts/', ".ex4")
 move_files_with_extension(source+'templates/', target+'templates/', ".tpl")
 
-targetId = '4B5AFECFE6DF22D551907BBA5F00BB79'
+targetId = '716058370864DBE52D5A71596B78BDBA'
 target = os.path.abspath(os.path.join(source, "../"+targetId))      + '/'
 move_files_with_extension(source+'MQL4/Indicators/', target+'MQL4/Indicators/', ".ex4")
 move_files_with_extension(source+'MQL4/Experts/', target+'MQL4/Experts/', ".ex4")
