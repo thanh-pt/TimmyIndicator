@@ -3,6 +3,7 @@ import os
 
 
 def move_files_with_extension(path_a, path_b, extension=".ex4"):
+    shutil.rmtree(path_b)
     for root, dirs, files in os.walk(path_a):
         # Tính toán thư mục con tương ứng trong path_b
         relative_path = os.path.relpath(root, path_a)
@@ -25,12 +26,12 @@ source = os.path.abspath(os.path.join(script_path, "../../../../../")) + '/'
 
 targetId = '38FF69EE6A6C1E944100BD440671B133'
 target = os.path.abspath(os.path.join(source, "../"+targetId))      + '/'
-move_files_with_extension(source+'MQL4/Indicators/', target+'MQL4/Indicators/', ".ex4")
-move_files_with_extension(source+'MQL4/Experts/', target+'MQL4/Experts/', ".ex4")
+move_files_with_extension(source+'MQL4/Indicators/TimmyIndicator', target+'MQL4/Indicators/TimmyIndicator', ".ex4")
+move_files_with_extension(source+'MQL4/Experts/TimmyEA', target+'MQL4/Experts/TimmyEA', ".ex4")
 move_files_with_extension(source+'templates/', target+'templates/', ".tpl")
 
 targetId = '716058370864DBE52D5A71596B78BDBA'
 target = os.path.abspath(os.path.join(source, "../"+targetId))      + '/'
-move_files_with_extension(source+'MQL4/Indicators/', target+'MQL4/Indicators/', ".ex4")
-move_files_with_extension(source+'MQL4/Experts/', target+'MQL4/Experts/', ".ex4")
+move_files_with_extension(source+'MQL4/Indicators/TimmyIndicator', target+'MQL4/Indicators/TimmyIndicator', ".ex4")
+move_files_with_extension(source+'MQL4/Experts/TimmyEA', target+'MQL4/Experts/TimmyEA', ".ex4")
 move_files_with_extension(source+'templates/', target+'templates/', ".tpl")
