@@ -189,7 +189,7 @@ void loadBarEnhance(int totalBar)
     bool isDoji     = false;
     bool isFuncBar  = false;
     double lineOffset = 0.000000001;
-    for (int idx = totalBar-2; idx >= 0; idx--) { // ignore first cancel
+    for (int idx = totalBar-2; idx > 0; idx--) { // ignore first cancel
         // Clean Data:
         UWK01Buf[idx] = EMPTY_VALUE;
         UWK02Buf[idx] = EMPTY_VALUE;
