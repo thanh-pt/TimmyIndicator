@@ -35,3 +35,9 @@ target = os.path.abspath(os.path.join(source, "../"+targetId))      + '/'
 move_files_with_extension(source+'MQL4/Indicators/TimmyIndicator', target+'MQL4/Indicators/TimmyIndicator', ".ex4")
 move_files_with_extension(source+'MQL4/Experts/TimmyEA', target+'MQL4/Experts/TimmyEA', ".ex4")
 move_files_with_extension(source+'templates/', target+'templates/', ".tpl")
+
+targetId = '05DB405748C184B03A522D662D537628'
+target = os.path.abspath(os.path.join(source, "../"+targetId))      + '/'
+move_files_with_extension(source+'MQL4/Indicators/TimmyIndicator', target+'MQL4/Indicators/TimmyIndicator', ".ex4")
+move_files_with_extension(source+'MQL4/Experts/TimmyEA', target+'MQL4/Experts/TimmyEA', ".ex4")
+move_files_with_extension(source+'templates/', target+'templates/', ".tpl")
