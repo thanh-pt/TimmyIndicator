@@ -81,7 +81,7 @@ int OnInit()
     // Boder/body size
     gArrSizeMap[0] = 0;
     gArrSizeMap[1] = 1;
-    gArrSizeMap[2] = 3;
+    gArrSizeMap[2] = 2;
     gArrSizeMap[3] = 3;
     gArrSizeMap[4] = 6;
     gArrSizeMap[5] = 13;
@@ -148,7 +148,7 @@ void OnChartEvent(const int id,
 
 void updateStyle()
 {
-    bool bVisible = (gChartScale > 2 && gChartMode == CHART_CANDLES);
+    bool bVisible = (gChartScale >= 2 && gChartMode == CHART_CANDLES);
     if (bVisible){
         gBderUpClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_UP);
         gBderDnClr = (color)ChartGetInteger(0,CHART_COLOR_CHART_DOWN);
