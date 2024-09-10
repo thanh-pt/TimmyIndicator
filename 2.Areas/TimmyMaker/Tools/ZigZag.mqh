@@ -73,6 +73,7 @@ void ZigZag::createItem()
         ObjectCreate(cPtM0, OBJ_ARROW, 0, pCommonData.mMouseTime, pCommonData.mMousePrice);
         ObjectSet(cPtM0, OBJPROP_COLOR, clrNONE);
         ObjectSetString(0, cPtM0 ,OBJPROP_TOOLTIP,"\n");
+        pMouseInfo.setText("");
     }
     mTempLine = cLnXX + "#" + IntegerToString(mLineIndex++);
     ObjectCreate(mTempLine, OBJ_TREND, 0, pCommonData.mMouseTime, pCommonData.mMousePrice);
