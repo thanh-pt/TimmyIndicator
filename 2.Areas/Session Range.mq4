@@ -308,12 +308,12 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         }
         if (isSsRunning) createRectangle(gRectIdx++, Time[i+1], endDt, currHi, currLo, gSsBgColor[ss]);
     }
-    
+    string strRange = " " + DoubleToString((gHi-gLo)*pow(10, Digits-1),1);
     if (isSsRunning){
-        createLabel(gLabelIdx++, "►" + gSsLableMap[ss], begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
+        createLabel(gLabelIdx++, "►" + gSsLableMap[ss] + strRange, begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
     }
     else {
-        if (inpDisplayLable) createLabel(gLabelIdx++, gSsLableMap[ss], endDt, gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+        if (inpDisplayLable) createLabel(gLabelIdx++, gSsLableMap[ss] + strRange, endDt, gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
         if (endBar*gChartPeriod < 15) createLabel(gLabelIdx++, "🏴 E N D", Time[0] + 120*gChartPeriod, Low[0], 9, ANCHOR_LEFT_UPPER, gSsColor[ss]);
     }
 }
