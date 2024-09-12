@@ -70,7 +70,7 @@ void ZigZag::prepareActive()
 void ZigZag::createItem()
 {
     if (mLineIndex == 0){
-        ObjectCreate(cPtM0, OBJ_ARROW, 0, pCommonData.mMouseTime, pCommonData.mMousePrice);
+        ObjectCreate(cPtM0, OBJ_ARROW, 0, 0, 0);
         ObjectSet(cPtM0, OBJPROP_COLOR, clrNONE);
         ObjectSetString(0, cPtM0 ,OBJPROP_TOOLTIP,"\n");
         pMouseInfo.setText("");
@@ -78,6 +78,8 @@ void ZigZag::createItem()
     mTempLine = cLnXX + "#" + IntegerToString(mLineIndex++);
     ObjectCreate(mTempLine, OBJ_TREND, 0, pCommonData.mMouseTime, pCommonData.mMousePrice);
     updateDefaultProperty();
+    if (mLineIndex < 10) pMouseInfo.setText(" " + IntegerToString(mLineIndex));
+    else pMouseInfo.setText(IntegerToString(mLineIndex));
 }
 void ZigZag::updateDefaultProperty()
 {
