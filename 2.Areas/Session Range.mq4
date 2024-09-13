@@ -107,7 +107,7 @@ int gLineIdx;
 int gLabelIdx;
 int gRectIdx;
 
-string  gSsLableMap[] = {"As", "Ld", "Ny"};
+string  gSsLableMap[] = {"A", "L", "N"};
 color   gSsColor[3];
 color   gSsBgColor[3];
 
@@ -308,7 +308,7 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         }
         if (isSsRunning) createRectangle(gRectIdx++, Time[i+1], endDt, currHi, currLo, gSsBgColor[ss]);
     }
-    string strRange = " " + DoubleToString((gHi-gLo)*pow(10, Digits-1),1);
+    string strRange = "=" + DoubleToString((gHi-gLo)*pow(10, Digits-1),1);
     if (isSsRunning){
         createLabel(gLabelIdx++, "►" + gSsLableMap[ss] + strRange, begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
     }
