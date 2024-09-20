@@ -41,8 +41,8 @@ public:
             else {
                 mOutBoundary = false;
             }
+            ChartSetDouble(0,CHART_FIXED_POSITION, (double)mMouseX/mChartWidth*100);
         }
-        ChartSetDouble(0,CHART_FIXED_POSITION, (double)mMouseX/mChartWidth*100);
     }
     void controlHold()
     {
