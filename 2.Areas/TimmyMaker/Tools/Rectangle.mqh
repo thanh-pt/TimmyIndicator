@@ -1,7 +1,6 @@
 #include "../Base/BaseItem.mqh"
 
 input string            Rect_;                              // ●  S U P P L Y   D E M A N D  ●
-input color             Rect_Text_Color  = clrMidnightBlue; //Text Color
 //-----------------------------------------------------------
       string            Rect_Sz_Name       = "Sz";
 input color             Rect_Sz_Color      = C'255,200,200'; // Sz Color
@@ -151,9 +150,9 @@ void Rectangle::updateDefaultProperty()
     setMultiProp(OBJPROP_ARROWCODE,       4, cPtL1+cPtL2+cPtR1+cPtR2+cPtC1+cPtC2);
     setMultiProp(OBJPROP_COLOR    , clrNONE, cPtL1+cPtL2+cPtR1+cPtR2+cPtC1+cPtC2);
 
-    setTextContent(iTxtC, "", 8, FONT_TEXT, Rect_Text_Color);
-    setTextContent(iTxtL, "", 8, FONT_TEXT, Rect_Text_Color);
-    setTextContent(iTxtR, "", 8, FONT_TEXT, Rect_Text_Color);
+    setTextContent(iTxtC, "", 8, FONT_TEXT, gClrForegrnd);
+    setTextContent(iTxtL, "", 8, FONT_TEXT, gClrForegrnd);
+    setTextContent(iTxtR, "", 8, FONT_TEXT, gClrForegrnd);
 
     ObjectSet(iTxtC, OBJPROP_ANCHOR, ANCHOR_CENTER);
     ObjectSet(iTxtL, OBJPROP_ANCHOR, ANCHOR_LEFT);

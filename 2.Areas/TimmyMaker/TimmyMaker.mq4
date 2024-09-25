@@ -26,6 +26,9 @@ int OnInit()
 //---
     ChartSetInteger(0, CHART_EVENT_MOUSE_MOVE, true);
     ChartSetInteger(0, CHART_EVENT_OBJECT_DELETE, true);
+
+    ChartSetInteger(0, CHART_AUTOSCROLL, false);
+    ChartSetInteger(0, CHART_SHIFT, true);
     
     // Init global variable
     gController.setFinishedJobCB(FinishedJobFunc);

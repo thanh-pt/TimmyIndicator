@@ -188,7 +188,7 @@ void Controller::handleKeyEvent(const long &key)
     if (mActive == eNONE) {
         if (key == 'E') {
             mbActiveErase = true;
-            pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF | 4-BgOverlap");
+            pMouseInfo.setText("Erase: 1-All | 2-ThisTF | 3-LowerTF | 4-BgOvl");
         }
         else {
             mbActiveErase = false;

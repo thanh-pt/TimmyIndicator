@@ -26,7 +26,7 @@ input bool      Trd_TrackTrade    = false;   // Track Trade
 input double    Trd_Cost          = 1.5;     // Cost ($)
 input double    Trd_Com           = 7;       // Commission ($)
 input double    Trd_Spread        = 0.0;     // Spread (pip)
-input double    Trd_SlSpace       = 0.1;     // Space for Price (pip)
+input double    Trd_SlSpace       = 0.1;     // Space for SL (pip)
 //-------------------------------------------------
 eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
 eDisplay    Trd_ShowDollar  = OPTION;   //Show Dollar

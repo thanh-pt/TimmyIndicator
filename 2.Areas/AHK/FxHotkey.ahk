@@ -10,7 +10,7 @@ Menu, Tray, Icon, FxHotkey.ico
 #Space::Send, {PrintScreen}
 
 ;------------------------------------------------------------ MT 4 Hotkey --------------------------------------------------------------------------------
-#IfWinActive, ahk_exe terminal.exe
+#IfWinActive, ahk_class MetaQuotes::MetaTrader::4.00
 	XButton1::End
 	^XButton1::
 		Send, J ;Chart Force
@@ -32,9 +32,6 @@ Menu, Tray, Icon, FxHotkey.ico
 		Send, J ;Chart Force
 		Send, H ;Chart Free
 	return
-#IfWinActive
-
-#IfWinActive, ahk_class MetaQuotes::MetaTrader::4.00
 ; Begin:: Vô hiệu hoá phím backspace -> Khắc phục lỗi xung đột với Unikey
 	BackSpace::
 	return
@@ -62,21 +59,16 @@ Menu, Tray, Icon, FxHotkey.ico
 #IfWinActive
 
 #IfWinActive, ahk_exe Forex Simulator.exe
-	Left::^Left
-	Right::^Right
-	$[::^Left
-	$]::^Right
+	; Left::^Left
+	; Right::^Right
+	; $[::^Left
+	; $]::^Right
 	F1::^Left
 	F2::^Right
 	F3::
 		WinActivate, ahk_exe terminal.exe
 		Send 5
 		WinActivate, ahk_exe Forex Simulator.exe
-	return
-	; Back to teminal and hide trade
-	u::
-		WinActivate, ahk_exe terminal.exe
-		Send u
 	return
 	; Next day
 	^p::
