@@ -53,7 +53,7 @@ public:
                 ObjectSet(itemBgnd, OBJPROP_COLOR, gClrTextBgnd);
             }
         }
-        gController.handleSparamEvent(CHART_EVENT_SELECT_CONTEXTMENU, mActiveObjectId);
+        gController.handleEvent(CHART_EVENT_SELECT_CONTEXTMENU, mActiveObjectId);
     }
     void onNumKeyPress(int index)
     {
@@ -61,7 +61,7 @@ public:
         string itemName = nameTag+IntegerToString(index);
         mActivePos = index;
         mActiveItemStr = StringTrimRight(StringTrimLeft(ObjectDescription(itemName)));
-        gController.handleSparamEvent(CHART_EVENT_SELECT_CONTEXTMENU, mActiveObjectId);
+        gController.handleEvent(CHART_EVENT_SELECT_CONTEXTMENU, mActiveObjectId);
     }
 public:
     void openContextMenu(const string objId, const string data)

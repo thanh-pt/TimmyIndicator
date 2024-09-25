@@ -44,9 +44,9 @@ public:
     ~Controller();
 
 public:
-    void handleKeyEvent(const long &key);
-    void handleIdEventOnly(const int id);
-    void handleSparamEvent(const int id, const string& sparam);
+    void handleEvent(const long &key);
+    void handleEvent(const int id);
+    void handleEvent(const int id, const string& sparam);
     void handleOntick();
     void setFinishedJobCB(FinishedJob cb);
     void finishedJob();
@@ -121,9 +121,9 @@ int Controller::findItemIdByName(const string& name)
     return eNONE;
 }
 
-void Controller::handleKeyEvent(const long &key)
+void Controller::handleEvent(const long &key)
 {
-    // PrintFormat("handleKeyEvent %c %d", key, key);
+    // PrintFormat("handleEvent %c %d", key, key);
     // S1: handle functional Key
     bool bFunctionKey = true;
     switch ((int)key)
@@ -230,7 +230,7 @@ void Controller::handleKeyEvent(const long &key)
     mListItem[mActive].startActivate(mFinishedJobCb);
 }
 
-void Controller::handleIdEventOnly(const int id)
+void Controller::handleEvent(const int id)
 {
     CHECK_NOT_ACTIVE_RETURN
 
@@ -246,7 +246,7 @@ void Controller::handleIdEventOnly(const int id)
     }
 }
 
-void Controller::handleSparamEvent(const int id, const string& sparam)
+void Controller::handleEvent(const int id, const string& sparam)
 {
     CHECK_ACTIVE_RETURN
 

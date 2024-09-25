@@ -70,7 +70,7 @@ void OnChartEvent(const int id,
     switch (id)
     {
     case CHARTEVENT_KEYDOWN:
-        gController.handleKeyEvent(lparam);
+        gController.handleEvent(lparam);
     break;
 
     case CHARTEVENT_MOUSE_MOVE:
@@ -79,7 +79,7 @@ void OnChartEvent(const int id,
         gMouseInfo.onMouseMove();
         detectMouseDraging(sparam);
     case CHARTEVENT_CLICK:
-        gController.handleIdEventOnly(id);
+        gController.handleEvent(id);
         break;
 
     // event need sparam
@@ -91,7 +91,7 @@ void OnChartEvent(const int id,
         // gMouseInfo.onObjectDeleted(sparam);
     case CHARTEVENT_OBJECT_DRAG:
     case CHARTEVENT_OBJECT_CHANGE:
-        gController.handleSparamEvent(id, sparam);
+        gController.handleEvent(id, sparam);
     break;
     case CHARTEVENT_CHART_CHANGE:
         gContextMenu.clearContextMenu();
@@ -131,7 +131,7 @@ void detectMouseDraging(const string &sparam)
     // Press and draging
     if (gIsPress && (option & 0x01) != 0)
     {
-        gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, gTargetItem);
+        gController.handleEvent(CHARTEVENT_OBJECT_DRAG, gTargetItem);
     }
 
     gPreviousOption = option;

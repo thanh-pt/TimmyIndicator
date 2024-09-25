@@ -142,7 +142,7 @@ void setUnselectAll()
         
         if (itemId == currentItemId) continue;
         currentItemId = itemId;
-        gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, objName);
+        gController.handleEvent(CHARTEVENT_OBJECT_DRAG, objName);
     }
     gContextMenu.clearContextMenu();
 }
@@ -168,7 +168,7 @@ void setUnselectAllExcept(string objId)
         
         if (itemId == currentItemId) continue;
         currentItemId = itemId;
-        gController.handleSparamEvent(CHARTEVENT_OBJECT_DRAG, objName);
+        gController.handleEvent(CHARTEVENT_OBJECT_DRAG, objName);
     }
     gContextMenu.clearContextMenu();
 }
