@@ -6,6 +6,7 @@
 #property strict
 #property indicator_chart_window
 
+#include "../3.Resource/DrawLib.mqh"
 #define APP_TAG "dailyBox"
 
 int          gChartPeriod = ChartPeriod();
@@ -80,7 +81,6 @@ void OnChartEvent(const int id,
 //+------------------------------------------------------------------+
 
 void scanWindow(){
-    gLineIdx = 0;
     if (ChartPeriod() > PERIOD_H4) return;
     // First bar Datetime
     int lastBar = gFirstBar - WindowBarsPerChart();
@@ -97,42 +97,13 @@ void scanWindow(){
         gDateTime += 86400;
     }
 
-    hideItem(gLineIdx, "Line");
+    drawLibEnd();
 }
 
 void createBox(datetime time1, datetime time2, double price1, double price2){
-    createLine(time1, time1, price1, price2, clrBlack);
-    createLine(time2, time2, price1, price2, clrBlack);
-    createLine(time1, time2, price1, price1, clrBlack);
-    createLine(time1, time2, price2, price2, clrBlack);
-}
-
-int gLineIdx = 0;
-void createLine(datetime time1, datetime time2, double price1, double price2, color cl){
-    string objName = APP_TAG + "Line" + IntegerToString(gLineIdx++);
-    ObjectCreate(objName, OBJ_TREND, 0, 0, 0);
-    // Default
-    ObjectSet(objName, OBJPROP_BACK, true);
-    ObjectSet(objName, OBJPROP_RAY, false);
-    ObjectSet(objName, OBJPROP_SELECTABLE, false);
-    ObjectSet(objName, OBJPROP_HIDDEN, true);
-    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
-    // Style
-    ObjectSet(objName, OBJPROP_STYLE, STYLE_DOT);
-    ObjectSet(objName, OBJPROP_WIDTH, 0);
-    // Basic
-    ObjectSet(objName, OBJPROP_COLOR, cl);
-    ObjectSet(objName, OBJPROP_TIME1, time1);
-    ObjectSet(objName, OBJPROP_TIME2, time2);
-    ObjectSet(objName, OBJPROP_PRICE1, price1);
-    ObjectSet(objName, OBJPROP_PRICE2, price2);
-}
-
-void hideItem(int index, string tag){
-    string objName = APP_TAG + tag + IntegerToString(index);
-    while(ObjectFind(objName) >= 0){
-        ObjectSet(objName, OBJPROP_TIME1, 0);
-        ObjectSet(objName, OBJPROP_TIME2, 0);
-        objName = APP_TAG + tag + IntegerToString(index++);
-    }
+    // drawRect(time1, time2, price1, price2, clrWhiteSmoke);
+    drawLine(time1, time1, price1, price2, clrBlack);
+    drawLine(time2, time2, price1, price2, clrBlack);
+    drawLine(time1, time2, price1, price1, clrBlack);
+    drawLine(time1, time2, price2, price2, clrBlack);
 }
