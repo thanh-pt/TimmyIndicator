@@ -89,8 +89,8 @@ Alert::Alert(CommonData* commonData, MouseInfo* mouseInfo)
     pMouseInfo = mouseInfo;
 
     // Init variable type
-    mNameType [CREATE_ALERT] = "Alert Line";
-    mNameType [TEST_ALERT]   = "Test Alert";
+    mNameType [CREATE_ALERT] = "Alert";
+    mNameType [TEST_ALERT]   = "Ping!";
     mTypeNum = CUTIL_NUM;
     mIndexType = 0;
 

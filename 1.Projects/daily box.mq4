@@ -1,7 +1,7 @@
 #property copyright "Chuot Forex"
 #property link      "https://chuot-fx.blogspot.com/"
 #property icon      "../3.Resource/Chuột.ico"
-#property version   "2.00"
+#property version   "1.00"
 #property description "Support me on Exness my IB: kzhhe6qy44"
 #property strict
 #property indicator_chart_window
@@ -81,7 +81,10 @@ void OnChartEvent(const int id,
 //+------------------------------------------------------------------+
 
 void scanWindow(){
-    if (ChartPeriod() > PERIOD_H4) return;
+    if (ChartPeriod() > PERIOD_H4) {
+        drawLibEnd();
+        return;
+    }
     // First bar Datetime
     int lastBar = gFirstBar - WindowBarsPerChart();
     gDateTime = Time[gFirstBar];
