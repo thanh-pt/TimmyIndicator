@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property strict
 #property indicator_chart_window
-#define Lver
+// #define Lver
 
 #include "Home/Controller.mqh"
 #include "Home/CommonData.mqh"
