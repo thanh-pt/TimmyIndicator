@@ -5,6 +5,7 @@
 //+------------------------------------------------------------------+
 #property strict
 #property indicator_chart_window
+#define Lver
 
 #include "Home/Controller.mqh"
 #include "Home/CommonData.mqh"
@@ -28,6 +29,7 @@ int OnInit()
     ChartSetInteger(0, CHART_EVENT_OBJECT_DELETE, true);
 
     ChartSetInteger(0, CHART_AUTOSCROLL, false);
+    ChartSetInteger(0, CHART_SHOW_GRID, false);
     ChartSetInteger(0, CHART_SHIFT, true);
     
     // Init global variable

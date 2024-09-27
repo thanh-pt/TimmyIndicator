@@ -16,11 +16,16 @@ enum ENotiType
     ENotiPC,    // PC
     ENotiNone,  // Silent
 };
-
+#ifdef Lver
+input string        _Alert; // ●  A L E R T (Pro Version)
+ENotiType     InpNotiType     = ENotiPhone;   // Alert
+color         InpAlertColor   = clrGainsboro; // Color
+#else
 input string        _Alert;                         // ●  A L E R T  ●
 input ENotiType     InpNotiType     = ENotiPhone;   // Alert
 input color         InpAlertColor   = clrGainsboro; // Color
-      LINE_STYLE    InpAlertStyle   = STYLE_DOT;    // Style
+#endif
+    LINE_STYLE    InpAlertStyle   = STYLE_DOT;    // Style
 
 class Alert : public BaseItem
 {

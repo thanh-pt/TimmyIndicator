@@ -69,12 +69,10 @@ BaseItem::~BaseItem()
 void BaseItem::startActivate(FinishedJob cb)
 {
     ChartSetInteger(0, CHART_MOUSE_SCROLL, false);
-    if (mTypeNum == 0)
-    {
+    if (mTypeNum == 0) {
         pMouseInfo.setText(mItemName);
     }
-    else
-    {
+    else {
         pMouseInfo.setText(createMouseInfo());
     }
     mFirstPoint = false;

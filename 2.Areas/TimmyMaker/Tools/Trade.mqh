@@ -20,6 +20,15 @@ enum eDisplay
     OPTION, // Option
 };
 
+#ifdef Lver
+input string    Trd_; // ●  T R A D E (Pro Version)
+//-------------------------------------------------
+bool      Trd_TrackTrade    = false;   // Track Trade
+double    Trd_Cost          = 1.5;     // Cost ($)
+double    Trd_Com           = 7;       // Commission ($)
+double    Trd_Spread        = 0.0;     // Spread (pip)
+double    Trd_SlSpace       = 0.1;     // Space for SL (pip)
+#else
 input string    Trd_; // ●  T R A D E  ●
 //-------------------------------------------------
 input bool      Trd_TrackTrade    = false;   // Track Trade
@@ -28,6 +37,8 @@ input double    Trd_Com           = 7;       // Commission ($)
 input double    Trd_Spread        = 0.0;     // Spread (pip)
 input double    Trd_SlSpace       = 0.1;     // Space for SL (pip)
 //-------------------------------------------------
+#endif
+
 eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
 eDisplay    Trd_ShowDollar  = OPTION;   //Show Dollar
 //-------------------------------------------------

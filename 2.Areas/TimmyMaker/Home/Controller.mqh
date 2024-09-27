@@ -95,15 +95,17 @@ void Controller::finishedJob()
 
 int Controller::findItemIdByKey(const int key)
 {
-    if (key == 'W') return eTRADE     ;
-    if (key == 'R') return eRECTANGLE ;
     if (key == 'T') return eTREND     ;
-    if (key == 'F') return eFIBONACI  ;
-    if (key == 'G') return eLABEL     ;
     if (key == 'Z') return eZIGZAG    ;
-    if (key == 'X') return eALERT     ;
+    if (key == 'R') return eRECTANGLE ;
+    if (key == 'F') return eFIBONACI  ;
     if (key == 'C') return eCALLOUT   ;
+    if (key == 'G') return eLABEL     ;
     if (key == 'S') return ePOINT     ;
+#ifndef Lver
+    if (key == 'X') return eALERT     ;
+    if (key == 'W') return eTRADE     ;
+#endif
     return eNONE;
 }
 
