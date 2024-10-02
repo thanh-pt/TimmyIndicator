@@ -11,7 +11,6 @@
 #define CTX_AUTOBE      "Auto BE"
 
 #define TAG_TRADEID     ".TMTrade_1#"
-#define LIVE_INDI       "ʟɪᴠᴇ"
 
 enum eDisplay
 {
@@ -214,8 +213,8 @@ void Trade::initData()
 void Trade::updateDefaultProperty()
 {
     //-------------------------------------------------
-    ObjectSet(cBgSl, OBJPROP_BACK, true);
-    ObjectSet(iBgTP, OBJPROP_BACK, true);
+    setMultiProp(OBJPROP_BACK, true , iBgTP+iLnTp+iLnBe+iLnEn+iLnSl+iTxT2+iTxE2+iTxS2+iTxtT+iTxtE+iTxtS+iTxtB);
+    setMultiProp(OBJPROP_BACK, false, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
     //-------------------------------------------------
     setMultiProp(OBJPROP_ARROWCODE , 4    , cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
     
@@ -406,9 +405,26 @@ void Trade::refreshData()
     ObjectSetString(0, cPtBE, OBJPROP_TOOLTIP, DoubleToString(priceBE, Digits));
 
     int selected = (int)ObjectGet(cPtWD, OBJPROP_SELECTED);
-    setMultiProp(OBJPROP_COLOR, selected ? gClrPointer : clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
-    if (selected) gContextMenu.openStaticCtxMenu(cPtWD, ObjectDescription(cPtWD) == LIVE_INDI ? mLiveTradeCtx : mContextType);
-    else gContextMenu.clearStaticCtxMenu(cPtWD);
+    if (ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2) {
+        if (selected) {
+            gContextMenu.openStaticCtxMenu(cPtWD, mLiveTradeCtx);
+            setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtWD+cPtBE);
+        }
+        else {
+            gContextMenu.clearStaticCtxMenu(cPtWD);
+            setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtWD+cPtBE);
+        }
+    }
+    else {
+        if (selected) {
+            gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
+            setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+        }
+        else {
+            gContextMenu.clearStaticCtxMenu(cPtWD);
+            setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+        }
+    }
 }
 void Trade::finishedJobDone()
 {
@@ -474,10 +490,27 @@ void Trade::onItemClick(const string &itemId, const string &objId)
 {
     if (StringFind(objId, TAG_CTRL) < 0) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    if (selected) gContextMenu.openStaticCtxMenu(cPtWD, ObjectDescription(cPtWD) == LIVE_INDI ? mLiveTradeCtx : mContextType);
-    else gContextMenu.clearStaticCtxMenu(cPtWD);
+    if (ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2) {
+        if (selected) {
+            gContextMenu.openStaticCtxMenu(cPtWD, mLiveTradeCtx);
+            setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtWD+cPtBE);
+        }
+        else {
+            gContextMenu.clearStaticCtxMenu(cPtWD);
+            setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtWD+cPtBE);
+        }
+    }
+    else {
+        if (selected) {
+            gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
+            setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+        }
+        else {
+            gContextMenu.clearStaticCtxMenu(cPtWD);
+            setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+        }
+    }
     setCtrlItemSelectState(mAllItem, selected);
-    setMultiProp(OBJPROP_COLOR, selected ? gClrPointer : clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
 }
 void Trade::onItemChange(const string &itemId, const string &objId)
 {
@@ -514,7 +547,7 @@ void Trade::showHistory(bool isShow)
         }
         
         if ((bool)ObjectGet(cPtWD, OBJPROP_SELECTED)) continue;
-        if (ObjectDescription(cPtWD) == LIVE_INDI) continue; // Don't hide live trade
+        if (ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2) continue; // Don't hide live trade
         // Hide Item
         ObjectSet(cBgSl, OBJPROP_PRICE1, 0);
         ObjectSet(iBgTP, OBJPROP_PRICE1, 0);
@@ -656,7 +689,8 @@ void Trade::scanLiveTrade()
             priceBE = 2*priceEN - priceSL;
             createTrade(OrderTicket(), OrderOpenTime(), OrderOpenTime()+getDistanceBar(10),
                                     priceEN, priceSL, priceTP, priceBE);
-            setTextContent(cPtWD, LIVE_INDI);
+            ObjectSet(cPtEN, OBJPROP_ARROWCODE, 2);
+            ObjectSet(cPtEN, OBJPROP_COLOR, clrRed);
             refreshData();
             continue;
         }
@@ -674,8 +708,7 @@ void Trade::scanLiveTrade()
             if (mArrTradeItems[i] == "") continue;
             itemId = "." + mArrTradeItems[i];
             activateItem(itemId);
-            setTextContent(cPtWD, "");
-            setTextContent(iTxtE, "---");
+            ObjectSet(cPtEN, OBJPROP_ARROWCODE, 4);
         }
     }
     mStrTradeItems = strNewTradeItems;
