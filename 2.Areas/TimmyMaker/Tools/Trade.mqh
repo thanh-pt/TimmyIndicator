@@ -409,20 +409,24 @@ void Trade::refreshData()
         if (selected) {
             gContextMenu.openStaticCtxMenu(cPtWD, mLiveTradeCtx);
             setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtWD+cPtBE);
+            ObjectSet(iLnBe, OBJPROP_COLOR, Trd_TpColor);
         }
         else {
             gContextMenu.clearStaticCtxMenu(cPtWD);
             setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtWD+cPtBE);
+            if (strBeInfo == "") ObjectSet(iLnBe, OBJPROP_COLOR, clrNONE);
         }
     }
     else {
         if (selected) {
             gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
             setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+            ObjectSet(iLnBe, OBJPROP_COLOR, Trd_TpColor);
         }
         else {
             gContextMenu.clearStaticCtxMenu(cPtWD);
             setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+            if (strBeInfo == "") ObjectSet(iLnBe, OBJPROP_COLOR, clrNONE);
         }
     }
 }
