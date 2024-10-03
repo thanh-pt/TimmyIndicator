@@ -89,12 +89,17 @@ void scanWindow(){
     int lastBar = gFirstBar - WindowBarsPerChart();
     gDateTime = Time[gFirstBar];
     if (lastBar < 0) lastBar = 0;
-    int dailyBarIdx = 0;
+    int barIdx_D = 0;
+    int doW = 0;
     while (gDateTime < Time[lastBar]){
-        dailyBarIdx = iBarShift(gSymbol, 1440, gDateTime, true);
-        if (dailyBarIdx > 0 && TimeDayOfWeek(gDateTime) != 0) {
-            gDateTime = iTime(gSymbol, 1440, dailyBarIdx);
-            createBox(gDateTime, gDateTime+86400, iHigh(gSymbol,1440, dailyBarIdx), iLow(gSymbol,1440, dailyBarIdx));
+        barIdx_D = iBarShift(gSymbol, 1440, gDateTime, true);
+        doW = TimeDayOfWeek(gDateTime);
+        if (barIdx_D > 0 && doW != 0) {
+            gDateTime = iTime(gSymbol, 1440, barIdx_D);
+            createBox(gDateTime, gDateTime+86400, dHigh(barIdx_D), dLow(barIdx_D), barIdx_D);
+        }
+        else if (doW == 0 || barIdx_D == 0){
+            drawLine(gDateTime, gDateTime, dHigh(barIdx_D+1), dLow(barIdx_D+1), clrGray);
         }
         // Next day!
         gDateTime += 86400;
@@ -103,10 +108,15 @@ void scanWindow(){
     drawLibEnd();
 }
 
-void createBox(datetime time1, datetime time2, double price1, double price2){
-    // drawRect(time1, time2, price1, price2, clrWhiteSmoke);
-    drawLine(time1, time1, price1, price2, clrBlack);
-    drawLine(time2, time2, price1, price2, clrBlack);
-    drawLine(time1, time2, price1, price1, clrBlack);
-    drawLine(time1, time2, price2, price2, clrBlack);
+void createBox(datetime time1, datetime time2, double price1, double price2, const int& barIdxD){
+    drawLine(time1, time1, MathMax(price1, dHigh(barIdxD+1)), MathMin(price2, dLow(barIdxD+1)), clrGray);
+    drawLine(time1, time2, price1, price1, clrGray);
+    drawLine(time1, time2, price2, price2, clrGray);
+}
+
+double dHigh(int idx){
+    return iHigh(gSymbol,1440, idx);
+}
+double dLow(int idx){
+    return iLow(gSymbol,1440, idx);
 }

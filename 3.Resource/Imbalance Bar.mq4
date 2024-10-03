@@ -19,6 +19,14 @@ double         LineUp02[];
 double         LineDn01[];
 double         LineDn02[];
 
+//--- Input
+input color     InpColorUp = clrGoldenrod; // Color UP
+input color     InpColorDn = clrGoldenrod; // Color DOWN
+input string    InpOnOffHotkey = "M";     // Hotkey ON/OFF
+input bool      InpDefaultIndiOn = false; // Default ON?
+
+
+//--- Variable
 int     gTotalRate = 1;
 
 int     gChartScale = (int)ChartGetInteger(0, CHART_SCALE);
@@ -31,7 +39,7 @@ color   gBderDnClr;
 
 int     gArrSizeMap[6];
 
-bool gbImbOn = true;
+bool gbImbOn = InpDefaultIndiOn;
 
 enum EBarMap{
     eBarIsmb1,
@@ -41,10 +49,6 @@ enum EBarMap{
     eBarLnN01,
     eBarLnN02,
 };
-
-input color InpColorUp = clrGoldenrod; // Color UP
-input color InpColorDn = clrGoldenrod; // Color DOWN
-input string InpOnOffHotkey = "M";       // Hotkey ON/OFF
 
 int OnInit()
 {
