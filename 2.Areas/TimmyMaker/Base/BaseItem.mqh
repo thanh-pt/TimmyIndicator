@@ -5,6 +5,8 @@
 #include "../Home/UtilityHeader.mqh"
 #include "../InfoItem/MouseInfo.mqh"
 
+#define MOUSE_MOVE_RETURN_CHECK if (mFirstPoint == false) {if (pCommonData.mOutBoundary) mFinishedJobCb();return;}
+
 typedef void(*FinishedJob)();
 
 class BaseItem

@@ -127,11 +127,13 @@ void ZigZag::finishedJobDone()
 // Chart Event
 void ZigZag::onMouseMove()
 {
+    MOUSE_MOVE_RETURN_CHECK
     ObjectSet(mTempLine, OBJPROP_TIME2,  pCommonData.mMouseTime);
     ObjectSet(mTempLine, OBJPROP_PRICE2, pCommonData.mMousePrice);
 }
 void ZigZag::onMouseClick()
 {
+    mFirstPoint = true;
     createItem();
 }
 void ZigZag::onItemDrag(const string &itemId, const string &objId)

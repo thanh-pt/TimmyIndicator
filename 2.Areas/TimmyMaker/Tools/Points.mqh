@@ -167,9 +167,7 @@ void Point::finishedJobDone(){}
 // Chart Event
 void Point::onMouseMove()
 {
-    price= pCommonData.mMousePrice;
-    time = pCommonData.mMouseTime;
-    refreshData();
+    MOUSE_MOVE_RETURN_CHECK
 }
 void Point::onMouseClick()
 {

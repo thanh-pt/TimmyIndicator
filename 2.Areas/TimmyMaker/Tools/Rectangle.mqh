@@ -251,18 +251,14 @@ void Rectangle::finishedJobDone(){}
 // Chart Event
 void Rectangle::onMouseMove()
 {
-    if (mFirstPoint == false)
-    {
-        return;
-    }
+    MOUSE_MOVE_RETURN_CHECK
     time2  = pCommonData.mMouseTime;
     price2 = pCommonData.mMousePrice;
     refreshData();
 }
 void Rectangle::onMouseClick()
 {
-    if (mFirstPoint == false)
-    {
+    if (mFirstPoint == false) {
         createItem();
         mFirstPoint = true;
         return;

@@ -334,7 +334,7 @@ void Trend::onMouseClick()
 }
 void Trend::onMouseMove()
 {
-    if (mFirstPoint == false) return;
+    MOUSE_MOVE_RETURN_CHECK
     if (pCommonData.mShiftHold) {
         price2 = price1;
     }

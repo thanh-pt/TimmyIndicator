@@ -35,7 +35,6 @@ public:
             mChartWidth  = ChartGetInteger(0,CHART_WIDTH_IN_PIXELS, 0);
             mChartHeight = ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS,0);
             if (mMouseX <= 0 || mMouseY <= 0 || mMouseX >= mChartWidth || mMouseY >= mChartHeight) {
-                if (mOutBoundary == false) FinishedJobFunc();
                 mOutBoundary = true;
             }
             else {

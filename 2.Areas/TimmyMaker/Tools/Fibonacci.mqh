@@ -312,10 +312,7 @@ void Fibonacci::finishedJobDone(){}
 // Chart Event
 void Fibonacci::onMouseMove()
 {
-    if (mFirstPoint == false)
-    {
-        return;
-    }
+    MOUSE_MOVE_RETURN_CHECK
     time1  = pCommonData.mMouseTime;
     price1 = pCommonData.mMousePrice;
     refreshData();

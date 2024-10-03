@@ -172,6 +172,7 @@ void Alert::finishedJobDone(){}
 // Chart Event
 void Alert::onMouseMove()
 {
+    MOUSE_MOVE_RETURN_CHECK
 }
 void Alert::onMouseClick()
 {

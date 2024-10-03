@@ -436,7 +436,10 @@ void Trade::finishedJobDone()
 }
 
 // Chart Event
-void Trade::onMouseMove(){}
+void Trade::onMouseMove()
+{
+    MOUSE_MOVE_RETURN_CHECK
+}
 void Trade::onMouseClick()
 {
     createItem();

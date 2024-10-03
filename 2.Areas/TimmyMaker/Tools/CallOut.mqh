@@ -148,10 +148,7 @@ void CallOut::finishedJobDone(){}
 // Chart Event
 void CallOut::onMouseMove()
 {
-    if (mFirstPoint == false)
-    {
-        return;
-    }
+    MOUSE_MOVE_RETURN_CHECK
     time2  = pCommonData.mMouseTime;
     price2 = pCommonData.mMousePrice;
     refreshData();

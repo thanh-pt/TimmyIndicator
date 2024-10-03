@@ -161,7 +161,10 @@ void LabelText::refreshData()
 void LabelText::finishedJobDone(){}
 
 // Chart Event
-void LabelText::onMouseMove(){}
+void LabelText::onMouseMove()
+{
+    MOUSE_MOVE_RETURN_CHECK
+}
 void LabelText::onMouseClick()
 {
     createItem();
