@@ -316,7 +316,7 @@ void Trend::onItemChange(const string &itemId, const string &objId)
     if (objId == cLnM0){
         ObjectSet(iTxtC, OBJPROP_COLOR, (color)ObjectGet(objId, OBJPROP_COLOR));
         string description = ObjectDescription(objId);
-        if (description != ""){
+        if (description != STR_EMPTY && description != ""){
             setTextContent(objId, "");
             setTextContent(iTxtC, (description == "-") ? STR_EMPTY : description);
         }

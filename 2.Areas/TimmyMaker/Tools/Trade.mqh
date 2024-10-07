@@ -344,7 +344,7 @@ void Trade::refreshData()
     double point       = floor(fabs(priceEN-priceSL) * (pow(10, Digits)));
     double absRR    = (priceTP-priceEN) / (priceEN-priceSL);
     double absBe    = (priceBE-priceEN) / (priceEN-priceSL);
-    mLot = floor(mCost / (point + Trd_Com) * 100)/100;
+    mLot = NormalizeDouble(floor(mCost / (point + Trd_Com) * 100)/100, 2);
     double realCost = mLot * (point + Trd_Com);
     double profit   = mLot * (absRR*point - Trd_Com);
 

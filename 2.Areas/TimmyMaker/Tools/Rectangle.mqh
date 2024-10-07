@@ -328,7 +328,7 @@ void Rectangle::onItemChange(const string &itemId, const string &objId)
 {
     if (objId == cBgM0) {
         string description = ObjectDescription(objId);
-        if (description != ""){
+        if (description != STR_EMPTY && description != ""){
             setTextContent(objId, "");
             setTextContent(iTxtC, (description == "-") ? STR_EMPTY : description);
         }

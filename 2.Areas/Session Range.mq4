@@ -322,7 +322,7 @@ void createLabel(int index, string label, datetime time1, double price1, int siz
     string objName = APP_TAG + "Label" + IntegerToString(index);
     ObjectCreate(objName, OBJ_TEXT, 0, 0, 0);
     // Default
-    ObjectSet(objName, OBJPROP_BACK, true);
+    ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSet(objName, OBJPROP_SELECTABLE, false);
     ObjectSet(objName, OBJPROP_HIDDEN, true);
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
