@@ -276,9 +276,9 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         if (Low[i]  < gLo)  gLo = Low[i];
     }
     if (inpStyle == eStyleLineBox){
-        createLine(gLineIdx++, begDt, begDt, gHi, gLo, gSsColor[ss]);
         createLine(gLineIdx++, endDt, endDt, gHi, gLo, gSsColor[ss]);
         if (isSsRunning == false) {
+            createLine(gLineIdx++, begDt, begDt, gHi, gLo, gSsColor[ss]);
             createLine(gLineIdx++, begDt, endDt, gHi, gHi, gSsColor[ss]);
             createLine(gLineIdx++, begDt, endDt, gLo, gLo, gSsColor[ss]);
         }
@@ -313,7 +313,7 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         createLabel(gLabelIdx++, "►" + gSsLableMap[ss] + strRange, begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
     }
     else {
-        if (inpDisplayLable) createLabel(gLabelIdx++, gSsLableMap[ss] + strRange, endDt, gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+        if (inpDisplayLable) createLabel(gLabelIdx++, gSsLableMap[ss] + strRange, begDt, gHi, 7, ANCHOR_LEFT_LOWER, gSsColor[ss]);
         if (endBar*gChartPeriod < 15) createLabel(gLabelIdx++, "🏴 E N D", Time[0] + 120*gChartPeriod, Low[0], 9, ANCHOR_LEFT_UPPER, gSsColor[ss]);
     }
 }
