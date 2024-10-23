@@ -37,6 +37,7 @@ input double    Trd_Spread        = 0.0;     // Spread (pip)
 input double    Trd_SlSpace       = 0.1;     // Space for SL (pip)
 //-------------------------------------------------
 #endif
+input int       Trd_ContractSize = 100000;  // Contract Size
 
 eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
 eDisplay    Trd_ShowDollar  = OPTION;   //Show Dollar
@@ -161,9 +162,9 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
 
     // Other initialize
     mCost     = Trd_Cost;
-    mSpread   = Trd_Spread / pow(10, Digits-1);
-    mStlSpace = Trd_SlSpace / pow(10, Digits-1);
-    mComPoint = Trd_Com / pow(10, Digits);
+    mSpread   = 10*Trd_Spread  / Trd_ContractSize;
+    mStlSpace = 10*Trd_SlSpace / Trd_ContractSize;
+    mComPoint = Trd_Com        / Trd_ContractSize;
     /* TODO: Chuyển đổi tỷ giá
         string strSymbol = Symbol();
         Example:
@@ -341,7 +342,7 @@ void Trade::refreshData()
     //-------------------------------------------------
     // 1. Thông tin lệnh
     if (priceSL == priceBE) return;
-    double point       = floor(fabs(priceEN-priceSL) * (pow(10, Digits)));
+    double point    = floor(fabs(priceEN-priceSL) * Trd_ContractSize);
     double absRR    = (priceTP-priceEN) / (priceEN-priceSL);
     double absBe    = (priceBE-priceEN) / (priceEN-priceSL);
     mLot = NormalizeDouble(floor(mCost / (point + Trd_Com) * 100)/100, 2);
@@ -672,15 +673,15 @@ void Trade::scanLiveTrade()
         if (orgSL <= 0.0) { //Invalid stored OrgSL
             priceSL = OrderStopLoss();
             tradeSize = OrderLots();
-            point = floor(fabs(priceEN-priceSL) * (pow(10, Digits)));
+            point = floor(fabs(priceEN-priceSL) * Trd_ContractSize);
             mLot = 0;
             if (point != 0) mLot = floor(mCost / (point + Trd_Com) * 100)/100;
             if (mLot != tradeSize) {
                 int orderType = OrderType();
                 if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
-                    priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / pow(10, Digits);
+                    priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
                 } else {
-                    priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / pow(10, Digits);
+                    priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
                 }
             }
             setTextContent(cPtSL, DoubleToString(priceSL, Digits));
