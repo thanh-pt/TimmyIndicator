@@ -317,16 +317,16 @@ void Trade::refreshData()
     setItemPos(iTxtB  , time2, priceBE);
 
     setItemPos(iTxT2, centerTime, priceTP);
-    setItemPos(iTxE2, centerTime, priceEN);
     setItemPos(iTxS2, centerTime, priceSL);
+    setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? 1 : -1)*Trd_Com/Trd_ContractSize);
     //-------------------------------------------------
     ObjectSet(iTxtE, OBJPROP_ANCHOR, ANCHOR_LOWER);
+    ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_RIGHT);
     if (priceTP > priceSL) {
         ObjectSet(iTxtS, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxtT, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
         ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_LOWER);
     }
     else {
@@ -334,7 +334,6 @@ void Trade::refreshData()
         ObjectSet(iTxtT, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
         ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_UPPER);
     }
     //-------------------------------------------------
@@ -391,7 +390,7 @@ void Trade::refreshData()
     }
     //-------------------------------------------------
     setTextContent(iTxT2, strTpInfo);
-    setTextContent(iTxE2, STR_EMPTY);
+    setTextContent(iTxE2, (Trd_Com > 0 && selectState) ? "---" : STR_EMPTY);
     setTextContent(iTxS2, STR_EMPTY);
     //-------------------------------------------------
     setTextContent(iTxtT, strRRInfo);
