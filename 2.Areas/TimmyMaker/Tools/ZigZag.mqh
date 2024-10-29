@@ -214,8 +214,7 @@ void ZigZag::onItemChange(const string &itemId, const string &objId)
     int propBkgrd = (int)ObjectGet(objId, OBJPROP_BACK);
     int i = 0;
     string objName;
-    do
-    {
+    do {
         objName = cLnXX + "#" + IntegerToString(i);
         setObjectStyle(objName, propColor, propStyle, propWidth);
         ObjectSet(objName, OBJPROP_BACK,  propBkgrd);

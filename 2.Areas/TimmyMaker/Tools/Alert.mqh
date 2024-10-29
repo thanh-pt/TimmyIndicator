@@ -176,8 +176,7 @@ void Alert::onMouseMove()
 }
 void Alert::onMouseClick()
 {
-    if (mIndexType == CREATE_ALERT)
-    {
+    if (mIndexType == CREATE_ALERT) {
         createItem();
 
         time1  = pCommonData.mMouseTime;
@@ -245,8 +244,7 @@ void Alert::initAlarm()
     mCurAlertPrice = 0;
     mListAlertRemainStr = "";
     string alertLine = "";
-    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--)
-    {
+    for(int i=ObjectsTotal() - 1 ;  i >= 0 ;  i--) {
         alertLine = ObjectName(i);
         if (StringFind(alertLine, Alert::Tag) == -1) continue;
         if (StringFind(alertLine, TAG_CTRM) == -1) continue;

@@ -119,8 +119,7 @@ Fibonacci::Fibonacci(CommonData* commonData, MouseInfo* mouseInfo)
     mNameType[FIB_RANGE_EXT] = "RangeExt";
     mNameType[FIB_FULL]      = "Fib";
     mTypeNum = FIB_NUM;
-    for (int i = 0; i < mTypeNum; i++)
-    {
+    for (int i = 0; i < mTypeNum; i++) {
         mContextType += mNameType[i];
         if (i < mTypeNum-1) mContextType += ",";
     }
@@ -319,8 +318,7 @@ void Fibonacci::onMouseMove()
 }
 void Fibonacci::onMouseClick()
 {
-    if (mFirstPoint == false)
-    {
+    if (mFirstPoint == false) {
         createItem();
         mFirstPoint = true;
         return;
@@ -330,46 +328,38 @@ void Fibonacci::onMouseClick()
 void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 {
     gContextMenu.clearContextMenu();
-    if (objId == cBgM0)
-    {
+    if (objId == cBgM0) {
         time0   = (datetime)ObjectGet(cBgM0, OBJPROP_TIME1);
         time1   = (datetime)ObjectGet(cBgM0, OBJPROP_TIME2);
         price0  =           ObjectGet(cBgM0, OBJPROP_PRICE1);
         price1  =           ObjectGet(cBgM0, OBJPROP_PRICE2);
     }
-    else
-    {
-        if (pCommonData.mCtrlHold)
-        {
+    else {
+        if (pCommonData.mCtrlHold) {
             if (objId == cPtL1 || objId == cPtR2 || objId == cPtL2 || objId == cPtR1) ObjectSet(objId, OBJPROP_PRICE1, pCommonData.mMousePrice);
         }
 
-        if (objId == cPtL1 || objId == cPtR2 )
-        {
+        if (objId == cPtL1 || objId == cPtR2 ) {
             time0  = (datetime)ObjectGet(cPtL1, OBJPROP_TIME1);
             price0 =           ObjectGet(cPtL1, OBJPROP_PRICE1);
             time1  = (datetime)ObjectGet(cPtR2, OBJPROP_TIME1);
             price1 =           ObjectGet(cPtR2, OBJPROP_PRICE1);
         }
-        else if (objId == cPtL2 || objId == cPtR1)
-        {
+        else if (objId == cPtL2 || objId == cPtR1) {
             time0  = (datetime)ObjectGet(cPtL2, OBJPROP_TIME1);
             price1 =           ObjectGet(cPtL2, OBJPROP_PRICE1);
             time1  = (datetime)ObjectGet(cPtR1, OBJPROP_TIME1);
             price0 =           ObjectGet(cPtR1, OBJPROP_PRICE1);
         }
-        else
-        {
+        else {
             time0  = (datetime)ObjectGet(cPtL1, OBJPROP_TIME1);
             price0 =           ObjectGet(cPtL1, OBJPROP_PRICE1);
             time1  = (datetime)ObjectGet(cPtR2, OBJPROP_TIME1);
             price1 =           ObjectGet(cPtR2, OBJPROP_PRICE1);
-            if (objId == cPtC1)
-            {
+            if (objId == cPtC1) {
                 time0 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
             }
-            else if (objId == cPtC2)
-            {
+            else if (objId == cPtC2) {
                 time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
             }
         }

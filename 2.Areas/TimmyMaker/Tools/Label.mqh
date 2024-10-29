@@ -135,8 +135,7 @@ void LabelText::refreshData()
     int idx = 1;
     string objCTxtX = cTxtX +"#"+ IntegerToString(idx);
     string objiTBgX = iTBgX +"#"+ IntegerToString(idx);
-    while (ObjectFind(objCTxtX) >= 0)
-    {
+    while (ObjectFind(objCTxtX) >= 0) {
         ObjectSet(objCTxtX, OBJPROP_XDISTANCE, posX);
         ObjectSet(objCTxtX, OBJPROP_YDISTANCE, posY+(idx)*spaceSize);
         ObjectSet(objiTBgX, OBJPROP_XDISTANCE, posX);
@@ -177,13 +176,11 @@ void LabelText::onItemDrag(const string &itemId, const string &objId)
     else if(size == 12) spaceSize = 19;
 
     itemDragIdx = 0;
-    if (objId == cTxtM)
-    {
+    if (objId == cTxtM) {
         posX = (int)ObjectGet(objId, OBJPROP_XDISTANCE);
         posY = (int)ObjectGet(objId, OBJPROP_YDISTANCE);
     }
-    else
-    {
+    else {
         string sparamItems[];
         int k=StringSplit(objId,'#',sparamItems);
         if (k != 3) return;
@@ -203,8 +200,7 @@ void LabelText::onItemClick(const string &itemId, const string &objId)
 
     int idx = 1;
     string objCTxtX = cTxtX +"#"+ IntegerToString(idx);
-    while (ObjectFind(objCTxtX) >= 0)
-    {
+    while (ObjectFind(objCTxtX) >= 0) {
         ObjectSet(objCTxtX, OBJPROP_SELECTED, selected);
         lastItem = objCTxtX;
         idx++;
@@ -261,8 +257,7 @@ void LabelText::onItemDeleted(const string &itemId, const string &objId)
     int idx = 1;
     string objCTxtX;
     string objiTBgX;
-    do
-    {
+    do {
         objCTxtX = cTxtX +"#"+ IntegerToString(idx);
         objiTBgX = iTBgX +"#"+ IntegerToString(idx);
         ObjectDelete(objiTBgX);
@@ -277,8 +272,7 @@ void LabelText::onUserRequest(const string &itemId, const string &objId)
     int newIdx = itemDragIdx+1;
     string objCTxtX = cTxtX +"#"+ IntegerToString(newIdx);
     string objiTBgX = iTBgX +"#"+ IntegerToString(newIdx);
-    while (ObjectFind(objCTxtX) >= 0)
-    {
+    while (ObjectFind(objCTxtX) >= 0) {
         newIdx++;
         objCTxtX = cTxtX +"#"+ IntegerToString(newIdx);
         objiTBgX = iTBgX +"#"+ IntegerToString(newIdx);

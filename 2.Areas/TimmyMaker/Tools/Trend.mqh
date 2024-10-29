@@ -185,8 +185,7 @@ Trend::Trend(CommonData* commonData, MouseInfo* mouseInfo)
     //--------------------------------------------
     mIndexType = 0;
     mTypeNum = MathMin(Trend_amount, TREND_NUM);
-    for (int i = 0; i < mTypeNum; i++)
-    {
+    for (int i = 0; i < mTypeNum; i++) {
         mContextType += mNameType[i];
         if (i < mTypeNum-1) mContextType += ",";
     }

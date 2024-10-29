@@ -138,8 +138,7 @@ void CallOut::refreshData()
     int calloutLen = StringLen(callOutValue);
     setTextContent(iTxtU, StringSubstr(BL_ULINE, 0, calloutLen));
     setTextContent(iTxBg, getHalfDwBL(calloutLen));
-    if (calloutLen == 7 && StrToDouble(callOutValue) != 0.0)
-    {
+    if (calloutLen == 7 && StrToDouble(callOutValue) != 0.0) {
         setTextContent(cTxtM, DoubleToString(price1,5));
     }
 }
@@ -155,8 +154,7 @@ void CallOut::onMouseMove()
 }
 void CallOut::onMouseClick()
 {
-    if (mFirstPoint == false)
-    {
+    if (mFirstPoint == false) {
         createItem();
         pMouseInfo.setText("");
         mFirstPoint = true;

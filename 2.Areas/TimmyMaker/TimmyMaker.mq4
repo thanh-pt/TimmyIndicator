@@ -118,21 +118,18 @@ void detectMouseDraging(const string &sparam)
     if (gContextMenu.mIsOpen == true) return;
     int option = StrToInteger(sparam);
     // Press event
-    if ((option & 0x01) != 0 && (gPreviousOption & 0x01) == 0)
-    {
+    if ((option & 0x01) != 0 && (gPreviousOption & 0x01) == 0) {
         gIsPress = true;
         gTargetItem = getItemUnderMouse(gCommonData.mMouseX, gCommonData.mMouseY);
     }
     else
         // Release event
-        if ((option & 0x01) == 0 && (gPreviousOption & 0x01) != 0)
-        {
+        if ((option & 0x01) == 0 && (gPreviousOption & 0x01) != 0) {
             gIsPress = false;
             gTargetItem = "";
         }
     // Press and draging
-    if (gIsPress && (option & 0x01) != 0)
-    {
+    if (gIsPress && (option & 0x01) != 0) {
         gController.handleEvent(CHARTEVENT_OBJECT_DRAG, gTargetItem);
     }
 

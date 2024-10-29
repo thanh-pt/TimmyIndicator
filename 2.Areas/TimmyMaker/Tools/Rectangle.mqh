@@ -113,8 +113,7 @@ Rectangle::Rectangle(CommonData* commonData, MouseInfo* mouseInfo)
     //------------------------------------------
     mIndexType = 0;
     mTypeNum = RECT_NUM;
-    for (int i = 0; i < mTypeNum; i++)
-    {
+    for (int i = 0; i < mTypeNum; i++) {
         mContextType += mNameType[i];
         if (i < mTypeNum-1) mContextType += ",";
     }
@@ -211,8 +210,7 @@ string Rectangle::getAllItem(string itemId)
 
 void Rectangle::updateItemAfterChangeType()
 {
-    if (mFirstPoint == true)
-    {
+    if (mFirstPoint == true) {
         updateTypeProperty();
     }
 }
@@ -268,44 +266,36 @@ void Rectangle::onMouseClick()
 void Rectangle::onItemDrag(const string &itemId, const string &objId)
 {
     gContextMenu.clearContextMenu();
-    if (pCommonData.mCtrlHold)
-    {
+    if (pCommonData.mCtrlHold) {
         if (objId == cPtL1 || objId == cPtR2 || objId == cPtL2 || objId == cPtR1) ObjectSet(objId, OBJPROP_PRICE1, pCommonData.mMousePrice);
     }
 
-    if (objId == cPtL1 || objId == cPtR2 )
-    {
+    if (objId == cPtL1 || objId == cPtR2 ) {
         time1  = (datetime)ObjectGet(cPtL1, OBJPROP_TIME1);
         price1 =           ObjectGet(cPtL1, OBJPROP_PRICE1);
         time2  = (datetime)ObjectGet(cPtR2, OBJPROP_TIME1);
         price2 =           ObjectGet(cPtR2, OBJPROP_PRICE1);
     }
-    else if (objId == cPtL2 || objId == cPtR1)
-    {
+    else if (objId == cPtL2 || objId == cPtR1) {
         time1  = (datetime)ObjectGet(cPtL2, OBJPROP_TIME1);
         price2 =           ObjectGet(cPtL2, OBJPROP_PRICE1);
         time2  = (datetime)ObjectGet(cPtR1, OBJPROP_TIME1);
         price1 =           ObjectGet(cPtR1, OBJPROP_PRICE1);
     }
-    else
-    {
+    else {
         time1  = (datetime)ObjectGet(cPtL1, OBJPROP_TIME1);
         price1 =           ObjectGet(cPtL1, OBJPROP_PRICE1);
         time2  = (datetime)ObjectGet(cPtR2, OBJPROP_TIME1);
         price2 =           ObjectGet(cPtR2, OBJPROP_PRICE1);
-        if (objId == cPtC1)
-        {
+        if (objId == cPtC1) {
             time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
         }
-        else if (objId == cPtC2)
-        {
+        else if (objId == cPtC2) {
             time2 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
         }
     }
-    if (objId == cBgM0)
-    {
-        if (MathAbs(time2-time1)/ChartPeriod()/60 > 15)
-        {
+    if (objId == cBgM0) {
+        if (MathAbs(time2-time1)/ChartPeriod()/60 > 15) {
             time1  = (datetime)ObjectGet(cBgM0, OBJPROP_TIME1);
             time2  = (datetime)ObjectGet(cBgM0, OBJPROP_TIME2);
             price1 =           ObjectGet(cBgM0, OBJPROP_PRICE1);

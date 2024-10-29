@@ -103,8 +103,7 @@ Point::Point(CommonData* commonData, MouseInfo* mouseInfo)
 
     mIndexType = 0;
     mTypeNum = POINT_NUM;
-    for (int i = 0; i < mTypeNum; i++)
-    {
+    for (int i = 0; i < mTypeNum; i++) {
         mContextType += mNameType[i];
         if (i < mTypeNum-1) mContextType += ",";
     }
@@ -180,8 +179,7 @@ void Point::onItemDrag(const string &itemId, const string &objId)
     time  = (datetime)ObjectGet(cPtM0, OBJPROP_TIME1);
     price =           ObjectGet(cPtM0, OBJPROP_PRICE1);
 
-    if (pCommonData.mCtrlHold)
-    {
+    if (pCommonData.mCtrlHold) {
         price = pCommonData.mMousePrice;
     }
     refreshData();

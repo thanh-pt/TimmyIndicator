@@ -530,19 +530,16 @@ void Trade::showHistory(bool isShow)
     string sparamItems[];
     int k;
     string objId;
-    for (int i = ObjectsTotal() - 1; i >= 0; i--)
-    {
+    for (int i = ObjectsTotal() - 1; i >= 0; i--) {
         string objName = ObjectName(i);
         if (StringFind(objName, TAG_CTRM) == -1) continue;
         k=StringSplit(objName,'_',sparamItems);
-        if (k != 3 || sparamItems[0] != mItemName)
-        {
+        if (k != 3 || sparamItems[0] != mItemName) {
             continue;
         }
         objId = sparamItems[0] + "_" + sparamItems[1];
         activateItem(objId);
-        if (isShow)
-        {
+        if (isShow) {
             priceTP =           ObjectGet(cPtTP, OBJPROP_PRICE1);
             priceEN =           ObjectGet(cPtEN, OBJPROP_PRICE1);
             priceSL =           ObjectGet(cPtSL, OBJPROP_PRICE1);
@@ -679,12 +676,14 @@ void Trade::scanLiveTrade()
                 int orderType = OrderType();
                 if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
                     priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
-                } else {
+                }
+                else {
                     priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
                 }
             }
             setTextContent(cPtSL, DoubleToString(priceSL, Digits));
-        } else {
+        }
+        else {
             priceSL = orgSL;
         }
 
