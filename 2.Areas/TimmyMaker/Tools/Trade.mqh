@@ -340,8 +340,9 @@ void Trade::refreshData()
     //            TÍNH TOÁN CÁC THỨ
     //-------------------------------------------------
     // 1. Thông tin lệnh
-    if (priceSL == priceBE) return;
+    if (priceSL == priceEN) return;
     double point    = floor(fabs(priceEN-priceSL) * Trd_ContractSize);
+    if (point <= 1) return;
     double absRR    = (priceTP-priceEN) / (priceEN-priceSL);
     double absBe    = (priceBE-priceEN) / (priceEN-priceSL);
     mLot = NormalizeDouble(floor(mCost / (point + Trd_Com) * 100)/100, 2);
