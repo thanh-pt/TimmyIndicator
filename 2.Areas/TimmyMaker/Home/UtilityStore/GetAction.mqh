@@ -28,34 +28,58 @@ string getTFString()
     return result;
 }
 
+input string _strTfLine = "5,15,H4,D1"; // TF Line (1,5,15,30,H1,H4,D1,W1,MN)
+
 int getHigerTF()
 {
-    int currentTf = ChartPeriod();
-    int retTF = PERIOD_H4;
-    switch (currentTf)
-    {
-        case PERIOD_D1:  retTF = PERIOD_D1; break;
-        case PERIOD_H4:  retTF = PERIOD_D1; break;
-        case PERIOD_M15: retTF = PERIOD_H4; break;
-        case PERIOD_M5:  retTF = PERIOD_M15; break;
-        case PERIOD_M1:  retTF = PERIOD_M5; break;
+    int arrTfLine[9];
+    int tfNum = 0;
+    arrTfLine[0] = 0;
+    string tfItems[9];
+    int k = StringSplit(_strTfLine,',',tfItems);
+    for (int i = 0; i < k; i++) {
+        if (tfItems[i] == "1")  {arrTfLine[tfNum++] = PERIOD_M1 ; continue;}
+        if (tfItems[i] == "5")  {arrTfLine[tfNum++] = PERIOD_M5 ; continue;}
+        if (tfItems[i] == "15") {arrTfLine[tfNum++] = PERIOD_M15; continue;}
+        if (tfItems[i] == "30") {arrTfLine[tfNum++] = PERIOD_M30; continue;}
+        if (tfItems[i] == "H1") {arrTfLine[tfNum++] = PERIOD_H1 ; continue;}
+        if (tfItems[i] == "H4") {arrTfLine[tfNum++] = PERIOD_H4 ; continue;}
+        if (tfItems[i] == "D1") {arrTfLine[tfNum++] = PERIOD_D1 ; continue;}
+        if (tfItems[i] == "W1") {arrTfLine[tfNum++] = PERIOD_W1 ; continue;}
+        if (tfItems[i] == "MN") {arrTfLine[tfNum++] = PERIOD_MN1; continue;}
     }
-    return retTF;
+
+    int currentTf = ChartPeriod();
+    for (int i = 0; i < tfNum-1; i++){
+        if (currentTf == arrTfLine[i]) return arrTfLine[i+1];
+    }
+    return arrTfLine[tfNum-1];
 }
 
 int getLowerTF()
 {
-    int currentTf = ChartPeriod();
-    int retTF = PERIOD_M5;
-    switch (currentTf)
-    {
-        case PERIOD_D1:  retTF = PERIOD_H4; break;
-        case PERIOD_H4:  retTF = PERIOD_M15; break;
-        case PERIOD_M15: retTF = PERIOD_M5; break;
-        // case PERIOD_M5:  retTF = PERIOD_M1; break;
-        // case PERIOD_M1:  retTF = PERIOD_M1; break;
+    int arrTfLine[9];
+    int tfNum = 0;
+    arrTfLine[0] = 0;
+    string tfItems[9];
+    int k = StringSplit(_strTfLine,',',tfItems);
+    for (int i = 0; i < k; i++) {
+        if (tfItems[i] == "1")  {arrTfLine[tfNum++] = PERIOD_M1 ; continue;}
+        if (tfItems[i] == "5")  {arrTfLine[tfNum++] = PERIOD_M5 ; continue;}
+        if (tfItems[i] == "15") {arrTfLine[tfNum++] = PERIOD_M15; continue;}
+        if (tfItems[i] == "30") {arrTfLine[tfNum++] = PERIOD_M30; continue;}
+        if (tfItems[i] == "H1") {arrTfLine[tfNum++] = PERIOD_H1 ; continue;}
+        if (tfItems[i] == "H4") {arrTfLine[tfNum++] = PERIOD_H4 ; continue;}
+        if (tfItems[i] == "D1") {arrTfLine[tfNum++] = PERIOD_D1 ; continue;}
+        if (tfItems[i] == "W1") {arrTfLine[tfNum++] = PERIOD_W1 ; continue;}
+        if (tfItems[i] == "MN") {arrTfLine[tfNum++] = PERIOD_MN1; continue;}
     }
-    return retTF;
+
+    int currentTf = ChartPeriod();
+    for (int i = 1; i < tfNum; i++){
+        if (currentTf == arrTfLine[i]) return arrTfLine[i-1];
+    }
+    return arrTfLine[0];
 }
 
 void getCenterPos(const datetime& time1, const datetime& time2, double price1, double price2, datetime& outTime, double& outPrice)

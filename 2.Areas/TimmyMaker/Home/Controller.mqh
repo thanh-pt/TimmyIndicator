@@ -290,7 +290,7 @@ void Controller::handleEvent(const int id, const string& sparam)
         if (StringFind(sparam, TAG_CTRL) == -1) return;
         mListItem[receiverItem].onItemClick(itemId, sparam);
         break;
-    case CHART_EVENT_SELECT_CONTEXTMENU:
+    case CHARTEVENT_SELECT_CONTEXTMENU:
         mListItem[receiverItem].onUserRequest(itemId, sparam);
         break;
     }
