@@ -19,6 +19,12 @@ enum eDisplay
     OPTION, // Option
 };
 
+enum eAdjust
+{
+    E_FIXEN, // Fixed EN
+    E_FIXTP, // Fixed TP
+};
+
 #ifdef Lver
 input string    Trd_; // ●  T R A D E (Pro Version)
 //-------------------------------------------------
@@ -38,6 +44,7 @@ input double    Trd_SlSpace       = 0.1;     // Space for SL (pip)
 //-------------------------------------------------
 #endif
 input int       Trd_ContractSize = 100000;  // Contract Size
+input eAdjust   Trd_AdjustType   = E_FIXEN; // Adjust Type
 
 eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
 eDisplay    Trd_ShowDollar  = OPTION;   //Show Dollar
@@ -755,6 +762,11 @@ void Trade::restoreBacktestingTrade()
 void Trade::adjustRR(double rr)
 {
     bool isBUY = (priceTP > priceSL);
-    priceEN = (priceTP + rr*priceSL) / (rr+1) + (isBUY ? -1 : 1) * mComPoint;
+    if (Trd_AdjustType == E_FIXTP){
+        priceEN = (priceTP + rr*priceSL) / (rr+1) + (isBUY ? -1 : 1) * mComPoint;
+    }
+    else if (Trd_AdjustType == E_FIXEN){
+        priceTP = (priceEN + (isBUY ? 1 : -1) * mComPoint) * (rr + 1) - rr*priceSL;
+    }
     refreshData();
 }
