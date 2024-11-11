@@ -12,6 +12,10 @@ Cuối cycle -> hide unsused item
 
 int gDlLineIdx = 0;
 void drawLine(datetime time1, datetime time2, double price1, double price2, color cl){
+    drawLine(time1, time2, price1, price2, cl, STYLE_DOT);
+}
+
+void drawLine(datetime time1, datetime time2, double price1, double price2, color clr, int style){
     string objName = APP_TAG + LINETAG + IntegerToString(gDlLineIdx++);
     ObjectCreate(objName, OBJ_TREND, 0, 0, 0);
     // Default
@@ -21,8 +25,8 @@ void drawLine(datetime time1, datetime time2, double price1, double price2, colo
     ObjectSet(objName, OBJPROP_RAY, false);
     // Style
     ObjectSet(objName, OBJPROP_BACK, true);
-    ObjectSet(objName, OBJPROP_COLOR, cl);
-    ObjectSet(objName, OBJPROP_STYLE, STYLE_DOT);
+    ObjectSet(objName, OBJPROP_COLOR, clr);
+    ObjectSet(objName, OBJPROP_STYLE, style);
     ObjectSet(objName, OBJPROP_WIDTH, 0);
     // Basic
     ObjectSet(objName, OBJPROP_TIME1, time1);

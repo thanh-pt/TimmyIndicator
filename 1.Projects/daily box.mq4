@@ -9,6 +9,9 @@
 #include "../3.Resource/DrawLib.mqh"
 #define APP_TAG "dailyBox"
 
+input color             InpColor = clrGray; //Color:
+input ENUM_LINE_STYLE   InpStyle = STYLE_DOT; //Style:
+
 int          gChartPeriod = ChartPeriod();
 string       gSymbol      = Symbol();
 int          gTotalRate = 0;
@@ -109,9 +112,9 @@ void scanWindow(){
 }
 
 void createBox(datetime time1, datetime time2, double price1, double price2, const int& barIdxD){
-    drawLine(time1, time1, MathMax(price1, dHigh(barIdxD+1)), MathMin(price2, dLow(barIdxD+1)), clrGray);
-    drawLine(time1, time2, price1, price1, clrGray);
-    drawLine(time1, time2, price2, price2, clrGray);
+    drawLine(time1, time1, MathMax(price1, dHigh(barIdxD+1)), MathMin(price2, dLow(barIdxD+1)), InpColor, InpStyle);
+    drawLine(time1, time2, price1, price1, InpColor, InpStyle);
+    drawLine(time1, time2, price2, price2, InpColor, InpStyle);
 }
 
 double dHigh(int idx){

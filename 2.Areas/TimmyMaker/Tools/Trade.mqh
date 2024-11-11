@@ -619,17 +619,17 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     // Auto adjust 2R
     else if (gContextMenu.mActiveItemStr == CTX_2R) {
         onItemDrag(itemId, objId);
-        adjustRR(2);
+        adjustRR(2.1);
     }
     // Auto adjust 3R
     else if (gContextMenu.mActiveItemStr == CTX_3R) {
         onItemDrag(itemId, objId);
-        adjustRR(3);
+        adjustRR(3.1);
     }
     // Auto adjust 4R
     else if (gContextMenu.mActiveItemStr == CTX_4R) {
         onItemDrag(itemId, objId);
-        adjustRR(4);
+        adjustRR(4.1);
     }
     // Add TP/SL if they don't have
     else if (gContextMenu.mActiveItemStr == CTX_ADDSLTP) {
