@@ -8,7 +8,7 @@
 
 #define APP_TAG "SessionRange"
 
-// #define pro
+#define pro
 
 enum eSession{
     eAs,
@@ -17,25 +17,42 @@ enum eSession{
 };
 
 enum eDisplayStyle {
-    eAlways,            // Always Display
-    eSeparateOn,        // PeriodSeparatorsON (Ctrl+Y)
-    eSeparateOnAndToday,// PeriodSeparatorsON + TodayAlways
+    eAlways,            // <Always>
+    eSeparateOn,        // <PeriodSeparatorsON (Ctrl+Y)>
+    eSeparateOnAndToday,// <PeriodSeparatorsON + TodayAlways>
 };
 
 #ifdef pro
+enum eLabelStyle {
+    eNoLabel,       // <No label>
+    eFullText,      // <Long label>
+    eShort,         // <Short label>
+    eShortRange,    // <Short & Range>
+};
+#else
+enum eLabelStyle {
+    eNoLabel,       // <No label>
+    eFullText,      // <Long label>
+    eShort,         // <Short label> [PRO/v2 version]
+    eShortRange,    // <Short & Range>[PRO/v2 version]
+};
+#endif
+
+#ifdef pro
 enum eStyle{
-    eStyleBorderLine,   // B O D E R
-    eStyleBorderColor,  // F I L L   B O D E R
-    eStyleLineBox,      // B O X
-    eStyleColorBox,     // F I L L   B O X
+    eStyleLineBox,      // <BOX>
+    eStyleBorderLine,   // <BODER>
+    eStyleBorder2Color, // <FILL BODER BY LINE>
+    eStyleBorderColor,  // <FILL BODER BY COLOR>
+    eStyleColorBox,     // <FILL BOX BY COLOR>
 };
 #else
 enum eStyle{
-    eStyleBorderLine,   // B O D E R
-    eStyleBorderColor,  // F I L L   B O D E R (pro/v2 version)
-    eStyleBorder2Color, // F I L L   L I N E   B O D E R (pro/v2 version)
-    eStyleLineBox,      // B O X
-    eStyleColorBox,     // F I L L   B O X (pro/v2 version)
+    eStyleLineBox,      // <BOX>
+    eStyleBorderLine,   // <BODER>
+    eStyleBorder2Color, // <FILL BODER BY LINE>
+    eStyleBorderColor,  // <FILL BODER BY COLOR> [PRO/v2 version]
+    eStyleColorBox,     // <FILL BOX BY COLOR> [PRO/v2 version]
 };
 #endif
 
@@ -70,15 +87,20 @@ enum eTz{
     eTz14   = 14,   // <14>
 };
 
-input string _config;                           // - - - Configuration - - -
-input eStyle inpStyle = eStyleBorderLine;       // S T Y L E
-input bool          inpDisplayLable = true;     // L A B E L
-input eDisplayStyle inpAlwaysDisplay = eAlways; // D I S P L A Y
+input string _config;                               // - - - Configuration - - -
+input eStyle inpStyle = eStyleBorderLine;           // S T Y L E
+input eLabelStyle   inpDisplayLable = eFullText;    // L A B E L
+input eDisplayStyle inpAlwaysDisplay = eAlways;     // D I S P L A Y
+#ifdef pro
+input bool          inpNextSession = true;          // N E X T   S E S S I O N
+#else
+input bool          inpNextSession = false;         // N E X T   S E S S I O N [PRO/v2 version]
+#endif
 
-input string _display;                          // - - - Display Option - - -
-input bool inpDisplayAs = true;                 // Asian
-input bool inpDisplayLd = true;                 // London
-input bool inpDisplayNy = true;                 // NewYork
+input string _display;                              // - - - Display Option - - -
+input bool inpDisplayAs = true;                     // Asian
+input bool inpDisplayLd = true;                     // London
+input bool inpDisplayNy = true;                     // NewYork
 
 input string _lineColor;                          // - - - Main Color - - -
 input color inpAsColor = clrTeal;               // Asian
@@ -90,14 +112,14 @@ input color inpAsBgColor = clrAliceBlue;        // Asian
 input color inpLdBgColor = clrHoneydew;         // London
 input color inpNyBgColor = clrLavenderBlush;    // NewYork
 
-input eTz inpServerTimeZone  = eTzAuto; // Server Timezone:
-input string _ssTime;               // Session Time (GMT)
+input string _ssTime;               // - - - Session Time (GMT) Configuration - - -
 input int   inpAsBegHour = 0;       // Asian Start
 input int   inpAsEndHour = 6;       // Asian End
 input int   inpLdBegHour = 7;       // London Start
 input int   inpLdEndHour = 11;      // London End
 input int   inpNyBegHour = 12;      // NewYork Start
 input int   inpNyEndHour = 16;      // NewYork End
+input eTz   inpServerTz  = eTzAuto; // Server Timezone
 input bool  inpAutoDST   = true;    // Daylight saving
 
 int asBegHour;
@@ -124,7 +146,7 @@ int gLineIdx;
 int gLabelIdx;
 int gRectIdx;
 
-string  gSsLableMap[] = {"A", "L", "N"};
+string  gSsLableMap[] = {"Asian", "London", "NewYork"};
 color   gSsColor[3];
 color   gSsBgColor[3];
 
@@ -147,6 +169,18 @@ int OnInit()
 //--- indicator buffers mapping
 //---
     initTimeConfiguration();
+#ifdef pro
+    if (inpDisplayLable == eShort) {
+        gSsLableMap[eAs] = "As";
+        gSsLableMap[eLd] = "Ld";
+        gSsLableMap[eNy] = "Ny";
+    }
+    else if (inpDisplayLable == eShortRange) {
+        gSsLableMap[eAs] = "A";
+        gSsLableMap[eLd] = "L";
+        gSsLableMap[eNy] = "N";
+    }
+#endif
 
     gSsColor[eAs] = inpAsColor;
     gSsColor[eLd] = inpLdColor;
@@ -285,13 +319,16 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
     int endBar   = iBarShift(gSymbol, gChartPeriod, endDt);
 
     if (beginBar == 0) {
-        createLabel(gLabelIdx++, "● "+gSsLableMap[ss], begDt, Low[0], 8, ANCHOR_LEFT_UPPER, gSsColor[ss]);
+#ifdef pro 
+        if (inpNextSession) createLabel(gLabelIdx++, "🚩 "+gSsLableMap[ss], begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
+#endif
         return;
     }
     bool isSsRunning = (endBar == 0);
     if (inpAlwaysDisplay == eSeparateOn && gPeriodSep == false) return;
     if (inpAlwaysDisplay == eSeparateOnAndToday && gPeriodSep == false && isSsRunning == false) return;
     
+    string strLabel = gSsLableMap[ss];
     gHi = High[beginBar];
     gLo = Low [beginBar];
     for (int i = beginBar; i >= 0 && i >= endBar; i--){
@@ -304,36 +341,34 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         createLine(gLineIdx++, begDt, endDt, gHi, gHi, gSsColor[ss]);
         createLine(gLineIdx++, begDt, endDt, gLo, gLo, gSsColor[ss]);
     }
-    else if (inpStyle == eStyleColorBox){
-        createRectangle(gRectIdx++, begDt, endDt, gHi, gLo, gSsBgColor[ss]);
-    }
-    else if (inpStyle == eStyleBorderLine){
+    else if (inpStyle == eStyleBorderLine || inpStyle == eStyleBorder2Color){
         double currHi = High[beginBar];
         double currLo = Low[beginBar];
         int preHiIdx = beginBar;
         int preLoIdx = beginBar;
         for (int i = beginBar-1; i >= 0 && i >= endBar; i--){
             if (High[i] > currHi) {
-                // Đường dốc
                 createLine(gLineIdx++, Time[i+1], Time[i], currHi, MathMax(currHi, High[i]), gSsColor[ss]);
-                // Đường cũ
                 if (preHiIdx>i+1) createLine(gLineIdx++, Time[preHiIdx], Time[i+1], currHi, currHi, gSsColor[ss]);
                 preHiIdx = i;
                 currHi = High[i];
             }
             if (Low[i] < currLo) {
-                // Đường dốc
                 createLine(gLineIdx++, Time[i+1], Time[i], currLo, MathMin(currLo, Low[i]), gSsColor[ss]);
-                // Đường cũ
                 if (preLoIdx>i+1) createLine(gLineIdx++, Time[preLoIdx], Time[i+1], currLo, currLo, gSsColor[ss]);
                 preLoIdx = i;
                 currLo = Low[i];
             }
+            if (inpStyle == eStyleBorder2Color) createLine(gLineIdx++, Time[i], Time[i], currHi, currLo, gSsBgColor[ss]);
         }
         // Đường cuối
         if (preHiIdx>endBar) createLine(gLineIdx++, Time[preHiIdx], endDt, currHi, currHi, gSsColor[ss]);
         if (preLoIdx>endBar) createLine(gLineIdx++, Time[preLoIdx], endDt, currLo, currLo, gSsColor[ss]);
         createLine(gLineIdx++, endDt, endDt, currHi, currLo, gSsColor[ss]);
+    }
+#ifdef pro
+    else if (inpStyle == eStyleColorBox){
+        createRectangle(gRectIdx++, begDt, endDt, gHi, gLo, gSsBgColor[ss]);
     }
     else if (inpStyle == eStyleBorderColor){
         double currHi = High[beginBar];
@@ -346,13 +381,18 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         }
         if (isSsRunning) createRectangle(gRectIdx++, Time[i+1], endDt, currHi, currLo, gSsBgColor[ss]);
     }
-    string strRange = "=" + DoubleToString((gHi-gLo)*pow(10, Digits-1),1);
-    if (isSsRunning){
-        createLabel(gLabelIdx++, "►" + gSsLableMap[ss] + strRange, endDt, gHi, 8, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
-    }
+
+    if (inpDisplayLable == eShortRange) strLabel += "=" + DoubleToString((gHi-gLo)*pow(10, Digits-1),1);
+#else
+    else if (inpStyle == eStyleBorderColor){displayProPanel(); return;}
+    else if (inpStyle == eStyleColorBox){displayProPanel(); return;}
     else {
-        if (inpDisplayLable) createLabel(gLabelIdx++, gSsLableMap[ss] + strRange, endDt, gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+        if (inpNextSession || inpDisplayLable >= eShort) displayProPanel();
+        else hideProPanel();
     }
+#endif
+    if (isSsRunning) strLabel = "►" + strLabel;
+    if (inpDisplayLable != eNoLabel) createLabel(gLabelIdx++, strLabel, endDt, gHi, 8, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
 }
 
 void createLabel(int index, string label, datetime time1, double price1, int size, int anchor, color cl){
@@ -418,8 +458,8 @@ void hideItem(int index, string tag){
 
 void initTimeConfiguration()
 {
-    int tzOffset = inpServerTimeZone;
-    if (inpServerTimeZone == eTzAuto) {
+    int tzOffset = inpServerTz;
+    if (inpServerTz == eTzAuto) {
         tzOffset = (int)(TimeCurrent() - TimeGMT()) / 3599;
     }
 
@@ -429,4 +469,48 @@ void initTimeConfiguration()
     asEndHour = adjustTime(inpAsEndHour + tzOffset);
     ldEndHour = adjustTime(inpLdEndHour + tzOffset);
     nyEndHour = adjustTime(inpNyEndHour + tzOffset);
+}
+
+int gNotiSize = 4;
+void displayProPanel()
+{
+    color foregroundClr = (color)ChartGetInteger(0, CHART_COLOR_FOREGROUND);
+    color backgroundClr = (color)ChartGetInteger(0, CHART_COLOR_BACKGROUND);
+    string notiInfo[] = {
+        "[Session Range]",
+        "Added Style, Next Session indi, Sesion Range are PRO/v2 feature",
+        "Upgrade to PRO/v2 to unlock those feature.",
+        "Thank you for your support!",
+    };
+    string notiName = APP_TAG + "0NotiBG";
+    ObjectCreate(notiName, OBJ_LABEL, 0, 0, 0);
+    ObjectSet(notiName, OBJPROP_SELECTABLE, false);
+    ObjectSet(notiName, OBJPROP_BACK, false);
+    ObjectSet(notiName, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+    ObjectSet(notiName, OBJPROP_CORNER, CORNER_LEFT_LOWER);
+    ObjectSet(notiName, OBJPROP_XDISTANCE, 0);
+    ObjectSet(notiName, OBJPROP_YDISTANCE, 0);
+    ObjectSetText(notiName, "██████", 80, NULL, backgroundClr);
+
+    for (int i = 0; i < gNotiSize; i++){
+        notiName = APP_TAG + "Noti" + IntegerToString(i);
+        ObjectCreate(notiName, OBJ_LABEL, 0, 0, 0);
+        ObjectSet(notiName, OBJPROP_BACK, false);
+        ObjectSet(notiName, OBJPROP_SELECTABLE, false);
+        ObjectSet(notiName, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        ObjectSet(notiName, OBJPROP_CORNER, CORNER_LEFT_LOWER);
+        ObjectSet(notiName, OBJPROP_XDISTANCE, 20);
+        ObjectSet(notiName, OBJPROP_YDISTANCE, 20*(gNotiSize-i));
+        ObjectSetText(notiName, notiInfo[i], 10, NULL, foregroundClr);
+    }
+}
+
+void hideProPanel()
+{
+    string notiName = APP_TAG + "0NotiBG";
+    ObjectSet(notiName, OBJPROP_YDISTANCE, -100);
+    for (int i = 0; i < gNotiSize; i++){
+        notiName = APP_TAG + "Noti" + IntegerToString(i);
+        ObjectSet(notiName, OBJPROP_YDISTANCE, -10);
+    }
 }
