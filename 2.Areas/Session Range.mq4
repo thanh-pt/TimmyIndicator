@@ -8,18 +8,36 @@
 
 #define APP_TAG "SessionRange"
 
+// #define pro
+
 enum eSession{
     eAs,
     eLd,
     eNy
 };
 
-enum eStyle{
-    eStyleLineBox,      // B O X   L I N E
-    eStyleColorBox,     // B O X   C O L O R
-    eStyleBorderLine,   // B O D E R   L I N E
-    eStyleBorderColor,  // B O D E R   C O L O R
+enum eDisplayStyle {
+    eAlways,            // Always Display
+    eSeparateOn,        // PeriodSeparatorsON (Ctrl+Y)
+    eSeparateOnAndToday,// PeriodSeparatorsON + TodayAlways
 };
+
+#ifdef pro
+enum eStyle{
+    eStyleBorderLine,   // B O D E R
+    eStyleBorderColor,  // F I L L   B O D E R
+    eStyleLineBox,      // B O X
+    eStyleColorBox,     // F I L L   B O X
+};
+#else
+enum eStyle{
+    eStyleBorderLine,   // B O D E R
+    eStyleBorderColor,  // F I L L   B O D E R (pro/v2 version)
+    eStyleBorder2Color, // F I L L   L I N E   B O D E R (pro/v2 version)
+    eStyleLineBox,      // B O X
+    eStyleColorBox,     // F I L L   B O X (pro/v2 version)
+};
+#endif
 
 enum eTz{
     eTzAuto = -99,  // <Auto>
@@ -53,9 +71,9 @@ enum eTz{
 };
 
 input string _config;                           // - - - Configuration - - -
-input eStyle inpStyle = eStyleLineBox;          // S T Y L E
-input bool inpDisplayLable = true;              // L A B E L
-input bool inpAlwaysDisplay = false;            // Always Display
+input eStyle inpStyle = eStyleBorderLine;       // S T Y L E
+input bool          inpDisplayLable = true;     // L A B E L
+input eDisplayStyle inpAlwaysDisplay = eAlways; // D I S P L A Y
 
 input string _display;                          // - - - Display Option - - -
 input bool inpDisplayAs = true;                 // Asian
@@ -67,21 +85,20 @@ input color inpAsColor = clrTeal;               // Asian
 input color inpLdColor = clrForestGreen;        // London
 input color inpNyColor = clrBrown;              // NewYork
 
-input string _bgBox;                              // - - - Background Color - - -
+input string _bgBox;                              // - - - Fill Color - - -
 input color inpAsBgColor = clrAliceBlue;        // Asian
 input color inpLdBgColor = clrHoneydew;         // London
 input color inpNyBgColor = clrLavenderBlush;    // NewYork
 
-input string _ssTimezone;         // - - - Timezone - - -
 input eTz inpServerTimeZone  = eTzAuto; // Server Timezone:
-input int inpLocalTimeZone   = 7; // Local Timezone:
-input string _ssTime;        // - - - Session Time (Local) - - -
-input int inpAsBegHour = 7;  // Asian Start
-input int inpAsEndHour = 11; // Asian End
-input int inpLdBegHour = 14; // London Start
-input int inpLdEndHour = 17; // London End
-input int inpNyBegHour = 19; // NewYork Start
-input int inpNyEndHour = 22; // NewYork End
+input string _ssTime;               // Session Time (GMT)
+input int   inpAsBegHour = 0;       // Asian Start
+input int   inpAsEndHour = 6;       // Asian End
+input int   inpLdBegHour = 7;       // London Start
+input int   inpLdEndHour = 11;      // London End
+input int   inpNyBegHour = 12;      // NewYork Start
+input int   inpNyEndHour = 16;      // NewYork End
+input bool  inpAutoDST   = true;    // Daylight saving
 
 int asBegHour;
 int ldBegHour;
@@ -111,6 +128,12 @@ string  gSsLableMap[] = {"A", "L", "N"};
 color   gSsColor[3];
 color   gSsBgColor[3];
 
+int gTzAutoVerify = 0;
+int gChartScale   = 0;
+int gDSTOffset = 0;
+
+int gArTextSize[] = {1,5,6,7,8,9};
+
 int adjustTime(int t){
     if (t > 24) t = t - 24;
     else if (t < 0) t = t + 24;
@@ -123,21 +146,7 @@ int OnInit()
 {
 //--- indicator buffers mapping
 //---
-    int tzOffset;
-    if (inpServerTimeZone == eTzAuto) {
-        datetime serverTime = TimeCurrent();
-        datetime localTime = TimeLocal();
-        tzOffset = (int)(serverTime - localTime) / 3599;
-    }
-    else {
-        tzOffset = inpServerTimeZone - inpLocalTimeZone;
-    }
-    asBegHour = adjustTime(inpAsBegHour + tzOffset);
-    ldBegHour = adjustTime(inpLdBegHour + tzOffset);
-    nyBegHour = adjustTime(inpNyBegHour + tzOffset);
-    asEndHour = adjustTime(inpAsEndHour + tzOffset);
-    ldEndHour = adjustTime(inpLdEndHour + tzOffset);
-    nyEndHour = adjustTime(inpNyEndHour + tzOffset);
+    initTimeConfiguration();
 
     gSsColor[eAs] = inpAsColor;
     gSsColor[eLd] = inpLdColor;
@@ -170,6 +179,10 @@ int OnCalculate(const int rates_total,
 {
 //---
     if (gTotalRate != rates_total) {
+        if (gTzAutoVerify < 2){
+            initTimeConfiguration();
+            gTzAutoVerify++;
+        }
         scanWindow();
     }
     gTotalRate = rates_total;
@@ -186,7 +199,10 @@ void OnChartEvent(const int id,
 {
 //---
     if (gTotalRate == 0) return;
+    gChartScale = (int)ChartGetInteger(0, CHART_SCALE);
+    
     if (id == CHARTEVENT_CHART_CHANGE) {
+        
         gPeriodSep = (bool)ChartGetInteger(0,CHART_SHOW_PERIOD_SEP);
         if (gPeriodSep != gPrePeriodSep) {
             gPrePeriodSep = gPeriodSep;
@@ -218,27 +234,33 @@ void scanWindow(){
     while (gBegDatetime < Time[lastBar]){
         gStDatetime.sec   = 0;
         gStDatetime.min   = 0;
+        if (inpAutoDST == true && (gStDatetime.mon <= 3 || gStDatetime.mon >= 11)){ // Winter
+            gDSTOffset = 1;
+        }
+        else {
+            gDSTOffset = 0;
+        }
         if (gStDatetime.day_of_week != 0 && gStDatetime.day_of_week != 6) {
             if (inpDisplayAs) {
-                gStDatetime.hour  = asBegHour;
+                gStDatetime.hour  = asBegHour + gDSTOffset;
                 gBegDatetime = StructToTime(gStDatetime);
-                gStDatetime.hour  = asEndHour;
+                gStDatetime.hour  = asEndHour + gDSTOffset;
                 gEndDatetime = StructToTime(gStDatetime);
                 if (asEndHour < asBegHour) gEndDatetime += 86400;
                 drawSession(eAs, gBegDatetime, gEndDatetime);
             }
             if (inpDisplayLd) {
-                gStDatetime.hour  = ldBegHour;
+                gStDatetime.hour  = ldBegHour + gDSTOffset;
                 gBegDatetime = StructToTime(gStDatetime);
-                gStDatetime.hour  = ldEndHour;
+                gStDatetime.hour  = ldEndHour + gDSTOffset;
                 gEndDatetime = StructToTime(gStDatetime);
                 if (ldEndHour < ldBegHour) gEndDatetime += 86400;
                 drawSession(eLd, gBegDatetime, gEndDatetime);
             }
             if (inpDisplayNy) {
-                gStDatetime.hour  = nyBegHour;
+                gStDatetime.hour  = nyBegHour + gDSTOffset;
                 gBegDatetime = StructToTime(gStDatetime);
-                gStDatetime.hour  = nyEndHour;
+                gStDatetime.hour  = nyEndHour + gDSTOffset;
                 gEndDatetime = StructToTime(gStDatetime);
                 if (nyEndHour < nyBegHour) gEndDatetime += 86400;
                 drawSession(eNy, gBegDatetime, gEndDatetime);
@@ -267,8 +289,9 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         return;
     }
     bool isSsRunning = (endBar == 0);
-    if (inpAlwaysDisplay == false && gPeriodSep == false && isSsRunning == false) return;
-
+    if (inpAlwaysDisplay == eSeparateOn && gPeriodSep == false) return;
+    if (inpAlwaysDisplay == eSeparateOnAndToday && gPeriodSep == false && isSsRunning == false) return;
+    
     gHi = High[beginBar];
     gLo = Low [beginBar];
     for (int i = beginBar; i >= 0 && i >= endBar; i--){
@@ -277,11 +300,9 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
     }
     if (inpStyle == eStyleLineBox){
         createLine(gLineIdx++, endDt, endDt, gHi, gLo, gSsColor[ss]);
-        if (isSsRunning == false) {
-            createLine(gLineIdx++, begDt, begDt, gHi, gLo, gSsColor[ss]);
-            createLine(gLineIdx++, begDt, endDt, gHi, gHi, gSsColor[ss]);
-            createLine(gLineIdx++, begDt, endDt, gLo, gLo, gSsColor[ss]);
-        }
+        createLine(gLineIdx++, begDt, begDt, gHi, gLo, gSsColor[ss]);
+        createLine(gLineIdx++, begDt, endDt, gHi, gHi, gSsColor[ss]);
+        createLine(gLineIdx++, begDt, endDt, gLo, gLo, gSsColor[ss]);
     }
     else if (inpStyle == eStyleColorBox){
         createRectangle(gRectIdx++, begDt, endDt, gHi, gLo, gSsBgColor[ss]);
@@ -289,12 +310,29 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
     else if (inpStyle == eStyleBorderLine){
         double currHi = High[beginBar];
         double currLo = Low[beginBar];
+        int preHiIdx = beginBar;
+        int preLoIdx = beginBar;
         for (int i = beginBar-1; i >= 0 && i >= endBar; i--){
-            createLine(gLineIdx++, Time[i+1], Time[i], currHi, MathMax(currHi, High[i]), gSsColor[ss]);
-            createLine(gLineIdx++, Time[i+1], Time[i], currLo, MathMin(currLo, Low[i]), gSsColor[ss]);
-            if (High[i] > currHi) currHi = High[i];
-            if (Low[i] < currLo) currLo = Low[i];
+            if (High[i] > currHi) {
+                // Đường dốc
+                createLine(gLineIdx++, Time[i+1], Time[i], currHi, MathMax(currHi, High[i]), gSsColor[ss]);
+                // Đường cũ
+                if (preHiIdx>i+1) createLine(gLineIdx++, Time[preHiIdx], Time[i+1], currHi, currHi, gSsColor[ss]);
+                preHiIdx = i;
+                currHi = High[i];
+            }
+            if (Low[i] < currLo) {
+                // Đường dốc
+                createLine(gLineIdx++, Time[i+1], Time[i], currLo, MathMin(currLo, Low[i]), gSsColor[ss]);
+                // Đường cũ
+                if (preLoIdx>i+1) createLine(gLineIdx++, Time[preLoIdx], Time[i+1], currLo, currLo, gSsColor[ss]);
+                preLoIdx = i;
+                currLo = Low[i];
+            }
         }
+        // Đường cuối
+        if (preHiIdx>endBar) createLine(gLineIdx++, Time[preHiIdx], endDt, currHi, currHi, gSsColor[ss]);
+        if (preLoIdx>endBar) createLine(gLineIdx++, Time[preLoIdx], endDt, currLo, currLo, gSsColor[ss]);
         createLine(gLineIdx++, endDt, endDt, currHi, currLo, gSsColor[ss]);
     }
     else if (inpStyle == eStyleBorderColor){
@@ -310,11 +348,10 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
     }
     string strRange = "=" + DoubleToString((gHi-gLo)*pow(10, Digits-1),1);
     if (isSsRunning){
-        createLabel(gLabelIdx++, "►" + gSsLableMap[ss] + strRange, begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
+        createLabel(gLabelIdx++, "►" + gSsLableMap[ss] + strRange, endDt, gHi, 8, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
     }
     else {
-        if (inpDisplayLable) createLabel(gLabelIdx++, gSsLableMap[ss] + strRange, begDt, gHi, 7, ANCHOR_LEFT_LOWER, gSsColor[ss]);
-        if (endBar*gChartPeriod < 15) createLabel(gLabelIdx++, "🏴 E N D", Time[0] + 120*gChartPeriod, Low[0], 9, ANCHOR_LEFT_UPPER, gSsColor[ss]);
+        if (inpDisplayLable) createLabel(gLabelIdx++, gSsLableMap[ss] + strRange, endDt, gHi, 7, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
     }
 }
 
@@ -330,7 +367,7 @@ void createLabel(int index, string label, datetime time1, double price1, int siz
     ObjectSet(objName, OBJPROP_TIME1, time1);
     ObjectSet(objName, OBJPROP_PRICE1, price1);
     ObjectSet(objName, OBJPROP_ANCHOR, anchor);
-    ObjectSetText(objName, label, size, NULL, cl);
+    ObjectSetText(objName, label, gArTextSize[gChartScale], NULL, cl);
 }
 
 void createLine(int index, datetime time1, datetime time2, double price1, double price2, color cl){
@@ -377,4 +414,19 @@ void hideItem(int index, string tag){
         ObjectSet(objName, OBJPROP_TIME2, 0);
         objName = APP_TAG + tag + IntegerToString(index++);
     }
+}
+
+void initTimeConfiguration()
+{
+    int tzOffset = inpServerTimeZone;
+    if (inpServerTimeZone == eTzAuto) {
+        tzOffset = (int)(TimeCurrent() - TimeGMT()) / 3599;
+    }
+
+    asBegHour = adjustTime(inpAsBegHour + tzOffset);
+    ldBegHour = adjustTime(inpLdBegHour + tzOffset);
+    nyBegHour = adjustTime(inpNyBegHour + tzOffset);
+    asEndHour = adjustTime(inpAsEndHour + tzOffset);
+    ldEndHour = adjustTime(inpLdEndHour + tzOffset);
+    nyEndHour = adjustTime(inpNyEndHour + tzOffset);
 }
