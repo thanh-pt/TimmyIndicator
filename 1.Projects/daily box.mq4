@@ -1,8 +1,8 @@
-#property copyright "Chuot Forex"
-#property link      "https://chuot-fx.blogspot.com/"
-#property icon      "../3.Resource/Chuột.ico"
+#property copyright "aForexStory Wiki"
+#property link      "https://aforexstory.notion.site/aa613be6d2fc4c5a84722fe629d5b3c4"
+#property icon      "../3.Resource/a-Forex-Story.ico"
 #property version   "1.00"
-#property description "Support me on Exness my IB: kzhhe6qy44"
+// #property description "Support me on Exness my IB: kzhhe6qy44"
 #property strict
 #property indicator_chart_window
 
@@ -102,7 +102,7 @@ void scanWindow(){
             createBox(gDateTime, gDateTime+86400, dHigh(barIdx_D), dLow(barIdx_D), barIdx_D);
         }
         else if (doW == 0 || barIdx_D == 0){
-            drawLine(gDateTime, gDateTime, dHigh(barIdx_D+1), dLow(barIdx_D+1), clrGray);
+            drawLine(gDateTime, gDateTime, dHigh(barIdx_D+1), dLow(barIdx_D+1), InpColor, InpStyle);
         }
         // Next day!
         gDateTime += 86400;
