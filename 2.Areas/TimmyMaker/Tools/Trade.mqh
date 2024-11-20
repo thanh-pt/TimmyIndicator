@@ -673,27 +673,24 @@ void Trade::scanLiveTrade()
         StringReplace(mStrTradeItems, itemId, "");
         activateItem(itemId);
         priceEN = OrderOpenPrice();
-        orgSL = StrToDouble(ObjectDescription(cPtSL));
-        if (orgSL <= 0.0) { //Invalid stored OrgSL
-            priceSL = OrderStopLoss();
-            tradeSize = OrderLots();
-            point = floor(fabs(priceEN-priceSL) * Trd_ContractSize);
-            mLot = 0;
-            if (point != 0) mLot = floor(mCost / (point + Trd_Com) * 100)/100;
-            if (mLot != tradeSize) {
-                int orderType = OrderType();
-                if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
-                    priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
-                }
-                else {
-                    priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
-                }
+        priceSL = OrderStopLoss();
+
+        int orderType = OrderType();
+        // Trường hợp đã BE
+        if ((priceSL >= priceEN && orderType == OP_BUY) || (priceSL <= priceEN && orderType == OP_SELL)) {
+            priceSL = StrToDouble(ObjectDescription(cPtSL));
+        }
+        
+        // Không có SL/ hoặc đã BE nhưng cPtSL text không lưu
+        if (priceSL == 0.0) {
+            if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
+                priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
             }
-            setTextContent(cPtSL, DoubleToString(priceSL, Digits));
+            else {
+                priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
+            }
         }
-        else {
-            priceSL = orgSL;
-        }
+        setTextContent(cPtSL, DoubleToString(priceSL, Digits));
 
         priceTP = OrderTakeProfit();
         if (ObjectFind(cPtWD) < 0) {
