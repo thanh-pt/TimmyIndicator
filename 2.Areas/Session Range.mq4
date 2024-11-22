@@ -41,19 +41,21 @@ enum eLabelStyle {
 
 #ifdef pro
 enum eStyle{
-    eStyleLineBox,      // <BOX>
-    eStyleBorderLine,   // <BODER>
-    eStyleBorder2Color, // <FILL BODER BY LINE>
-    eStyleBorderColor,  // <FILL BODER BY COLOR>
-    eStyleColorBox,     // <FILL BOX BY COLOR>
+    eStyleBox,          // <BOX>
+    eStyleBorder,       // <BODER>
+    eStyleBoxFill1,     // <BOX FILL BY LINE>
+    eStyleBoxFill2,     // <BOX FILL BY COLOR>
+    eStyleBorderFill1,  // <BODER FILL BY LINE>
+    eStyleBorderFill2,  // <BODER FILL BY COLOR>
 };
 #else
 enum eStyle{
-    eStyleLineBox,      // <BOX>
-    eStyleBorderLine,   // <BODER>
-    eStyleBorder2Color, // <FILL BODER BY LINE>
-    eStyleBorderColor,  // <FILL BODER BY COLOR> [PRO/v2 version]
-    eStyleColorBox,     // <FILL BOX BY COLOR> [PRO/v2 version]
+    eStyleBox,          // <BOX>
+    eStyleBorder,       // <BODER>
+    eStyleBoxFill1,     // <BOX FILL BY LINE> [PRO/v2 version]
+    eStyleBoxFill2,     // <BOX FILL BY COLOR> [PRO/v2 version]
+    eStyleBorderFill1,  // <BODER FILL BY LINE>
+    eStyleBorderFill2,  // <BODER FILL BY COLOR> [PRO/v2 version]
 };
 #endif
 
@@ -89,7 +91,7 @@ enum eTz{
 };
 
 input string _config;                               // - - - Configuration - - -
-input eStyle inpStyle = eStyleBorderLine;           // S T Y L E
+input eStyle inpStyle = eStyleBorder;           // S T Y L E
 input eLabelStyle   inpDisplayLable = eFullText;    // L A B E L
 input eDisplayStyle inpAlwaysDisplay = eAlways;     // D I S P L A Y
 #ifdef pro
@@ -155,7 +157,7 @@ int gTzAutoVerify = 0;
 int gChartScale   = 0;
 int gDSTOffset = 0;
 
-int gArTextSize[] = {1,5,6,7,8,9};
+int gArTextSize[] = {5,6,7,7,8,9};
 
 int adjustTime(int t){
     if (t > 24) t = t - 24;
@@ -213,11 +215,12 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
 //---
-    if (gTotalRate != rates_total) {
-        if (gTzAutoVerify < 2){
-            initTimeConfiguration();
-            gTzAutoVerify++;
-        }
+    if (gTzAutoVerify < 2){
+        initTimeConfiguration();
+        gTzAutoVerify++;
+        scanWindow();
+    }
+    else if (high[0] > gHi || low[0] < gLo || gTotalRate != rates_total) {
         scanWindow();
     }
     gTotalRate = rates_total;
@@ -336,13 +339,16 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         if (High[i] > gHi)  gHi = High[i];
         if (Low[i]  < gLo)  gLo = Low[i];
     }
-    if (inpStyle == eStyleLineBox){
+    if (inpStyle == eStyleBox){
+        for (int i = beginBar-1; i >= 0 && i >= endBar; i--){
+            createLine(gLineIdx++, Time[i], Time[i], gHi, gLo, gSsBgColor[ss]);
+        }
         createLine(gLineIdx++, endDt, endDt, gHi, gLo, gSsColor[ss]);
         createLine(gLineIdx++, begDt, begDt, gHi, gLo, gSsColor[ss]);
         createLine(gLineIdx++, begDt, endDt, gHi, gHi, gSsColor[ss]);
         createLine(gLineIdx++, begDt, endDt, gLo, gLo, gSsColor[ss]);
     }
-    else if (inpStyle == eStyleBorderLine || inpStyle == eStyleBorder2Color){
+    else if (inpStyle == eStyleBorder || inpStyle == eStyleBorderFill1){
         double currHi = High[beginBar];
         double currLo = Low[beginBar];
         int preHiIdx = beginBar;
@@ -360,7 +366,7 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
                 preLoIdx = i;
                 currLo = Low[i];
             }
-            if (inpStyle == eStyleBorder2Color) createLine(gLineIdx++, Time[i], Time[i], currHi, currLo, gSsBgColor[ss]);
+            if (inpStyle == eStyleBorderFill1) createLine(gLineIdx++, Time[i], Time[i], currHi, currLo, gSsBgColor[ss]);
         }
         // Đường cuối
         if (preHiIdx>endBar) createLine(gLineIdx++, Time[preHiIdx], endDt, currHi, currHi, gSsColor[ss]);
@@ -368,10 +374,16 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         createLine(gLineIdx++, endDt, endDt, currHi, currLo, gSsColor[ss]);
     }
 #ifdef pro
-    else if (inpStyle == eStyleColorBox){
+    else if (inpStyle == eStyleBoxFill1){
+        createLine(gLineIdx++, endDt, endDt, gHi, gLo, gSsColor[ss]);
+        createLine(gLineIdx++, begDt, begDt, gHi, gLo, gSsColor[ss]);
+        createLine(gLineIdx++, begDt, endDt, gHi, gHi, gSsColor[ss]);
+        createLine(gLineIdx++, begDt, endDt, gLo, gLo, gSsColor[ss]);
+    }
+    else if (inpStyle == eStyleBoxFill2){
         createRectangle(gRectIdx++, begDt, endDt, gHi, gLo, gSsBgColor[ss]);
     }
-    else if (inpStyle == eStyleBorderColor){
+    else if (inpStyle == eStyleBorderFill2){
         double currHi = High[beginBar];
         double currLo = Low[beginBar];
         int i = beginBar-1;
@@ -385,15 +397,16 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
 
     if (inpDisplayLable == eShortRange) strLabel += "=" + DoubleToString((gHi-gLo)*pow(10, Digits-1),1);
 #else
-    else if (inpStyle == eStyleBorderColor){displayProPanel(); return;}
-    else if (inpStyle == eStyleColorBox){displayProPanel(); return;}
+    else if (inpStyle == eStyleBoxFill1){displayProPanel(); return;}
+    else if (inpStyle == eStyleBoxFill2){displayProPanel(); return;}
+    else if (inpStyle == eStyleBorderFill2){displayProPanel(); return;}
     else {
         if (inpNextSession || inpDisplayLable >= eShort) displayProPanel();
         else hideProPanel();
     }
 #endif
     if (isSsRunning) strLabel = "►" + strLabel;
-    if (inpDisplayLable != eNoLabel) createLabel(gLabelIdx++, strLabel, endDt, gHi, 8, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+    if (inpDisplayLable != eNoLabel) createLabel(gLabelIdx++, strLabel, Time[endBar], gHi, 8, isSsRunning ? ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_LOWER, gSsColor[ss]);
 }
 
 void createLabel(int index, string label, datetime time1, double price1, int size, int anchor, color cl){
