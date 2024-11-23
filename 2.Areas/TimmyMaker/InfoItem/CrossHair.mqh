@@ -13,6 +13,7 @@ private:
     CommonData* pCommonData;
     string mStrTimeInfo;
     int mOffsetTime;
+    int mRetryGetServerTime;
 // COMPONENTS
 private:
     string mVCrossHair;
@@ -26,10 +27,8 @@ public:
     {
         gLocalTz = (int)(TimeLocal() - TimeGMT())/3600;
         pCommonData = commonData;
-        if (CrossHair_ServerTz == eTzAuto) {
-            mOffsetTime = (int)(TimeLocal() - TimeCurrent())/3600;
-        }
-        else {
+        mRetryGetServerTime = 0;
+        if (CrossHair_ServerTz != eTzAuto) {
             mOffsetTime = gLocalTz - CrossHair_ServerTz;
         }
         // Init component
@@ -103,8 +102,12 @@ public:
         ObjectSetString( 0, mDateInfo, OBJPROP_TOOLTIP,"\n");
 
     }
+
     void onMouseMove()
     {
+        if (CrossHair_ServerTz == eTzAuto && mRetryGetServerTime++ >= 100) {
+            mOffsetTime = (int)(TimeLocal() - TimeCurrent())/3600;
+        }
         if (pCommonData.mOutBoundary) {
             ObjectSet(mHCrossHair, OBJPROP_PRICE1, 0);
             ObjectSet(mHCrossHair, OBJPROP_PRICE2, 0);

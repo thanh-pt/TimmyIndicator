@@ -7,7 +7,7 @@
 #property strict
 #property indicator_chart_window
 
-#define APP_TAG "SessionRange"
+#define APP_TAG "*SessionRange"
 
 #define pro
 
@@ -91,8 +91,8 @@ enum eTz{
 };
 
 input string _config;                               // - - - Configuration - - -
-input eStyle inpStyle = eStyleBorder;           // S T Y L E
-input eLabelStyle   inpDisplayLable = eFullText;    // L A B E L
+input eStyle inpStyle = eStyleBorder;               // S T Y L E
+input eLabelStyle   inpDisplayLable = eShortRange;  // L A B E L
 input eDisplayStyle inpAlwaysDisplay = eAlways;     // D I S P L A Y
 #ifdef pro
 input bool          inpNextSession = true;          // N E X T   S E S S I O N
@@ -134,9 +134,9 @@ int ldEndHour;
 int nyEndHour;
 
 int          gChartPeriod = ChartPeriod();
+string       gSymbol = Symbol();
 bool         gPeriodSep;
 bool         gPrePeriodSep = false;
-string       gSymbol = Symbol();
 int          gTotalRate = 0;
 
 MqlDateTime  gStDatetime;
@@ -215,10 +215,9 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
 //---
-    if (gTzAutoVerify < 2){
+    if (gTzAutoVerify < 5){
         initTimeConfiguration();
         gTzAutoVerify++;
-        scanWindow();
     }
     else if (high[0] > gHi || low[0] < gLo || gTotalRate != rates_total) {
         scanWindow();
@@ -283,7 +282,7 @@ void scanWindow(){
                 gStDatetime.hour  = asBegHour + gDSTOffset;
                 gBegDatetime = StructToTime(gStDatetime);
                 gStDatetime.hour  = asEndHour + gDSTOffset;
-                gEndDatetime = StructToTime(gStDatetime);
+                gEndDatetime = StructToTime(gStDatetime) - gChartPeriod*60;
                 if (asEndHour < asBegHour) gEndDatetime += 86400;
                 drawSession(eAs, gBegDatetime, gEndDatetime);
             }
@@ -291,7 +290,7 @@ void scanWindow(){
                 gStDatetime.hour  = ldBegHour + gDSTOffset;
                 gBegDatetime = StructToTime(gStDatetime);
                 gStDatetime.hour  = ldEndHour + gDSTOffset;
-                gEndDatetime = StructToTime(gStDatetime);
+                gEndDatetime = StructToTime(gStDatetime) - gChartPeriod*60;
                 if (ldEndHour < ldBegHour) gEndDatetime += 86400;
                 drawSession(eLd, gBegDatetime, gEndDatetime);
             }
@@ -299,7 +298,7 @@ void scanWindow(){
                 gStDatetime.hour  = nyBegHour + gDSTOffset;
                 gBegDatetime = StructToTime(gStDatetime);
                 gStDatetime.hour  = nyEndHour + gDSTOffset;
-                gEndDatetime = StructToTime(gStDatetime);
+                gEndDatetime = StructToTime(gStDatetime) - gChartPeriod*60;
                 if (nyEndHour < nyBegHour) gEndDatetime += 86400;
                 drawSession(eNy, gBegDatetime, gEndDatetime);
             }
@@ -470,6 +469,7 @@ void hideItem(int index, string tag){
     }
 }
 
+int gPreTzOffset = -999;
 void initTimeConfiguration()
 {
     int tzOffset = inpServerTz;
@@ -483,6 +483,9 @@ void initTimeConfiguration()
     asEndHour = adjustTime(inpAsEndHour + tzOffset);
     ldEndHour = adjustTime(inpLdEndHour + tzOffset);
     nyEndHour = adjustTime(inpNyEndHour + tzOffset);
+
+    if (gPreTzOffset != tzOffset) scanWindow();
+    gPreTzOffset = tzOffset;
 }
 
 int gNotiSize = 4;

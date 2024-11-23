@@ -2,15 +2,15 @@
 #property link      "https://aforexstory.notion.site/aa613be6d2fc4c5a84722fe629d5b3c4"
 #property icon      "../3.Resource/a-Forex-Story.ico"
 #property version   "1.00"
-// #property description "Support me on Exness my IB: kzhhe6qy44"
 #property strict
 #property indicator_chart_window
 
+#define APP_TAG "*dailyBox"
 #include "../3.Resource/DrawLib.mqh"
-#define APP_TAG "dailyBox"
 
-input color             InpColor = clrGray; //Color:
-input ENUM_LINE_STYLE   InpStyle = STYLE_DOT; //Style:
+input color             InpColor1 = clrGray;        //Color1:
+input color             InpColor2 = clrLightGray;   //Color2:
+input ENUM_LINE_STYLE   InpStyle = STYLE_SOLID;   //Style:
 
 int          gChartPeriod = ChartPeriod();
 string       gSymbol      = Symbol();
@@ -85,7 +85,6 @@ void OnChartEvent(const int id,
 
 void scanWindow(){
     if (ChartPeriod() > PERIOD_H4) {
-        drawLibEnd();
         return;
     }
     // First bar Datetime
@@ -99,10 +98,7 @@ void scanWindow(){
         doW = TimeDayOfWeek(gDateTime);
         if (barIdx_D > 0 && doW != 0) {
             gDateTime = iTime(gSymbol, 1440, barIdx_D);
-            createBox(gDateTime, gDateTime+86400, dHigh(barIdx_D), dLow(barIdx_D), barIdx_D);
-        }
-        else if (doW == 0 || barIdx_D == 0){
-            drawLine(gDateTime, gDateTime, dHigh(barIdx_D+1), dLow(barIdx_D+1), InpColor, InpStyle);
+            createBox(gDateTime, gDateTime+86400-gChartPeriod*60, dHigh(barIdx_D), dLow(barIdx_D), barIdx_D);
         }
         // Next day!
         gDateTime += 86400;
@@ -112,9 +108,10 @@ void scanWindow(){
 }
 
 void createBox(datetime time1, datetime time2, double price1, double price2, const int& barIdxD){
-    drawLine(time1, time1, MathMax(price1, dHigh(barIdxD+1)), MathMin(price2, dLow(barIdxD+1)), InpColor, InpStyle);
-    drawLine(time1, time2, price1, price1, InpColor, InpStyle);
-    drawLine(time1, time2, price2, price2, InpColor, InpStyle);
+    drawLine(time1, time1, price1, price2, clrLightGray, InpStyle);
+    drawLine(time2, time2, price1, price2, clrLightGray, InpStyle);
+    drawLine(time1, time2, price1, price1, InpColor1, InpStyle);
+    drawLine(time1, time2, price2, price2, InpColor1, InpStyle);
 }
 
 double dHigh(int idx){

@@ -4,7 +4,10 @@ Draw các thứ thoải mái
 Cuối cycle -> hide unsused item
 */
 
+
+#ifndef APP_TAG
 #define APP_TAG "DrawLib"
+#endif
 
 
 #define LINETAG "Line"
