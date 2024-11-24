@@ -1,7 +1,7 @@
 #include "../Home/CommonData.mqh"
 #include "../Home/UtilityHeader.mqh"
 input string CrossHair_;                        // ●  C R O S S   H A I R  ●
-input bool   CrossHair_DisplayDateInfo  = true; // Date Info
+bool   CrossHair_DisplayDateInfo  = true; // Date Info
 input eTz    CrossHair_ServerTz         = eTz0; // Server Timezone
 
 

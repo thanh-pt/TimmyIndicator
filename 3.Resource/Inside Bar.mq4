@@ -1,12 +1,41 @@
-#property copyright "Chuot Forex"
-#property link      "https://chuot-fx.blogspot.com/"
-#property icon      "Chuột.ico"
-#property version   "2.00"
-#property description "Support me on Exness my IB: kzhhe6qy44"
+#property copyright "aForexStory Wiki"
+#property link      "https://aforexstory.notion.site/aa613be6d2fc4c5a84722fe629d5b3c4"
+#property icon      "../3.Resource/a-Forex-Story.ico"
+#property version   "2.01"
+#property description "Inside Bar is usually indicate for a fight between Supply and Demand which is leading to price was holded between High and Low of mother bar.\nThis will be an early signal of who wona control market next."
 #property strict
 #property indicator_chart_window
 #property indicator_buffers 6
 #property indicator_plots   6
+
+#resource           "kofi-donation.bmp"
+class Donation{
+    string donateLabelObj;
+public:
+    Donation(){
+        donateLabelObj = "kofi-donation";
+    }
+    void loadDonation()
+    {
+        ObjectCreate(donateLabelObj,OBJ_BITMAP_LABEL,0,0,0);
+        ObjectSetInteger(0, donateLabelObj, OBJPROP_CORNER, CORNER_LEFT_LOWER);
+        ObjectSetInteger(0, donateLabelObj, OBJPROP_ANCHOR, CORNER_LEFT_LOWER);
+        ObjectSetInteger(0, donateLabelObj, OBJPROP_XDISTANCE, 0);
+        ObjectSetInteger(0, donateLabelObj, OBJPROP_YDISTANCE, 0);
+
+        ObjectSetString(0,donateLabelObj, OBJPROP_BMPFILE,0,"::kofi-donation.bmp");
+    }
+    void OnChartEvent(const int id,
+                      const long &lparam,
+                      const double &dparam,
+                      const string &sparam) {
+        if (sparam == donateLabelObj && id == CHARTEVENT_OBJECT_CLICK){
+            ObjectSetInteger(0, donateLabelObj, OBJPROP_XDISTANCE, -200);
+        }
+    }
+};
+
+Donation gDonation;
 
 #define MACRO_BderSize gArrSizeMap[gChartScale]
 #define MACRO_BodySize gArrSizeMap[gChartScale]-1
@@ -65,7 +94,7 @@ int OnInit()
     // Setup
 
     updateStyle();
-
+    gDonation.loadDonation();
 //---
     return(INIT_SUCCEEDED);
 }
@@ -110,6 +139,8 @@ void OnChartEvent(const int id,
         gPreChartMode = gChartMode;
         updateStyle();
     }
+    
+    gDonation.OnChartEvent(id, lparam, dparam, sparam);
 }
 
 void updateStyle()
