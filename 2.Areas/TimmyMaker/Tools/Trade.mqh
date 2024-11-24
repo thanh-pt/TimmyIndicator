@@ -30,20 +30,19 @@ input string    Trd_; // ●  T R A D E (Pro Version)
 //-------------------------------------------------
 bool      Trd_TrackTrade    = false;   // Track Trade
 double    Trd_Cost          = 1.5;     // Cost ($)
-double    Trd_Com           = 7;       // Commission ($)
-double    Trd_Spread        = 0.0;     // Spread (pip)
-double    Trd_SlSpace       = 0.1;     // Space for SL (pip)
+double    Trd_Comm          = 7;       // Commission ($)
+double    Trd_Spread        = 0.0;     // Spread (point)
+double    Trd_SlSpace       = 2.0;     // Space for SL (point)
 #else
 input string    Trd_; // ●  T R A D E  ●
 //-------------------------------------------------
 input bool      Trd_TrackTrade    = false;   // Track Trade
 input double    Trd_Cost          = 1.5;     // Cost ($)
-input double    Trd_Com           = 7;       // Commission ($)
-input double    Trd_Spread        = 0.0;     // Spread (pip)
-input double    Trd_SlSpace       = 0.1;     // Space for SL (pip)
+input double    Trd_Comm          = 7;       // Commission ($)
+input double    Trd_Spread        = 0.0;     // Spread (point)
+input double    Trd_SlSpace       = 2.0;     // Space for SL (point)
 //-------------------------------------------------
 #endif
-input int       Trd_ContractSize = 100000;  // Contract Size
 input eAdjust   Trd_AdjustType   = E_FIXEN; // Adjust Type
 
 eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
@@ -58,12 +57,12 @@ int         Trd_LineWidth     = 2;                   // Line Width
 color       Trd_SlBkgrdColor  = clrLavenderBlush;  // SlBg
 color       Trd_TpBkgrdColor  = clrWhiteSmoke;     // TpBg
 
+double gdLotSize = MarketInfo(Symbol(), MODE_LOTSIZE);
 
 class Trade : public BaseItem
 {
 // Internal Value
 private:
-    double mLot;
     double mCost;
     double mStlSpace;
     double mSpread;
@@ -169,9 +168,16 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
 
     // Other initialize
     mCost     = Trd_Cost;
-    mSpread   = 10*Trd_Spread  / Trd_ContractSize;
-    mStlSpace = 10*Trd_SlSpace / Trd_ContractSize;
-    mComPoint = Trd_Com        / Trd_ContractSize;
+    mSpread   = Trd_Spread  / gdLotSize;
+    mStlSpace = Trd_SlSpace / gdLotSize;
+    mComPoint = Trd_Comm    / gdLotSize;
+
+    
+    ObjectCreate(TAG_STATIC + "Cost" , OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(TAG_STATIC + "Comm" , OBJ_ARROW, 0, 0, 0);
+
+    ObjectSetText(TAG_STATIC + "Cost", DoubleToString(Trd_Cost, 6));
+    ObjectSetText(TAG_STATIC + "Comm", DoubleToString(Trd_Comm, 6));
     /* TODO: Chuyển đổi tỷ giá
         string strSymbol = Symbol();
         Example:
@@ -325,7 +331,7 @@ void Trade::refreshData()
 
     setItemPos(iTxT2, centerTime, priceTP);
     setItemPos(iTxS2, centerTime, priceSL);
-    setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? 1 : -1)*Trd_Com/Trd_ContractSize);
+    setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? 1 : -1)*Trd_Comm/gdLotSize);
     //-------------------------------------------------
     ObjectSet(iTxtE, OBJPROP_ANCHOR, ANCHOR_LOWER);
     ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_RIGHT);
@@ -348,13 +354,13 @@ void Trade::refreshData()
     //-------------------------------------------------
     // 1. Thông tin lệnh
     if (priceSL == priceEN) return;
-    double point    = floor(fabs(priceEN-priceSL) * Trd_ContractSize);
+    double point    = floor(fabs(priceEN-priceSL) * gdLotSize);
     if (point <= 1) return;
     double absRR    = (priceTP-priceEN) / (priceEN-priceSL);
     double absBe    = (priceBE-priceEN) / (priceEN-priceSL);
-    mLot = NormalizeDouble(floor(mCost / (point + Trd_Com) * 100)/100, 2);
-    double realCost = mLot * (point + Trd_Com);
-    double profit   = mLot * (absRR*point - Trd_Com);
+    double tradeSize = NormalizeDouble(floor(mCost / (point + Trd_Comm) * 100)/100, 2);
+    double realCost = tradeSize * (point + Trd_Comm);
+    double profit   = tradeSize * (absRR*point - Trd_Comm);
 
     // 2. Thông tin hiển thị
     bool   selectState = (bool)ObjectGet(cPtWD, OBJPROP_SELECTED);
@@ -385,11 +391,11 @@ void Trade::refreshData()
         strTpInfo += DoubleToString(profit,   2) + "$";
         strSlInfo += DoubleToString(realCost, 2) + "$";
         if (strEnInfo != "") strEnInfo += ": ";
-        strEnInfo += DoubleToString(mLot,2) + "lot";
+        strEnInfo += DoubleToString(tradeSize,2) + "lot";
     }
     string strRRInfo = "";
     string strRR = DoubleToString(absRR,1) + "r";
-    if (Trd_Com > 0 && realCost > 0) {
+    if (Trd_Comm > 0 && realCost > 0) {
         strRR += "/" + DoubleToString(profit/realCost,1) + "ʀ";
     }
     for (int i = 0; i < StringLen(strRR); i++) {
@@ -398,7 +404,7 @@ void Trade::refreshData()
     }
     //-------------------------------------------------
     setTextContent(iTxT2, strTpInfo);
-    setTextContent(iTxE2, (Trd_Com > 0 && selectState) ? "---" : STR_EMPTY);
+    setTextContent(iTxE2, (Trd_Comm > 0 && selectState) ? "---" : STR_EMPTY);
     setTextContent(iTxS2, STR_EMPTY);
     //-------------------------------------------------
     setTextContent(iTxtT, strRRInfo);
@@ -684,10 +690,10 @@ void Trade::scanLiveTrade()
         // Không có SL/ hoặc đã BE nhưng cPtSL text không lưu
         if (priceSL == 0.0) {
             if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
-                priceSL = priceEN - (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
+                priceSL = priceEN - (mCost/tradeSize  - Trd_Comm) / gdLotSize;
             }
             else {
-                priceSL = priceEN + (mCost/tradeSize  - Trd_Com) / Trd_ContractSize;
+                priceSL = priceEN + (mCost/tradeSize  - Trd_Comm) / gdLotSize;
             }
         }
         setTextContent(cPtSL, DoubleToString(priceSL, Digits));
