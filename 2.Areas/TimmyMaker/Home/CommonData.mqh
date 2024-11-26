@@ -34,7 +34,7 @@ public:
         else {
             mChartWidth  = ChartGetInteger(0,CHART_WIDTH_IN_PIXELS, 0);
             mChartHeight = ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS,0);
-            if (mMouseX <= 0 || mMouseY <= 0 || mMouseX >= mChartWidth || mMouseY >= mChartHeight) {
+            if (mMouseX <= 5 || mMouseY <= 5 || mMouseX >= mChartWidth-5 || mMouseY >= mChartHeight-5) {
                 mOutBoundary = true;
             }
             else {

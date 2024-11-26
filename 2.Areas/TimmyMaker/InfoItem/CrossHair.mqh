@@ -71,6 +71,7 @@ public:
         setObjectStyle(mVCrossHair, gClrPointer, STYLE_DOT, 0);
         ObjectSet(mVCrossHair, OBJPROP_SELECTABLE, false);
         ObjectSet(mVCrossHair, OBJPROP_TIME2, 0);
+        ObjectSetString( 0, mVCrossHair, OBJPROP_TOOLTIP,"\n");
 
         ObjectCreate(mHCrossHair, OBJ_FIBO, 0, 0, 0);
         ObjectSet(mHCrossHair, OBJPROP_RAY  , true);
@@ -80,6 +81,7 @@ public:
         ObjectSetInteger(0, mHCrossHair,OBJPROP_LEVELCOLOR,0, gClrPointer);
         ObjectSetInteger(0, mHCrossHair,OBJPROP_LEVELSTYLE,0, STYLE_DOT);
         ObjectSetInteger(0, mHCrossHair,OBJPROP_LEVELWIDTH,0, 1);
+        ObjectSetString( 0, mHCrossHair, OBJPROP_TOOLTIP,"\n");
 
         // mWeekInfo
         ObjectCreate(mWeekInfo, OBJ_LABEL, 0, 0, 0);
@@ -113,9 +115,9 @@ public:
             ObjectSet(mHCrossHair, OBJPROP_PRICE2, 0);
             ObjectSet(miHPriceBg , OBJPROP_YDISTANCE, 0);
             ObjectSet(mVCrossHair, OBJPROP_TIME1,  0);
-            ObjectSet(miDtBkgnd, OBJPROP_XDISTANCE,0);
-            ObjectSet(mWeekInfo, OBJPROP_XDISTANCE,0);
-            ObjectSet(mDateInfo, OBJPROP_XDISTANCE,0);
+            ObjectSet(miDtBkgnd, OBJPROP_XDISTANCE, -100);
+            ObjectSet(mWeekInfo, OBJPROP_XDISTANCE, -100);
+            ObjectSet(mDateInfo, OBJPROP_XDISTANCE, -100);
             return;
         }
         // Horizontal: Đường kẻ ngang

@@ -318,10 +318,10 @@ double gHi, gLo;
 void drawSession(eSession ss, datetime begDt, datetime endDt)
 {
     // Find HiLo
-    int beginBar = iBarShift(gSymbol, gChartPeriod, begDt);
+    int beginBar = iBarShift(gSymbol, gChartPeriod, begDt, true);
     int endBar   = iBarShift(gSymbol, gChartPeriod, endDt);
 
-    if (beginBar == 0) {
+    if (beginBar < 0) {
 #ifdef pro 
         if (inpNextSession) createLabel(gLabelIdx++, "🚩 "+gSsLableMap[ss], begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
 #endif

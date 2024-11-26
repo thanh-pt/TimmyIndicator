@@ -143,7 +143,7 @@ string Alert::getAllItem(string itemId)
 }
 void Alert::updateItemAfterChangeType(){}
 void Alert::refreshData(){
-    setItemPos(cFb01, time1, time1 + getDistanceBar(10), price1, price1);
+    setItemPos(cFb01, time1, iTime(ChartSymbol(), PERIOD_D1, 0) + PERIOD_D1*60, price1, price1);
     setItemPos(cPtM0, time1, price1);
 
     // Handle logic gì đó
@@ -200,12 +200,21 @@ void Alert::onItemDrag(const string &itemId, const string &objId)
         time1  = pCommonData.mMouseTime;
     }
     else if (objId == cPtM0) {
-        time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
+        time1 = (datetime)ObjectGet(cPtM0, OBJPROP_TIME1);
+        price1 =          ObjectGet(objId, OBJPROP_PRICE1);
+        price1 =          ObjectGet(objId, OBJPROP_PRICE1);
         price1 =          ObjectGet(objId, OBJPROP_PRICE1);
     }
     else if (objId == cFb01) {
-        time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
-        price1 =          ObjectGet(objId, OBJPROP_PRICE2);
+        time1 = (datetime)ObjectGet(cPtM0, OBJPROP_TIME1);
+        double priceB = ObjectGet(objId, OBJPROP_PRICE1);
+        double priceC = ObjectGet(objId, OBJPROP_PRICE2);
+        if (priceB == priceC) price1 = priceB;
+        else {
+            double priceA = ObjectGet(cPtM0, OBJPROP_PRICE1);
+            if (priceA == priceB) price1 = priceC;
+            else price1 = priceB;
+        }
     }
 
     refreshData();
