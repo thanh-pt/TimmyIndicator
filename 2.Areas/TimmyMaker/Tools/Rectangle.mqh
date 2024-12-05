@@ -352,10 +352,16 @@ void Rectangle::onUserRequest2(const string &itemId, const string &objId)
         onItemDrag(itemId, objId);
 
         int barIdx = 0;
-        barIdx = iBarShift(ChartSymbol(), ChartPeriod(), MathMax(time1, time2))-3;
-        bool isSz = (mIndexType == SZ_LIGHT_TYPE || mIndexType == SZ_POI_TYPE);
-        double price = (isSz ? MathMin(price1, price2) : MathMax(price1, price2));
-        if (isSz) {
+        double price = 0;
+        if (time2 >= Time[0] + getDistanceBar(10)) {// max bêu rồi
+            barIdx = iBarShift(ChartSymbol(), ChartPeriod(), time1)-5;
+        }
+        else {
+            barIdx = iBarShift(ChartSymbol(), ChartPeriod(), MathMax(time1, time2))-3;
+        }
+
+        if (mIndexType == SZ_LIGHT_TYPE || mIndexType == SZ_POI_TYPE) {
+            price = MathMin(price1, price2);
             for (int i = barIdx; i >= 0; i--){
                 if (High[i] >= price) {
                     time2 = Time[i];
@@ -365,6 +371,7 @@ void Rectangle::onUserRequest2(const string &itemId, const string &objId)
             }
         }
         else {
+            price = MathMax(price1, price2);
             for (int i = barIdx; i >= 0; i--){
                 if (Low[i] <= price) {
                     time2 = Time[i];
