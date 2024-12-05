@@ -1,15 +1,11 @@
-//+------------------------------------------------------------------+
-//|                                              Countdown Timer.mq4 |
-//|                                                    Timmy Ham Hoc |
-//|                       https://www.youtube.com/@TimmyTraderHamHoc |
-//+------------------------------------------------------------------+
-#property copyright "Timmy Ham Hoc"
-#property link      "https://www.youtube.com/@TimmyTraderHamHoc"
+#property copyright "aForexStory Wiki"
+#property link      "https://aforexstory.notion.site/aa613be6d2fc4c5a84722fe629d5b3c4"
 #property version   "1.00"
 #property strict
 #property indicator_chart_window
 
-input bool InpMiniAskBid = true; // Mini Ask/Bid
+input bool InpMiniAskBid = true;        // Mini Ask/Bid
+input bool InpCountDownTimer = true;    // Countdown Timer
 
 string objAsk    = "*1MiniPriceLineAsk";
 string objBid    = "*2MiniPriceLineBid";
@@ -17,7 +13,6 @@ string objBid    = "*2MiniPriceLineBid";
 string gObjBkgnd = "*1gObjBkgnd";
 string gObjTimer = "*2gObjTimer";
 string gRemainTimeStr = "";
-bool    gInitTimer = false;
 bool    gInitChart = false;
 int     gX, gY;
 //+------------------------------------------------------------------+
@@ -26,9 +21,10 @@ int     gX, gY;
 int OnInit()
 {
 //--- indicator buffers mapping
-    gInitTimer = false;
-    EventSetTimer(1);
-    createTimerLabel();
+    if (InpCountDownTimer){
+        EventSetTimer(1);
+        createTimerLabel();
+    }
     if (InpMiniAskBid) createMiniAskBid();
 //---
     return(INIT_SUCCEEDED);
@@ -61,7 +57,7 @@ int OnCalculate(const int rates_total,
    
 //--- return value of prev_calculated for next call
     gInitChart = true;
-    updateTimerPosition();
+    if (InpCountDownTimer) updateTimerPosition();
     if (InpMiniAskBid) updateMiniAskBid();
     return(rates_total);
 }
@@ -71,13 +67,7 @@ int OnCalculate(const int rates_total,
 //+------------------------------------------------------------------+
 void OnTimer()
 {
-    if (gInitTimer == false){
-        EventKillTimer();
-        EventSetTimer(1);
-        gInitTimer = true;
-        return;
-    }
-    loadTimer();
+    if (InpCountDownTimer) loadTimer();
 }
 //+------------------------------------------------------------------+
 void OnChartEvent(const int id,
@@ -85,8 +75,10 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
-    if (id == CHARTEVENT_CHART_CHANGE || id == 10)
+    if (id == CHARTEVENT_CHART_CHANGE || id == 10){
+        if (gInitChart == false) return;
         updateTimerPosition();
+    }
     else if (id == CHARTEVENT_OBJECT_DELETE){
         if (gInitChart == false) return;
         if (sparam == gObjTimer) createTimerLabel();
@@ -159,7 +151,6 @@ void loadTimer(){
 }
 
 void updateTimerPosition(){
-    if (gInitChart == false) return;
     ChartTimePriceToXY(0, 0, Time[0], Bid, gX, gY);
     ObjectSet(gObjBkgnd, OBJPROP_YDISTANCE, gY);
     ObjectSet(gObjTimer, OBJPROP_YDISTANCE, gY);
