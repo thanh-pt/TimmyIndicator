@@ -9,8 +9,13 @@
 #property strict
 #property indicator_chart_window
 
-string gObjTimer = "CountdownTimer%";
-string gObjBkgnd = "CountdownTimer%Bkgnd";
+input bool InpMiniAskBid = true; // Mini Ask/Bid
+
+string objAsk    = "*1MiniPriceLineAsk";
+string objBid    = "*2MiniPriceLineBid";
+
+string gObjBkgnd = "*1gObjBkgnd";
+string gObjTimer = "*2gObjTimer";
 string gRemainTimeStr = "";
 bool    gInitTimer = false;
 bool    gInitChart = false;
@@ -24,8 +29,19 @@ int OnInit()
     gInitTimer = false;
     EventSetTimer(1);
     createTimerLabel();
+    if (InpMiniAskBid) createMiniAskBid();
 //---
     return(INIT_SUCCEEDED);
+}
+void OnDeinit(const int reason)
+{
+    gInitChart = false;
+    ChartSetInteger(0, CHART_SHOW_ASK_LINE, true);
+    ChartSetInteger(0, CHART_SHOW_BID_LINE, true);
+    ObjectDelete(objBid);
+    ObjectDelete(objAsk);
+    ObjectDelete(gObjBkgnd);
+    ObjectDelete(gObjTimer);
 }
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |
@@ -46,6 +62,7 @@ int OnCalculate(const int rates_total,
 //--- return value of prev_calculated for next call
     gInitChart = true;
     updateTimerPosition();
+    if (InpMiniAskBid) updateMiniAskBid();
     return(rates_total);
 }
 
@@ -71,13 +88,14 @@ void OnChartEvent(const int id,
     if (id == CHARTEVENT_CHART_CHANGE || id == 10)
         updateTimerPosition();
     else if (id == CHARTEVENT_OBJECT_DELETE){
+        if (gInitChart == false) return;
         if (sparam == gObjTimer) createTimerLabel();
     }
 }
 void createTimerLabel(){
     ObjectCreate(gObjBkgnd, OBJ_LABEL, 0, 0, 0);
     ObjectSet(gObjBkgnd, OBJPROP_SELECTABLE, false);
-    ObjectSetText(gObjBkgnd, "█████", 9, "Consolas");
+    ObjectSetText(gObjBkgnd, "", 9, "Consolas");
     ObjectSet(gObjBkgnd, OBJPROP_COLOR, clrLightGray);
     ObjectSet(gObjBkgnd, OBJPROP_XDISTANCE, 1);
     ObjectSet(gObjBkgnd, OBJPROP_YDISTANCE, 0);
@@ -94,6 +112,29 @@ void createTimerLabel(){
     ObjectSet(gObjTimer, OBJPROP_CORNER , CORNER_RIGHT_UPPER);
     ObjectSet(gObjTimer, OBJPROP_ANCHOR , ANCHOR_RIGHT);
     ObjectSetString(0 , gObjTimer, OBJPROP_TOOLTIP, "\n");
+}
+void createMiniAskBid(){
+    ObjectCreate(objAsk, OBJ_TREND, 0, 0, 0);
+    ObjectCreate(objBid, OBJ_TREND, 0, 0, 0);
+    ObjectSet(objBid, OBJPROP_BACK, true);
+    ObjectSet(objBid, OBJPROP_SELECTABLE, false);
+    ObjectSet(objBid, OBJPROP_RAY, true);
+    ObjectSet(objBid, OBJPROP_STYLE, STYLE_SOLID);
+    ObjectSet(objBid, OBJPROP_WIDTH, 0);
+    ObjectSet(objBid, OBJPROP_COLOR, clrLightGray);
+    ObjectSetString(0, objBid, OBJPROP_TOOLTIP, "\n");
+    
+    ObjectSet(objAsk, OBJPROP_BACK, true);
+    ObjectSet(objAsk, OBJPROP_SELECTABLE, false);
+    ObjectSet(objAsk, OBJPROP_RAY, true);
+    ObjectSet(objAsk, OBJPROP_STYLE, STYLE_SOLID);
+    ObjectSet(objAsk, OBJPROP_WIDTH, 0);
+    ObjectSet(objAsk, OBJPROP_COLOR, clrRed);
+    ObjectSetString(0, objAsk, OBJPROP_TOOLTIP, "\n");
+
+//---
+    ChartSetInteger(0, CHART_SHOW_ASK_LINE, false);
+    ChartSetInteger(0, CHART_SHOW_BID_LINE, false);
 }
 
 void loadTimer(){
@@ -120,6 +161,18 @@ void loadTimer(){
 void updateTimerPosition(){
     if (gInitChart == false) return;
     ChartTimePriceToXY(0, 0, Time[0], Bid, gX, gY);
-    ObjectSet(gObjTimer, OBJPROP_YDISTANCE, gY);
     ObjectSet(gObjBkgnd, OBJPROP_YDISTANCE, gY);
+    ObjectSet(gObjTimer, OBJPROP_YDISTANCE, gY);
+}
+
+void updateMiniAskBid(){
+    ObjectSet(objBid, OBJPROP_PRICE1, Bid);
+    ObjectSet(objBid, OBJPROP_PRICE2, Bid);
+    ObjectSet(objBid, OBJPROP_TIME1, Time[0]);
+    ObjectSet(objBid, OBJPROP_TIME2, Time[0] + Period()*300);
+    
+    ObjectSet(objAsk, OBJPROP_PRICE1, Ask);
+    ObjectSet(objAsk, OBJPROP_PRICE2, Ask);
+    ObjectSet(objAsk, OBJPROP_TIME1, Time[0]);
+    ObjectSet(objAsk, OBJPROP_TIME2, Time[0] + Period()*300);
 }
