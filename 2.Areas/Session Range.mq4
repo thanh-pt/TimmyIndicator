@@ -339,13 +339,15 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
         if (Low[i]  < gLo)  gLo = Low[i];
     }
     if (inpStyle == eStyleBox){
-        for (int i = beginBar-1; i >= 0 && i >= endBar; i--){
-            createLine(gLineIdx++, Time[i], Time[i], gHi, gLo, gSsBgColor[ss]);
-        }
+        // for (int i = beginBar-1; i >= 0 && i >= endBar; i--){
+        //     createLine(gLineIdx++, Time[i], Time[i], gHi, gLo, gSsBgColor[ss]);
+        // }
         createLine(gLineIdx++, endDt, endDt, gHi, gLo, gSsColor[ss]);
         createLine(gLineIdx++, begDt, begDt, gHi, gLo, gSsColor[ss]);
-        createLine(gLineIdx++, begDt, endDt, gHi, gHi, gSsColor[ss]);
-        createLine(gLineIdx++, begDt, endDt, gLo, gLo, gSsColor[ss]);
+        if (isSsRunning == false){
+            createLine(gLineIdx++, begDt, endDt, gHi, gHi, gSsColor[ss]);
+            createLine(gLineIdx++, begDt, endDt, gLo, gLo, gSsColor[ss]);
+        }
     }
     else if (inpStyle == eStyleBorder || inpStyle == eStyleBorderFill1){
         double currHi = High[beginBar];

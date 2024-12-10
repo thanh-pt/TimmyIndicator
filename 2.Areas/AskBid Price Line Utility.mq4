@@ -139,13 +139,14 @@ void loadTimer(){
         gRemainTimeStr = IntegerToString(min,2,'0') + ":" + IntegerToString(sec,2,'0');
     }
     else if (ChartPeriod() <= PERIOD_H4){
-        ObjectSetText(gObjBkgnd, "███████");
+        ObjectSetText(gObjBkgnd, "█████");
+        // ObjectSetText(gObjBkgnd, "███████");
         int hour = 0;
         if (min >= 60) {
             hour = min/60;
             min = min - hour*60;
         }
-        gRemainTimeStr = IntegerToString(hour) +":"+IntegerToString(min,2,'0') + ":" + IntegerToString(sec,2,'0');
+        gRemainTimeStr = IntegerToString(hour) +"h:"+IntegerToString(min,2,'0');// + ":" + IntegerToString(sec,2,'0');
     }
     ObjectSetText(gObjTimer, gRemainTimeStr);
 }
