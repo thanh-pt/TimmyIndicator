@@ -72,10 +72,10 @@ void createTimerLabel(){
         ObjectSet(gObjWorldClock, OBJPROP_SELECTABLE, true);
         ObjectSetText(gObjWorldClock, "hh:mm:ss", 18, "Consolas");
         ObjectSet(gObjWorldClock, OBJPROP_COLOR, clrMidnightBlue);
-        ObjectSet(gObjWorldClock, OBJPROP_XDISTANCE, 30);
-        ObjectSet(gObjWorldClock, OBJPROP_YDISTANCE, 30);
-        ObjectSet(gObjWorldClock, OBJPROP_CORNER , CORNER_LEFT_UPPER);
-        ObjectSet(gObjWorldClock, OBJPROP_ANCHOR , ANCHOR_LEFT_UPPER);
+        ObjectSet(gObjWorldClock, OBJPROP_XDISTANCE, 10);
+        ObjectSet(gObjWorldClock, OBJPROP_YDISTANCE, 10);
+        ObjectSet(gObjWorldClock, OBJPROP_CORNER , CORNER_LEFT_LOWER);
+        ObjectSet(gObjWorldClock, OBJPROP_ANCHOR , ANCHOR_LEFT_LOWER);
         ObjectSetString(0 , gObjWorldClock, OBJPROP_TOOLTIP, "\n");
     }
 }

@@ -8,9 +8,9 @@
 #define APP_TAG "*dailyBox"
 #include "../3.Resource/DrawLib.mqh"
 
-input color             InpColor1 = clrGray;        //Color1:
-input color             InpColor2 = clrLightGray;   //Color2:
-input ENUM_LINE_STYLE   InpStyle = STYLE_SOLID;   //Style:
+input color             InpColor1 = clrGainsboro;   //Color1:
+input color             InpColor2 = clrGainsboro;   //Color2:
+input ENUM_LINE_STYLE   InpStyle = STYLE_SOLID;     //Style:
 
 int          gChartPeriod = ChartPeriod();
 string       gSymbol      = Symbol();
@@ -98,7 +98,8 @@ void scanWindow(){
         doW = TimeDayOfWeek(gDateTime);
         if (barIdx_D > 0 && doW != 0) {
             gDateTime = iTime(gSymbol, 1440, barIdx_D);
-            createBox(gDateTime, gDateTime+86400-gChartPeriod*60, dHigh(barIdx_D), dLow(barIdx_D), barIdx_D);
+            // createBox(gDateTime, gDateTime+86400-gChartPeriod*60, dHigh(barIdx_D), dLow(barIdx_D));
+            createBox(gDateTime, gDateTime+86400, dHigh(barIdx_D), dLow(barIdx_D));
         }
         // Next day!
         gDateTime += 86400;
@@ -107,9 +108,9 @@ void scanWindow(){
     drawLibEnd();
 }
 
-void createBox(datetime time1, datetime time2, double price1, double price2, const int& barIdxD){
-    drawLine(time1, time1, price1, price2, clrLightGray, InpStyle);
-    drawLine(time2, time2, price1, price2, clrLightGray, InpStyle);
+void createBox(datetime time1, datetime time2, double price1, double price2){
+    drawLine(time1, time1, price1, price2, InpColor2, InpStyle);
+    drawLine(time2, time2, price1, price2, InpColor2, InpStyle);
     drawLine(time1, time2, price1, price1, InpColor1, InpStyle);
     drawLine(time1, time2, price2, price2, InpColor1, InpStyle);
 }
