@@ -1,31 +1,26 @@
+string gTFString = "";
 string getTFString()
 {
+    if (gTFString != "") return gTFString;
     int period = ChartPeriod();
+    gTFString = "mn";
 
-    string result = "";
-    if (period < PERIOD_H1)
-    {
-        result = IntegerToString(period);
-        return result;
+    if (period < PERIOD_H1) {
+        gTFString = IntegerToString(period);
     }
-    if (period < PERIOD_D1)
-    {
-        result = "h";
-        result += IntegerToString(period/PERIOD_H1);
-        return result;
+    else if (period < PERIOD_D1) {
+        gTFString = "h";
+        gTFString += IntegerToString(period/PERIOD_H1);
     }
-    if (period < PERIOD_W1)
-    {
-        result = "d";
-        return result;
+    else if (period < PERIOD_W1) {
+        gTFString = "d";
+        gTFString += IntegerToString(period/PERIOD_D1);
     }
-    if (period < PERIOD_MN1)
-    {
-        result = "w";
-        return result;
+    else if (period < PERIOD_MN1) {
+        gTFString = "w";
+        gTFString += IntegerToString(period/PERIOD_W1);
     }
-    result = "mn";
-    return result;
+    return gTFString;
 }
 
 input string _strTfLine = "5,15,H4,D1"; // TF Line (1,5,15,30,H1,H4,D1,W1,MN)

@@ -32,12 +32,14 @@ int OnInit()
 void OnDeinit(const int reason)
 {
     gInitChart = false;
-    ChartSetInteger(0, CHART_SHOW_ASK_LINE, true);
-    ChartSetInteger(0, CHART_SHOW_BID_LINE, true);
-    ObjectDelete(objBid);
-    ObjectDelete(objAsk);
-    ObjectDelete(gObjBkgnd);
-    ObjectDelete(gObjTimer);
+    if (reason <= REASON_RECOMPILE || reason == REASON_PARAMETERS){
+        ChartSetInteger(0, CHART_SHOW_ASK_LINE, true);
+        ChartSetInteger(0, CHART_SHOW_BID_LINE, true);
+        ObjectDelete(objBid);
+        ObjectDelete(objAsk);
+        ObjectDelete(gObjBkgnd);
+        ObjectDelete(gObjTimer);
+    }
 }
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |

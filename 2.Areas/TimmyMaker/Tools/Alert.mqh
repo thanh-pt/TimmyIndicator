@@ -164,7 +164,8 @@ void Alert::refreshData(){
 
     // Update vụ Selected or NOT
     int selected = (int)ObjectGet(cPtM0, OBJPROP_SELECTED);
-    setMultiProp(OBJPROP_COLOR, selected ? gClrForegrnd : gClrPointer, cFb01+cPtM0);
+    ObjectSet(cFb01, OBJPROP_COLOR, selected ? gClrForegrnd : gClrPointer);
+    ObjectSet(cPtM0, OBJPROP_COLOR, selected ? gClrForegrnd : clrNONE);
     ObjectSetInteger(0, cFb01,OBJPROP_LEVELCOLOR,0, selected ? gClrForegrnd : gClrPointer);
 }
 void Alert::finishedJobDone(){}
@@ -189,7 +190,7 @@ void Alert::onMouseClick()
         mListAlertStr += cPtM0 + ",";
     }
     else if (mIndexType == TEST_ALERT){
-        sendNotification("↑﹉" + DoubleToString(gCommonData.mMousePrice, Digits) + "\nThông báo OK!");
+        sendNotification("↗﹉↘﹍" + DoubleToString(gCommonData.mMousePrice, Digits) + "\nThông báo OK!");
     }
     mFinishedJobCb();
 }
@@ -224,7 +225,8 @@ void Alert::onItemClick(const string &itemId, const string &objId)
     if (StringFind(objId, TAG_CTRL) < 0) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
     setCtrlItemSelectState(mAllItem, selected);
-    setMultiProp(OBJPROP_COLOR, selected ? gClrForegrnd : gClrPointer, cFb01+cPtM0);
+    ObjectSet(cFb01, OBJPROP_COLOR, selected ? gClrForegrnd : gClrPointer);
+    ObjectSet(cPtM0, OBJPROP_COLOR, selected ? gClrForegrnd : clrNONE);
     ObjectSetInteger(0, cFb01,OBJPROP_LEVELCOLOR,0, selected ? gClrForegrnd : gClrPointer);
 }
 void Alert::onItemChange(const string &itemId, const string &objId)
@@ -301,7 +303,7 @@ void Alert::checkAlert()
                 StringReplace(mCurAlertText, ALERT_INDI_H, "");
                 StringReplace(mCurAlertText, ALERT_INDI_L, "");
                 mCurAlertText = ChartSymbol() + mCurAlertText;
-                sendNotification(   (isHighAlert ? "↑﹉" : "↓﹍") + DoubleToString(mCurAlertPrice, Digits) + "\n"
+                sendNotification(   (isHighAlert ? "↗﹉" : "↘﹍") + DoubleToString(mCurAlertPrice, Digits) + "\n"
                                     + mCurAlertText);
             }
         }

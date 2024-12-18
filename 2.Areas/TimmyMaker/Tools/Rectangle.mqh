@@ -15,9 +15,9 @@ input color             Rect_Dz_Color      = C'209,225,237'; // Dz Color
 input color             Rect_DzLight_Color = C'232,240,247'; // Dz Light Color
 //-----------------------------------------------------------
 
-#define CTX_RANGE   "+Range"
-#define CTX_XRANGE  "-Range"
 #define CTX_EXTENT  "Extent"
+#define CTX_TFTAG   "TF Tag"
+#define CTX_RANGE   "Range"
 
 enum RectangleType
 {
@@ -118,8 +118,8 @@ Rectangle::Rectangle(CommonData* commonData, MouseInfo* mouseInfo)
         if (i < mTypeNum-1) mContextType += ",";
     }
     mContextType += "," + CTX_EXTENT;
+    mContextType += "," + CTX_TFTAG ;
     mContextType += "," + CTX_RANGE;
-    mContextType += "," + CTX_XRANGE;
 }
 
 // Internal Event
@@ -236,6 +236,9 @@ void Rectangle::refreshData()
     //-------------------------------------------------
     setTextContent(iTxtL, ObjectDescription(cPtC1));
     setTextContent(iTxtR, ObjectDescription(cPtC2));
+    setMultiStrs(OBJPROP_TOOLTIP, DoubleToString(price1, Digits), cPtL1+cPtR1);
+    setMultiStrs(OBJPROP_TOOLTIP, DoubleToString(price2, Digits), cPtL2+cPtR2);
+    setMultiStrs(OBJPROP_TOOLTIP, DoubleToString(centerPrice, Digits), cPtC1+cPtC2);
     //-------------------------------------------------
     scanBackgroundOverlap(cBgM0);
     //-------------------------------------------------
@@ -333,20 +336,34 @@ void Rectangle::onItemDeleted(const string &itemId, const string &objId)
 void Rectangle::onUserRequest2(const string &itemId, const string &objId)
 {
     if (gContextMenu.mActiveItemStr == CTX_RANGE) {
-        // ObjectCreate(iLn01, OBJ_TREND, 0, 0, 0);
-        ObjectCreate(iLn02, OBJ_TREND, 0, 0, 0);
-        // ObjectCreate(iLn03, OBJ_TREND, 0, 0, 0);
+        bool needHide = true;
+        if (ObjectFind(iLn02) < 0) {
+            // ObjectCreate(iLn01, OBJ_TREND, 0, 0, 0);
+            ObjectCreate(iLn02, OBJ_TREND, 0, 0, 0);
+            // ObjectCreate(iLn03, OBJ_TREND, 0, 0, 0);
+            needHide = false;
+        }
+        else if (ObjectGet(iLn02, OBJPROP_COLOR) == clrNONE){
+            needHide = false;
+        }
         
         setMultiProp(OBJPROP_SELECTABLE, false, iLn01+iLn02+iLn03);
-        setObjectStyle(iLn01, clrGray, 0, 0, true);
-        setObjectStyle(iLn02, clrSilver, STYLE_DOT, 0, true);
-        setObjectStyle(iLn03, clrGray, 0, 0, true);
+        if (needHide) {
+            setObjectStyle(iLn01, clrNONE, 0, 0);
+            setObjectStyle(iLn02, clrNONE, 0, 0);
+            setObjectStyle(iLn03, clrNONE, 0, 0);
+        }
+        else {
+            setObjectStyle(iLn01, clrGray, 0, 0, true);
+            setObjectStyle(iLn02, clrSilver, STYLE_DOT, 0, true);
+            setObjectStyle(iLn03, clrGray, 0, 0, true);
+        }
         onItemDrag(itemId, objId);
     }
-    else if (gContextMenu.mActiveItemStr == CTX_XRANGE) {
-        setObjectStyle(iLn01, clrNONE, 0, 0);
-        setObjectStyle(iLn02, clrNONE, 0, 0);
-        setObjectStyle(iLn03, clrNONE, 0, 0);
+    if (gContextMenu.mActiveItemStr == CTX_TFTAG) {
+        if (ObjectDescription(cPtC2) != getTFString()) setTextContent(cPtC2, getTFString());
+        else setTextContent(cPtC2, "");
+        onItemDrag(itemId, objId);
     }
     else if (gContextMenu.mActiveItemStr == CTX_EXTENT) {
         onItemDrag(itemId, objId);
