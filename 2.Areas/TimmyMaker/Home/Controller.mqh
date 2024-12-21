@@ -276,7 +276,6 @@ void Controller::handleEvent(const int id, const string& sparam)
     case CHARTEVENT_OBJECT_DELETE:
         if (StringFind(sparam, TAG_CTRM) == -1) return;
         mListItem[receiverItem].onItemDeleted(itemId, sparam);
-        gContextMenu.clearContextMenu();
         break;
     case CHARTEVENT_OBJECT_DRAG:
         if (StringFind(sparam, TAG_CTRL) == -1) return;

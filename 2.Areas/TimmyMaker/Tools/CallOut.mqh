@@ -194,7 +194,8 @@ void CallOut::onItemClick(const string &itemId, const string &objId)
     if (StringFind(objId, TAG_CTRL) < 0) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
     setCtrlItemSelectState(mAllItem, selected);
-    if (selected && pCommonData.mShiftHold) gContextMenu.openContextMenu(cTxtM, mContextType);
+    if (selected) gContextMenu.openStaticCtxMenu(cTxtM, mContextType);
+    else gContextMenu.clearStaticCtxMenu(cTxtM);
 }
 void CallOut::onItemChange(const string &itemId, const string &objId)
 {

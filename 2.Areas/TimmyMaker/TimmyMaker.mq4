@@ -38,7 +38,6 @@ int OnInit()
 }
 void OnDeinit(const int reason)
 {
-    gContextMenu.clearContextMenu();
     gContextMenu.clearStaticCtxMenu();
 }
 
@@ -95,7 +94,6 @@ void OnChartEvent(const int id,
         gController.handleEvent(id, sparam);
     break;
     case CHARTEVENT_CHART_CHANGE:
-        gContextMenu.clearContextMenu();
     break;
     default:
         // PrintFormat("%d", id);
@@ -114,7 +112,6 @@ bool gIsPress;
 int gPreviousOption;
 void detectMouseDraging(const string &sparam)
 {
-    if (gContextMenu.mIsOpen == true) return;
     int option = StrToInteger(sparam);
     // Press event
     if ((option & 0x01) != 0 && (gPreviousOption & 0x01) == 0) {

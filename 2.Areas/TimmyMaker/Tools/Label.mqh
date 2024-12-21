@@ -206,7 +206,6 @@ void LabelText::onItemClick(const string &itemId, const string &objId)
         idx++;
         objCTxtX = cTxtX +"#"+ IntegerToString(idx);
     }
-    if (selected == true && objId == lastItem && pCommonData.mShiftHold) gContextMenu.openContextMenu(cTxtM, mContextType);
 
     if (selected) gContextMenu.openStaticCtxMenu(cTxtM, mContextType);
     else gContextMenu.clearStaticCtxMenu(cTxtM);
@@ -303,5 +302,4 @@ void LabelText::onUserRequest(const string &itemId, const string &objId)
     setMultiStrs(OBJPROP_TOOLTIP, "\n", objCTxtX+objiTBgX);
 
     refreshData();
-    gContextMenu.clearContextMenu();
 }

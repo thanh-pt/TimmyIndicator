@@ -7,6 +7,9 @@
 class ContextMenu
 {
 private:
+    string NameTag;
+    string BgndTag;
+private:
     string mContextMenu[];
     int    mSize;
     int    mMaxLength;
@@ -14,139 +17,70 @@ public:
     string mActiveObjectId;
     int    mActivePos;
     string mActiveItemStr;
-    bool   mIsOpen;
     bool   mStaticCtxOn;
 
 public:
-    ContextMenu()
-    {
-        mIsOpen = false;
+    ContextMenu() {
+        NameTag = ".StaticCtxMenuName_";
+        BgndTag = ".StaticCtxMenuBgnd_";
     }
-    virtual void onItemClick(const string &objId)
-    {
-        string nameTag, bgndTag;
-        if (StringFind(objId, "ContextMenu") >= 0) {
-            nameTag = "ContextMenuName_";
-            bgndTag = "ContextMenuBgnd_";
-        }
-        else if (StringFind(objId, "StaticCtxMenu") >= 0) {
-            nameTag = "StaticCtxMenuName_";
-            bgndTag = "StaticCtxMenuBgnd_";
-        }
-        else {
-            return;
-        }
+    virtual void onItemClick(const string &objId) {
+        if (StringFind(objId, "StaticCtxMenu") < 0) return;
         string sparamItems[];
         int k=StringSplit(objId,'_',sparamItems);
         if (k != 2) return;
-
-        mActivePos = StrToInteger(sparamItems[1]);
-        string itemBgnd;
-        for (int i = 0; i < mSize; i++) {
-            itemBgnd = bgndTag+IntegerToString(i);
-            if (i == mActivePos){
-                ObjectSet(itemBgnd, OBJPROP_COLOR, gClrTextBgHl);
-                string itemName = nameTag+IntegerToString(i);
-                mActiveItemStr = StringTrimRight(StringTrimLeft(ObjectDescription(itemName)));
-            }
-            else {
-                ObjectSet(itemBgnd, OBJPROP_COLOR, gClrTextBgnd);
-            }
-        }
-        gController.handleEvent(CHARTEVENT_SELECT_CONTEXTMENU, mActiveObjectId);
+        onNumKeyPress(StrToInteger(sparamItems[1]));
     }
-    void onNumKeyPress(int index)
-    {
-        string nameTag = "StaticCtxMenuName_";
-        string itemName = nameTag+IntegerToString(index);
+    void onNumKeyPress(int index) {
+        string itemName = NameTag+IntegerToString(index);
         mActivePos = index;
         mActiveItemStr = StringTrimRight(StringTrimLeft(ObjectDescription(itemName)));
         gController.handleEvent(CHARTEVENT_SELECT_CONTEXTMENU, mActiveObjectId);
     }
-public:
-    void openContextMenu(const string objId, const string data)
-    {
-        openContextMenu(objId, data, -1);
-    }
-    void openStaticCtxMenu(const string objId, const string data)
-    {
-        openStaticCtxMenu(objId, data, -1);
-    }
-    void openContextMenu(const string objId, const string data, const int activePos)
-    {
-        if (mIsOpen == true) clearContextMenu();
+    void openStaticCtxMenu(const string objId, const string data) {
         mActiveObjectId = objId;
-        mActivePos = activePos;
         mSize = StringSplit(data,',',mContextMenu);
         mMaxLength = 0;
         int tempLength;
-        for (int i = 0; i < mSize; i++)
-        {
+        for (int i = 0; i < mSize; i++) {
             tempLength = StringLen(mContextMenu[i]);
             if (tempLength > mMaxLength) mMaxLength = tempLength;
         }
         mMaxLength += 2;
-        for (int i = 0; i < mSize; i++)
-        {
-            drawItem(mContextMenu[i], i);
-        }
-        mIsOpen = true;
-    }
-    void openStaticCtxMenu(const string objId, const string data, const int activePos)
-    {
-        mActiveObjectId = objId;
-        mActivePos = activePos;
-        mSize = StringSplit(data,',',mContextMenu);
-        mMaxLength = 0;
-        int tempLength;
-        for (int i = 0; i < mSize; i++)
-        {
-            tempLength = StringLen(mContextMenu[i]);
-            if (tempLength > mMaxLength) mMaxLength = tempLength;
-        }
 
         string itemName;
         string itemBgnd;
-        int bottomOffset = 5 + mSize*20;
+        string allItem;
+        int bottomOffset = mSize*16;
         int i = 0;
         for (; i < mSize; i++) {
-            itemName = "StaticCtxMenuName_"+IntegerToString(i);
-            itemBgnd = "StaticCtxMenuBgnd_"+IntegerToString(i);
+            itemName = NameTag+IntegerToString(i);
+            itemBgnd = BgndTag+IntegerToString(i);
+            allItem = itemBgnd+itemName;
             ObjectCreate(itemBgnd, OBJ_LABEL, 0, 0, 0);
             ObjectCreate(itemName, OBJ_LABEL, 0, 0, 0);
-            ObjectSet(itemBgnd, OBJPROP_SELECTABLE, false);
-            ObjectSet(itemName, OBJPROP_SELECTABLE, false);
-            setTextContent(itemBgnd, IntegerToString(i+1) + getFullBL(mMaxLength), 10, FONT_BLOCK, gClrTextBgnd);
-            setTextContent(itemName, mContextMenu[i]+getSpaceBL((mMaxLength-StringLen(mContextMenu[i]))/2), 10, FONT_BLOCK, gClrForegrnd);
-            ObjectSetString( 0, itemBgnd, OBJPROP_TOOLTIP,"\n");
-            ObjectSetString( 0, itemName, OBJPROP_TOOLTIP,"\n");
-            ObjectSet(itemName, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-            ObjectSet(itemBgnd, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-            ObjectSet(itemName, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
-            ObjectSet(itemBgnd, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
-            ObjectSet(itemName, OBJPROP_XDISTANCE, 5);
-            ObjectSet(itemBgnd, OBJPROP_XDISTANCE, 5);
+            setTextContent(itemBgnd, IntegerToString(i+1) + getFullBL(mMaxLength)                           , 10, FONT_BLOCK, gClrTextBgnd);
+            setTextContent(itemName, mContextMenu[i]+getSpaceBL((mMaxLength-StringLen(mContextMenu[i]))/2)  , 10, FONT_BLOCK, gClrForegrnd);
 
-            bottomOffset -= 20;
-            ObjectSet(itemName, OBJPROP_YDISTANCE, bottomOffset);
-            ObjectSet(itemBgnd, OBJPROP_YDISTANCE, bottomOffset);
-
-            if (i == mActivePos) {
-                ObjectSet(itemBgnd, OBJPROP_COLOR, gClrTextBgHl);
-            }
+            bottomOffset -= 16;
+            setMultiProp(OBJPROP_BACK       , false             , allItem);
+            setMultiProp(OBJPROP_SELECTABLE , false             , allItem);
+            setMultiProp(OBJPROP_ANCHOR     , ANCHOR_RIGHT_LOWER, allItem);
+            setMultiProp(OBJPROP_CORNER     , CORNER_RIGHT_LOWER, allItem);
+            setMultiProp(OBJPROP_XDISTANCE  , 0                 , allItem);
+            setMultiProp(OBJPROP_YDISTANCE  , bottomOffset      , allItem);
+            setMultiStrs(OBJPROP_TOOLTIP    , "\n"              , allItem);
         }
         do {
-            itemName = "StaticCtxMenuName_"+IntegerToString(i);
-            itemBgnd = "StaticCtxMenuBgnd_"+IntegerToString(i);
-            ObjectSet(itemName, OBJPROP_COLOR, clrNONE);
-            ObjectSet(itemBgnd, OBJPROP_COLOR, clrNONE);
+            itemName = NameTag+IntegerToString(i);
+            itemBgnd = BgndTag+IntegerToString(i);
+            setMultiProp(OBJPROP_COLOR, clrNONE, itemBgnd+itemName);
             i++;
         } while (ObjectFind(itemName) >= 0);
         
         mStaticCtxOn = true;
     }
-    void clearStaticCtxMenu()
-    {
+    void clearStaticCtxMenu() {
         clearStaticCtxMenu(mActiveObjectId);
     }
     void clearStaticCtxMenu(string who)
@@ -156,58 +90,12 @@ public:
         string itemBgnd;
         int i = 0;
         do {
-            itemName = "StaticCtxMenuName_"+IntegerToString(i);
-            itemBgnd = "StaticCtxMenuBgnd_"+IntegerToString(i);
+            itemName = NameTag+IntegerToString(i);
+            itemBgnd = BgndTag+IntegerToString(i);
             ObjectSet(itemName, OBJPROP_YDISTANCE, -50);
             ObjectSet(itemBgnd, OBJPROP_YDISTANCE, -50);
             i++;
         } while (ObjectFind(itemName) >= 0);
         mStaticCtxOn = false;
-    }
-    void clearContextMenu()
-    {
-        if (mIsOpen == false) return;
-        string itemName;
-        string itemBgnd;
-        int i = 0;
-        do {
-            itemName = "ContextMenuName_"+IntegerToString(i);
-            itemBgnd = "ContextMenuBgnd_"+IntegerToString(i);
-            ObjectSet(itemName, OBJPROP_YDISTANCE, -50);
-            ObjectSet(itemBgnd, OBJPROP_YDISTANCE, -50);
-            i++;
-        } while (ObjectFind(itemName) >= 0);
-        mIsOpen = false;
-    }
-private:
-    void drawItem(const string& name, int pos)
-    {
-        string itemName = "ContextMenuName_"+IntegerToString(pos);
-        string itemBgnd = "ContextMenuBgnd_"+IntegerToString(pos);
-        ObjectCreate(itemBgnd, OBJ_LABEL, 0, 0, 0);
-        ObjectCreate(itemName, OBJ_LABEL, 0, 0, 0);
-        ObjectSet(itemBgnd, OBJPROP_SELECTABLE, false);
-        ObjectSet(itemName, OBJPROP_SELECTABLE, false);
-        setTextContent(itemBgnd, getFullBL(mMaxLength), 8, FONT_BLOCK, gClrTextBgnd);
-        setTextContent(itemName, getSpaceBL((mMaxLength-StringLen(name))/2)+name, 8, FONT_BLOCK, gClrForegrnd);
-        ObjectSetString( 0, itemBgnd, OBJPROP_TOOLTIP,name);
-        ObjectSetString( 0, itemName, OBJPROP_TOOLTIP,name);
-        ObjectSet(itemName, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
-        ObjectSet(itemBgnd, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
-        
-
-        int topOffset  = gCommonData.mMouseY + 10 + (pos%MAX_ROW)*14;
-        int leftOffset = gCommonData.mMouseX + 20 + (pos/MAX_ROW)*mMaxLength*7;
-
-        ObjectSet(itemName, OBJPROP_XDISTANCE, leftOffset);
-        ObjectSet(itemName, OBJPROP_YDISTANCE, topOffset);
-
-        ObjectSet(itemBgnd, OBJPROP_XDISTANCE, leftOffset);
-        ObjectSet(itemBgnd, OBJPROP_YDISTANCE, topOffset);
-
-        if (pos == mActivePos)
-        {
-            ObjectSet(itemBgnd, OBJPROP_COLOR, gClrTextBgHl);
-        }
     }
 };

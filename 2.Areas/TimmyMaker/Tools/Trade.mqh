@@ -10,7 +10,7 @@
 #define CTX_ADDSLTP     "Sl/TP"
 #define CTX_AUTOBE      "Auto BE"
 
-#define TAG_TRADEID     ".TMTrade_1#"
+#define TAG_TRADEID     ".TMTrade_1440#"
 
 enum eDisplay
 {
@@ -645,7 +645,6 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
         setTextContent(cPtBE, "be");
         refreshData();
     }
-    gContextMenu.clearContextMenu();
 }
 
 void Trade::createTrade(int id, datetime _time1, datetime _time2, double _priceEN, double _priceSL, double _priceTP, double _priceBE)

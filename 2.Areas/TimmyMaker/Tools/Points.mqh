@@ -175,7 +175,6 @@ void Point::onMouseClick()
 }
 void Point::onItemDrag(const string &itemId, const string &objId)
 {
-    gContextMenu.clearContextMenu();
     time  = (datetime)ObjectGet(cPtM0, OBJPROP_TIME1);
     price =           ObjectGet(cPtM0, OBJPROP_PRICE1);
 
@@ -188,7 +187,6 @@ void Point::onItemClick(const string &itemId, const string &objId)
 {
     // if (StringFind(objId, TAG_CTRL) < 0) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    if (selected && pCommonData.mShiftHold) gContextMenu.openContextMenu(cPtM0, mContextType, mIndexType);
     // setCtrlItemSelectState(mAllItem, selected);
     if (selected) gContextMenu.openStaticCtxMenu(cPtM0, mContextType);
     else gContextMenu.clearStaticCtxMenu(cPtM0);

@@ -327,7 +327,6 @@ void Fibonacci::onMouseClick()
 }
 void Fibonacci::onItemDrag(const string &itemId, const string &objId)
 {
-    gContextMenu.clearContextMenu();
     if (objId == cBgM0) {
         time0   = (datetime)ObjectGet(cBgM0, OBJPROP_TIME1);
         time1   = (datetime)ObjectGet(cBgM0, OBJPROP_TIME2);
@@ -371,7 +370,8 @@ void Fibonacci::onItemClick(const string &itemId, const string &objId)
 {
     if (StringFind(objId, TAG_CTRL) < 0) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    if (selected && pCommonData.mShiftHold) gContextMenu.openContextMenu(cBgM0, mContextType, mIndexType);
+    if (selected) gContextMenu.openStaticCtxMenu(cBgM0, mContextType);
+    else gContextMenu.clearStaticCtxMenu(cBgM0);
     setCtrlItemSelectState(mAllItem, selected);
     setMultiProp(OBJPROP_COLOR, selected ? gClrPointer : clrNONE, cPtL1+cPtL2+cPtR1+cPtR2+cPtC1+cPtC2);
 }

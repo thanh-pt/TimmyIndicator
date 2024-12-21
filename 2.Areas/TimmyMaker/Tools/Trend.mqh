@@ -281,8 +281,6 @@ void Trend::updateItemAfterChangeType()
 //Chart Event
 void Trend::onItemDrag(const string &itemId, const string &objId)
 {
-    gContextMenu.clearContextMenu();
-
     if (objId == cLnM0){
         time1 = (datetime)ObjectGet(objId, OBJPROP_TIME1);
         time2 = (datetime)ObjectGet(objId, OBJPROP_TIME2);

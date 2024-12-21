@@ -296,6 +296,8 @@ void Alert::checkAlert()
             sendNotification(   (isHighAlert ? ALERT_INDI_H : ALERT_INDI_L) + DoubleToString(mCurAlertPrice, Digits) + "\n"
                                 + mCurAlertText);
             ObjectDelete(mListAlertArr[i]);
+            StringReplace(mListAlertArr[i], TAG_CTRM + "cPtM0", TAG_CTRL + "cFb01");
+            ObjectDelete(mListAlertArr[i]);
         }
         else {
             mListAlertRemainStr += mListAlertArr[i] + ",";

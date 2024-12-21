@@ -144,7 +144,6 @@ void setUnselectAll()
         currentItemId = itemId;
         gController.handleEvent(CHARTEVENT_OBJECT_DRAG, objName);
     }
-    gContextMenu.clearContextMenu();
 }
 
 void setUnselectAllExcept(string objId)
@@ -170,7 +169,6 @@ void setUnselectAllExcept(string objId)
         currentItemId = itemId;
         gController.handleEvent(CHARTEVENT_OBJECT_DRAG, objName);
     }
-    gContextMenu.clearContextMenu();
 }
 
 void setCtrlItemSelectState(string lstItem, int selecteState)
