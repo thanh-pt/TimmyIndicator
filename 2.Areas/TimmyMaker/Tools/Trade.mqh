@@ -71,6 +71,7 @@ private:
     bool   mUserActive;
     string mStrTradeItems;
     string mArrTradeItems[];
+    bool mShowTradeLevers;
 
 // Component name
 private:
@@ -126,6 +127,7 @@ public:
     virtual void onItemChange(const string &itemId, const string &objId);
     virtual void onUserRequest(const string &itemId, const string &objId);
 // Special functional
+    void toggleTradeLevers();
     void showHistory(bool isShow);
     void scanLiveTrade();
     void restoreBacktestingTrade();
@@ -184,6 +186,8 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
             - xxxJPY: mCost = Trd_Cost * 1.49;
             - XAUUSD: mCost = Trd_Cost * 10;
     */
+
+   mShowTradeLevers = (bool)ChartGetInteger(0, CHART_SHOW_TRADE_LEVELS);
 }
 
 // Internal Event
@@ -539,6 +543,11 @@ void Trade::onItemChange(const string &itemId, const string &objId)
 }
 
 //-------------------------------------------------------------------
+void Trade::toggleTradeLevers()
+{
+    mShowTradeLevers = !mShowTradeLevers;
+    ChartSetInteger(0, CHART_SHOW_TRADE_LEVELS, mShowTradeLevers);
+}
 void Trade::showHistory(bool isShow)
 {
     string sparamItems[];

@@ -154,6 +154,9 @@ void Controller::handleEvent(const long &key)
     case 'U':
         ((Trade*)mListItem[eTRADE]).showHistory(false);
         break;
+    case 'I':
+        ((Trade*)mListItem[eTRADE]).toggleTradeLevers();
+        break;
     case 'H':
         setChartFree(true);
         break;
