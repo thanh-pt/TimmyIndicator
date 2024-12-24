@@ -170,6 +170,7 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
 
     // Other initialize
     mCost     = Trd_Cost;
+    if (gdLotSize == 0) gdLotSize = 100000;
     mSpread   = Trd_Spread  / gdLotSize;
     mStlSpace = Trd_SlSpace / gdLotSize;
     mComPoint = Trd_Comm    / gdLotSize;
@@ -408,7 +409,7 @@ void Trade::refreshData()
     }
     //-------------------------------------------------
     setTextContent(iTxT2, strTpInfo);
-    setTextContent(iTxE2, (Trd_Comm > 0 && selectState) ? "---" : STR_EMPTY);
+    setTextContent(iTxE2, (Trd_Comm > 0 && (selectState || ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2)) ? "---" : STR_EMPTY);
     setTextContent(iTxS2, STR_EMPTY);
     //-------------------------------------------------
     setTextContent(iTxtT, strRRInfo);

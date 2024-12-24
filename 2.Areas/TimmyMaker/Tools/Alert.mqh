@@ -270,7 +270,7 @@ void Alert::checkAlert()
     mAlertNumber  = StringSplit(mListAlertStr,',',mListAlertArr);
     mListAlertRemainStr = "";
     bool isHighAlert = false;
-    for (int i = 0; i < mAlertNumber; i++) {
+    for (int i = mAlertNumber-1; i >= 0; i--) {
         // Check valid Alert
         if (ObjectFind(mListAlertArr[i]) < 0) continue;
 
