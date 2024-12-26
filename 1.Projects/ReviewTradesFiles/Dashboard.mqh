@@ -5,8 +5,8 @@
 #define MAX_TRADES 100
 #define COL1 250
 #define COL2 225
-#define COL3 180
-#define COL4 80
+#define COL3 140
+#define COL4 50
 
 struct TradeSt {
     datetime    orderOpenTime;
@@ -17,14 +17,18 @@ struct TradeSt {
     double      priceEN;
     double      priceSL;
     double      priceTP;
+    string      note;
 };
 
 TradeSt gListTrade[MAX_TRADES];
 int     gTradeIndex = 0;
 
+int gPage = 0;
+int gPageTotal = 0;
 void getData()
 {
     gTradeIndex = 0;
+    gPage = 0;
     // retrieving info from trade history
     int i,orderType,hstTotal=OrdersHistoryTotal();
     for(i=0;i<hstTotal;i++) {
@@ -48,22 +52,15 @@ void getData()
             gTradeIndex++;
         }
     }
+    gPageTotal = (int)MathCeil((float)gTradeIndex/5);
 }
 
-string objHidePanel = APP_TAG + "HidePanel";
 string objDashboardBg = APP_TAG + "DashboardBg";
 string objRowHighlight = APP_TAG + "RowHighlight";
 string objInitDashboard = APP_TAG+"initPanel";
 void initPanel()
 {
     ObjectCreate(objInitDashboard, OBJ_TEXT, 0, 0, 0);
-    ObjectCreate(objHidePanel, OBJ_TEXT, 0, 0, 0);
-    ObjectSetText(objHidePanel, "██████████████████", 10000, "Consolas", clrWhiteSmoke);
-    ObjectSetString(0, objHidePanel, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objHidePanel, OBJPROP_ANCHOR, ANCHOR_LEFT);
-    ObjectSet(objHidePanel, OBJPROP_SELECTABLE, false);
-    ObjectSet(objHidePanel, OBJPROP_TIME1 , 0);
-    ObjectSet(objHidePanel, OBJPROP_PRICE1, 0);
     
     ObjectCreate(objDashboardBg, OBJ_LABEL, 0, 0, 0);
     ObjectSetText(objDashboardBg, "██████", 10000, "Consolas", clrWhiteSmoke);
@@ -81,10 +78,10 @@ void initPanel()
     ObjectSet(objRowHighlight, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
     ObjectSet(objRowHighlight, OBJPROP_SELECTABLE, false);
     ObjectSet(objRowHighlight, OBJPROP_XDISTANCE, COL1);
-    ObjectSet(objRowHighlight, OBJPROP_YDISTANCE, 0);
+    ObjectSet(objRowHighlight, OBJPROP_YDISTANCE, -20);
 
     gLabelIndex = 0;
-    gRowPos = 20;
+    gRowPos = 5;
     // function
     createLabel("[Reload]"  , COL1, gRowPos);
     hideItem(gLabelIndex, "Label");
@@ -94,32 +91,34 @@ int gRowPos = 0;
 void drawDashboard()
 {
     gLabelIndex = 0;
-    gRowPos = 20;
+    gRowPos = 5;
     // header
     createLabel("Idx"   , COL1, gRowPos);
     createLabel("Date"  , COL2, gRowPos);
     createLabel("Action", COL3, gRowPos);
     createLabel("Note"  , COL4, gRowPos);
     nextRow();
+    separateRow();
     // table
     string currentDate = StringSubstr(TimeToStr(gListTrade[0].orderOpenTime, TIME_DATE), 5);
     // todo: Chia page
     // todo: hide/show button
-    for (int i = 0; i < gTradeIndex; i++) {
-        if (currentDate != StringSubstr(TimeToStr(gListTrade[i].orderOpenTime, TIME_DATE), 5)) {
-            currentDate = StringSubstr(TimeToStr(gListTrade[i].orderOpenTime, TIME_DATE), 5);
-            separateRow();
-        }
+    for (int i = gPage*5; i < gTradeIndex && i < (gPage+1) * 5; i++) {
+        currentDate = TimeToStr(gListTrade[i].orderOpenTime, TIME_MINUTES) + " "
+                    + StringSubstr(TimeToStr(gListTrade[i].orderOpenTime, TIME_DATE), 5);
         createLabel(IntegerToString(i)  , COL1      , gRowPos);
-        createLabel(currentDate         , COL2      , gRowPos, TimeToStr(gListTrade[i].orderOpenTime, TIME_MINUTES) + "\nLot:" + DoubleToString(gListTrade[i].orderLots, 2));
+        createLabel(currentDate         , COL2      , gRowPos);
         createLabel("View"              , COL3      , gRowPos);
         createLabel("Result"            , COL3-40   , gRowPos);
-        createLabel("---"               , COL4      , gRowPos, true);
+        createLabel(gListTrade[i].note == "" ? "---" : gListTrade[i].note, COL4, gRowPos, true);
         nextRow();
     }
     separateRow();
     // function
     createLabel("[Reload]"  , COL1, gRowPos);
+    createLabel("[<]"       , COL3, gRowPos);
+    createLabel(IntegerToString(gPage+1) + "/" + IntegerToString(gPageTotal), COL3-20, gRowPos);
+    createLabel("[>]"       , COL3-50, gRowPos);
     nextRow();
     separateRow();
 
@@ -153,6 +152,18 @@ void handleClick(const string &sparam)
         getData();
         drawDashboard();
     }
+    else if (description == "[>]") {
+        if (gPage < gPageTotal-1) {
+            gPage++;
+            drawDashboard();
+        }
+    }
+    else if (description == "[<]") {
+        if (gPage > 0) {
+            gPage--;
+            drawDashboard();
+        }
+    }
 }
 
 int gLabelIndex = 0;
@@ -184,8 +195,10 @@ void createLabel(string text, int posX, int posY, bool editable, string tooltip)
 void hideItem(int index, string tag){
     string objName = APP_TAG + tag + IntegerToString(index);
     while(ObjectFind(objName) >= 0){
-        ObjectSet(objName, OBJPROP_TIME1, 0);
-        ObjectSet(objName, OBJPROP_TIME2, 0);
+        ObjectSet(objName, OBJPROP_XDISTANCE, 0);
+        ObjectSet(objName, OBJPROP_YDISTANCE, 0);
+        // ObjectSet(objName, OBJPROP_TIME1, 0);
+        // ObjectSet(objName, OBJPROP_TIME2, 0);
         objName = APP_TAG + tag + IntegerToString(index++);
     }
 }
