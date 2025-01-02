@@ -8,21 +8,37 @@
 #define COL3 140
 #define COL4 50
 
-struct TradeSt {
-    datetime    orderOpenTime;
-    datetime    orderCloseTime;
-    int         orderTicket;
-    int         orderType;
-    double      orderLots;
-    double      priceEN;
-    double      priceSL;
-    double      priceTP;
-    string      note;
-};
+datetime orderOpenTime  ;
+datetime orderCloseTime ;
+int      orderType      ;
+double   orderLots      ;
+double   priceEN        ;
+double   priceSL        ;
+double   priceTP        ;
 
-TradeSt gListTrade[MAX_TRADES];
-int     gTradeIndex = 0;
+void setDataTo(int idx, string rawData)
+{
+    string objTradeData = APP_TAG + "TradeData" + IntegerToString(idx);
+    ObjectCreate(objTradeData, OBJ_TEXT, 0, 0, 0);
+    ObjectSetText(objTradeData, rawData);
+}
 
+void getDataFrom(int idx)
+{
+    string objTradeData = APP_TAG + "TradeData" + IntegerToString(idx);
+    string rawData = ObjectDescription(objTradeData);
+    string data[];
+    StringSplit(rawData,';',data);
+    orderOpenTime  = StringToTime    (data[0]);
+    orderCloseTime = StringToTime    (data[1]);
+    orderType      = (int)StringToInteger (data[2]);
+    orderLots      = StringToDouble  (data[3]);
+    priceEN        = StringToDouble  (data[4]);
+    priceSL        = StringToDouble  (data[5]);
+    priceTP        = StringToDouble  (data[6]);
+}
+
+int gTradeIndex = 0;
 int gPage = 0;
 int gPageTotal = 0;
 void getData()
@@ -30,7 +46,8 @@ void getData()
     gTradeIndex = 0;
     gPage = 0;
     // retrieving info from trade history
-    int i,orderType,hstTotal=OrdersHistoryTotal();
+    int i,_orderType,hstTotal=OrdersHistoryTotal();
+    string data;
     for(i=0;i<hstTotal;i++) {
         //---- check selection result
         if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false) {
@@ -38,26 +55,25 @@ void getData()
             break;
         }
         // some work with order
-        orderType = OrderType();
-        // TODO: check gTradeIndex >= MAX_TRADES
-        if (orderType == OP_BUY || orderType == OP_SELL) {
-            gListTrade[gTradeIndex].orderOpenTime   = OrderOpenTime();
-            gListTrade[gTradeIndex].orderCloseTime  = OrderCloseTime();
-            gListTrade[gTradeIndex].orderTicket     = OrderTicket();
-            gListTrade[gTradeIndex].orderType       = OrderType();
-            gListTrade[gTradeIndex].orderLots       = OrderLots();
-            gListTrade[gTradeIndex].priceEN         = OrderOpenPrice();
-            gListTrade[gTradeIndex].priceSL         = OrderStopLoss();
-            gListTrade[gTradeIndex].priceTP         = OrderTakeProfit();
-            gTradeIndex++;
+        _orderType = OrderType();
+        if (_orderType == OP_BUY || _orderType == OP_SELL) {
+            data = "";
+            data += TimeToString(OrderOpenTime(), TIME_DATE|TIME_MINUTES) + ";";
+            data += TimeToString(OrderCloseTime(), TIME_DATE|TIME_MINUTES) + ";";
+            data += IntegerToString(OrderType()) + ";";
+            data += DoubleToString(OrderLots(), 2)  + ";";
+            data += DoubleToString(OrderOpenPrice(), 5) + ";";
+            data += DoubleToString(OrderStopLoss(), 5) + ";";
+            data += DoubleToString(OrderTakeProfit(), 5);
+            setDataTo(gTradeIndex++, data);
         }
     }
     gPageTotal = (int)MathCeil((float)gTradeIndex/5);
 }
 
-string objDashboardBg = APP_TAG + "DashboardBg";
+string objDashboardBg = APP_TAG  + "DashboardBg";
 string objRowHighlight = APP_TAG + "RowHighlight";
-string objInitDashboard = APP_TAG+"initPanel";
+string objInitDashboard = APP_TAG+ "initPanel";
 void initPanel()
 {
     ObjectCreate(objInitDashboard, OBJ_TEXT, 0, 0, 0);
@@ -100,17 +116,17 @@ void drawDashboard()
     nextRow();
     separateRow();
     // table
-    string currentDate = StringSubstr(TimeToStr(gListTrade[0].orderOpenTime, TIME_DATE), 5);
+    string currentDate;
     // todo: Chia page
     // todo: hide/show button
     for (int i = gPage*5; i < gTradeIndex && i < (gPage+1) * 5; i++) {
-        currentDate = TimeToStr(gListTrade[i].orderOpenTime, TIME_MINUTES) + " "
-                    + StringSubstr(TimeToStr(gListTrade[i].orderOpenTime, TIME_DATE), 5);
+        getDataFrom(i);
+        currentDate = TimeToStr(orderOpenTime, TIME_MINUTES) + " "
+                    + StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
         createLabel(IntegerToString(i)  , COL1      , gRowPos);
         createLabel(currentDate         , COL2      , gRowPos);
         createLabel("View"              , COL3      , gRowPos);
         createLabel("Result"            , COL3-40   , gRowPos);
-        createLabel(gListTrade[i].note == "" ? "---" : gListTrade[i].note, COL4, gRowPos, true);
         nextRow();
     }
     separateRow();
@@ -218,9 +234,11 @@ void viewTrade(int tradeIdx)
     ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objName, OBJPROP_ARROWCODE, 2);
-    ObjectSet(objName, OBJPROP_COLOR , gListTrade[tradeIdx].orderType == OP_BUY ? clrBlue : clrRed);
-    ObjectSet(objName, OBJPROP_TIME1 , gListTrade[tradeIdx].orderOpenTime);
-    ObjectSet(objName, OBJPROP_PRICE1, gListTrade[tradeIdx].priceEN);
+
+    getDataFrom(tradeIdx);
+    ObjectSet(objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
+    ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
+    ObjectSet(objName, OBJPROP_PRICE1, priceEN);
 
     objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
     ObjectSet(objName, OBJPROP_TIME1 , 0);
@@ -244,9 +262,11 @@ void resultTrade(int tradeIdx)
     ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objName, OBJPROP_ARROWCODE, 2);
-    ObjectSet(objName, OBJPROP_COLOR , gListTrade[tradeIdx].orderType == OP_BUY ? clrBlue : clrRed);
-    ObjectSet(objName, OBJPROP_TIME1 , gListTrade[tradeIdx].orderOpenTime);
-    ObjectSet(objName, OBJPROP_PRICE1, gListTrade[tradeIdx].priceEN);
+
+    getDataFrom(tradeIdx);
+    ObjectSet(objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
+    ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
+    ObjectSet(objName, OBJPROP_PRICE1, priceEN);
 
     objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
     ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
@@ -254,8 +274,8 @@ void resultTrade(int tradeIdx)
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objName, OBJPROP_ARROWCODE, 3);
     ObjectSet(objName, OBJPROP_COLOR , clrBlue);
-    ObjectSet(objName, OBJPROP_TIME1 , gListTrade[tradeIdx].orderCloseTime);
-    ObjectSet(objName, OBJPROP_PRICE1, gListTrade[tradeIdx].priceTP);
+    ObjectSet(objName, OBJPROP_TIME1 , orderCloseTime);
+    ObjectSet(objName, OBJPROP_PRICE1, priceTP);
 
     objName = APP_TAG + "TradeSL" + IntegerToString(tradeIdx);
     ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
@@ -263,8 +283,8 @@ void resultTrade(int tradeIdx)
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objName, OBJPROP_ARROWCODE, 3);
     ObjectSet(objName, OBJPROP_COLOR , clrRed);
-    ObjectSet(objName, OBJPROP_TIME1 , gListTrade[tradeIdx].orderCloseTime);
-    ObjectSet(objName, OBJPROP_PRICE1, gListTrade[tradeIdx].priceSL);
+    ObjectSet(objName, OBJPROP_TIME1 , orderCloseTime);
+    ObjectSet(objName, OBJPROP_PRICE1, priceSL);
 }
 
 void nextRow() {
