@@ -146,6 +146,8 @@ void handleClick(const string &sparam)
     else if (description == "Result") {
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-3);
         resultTrade(StrToInteger(ObjectDescription(tradeIdx)));
+        string viewBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-1);
+        ObjectSetText(viewBtn, "Hide");
         ObjectSet(objRowHighlight, OBJPROP_YDISTANCE, ObjectGet(sparam, OBJPROP_YDISTANCE));
     }
     else if (description == "[Reload]") {

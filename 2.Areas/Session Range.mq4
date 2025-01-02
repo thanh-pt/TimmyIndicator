@@ -323,7 +323,7 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
 
     if (beginBar < 0) {
 #ifdef pro 
-        if (inpNextSession) createLabel(gLabelIdx++, "🚩 "+gSsLableMap[ss], begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
+        if (inpNextSession) createLabel(gLabelIdx++, gSsLableMap[ss], begDt, gHi, 8, ANCHOR_LEFT_LOWER, gSsColor[ss]);
 #endif
         return;
     }
