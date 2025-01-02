@@ -2,11 +2,8 @@
 #define APP_TAG "Dashboard"
 #endif
 
-#define MAX_TRADES 100
-#define COL1 250
-#define COL2 225
-#define COL3 140
-#define COL4 50
+#define COL1 190
+#define COL2 100
 
 datetime orderOpenTime  ;
 datetime orderCloseTime ;
@@ -23,10 +20,12 @@ void setDataTo(int idx, string rawData)
     ObjectSetText(objTradeData, rawData);
 }
 
-void getDataFrom(int idx)
+bool getDataFrom(int idx)
 {
     string objTradeData = APP_TAG + "TradeData" + IntegerToString(idx);
     string rawData = ObjectDescription(objTradeData);
+    if (rawData == "" || rawData == NULL) return false;
+    //Print("rawData:[", rawData, "]");
     string data[];
     StringSplit(rawData,';',data);
     orderOpenTime  = StringToTime    (data[0]);
@@ -36,27 +35,27 @@ void getDataFrom(int idx)
     priceEN        = StringToDouble  (data[4]);
     priceSL        = StringToDouble  (data[5]);
     priceTP        = StringToDouble  (data[6]);
+    return true;
 }
 
 int gTradeIndex = 0;
+
 int gPage = 0;
 int gPageTotal = 0;
 void getData()
 {
-    gTradeIndex = 0;
-    gPage = 0;
     // retrieving info from trade history
-    int i,_orderType,hstTotal=OrdersHistoryTotal();
+    int type,hstTotal=OrdersHistoryTotal(),tradeIdx = 0;
     string data;
-    for(i=0;i<hstTotal;i++) {
+    for(int i=0;i<hstTotal;i++) {
         //---- check selection result
         if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false) {
             Print("Access to history failed with error (",GetLastError(),")");
             break;
         }
         // some work with order
-        _orderType = OrderType();
-        if (_orderType == OP_BUY || _orderType == OP_SELL) {
+        type = OrderType();
+        if (type == OP_BUY || type == OP_SELL) {
             data = "";
             data += TimeToString(OrderOpenTime(), TIME_DATE|TIME_MINUTES) + ";";
             data += TimeToString(OrderCloseTime(), TIME_DATE|TIME_MINUTES) + ";";
@@ -65,41 +64,53 @@ void getData()
             data += DoubleToString(OrderOpenPrice(), 5) + ";";
             data += DoubleToString(OrderStopLoss(), 5) + ";";
             data += DoubleToString(OrderTakeProfit(), 5);
-            setDataTo(gTradeIndex++, data);
+            setDataTo(tradeIdx++, data);
         }
     }
-    gPageTotal = (int)MathCeil((float)gTradeIndex/5);
+    ObjectSetText(objCurPage, "0");
+    ObjectSetText(objAllPage, IntegerToString((int)MathCeil((float)tradeIdx/5)-1));
 }
 
-string objDashboardBg = APP_TAG  + "DashboardBg";
-string objRowHighlight = APP_TAG + "RowHighlight";
-string objInitDashboard = APP_TAG+ "initPanel";
+string objBgBoard   = APP_TAG   + "objBgBoard";
+string objInitPanel = APP_TAG   + "initPanel";
+string objCurPage   = APP_TAG   + "CurPage";
+string objAllPage   = APP_TAG   + "AllPage";
 void initPanel()
 {
-    ObjectCreate(objInitDashboard, OBJ_TEXT, 0, 0, 0);
+    ObjectCreate(objInitPanel, OBJ_TEXT, 0, 0, 0);
     
-    ObjectCreate(objDashboardBg, OBJ_LABEL, 0, 0, 0);
-    ObjectSetText(objDashboardBg, "██████", 10000, "Consolas", clrWhiteSmoke);
-    ObjectSetString(0, objDashboardBg, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objDashboardBg, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
-    ObjectSet(objDashboardBg, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
-    ObjectSet(objDashboardBg, OBJPROP_SELECTABLE, false);
-    ObjectSet(objDashboardBg, OBJPROP_XDISTANCE, 0);
-    ObjectSet(objDashboardBg, OBJPROP_YDISTANCE, 0);
+    ObjectCreate(objBgBoard, OBJ_LABEL, 0, 0, 0);
+    ObjectSetText(objBgBoard, "██████", 10000, "Consolas", clrWhiteSmoke);
+    ObjectSetString(0, objBgBoard, OBJPROP_TOOLTIP, "\n");
+    ObjectSet(objBgBoard, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
+    ObjectSet(objBgBoard, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+    ObjectSet(objBgBoard, OBJPROP_SELECTABLE, false);
+    ObjectSet(objBgBoard, OBJPROP_XDISTANCE, COL1+5);
+    ObjectSet(objBgBoard, OBJPROP_YDISTANCE, 25);
 
-    ObjectCreate(objRowHighlight, OBJ_LABEL, 0, 0, 0);
-    ObjectSetText(objRowHighlight, "________________________________________________", 10, "Consolas", clrGold);
-    ObjectSetString(0, objRowHighlight, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objRowHighlight, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
-    ObjectSet(objRowHighlight, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
-    ObjectSet(objRowHighlight, OBJPROP_SELECTABLE, false);
-    ObjectSet(objRowHighlight, OBJPROP_XDISTANCE, COL1);
-    ObjectSet(objRowHighlight, OBJPROP_YDISTANCE, -20);
+    ObjectCreate(objCurPage, OBJ_LABEL, 0, 0, 0);
+    ObjectCreate(objAllPage, OBJ_LABEL, 0, 0, 0);
+    ObjectSetText(objCurPage, "0", 10, "Consolas", clrBlack);
+    ObjectSetText(objAllPage, "0", 10, "Consolas", clrBlack);
+    ObjectSetString(0, objCurPage, OBJPROP_TOOLTIP, "\n");
+    ObjectSetString(0, objAllPage, OBJPROP_TOOLTIP, "\n");
+    ObjectSet(objCurPage, OBJPROP_YDISTANCE, -20);
+    ObjectSet(objAllPage, OBJPROP_YDISTANCE, -20);
 
+    ObjectSet(objCurPage, OBJPROP_SELECTABLE, false);
+    ObjectSet(objCurPage, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
+    ObjectSet(objCurPage, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+    ObjectSet(objAllPage, OBJPROP_SELECTABLE, false);
+    ObjectSet(objAllPage, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
+    ObjectSet(objAllPage, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+
+    ObjectSet(objCurPage, OBJPROP_XDISTANCE, COL2-25);
+    ObjectSet(objAllPage, OBJPROP_XDISTANCE, COL2-50);
+
+
+    // init function
     gLabelIndex = 0;
-    gRowPos = 5;
-    // function
-    createLabel("[Reload]"  , COL1, gRowPos);
+    createLabel("[Start Review Trades]", COL1, 5);
     hideItem(gLabelIndex, "Label");
 }
 
@@ -109,37 +120,36 @@ void drawDashboard()
     gLabelIndex = 0;
     gRowPos = 5;
     // header
-    createLabel("Idx"   , COL1, gRowPos);
-    createLabel("Date"  , COL2, gRowPos);
-    createLabel("Action", COL3, gRowPos);
-    createLabel("Note"  , COL4, gRowPos);
-    nextRow();
-    separateRow();
+    createLabel("Time_Date" , COL1, gRowPos);
+    createLabel("Action"    , COL2, gRowPos);
+    nextRow(); separateRow();
     // table
     string currentDate;
-    // todo: Chia page
-    // todo: hide/show button
-    for (int i = gPage*5; i < gTradeIndex && i < (gPage+1) * 5; i++) {
+    int i = (int)StringToInteger(ObjectDescription(objCurPage)) * 5;
+    int fullPage = 0;
+    while (getDataFrom(i) == true && fullPage < 5) {
         getDataFrom(i);
-        currentDate = TimeToStr(orderOpenTime, TIME_MINUTES) + " "
-                    + StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
-        createLabel(IntegerToString(i)  , COL1      , gRowPos);
-        createLabel(currentDate         , COL2      , gRowPos);
-        createLabel("View"              , COL3      , gRowPos);
-        createLabel("Result"            , COL3-40   , gRowPos);
+        currentDate = TimeToStr(orderOpenTime, TIME_MINUTES) + " " + StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
+        createLabel(currentDate         , COL1   , gRowPos);
+        createLabel("[View]"            , COL2   , gRowPos);
+        createLabel("[Result]"          , COL2-40, gRowPos);
+        createLabel(IntegerToString(i)  , 0      , gRowPos);
         nextRow();
+        fullPage++;
+        i++;
     }
     separateRow();
     // function
     createLabel("[Reload]"  , COL1, gRowPos);
-    createLabel("[<]"       , COL3, gRowPos);
-    createLabel(IntegerToString(gPage+1) + "/" + IntegerToString(gPageTotal), COL3-20, gRowPos);
-    createLabel("[>]"       , COL3-50, gRowPos);
+    createLabel("[<]"       , COL2, gRowPos);
+    createLabel("/"         , COL2-40, gRowPos);
+    createLabel("[>]"       , 25,   gRowPos);
+    ObjectSet(objCurPage, OBJPROP_YDISTANCE, gRowPos);
+    ObjectSet(objAllPage, OBJPROP_YDISTANCE, gRowPos);
     nextRow();
     separateRow();
 
-    ObjectSet(objDashboardBg, OBJPROP_XDISTANCE, COL1+5);
-    ObjectSet(objDashboardBg, OBJPROP_YDISTANCE, gRowPos);
+    ObjectSet(objBgBoard, OBJPROP_YDISTANCE, gRowPos);
     hideItem(gLabelIndex, "Label");
 }
 
@@ -147,38 +157,41 @@ void handleClick(const string &sparam)
 {
     string description = ObjectDescription(sparam);
     string tradeIdx;
-    if (description == "View"){
-        tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-2);
+    int curPage;
+    if (description == "[View]"){
+        tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+2);
         viewTrade(StrToInteger(ObjectDescription(tradeIdx)));
-        ObjectSetText(sparam, "Hide");
-        
-        ObjectSet(objRowHighlight, OBJPROP_YDISTANCE, ObjectGet(sparam, OBJPROP_YDISTANCE));
+        ObjectSetText(sparam, "[Hide]");
     }
-    if (description == "Hide"){
-        tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-2);
+    if (description == "[Hide]"){
+        tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+2);
         hideTrade(StrToInteger(ObjectDescription(tradeIdx)));
-        ObjectSetText(sparam, "View");
+        ObjectSetText(sparam, "[View]");
     }
-    else if (description == "Result") {
-        tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-3);
+    else if (description == "[Result]") {
+        tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+1);
         resultTrade(StrToInteger(ObjectDescription(tradeIdx)));
         string viewBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-1);
-        ObjectSetText(viewBtn, "Hide");
-        ObjectSet(objRowHighlight, OBJPROP_YDISTANCE, ObjectGet(sparam, OBJPROP_YDISTANCE));
+        ObjectSetText(viewBtn, "[Hide]");
     }
-    else if (description == "[Reload]") {
+    else if (description == "[Reload]" || description == "[Start Review Trades]") {
         getData();
         drawDashboard();
     }
     else if (description == "[>]") {
-        if (gPage < gPageTotal-1) {
-            gPage++;
+        curPage = (int)StringToInteger(ObjectDescription(objCurPage));
+        int allPage = (int)StringToInteger(ObjectDescription(objAllPage));
+        if (curPage < allPage) {
+            curPage++;
+            ObjectSetText(objCurPage, IntegerToString(curPage));
             drawDashboard();
         }
     }
     else if (description == "[<]") {
-        if (gPage > 0) {
-            gPage--;
+        curPage = (int)StringToInteger(ObjectDescription(objCurPage));
+        if (curPage > 0) {
+            curPage--;
+            ObjectSetText(objCurPage, IntegerToString(curPage));
             drawDashboard();
         }
     }

@@ -16,7 +16,7 @@ bool initStatus = false;
 //+------------------------------------------------------------------+
 int OnInit()
 {
-    if (ObjectFind(objInitDashboard) < 0) initPanel();
+    if (ObjectFind(objInitPanel) < 0) initPanel();
     return(INIT_SUCCEEDED);
 }
 void OnDeinit(const int reason)
