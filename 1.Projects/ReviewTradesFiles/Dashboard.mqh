@@ -2,8 +2,14 @@
 #define APP_TAG "Dashboard"
 #endif
 
-#define COL1 190
-#define COL2 100
+#define COL1 150
+#define COL2 60
+
+#define BTN_SHOW    "[➕]"
+#define BTN_RESULT  "[✔]"
+#define BTN_HIDE    "[✖]"
+
+input int InpPageSize = 20;
 
 datetime orderOpenTime  ;
 datetime orderCloseTime ;
@@ -12,20 +18,29 @@ double   orderLots      ;
 double   priceEN        ;
 double   priceSL        ;
 double   priceTP        ;
+bool     isTakeProfit   ;
 
 void setDataTo(int idx, string rawData)
 {
-    string objTradeData = APP_TAG + "TradeData" + IntegerToString(idx);
+    string str1 = StringSubstr(rawData, 0, 63);
+    string str2 = StringSubstr(rawData, 63);
+
+    string objTradeData = APP_TAG + "TradeData1" + IntegerToString(idx);
     ObjectCreate(objTradeData, OBJ_TEXT, 0, 0, 0);
-    ObjectSetText(objTradeData, rawData);
+    ObjectSetText(objTradeData, str1);
+    objTradeData = APP_TAG + "TradeData2" + IntegerToString(idx);
+    ObjectCreate(objTradeData, OBJ_TEXT, 0, 0, 0);
+    ObjectSetText(objTradeData, str2);
 }
 
 bool getDataFrom(int idx)
 {
-    string objTradeData = APP_TAG + "TradeData" + IntegerToString(idx);
+    string objTradeData = APP_TAG + "TradeData1" + IntegerToString(idx);
     string rawData = ObjectDescription(objTradeData);
+    objTradeData = APP_TAG + "TradeData2" + IntegerToString(idx);
+    rawData += ObjectDescription(objTradeData);
     if (rawData == "" || rawData == NULL) return false;
-    //Print("rawData:[", rawData, "]");
+    // Print("rawData:[", rawData, "]");
     string data[];
     StringSplit(rawData,';',data);
     orderOpenTime  = StringToTime    (data[0]);
@@ -35,6 +50,7 @@ bool getDataFrom(int idx)
     priceEN        = StringToDouble  (data[4]);
     priceSL        = StringToDouble  (data[5]);
     priceTP        = StringToDouble  (data[6]);
+    isTakeProfit   = (bool)StringToInteger(data[7]);
     return true;
 }
 
@@ -63,12 +79,14 @@ void getData()
             data += DoubleToString(OrderLots(), 2)  + ";";
             data += DoubleToString(OrderOpenPrice(), 5) + ";";
             data += DoubleToString(OrderStopLoss(), 5) + ";";
-            data += DoubleToString(OrderTakeProfit(), 5);
+            data += DoubleToString(OrderTakeProfit(), 5) + ";";
+            if (StringFind(OrderComment(), "[tp]") >= 0) data += "1";
+            else data += "0";
             setDataTo(tradeIdx++, data);
         }
     }
     ObjectSetText(objCurPage, "0");
-    ObjectSetText(objAllPage, IntegerToString((int)MathCeil((float)tradeIdx/5)-1));
+    ObjectSetText(objAllPage, IntegerToString((int)MathCeil((float)tradeIdx/InpPageSize)-1));
 }
 
 string objBgBoard   = APP_TAG   + "objBgBoard";
@@ -124,28 +142,50 @@ void drawDashboard()
     createLabel("Action"    , COL2, gRowPos);
     nextRow(); separateRow();
     // table
-    string currentDate;
-    int i = (int)StringToInteger(ObjectDescription(objCurPage)) * 5;
+    string currentDate, objName, strOpenOrder;
+    int curPage = (int)StringToInteger(ObjectDescription(objCurPage));
+    int allPage = (int)StringToInteger(ObjectDescription(objAllPage));
+    int i = curPage * InpPageSize;
     int fullPage = 0;
-    while (getDataFrom(i) == true && fullPage < 5) {
+    while (getDataFrom(i) == true && fullPage < InpPageSize) {
         getDataFrom(i);
-        currentDate = TimeToStr(orderOpenTime, TIME_MINUTES) + " " + StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
-        createLabel(currentDate         , COL1   , gRowPos);
-        createLabel("[View]"            , COL2   , gRowPos);
-        createLabel("[Result]"          , COL2-40, gRowPos);
+        if (StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5) != currentDate) {
+            // if (fullPage != 0) nextRow(); TODO: Nghiên cứu phương cách mà next row vẫn được mà không bị cắt ngày.
+            currentDate = StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
+            strOpenOrder = currentDate;
+        }
+        else {
+            strOpenOrder = "     ";
+        }
+        strOpenOrder += " " + TimeToStr(orderOpenTime, TIME_MINUTES);
+        objName = APP_TAG + "TradeEN" + IntegerToString(i);
+        createLabel(strOpenOrder, COL1   , gRowPos);
+        if (ObjectGet(objName, OBJPROP_PRICE1) == 0) {
+            createLabel(BTN_SHOW    , COL2   , gRowPos);
+            createLabel(BTN_RESULT  , COL2-25, gRowPos);
+        }
+        else {
+            createLabel(BTN_HIDE    , COL2   , gRowPos);
+            objName = APP_TAG + "TradeSL" + IntegerToString(i);
+            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_RESULT  , COL2-25, gRowPos);
+            else createLabel(""  , COL2-25, gRowPos);
+        }
         createLabel(IntegerToString(i)  , 0      , gRowPos);
         nextRow();
         fullPage++;
         i++;
     }
-    separateRow();
+    if (allPage > 0){
+        createLabel("――――――――――――――" + IntegerToString(curPage+1) + "/" + IntegerToString(allPage+1) + "―", COL1, gRowPos);
+        nextRow();
+    }
+    else {
+        separateRow();
+    }
     // function
     createLabel("[Reload]"  , COL1, gRowPos);
     createLabel("[<]"       , COL2, gRowPos);
-    createLabel("/"         , COL2-40, gRowPos);
-    createLabel("[>]"       , 25,   gRowPos);
-    ObjectSet(objCurPage, OBJPROP_YDISTANCE, gRowPos);
-    ObjectSet(objAllPage, OBJPROP_YDISTANCE, gRowPos);
+    createLabel("[>]"       , 30,   gRowPos);
     nextRow();
     separateRow();
 
@@ -158,21 +198,25 @@ void handleClick(const string &sparam)
     string description = ObjectDescription(sparam);
     string tradeIdx;
     int curPage;
-    if (description == "[View]"){
+    // Print("handleClick on[", description, "]");
+    if (description == BTN_SHOW){
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+2);
         viewTrade(StrToInteger(ObjectDescription(tradeIdx)));
-        ObjectSetText(sparam, "[Hide]");
+        ObjectSetText(sparam, BTN_HIDE);
     }
-    if (description == "[Hide]"){
+    if (description == BTN_HIDE){
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+2);
         hideTrade(StrToInteger(ObjectDescription(tradeIdx)));
-        ObjectSetText(sparam, "[View]");
+        ObjectSetText(sparam, BTN_SHOW);
+        string resultBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+1);
+        ObjectSetText(resultBtn, BTN_RESULT);
     }
-    else if (description == "[Result]") {
+    else if (description == BTN_RESULT) {
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+1);
+        ObjectSetText(sparam, "");
         resultTrade(StrToInteger(ObjectDescription(tradeIdx)));
         string viewBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-1);
-        ObjectSetText(viewBtn, "[Hide]");
+        ObjectSetText(viewBtn, BTN_HIDE);
     }
     else if (description == "[Reload]" || description == "[Start Review Trades]") {
         getData();
@@ -242,41 +286,26 @@ int getLabelIndex(string objIdLabel)
 
 void viewTrade(int tradeIdx)
 {
+    getDataFrom(tradeIdx);
     string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
     ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
     ObjectSet(objName, OBJPROP_BACK, false);
-    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objName, OBJPROP_ARROWCODE, 2);
 
-    getDataFrom(tradeIdx);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP,"Size:" + DoubleToString(orderLots,2));
     ObjectSet(objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
     ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
     ObjectSet(objName, OBJPROP_PRICE1, priceEN);
-
-    objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
-    objName = APP_TAG + "TradeSL" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
 }
-void hideTrade(int tradeIdx)
-{
-    string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
-    objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
-    objName = APP_TAG + "TradeSL" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
-}
-
 void resultTrade(int tradeIdx)
 {
+    getDataFrom(tradeIdx);
     string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
     ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
     ObjectSet(objName, OBJPROP_BACK, false);
-    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objName, OBJPROP_ARROWCODE, 2);
 
-    getDataFrom(tradeIdx);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP,"Size:" + DoubleToString(orderLots,2));
     ObjectSet(objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
     ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
     ObjectSet(objName, OBJPROP_PRICE1, priceEN);
@@ -285,7 +314,7 @@ void resultTrade(int tradeIdx)
     ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
     ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objName, OBJPROP_ARROWCODE, 3);
+    ObjectSet(objName, OBJPROP_ARROWCODE, isTakeProfit ? 3 : 4);
     ObjectSet(objName, OBJPROP_COLOR , clrBlue);
     ObjectSet(objName, OBJPROP_TIME1 , orderCloseTime);
     ObjectSet(objName, OBJPROP_PRICE1, priceTP);
@@ -294,10 +323,37 @@ void resultTrade(int tradeIdx)
     ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
     ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objName, OBJPROP_ARROWCODE, 3);
+    ObjectSet(objName, OBJPROP_ARROWCODE, isTakeProfit ? 4 : 3);
     ObjectSet(objName, OBJPROP_COLOR , clrRed);
     ObjectSet(objName, OBJPROP_TIME1 , orderCloseTime);
     ObjectSet(objName, OBJPROP_PRICE1, priceSL);
+
+    objName = APP_TAG + "TradeLn" + IntegerToString(tradeIdx);
+    ObjectCreate(objName, OBJ_TREND, 0, 0, 0);
+    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
+    ObjectSet(objName, OBJPROP_BACK, false);
+    ObjectSet(objName, OBJPROP_RAY, false);
+    ObjectSet(objName, OBJPROP_STYLE, 2);
+    ObjectSet(objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
+    ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
+    ObjectSet(objName, OBJPROP_TIME2 , orderCloseTime);
+    ObjectSet(objName, OBJPROP_PRICE1, priceEN);
+    ObjectSet(objName, OBJPROP_PRICE2, isTakeProfit ? priceTP : priceSL);
+}
+void hideTrade(int tradeIdx)
+{
+    string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
+    ObjectSet(objName, OBJPROP_TIME1 , 0);
+    ObjectSet(objName, OBJPROP_PRICE1 , 0);
+    objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
+    ObjectSet(objName, OBJPROP_TIME1 , 0);
+    ObjectSet(objName, OBJPROP_PRICE1 , 0);
+    objName = APP_TAG + "TradeSL" + IntegerToString(tradeIdx);
+    ObjectSet(objName, OBJPROP_TIME1 , 0);
+    ObjectSet(objName, OBJPROP_PRICE1 , 0);
+    objName = APP_TAG + "TradeLn" + IntegerToString(tradeIdx);
+    ObjectSet(objName, OBJPROP_TIME1 , 0);
+    ObjectSet(objName, OBJPROP_TIME2 , 0);
 }
 
 void nextRow() {
@@ -305,6 +361,6 @@ void nextRow() {
 }
 
 void separateRow() {
-    createLabel("------------------------------------------------", COL1, gRowPos);
+    createLabel("――――――――――――――――――――", COL1, gRowPos);
     gRowPos += 15;
 }
