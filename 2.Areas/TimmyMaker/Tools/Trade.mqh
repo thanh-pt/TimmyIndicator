@@ -41,6 +41,7 @@ input double    Trd_Cost          = 1.5;     // Cost ($)
 input double    Trd_Comm          = 7;       // Commission ($)
 input double    Trd_Spread        = 0.0;     // Spread (point)
 input double    Trd_SlSpace       = 2.0;     // Space for SL (point)
+input double    Trd_LotSize       = 0;       // LotSize (0=default)
 //-------------------------------------------------
 #endif
 input eAdjust   Trd_AdjustType   = E_FIXEN; // Adjust Type
@@ -170,6 +171,7 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
 
     // Other initialize
     mCost     = Trd_Cost;
+    if (Trd_LotSize != 0) gdLotSize = Trd_LotSize;
     if (gdLotSize == 0) gdLotSize = 100000;
     mSpread   = Trd_Spread  / gdLotSize;
     mStlSpace = Trd_SlSpace / gdLotSize;
@@ -178,9 +180,11 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     
     ObjectCreate(TAG_STATIC + "Cost" , OBJ_ARROW, 0, 0, 0);
     ObjectCreate(TAG_STATIC + "Comm" , OBJ_ARROW, 0, 0, 0);
+    ObjectCreate(TAG_STATIC + "LotSize" , OBJ_ARROW, 0, 0, 0);
 
     ObjectSetText(TAG_STATIC + "Cost", DoubleToString(Trd_Cost, 6));
     ObjectSetText(TAG_STATIC + "Comm", DoubleToString(Trd_Comm, 6));
+    ObjectSetText(TAG_STATIC + "LotSize", DoubleToString(gdLotSize));
     /* TODO: Chuyển đổi tỷ giá
         string strSymbol = Symbol();
         Example:
@@ -675,6 +679,7 @@ void Trade::scanLiveTrade()
 {
     if (Trd_TrackTrade == false) return;
     if (mUserActive == true) return; // User are trying to draw new trade
+    string strOrderTicket = "";
     string itemId = "";
     string strNewTradeItems = "";
     double point = 0;
@@ -683,7 +688,16 @@ void Trade::scanLiveTrade()
     for (int i = 0 ; i < OrdersTotal(); i++) {
         if (OrderSelect(i, SELECT_BY_POS) == false) continue;
         if (OrderSymbol() != Symbol()) continue;
-        itemId = TAG_TRADEID + IntegerToString(OrderTicket());
+        strOrderTicket = IntegerToString(OrderTicket());
+        if (ObjectFind(strOrderTicket) < 0) {
+            itemId = TAG_TRADEID + strOrderTicket;
+            ObjectCreate(strOrderTicket, OBJ_LABEL, 0, 0, 0);
+            ObjectSetText(strOrderTicket, itemId);
+            ObjectSet(strOrderTicket, OBJPROP_YDISTANCE, -20);
+        }
+        else {
+            itemId = ObjectDescription(strOrderTicket);
+        }
         strNewTradeItems += itemId;
         StringReplace(mStrTradeItems, itemId, "");
         activateItem(itemId);
@@ -715,6 +729,8 @@ void Trade::scanLiveTrade()
             priceBE = 2*priceEN - priceSL;
             createTrade(OrderTicket(), OrderOpenTime(), OrderOpenTime()+getDistanceBar(10),
                                     priceEN, priceSL, priceTP, priceBE);
+            itemId = TAG_TRADEID + IntegerToString(OrderTicket());
+            ObjectSetText(strOrderTicket, itemId);
             ObjectSet(cPtEN, OBJPROP_ARROWCODE, 2);
             ObjectSet(cPtEN, OBJPROP_COLOR, clrRed);
             refreshData();
