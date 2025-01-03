@@ -2,9 +2,10 @@
 #define APP_TAG "Dashboard"
 #endif
 
-#define COL1 150
-#define COL2 60
+#define COL1 140
+#define COL2 55
 
+#define BTN_START   "[StartReview]"
 #define BTN_SHOW    "[➕]"
 #define BTN_RESULT  "[✔]"
 #define BTN_HIDE    "[✖]"
@@ -54,16 +55,27 @@ bool getDataFrom(int idx)
     return true;
 }
 
+bool removeData(int idx)
+{
+    string objTradeData = APP_TAG + "TradeData1" + IntegerToString(idx);
+    ObjectDelete(objTradeData);
+    objTradeData = APP_TAG + "TradeData2" + IntegerToString(idx);
+    return ObjectDelete(objTradeData);
+}
+
 int gTradeIndex = 0;
 
 int gPage = 0;
 int gPageTotal = 0;
 void getData()
 {
+    // Remove old data
+    int i = 0;
+    while (removeData(i) == true) i++;
     // retrieving info from trade history
     int type,hstTotal=OrdersHistoryTotal(),tradeIdx = 0;
     string data;
-    for(int i=0;i<hstTotal;i++) {
+    for(i=0;i<hstTotal;i++) {
         //---- check selection result
         if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false) {
             Print("Access to history failed with error (",GetLastError(),")");
@@ -128,7 +140,7 @@ void initPanel()
 
     // init function
     gLabelIndex = 0;
-    createLabel("[Start Review Trades]", COL1, 5);
+    createLabel(BTN_START, COL1, 5);
     hideItem(gLabelIndex, "Label");
 }
 
@@ -148,7 +160,6 @@ void drawDashboard()
     int i = curPage * InpPageSize;
     int fullPage = 0;
     while (getDataFrom(i) == true && fullPage < InpPageSize) {
-        getDataFrom(i);
         if (StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5) != currentDate) {
             // if (fullPage != 0) nextRow(); TODO: Nghiên cứu phương cách mà next row vẫn được mà không bị cắt ngày.
             currentDate = StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
@@ -183,9 +194,9 @@ void drawDashboard()
         separateRow();
     }
     // function
-    createLabel("[Reload]"  , COL1, gRowPos);
-    createLabel("[<]"       , COL2, gRowPos);
-    createLabel("[>]"       , 30,   gRowPos);
+    createLabel("[Reload]"  , COL1      , gRowPos);
+    createLabel("[<]"       , COL2      , gRowPos);
+    createLabel("[>]"       , COL2-25   , gRowPos);
     nextRow();
     separateRow();
 
@@ -218,7 +229,7 @@ void handleClick(const string &sparam)
         string viewBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-1);
         ObjectSetText(viewBtn, BTN_HIDE);
     }
-    else if (description == "[Reload]" || description == "[Start Review Trades]") {
+    else if (description == "[Reload]" || description == BTN_START) {
         getData();
         drawDashboard();
     }
@@ -361,6 +372,6 @@ void nextRow() {
 }
 
 void separateRow() {
-    createLabel("――――――――――――――――――――", COL1, gRowPos);
+    createLabel("―――――――――――――――――――", COL1, gRowPos);
     gRowPos += 15;
 }

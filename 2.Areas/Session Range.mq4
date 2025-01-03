@@ -407,7 +407,7 @@ void drawSession(eSession ss, datetime begDt, datetime endDt)
     }
 #endif
     if (isSsRunning) strLabel = "►" + strLabel;
-    if (inpDisplayLable != eNoLabel) createLabel(gLabelIdx++, strLabel, isSsRunning ? begDt : Time[endBar], gHi, 8, ANCHOR_RIGHT_LOWER, gSsColor[ss]);
+    if (inpDisplayLable != eNoLabel) createLabel(gLabelIdx++, strLabel, isSsRunning ? begDt : Time[endBar], gHi, 8, isSsRunning ? ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_LOWER, gSsColor[ss]);
 }
 
 void createLabel(int index, string label, datetime time1, double price1, int size, int anchor, color cl){
