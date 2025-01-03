@@ -1,6 +1,5 @@
 ﻿SetTitleMatchMode, 2 ; Set title match mode to find partial matches
 #NoEnv
-; #InstallKeybdHook
 #UseHook
 #Persistent
 
@@ -10,44 +9,34 @@ Menu, Tray, Icon, FxHotkey.ico
 #Space::Send, {PrintScreen}
 
 ;------------------------------------------------------------ MT 4 Hotkey --------------------------------------------------------------------------------
-#IfWinActive, ahk_class MetaQuotes::MetaTrader::4.00
+; #IfWinActive, ahk_class MetaQuotes::MetaTrader::4.00
+#IfWinActive, ahk_exe terminal.exe
 	XButton1::End
+	^WheelUp::Send, {+}
+	^WheelDown::Send, {-}
+	+WheelUp::Send, {,}
+	+WheelDown::Send, {.}
+;==== Timmy Maker Compatible
 	^XButton1::
 		Send, J ;Chart Force
 		sleep, 100
 		Send, H ;Chart Free
 	return
-
 	XButton2::
 		Send, {Esc}
 		Send, H ;Chart Free
 	return
-
-	^WheelUp::Send, {+}
-	^WheelDown::Send, {-}
-	+WheelUp::Send, {,}
-	+WheelDown::Send, {.}
-
 	^MButton::
 		Send, J ;Chart Force
 		Send, H ;Chart Free
 	return
-; Begin:: Vô hiệu hoá phím backspace -> Khắc phục lỗi xung đột với Unikey
+	+Q::Send, P
+
+;==== Disable [Backspace] -> Khắc phục lỗi xung đột với Unikey
 	BackSpace::
 	return
-; End
-	+Q::Send, P ;Phìm tắt này hoạt động với Timmy maker
-	^Right::
-		WinActivate, ahk_exe Forex Simulator.exe
-	return
-
-	; Soft4fx simulation
-	$[::
-		WinActivate, ahk_exe Forex Simulator.exe
-	return
-	$]::
-		WinActivate, ahk_exe Forex Simulator.exe
-	return
+	
+;==== Soft4fx simulation
 	F1::
 		WinActivate, ahk_exe Forex Simulator.exe
 		Send ^{Left}
@@ -59,34 +48,12 @@ Menu, Tray, Icon, FxHotkey.ico
 #IfWinActive
 
 #IfWinActive, ahk_exe Forex Simulator.exe
-	; Left::^Left
-	; Right::^Right
-	; $[::^Left
-	; $]::^Right
 	F1::^Left
 	F2::^Right
 	F3::
 		WinActivate, ahk_exe terminal.exe
 		Send 5
 		WinActivate, ahk_exe Forex Simulator.exe
-	return
-	; Next day
-	^p::
-		Loop 8 { ; Down to bottom <D1>
-			Send {Down}
-		}
-		sleep, 300
-		Send ^{Right}
-		sleep, 300
-		Send {Up} ; Back to <H1>
-		sleep, 300
-		Loop 7 {
-			sleep, 300
-			Send ^{Right}
-		}
-		Loop 8 { ; Up to first TF <m1>
-			Send {Up}
-		}
 	return
 #IfWinActive
 
