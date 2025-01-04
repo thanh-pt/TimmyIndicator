@@ -9,6 +9,7 @@
 #define BTN_SHOW    "[➕]"
 #define BTN_RESULT  "[✔]"
 #define BTN_HIDE    "[✖]"
+#define BTN_RELOAD  "[R]"
 
 input int InpPageSize = 20;
 
@@ -150,6 +151,7 @@ void drawDashboard()
     gLabelIndex = 0;
     gRowPos = 5;
     // header
+    createLabel(BTN_RELOAD  , COL1+30, gRowPos);
     createLabel("Time_Date" , COL1, gRowPos);
     createLabel("Action"    , COL2, gRowPos);
     nextRow(); separateRow();
@@ -186,19 +188,18 @@ void drawDashboard()
         fullPage++;
         i++;
     }
+    // function
     if (allPage > 0){
         createLabel("――――――――――――――" + IntegerToString(curPage+1) + "/" + IntegerToString(allPage+1) + "―", COL1, gRowPos);
         nextRow();
+        createLabel("[<]"       , COL2      , gRowPos);
+        createLabel("[>]"       , COL2-25   , gRowPos);
+        nextRow();
+        separateRow();
     }
     else {
         separateRow();
     }
-    // function
-    createLabel("[Reload]"  , COL1      , gRowPos);
-    createLabel("[<]"       , COL2      , gRowPos);
-    createLabel("[>]"       , COL2-25   , gRowPos);
-    nextRow();
-    separateRow();
 
     ObjectSet(objBgBoard, OBJPROP_YDISTANCE, gRowPos);
     hideItem(gLabelIndex, "Label");
@@ -229,7 +230,7 @@ void handleClick(const string &sparam)
         string viewBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-1);
         ObjectSetText(viewBtn, BTN_HIDE);
     }
-    else if (description == "[Reload]" || description == BTN_START) {
+    else if (description == BTN_RELOAD || description == BTN_START) {
         getData();
         drawDashboard();
     }
