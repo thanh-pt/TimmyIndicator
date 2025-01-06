@@ -1,7 +1,8 @@
 #include "../Home/CommonData.mqh"
 #include "../Home/UtilityHeader.mqh"
 input string CrossHair_;                        // ●  C R O S S   H A I R  ●
-bool   CrossHair_DisplayDateInfo  = true; // Date Info
+input bool   CrossHair_DisplayDateInfo  = true; // Date Info
+input bool   CrossHair_SimpleMode       = true; // Simple Mode
 input eTz    CrossHair_ServerTz         = eTz0; // Server Timezone
 
 
@@ -107,10 +108,7 @@ public:
 
     void onMouseMove()
     {
-        if (CrossHair_ServerTz == eTzAuto && mRetryGetServerTime++ >= 100) {
-            mOffsetTime = (int)(TimeLocal() - TimeCurrent())/3600;
-        }
-        if (pCommonData.mOutBoundary) {
+        if ((CrossHair_SimpleMode && pCommonData.mCtrlHold == false) || pCommonData.mOutBoundary) {
             ObjectSet(mHCrossHair, OBJPROP_PRICE1, 0);
             ObjectSet(mHCrossHair, OBJPROP_PRICE2, 0);
             ObjectSet(miHPriceBg , OBJPROP_YDISTANCE, 0);
@@ -119,6 +117,9 @@ public:
             ObjectSet(mWeekInfo, OBJPROP_XDISTANCE, -100);
             ObjectSet(mDateInfo, OBJPROP_XDISTANCE, -100);
             return;
+        }
+        if (CrossHair_ServerTz == eTzAuto && mRetryGetServerTime++ >= 100) {
+            mOffsetTime = (int)(TimeLocal() - TimeCurrent())/3600;
         }
         // Horizontal: Đường kẻ ngang
         ObjectSet(mHCrossHair, OBJPROP_TIME1, pCommonData.mBeginTime);

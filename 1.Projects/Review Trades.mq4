@@ -11,10 +11,12 @@
 #define COL2 55
 
 #define BTN_START   "[StartReview]"
-#define BTN_SHOW    "[➕]"
-#define BTN_RESULT  "[✔]"
-#define BTN_HIDE    "[✖]"
+#define BTN_TRDOPEN "[➕]"
+#define BTN_TRDCLOSE "[✔]"
+#define BTN_TRDHIDE "[✖]"
 #define BTN_RELOAD  "[R]"
+#define BTN_HIDEPN  "[H]"
+#define BTN_SHOWPN  "[S]"
 
 input int InpPageSize = 20;
 
@@ -77,24 +79,24 @@ void handleClick(const string &sparam)
     string tradeIdx;
     int curPage;
     // Print("handleClick on[", description, "]");
-    if (description == BTN_SHOW){
+    if (description == BTN_TRDOPEN){
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+2);
-        viewTrade(StrToInteger(ObjectDescription(tradeIdx)));
-        ObjectSetText(sparam, BTN_HIDE);
+        viewTradeOpen(StrToInteger(ObjectDescription(tradeIdx)));
+        ObjectSetText(sparam, BTN_TRDHIDE);
     }
-    if (description == BTN_HIDE){
+    if (description == BTN_TRDHIDE){
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+2);
         hideTrade(StrToInteger(ObjectDescription(tradeIdx)));
-        ObjectSetText(sparam, BTN_SHOW);
+        ObjectSetText(sparam, BTN_TRDOPEN);
         string resultBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+1);
-        ObjectSetText(resultBtn, BTN_RESULT);
+        ObjectSetText(resultBtn, BTN_TRDCLOSE);
     }
-    else if (description == BTN_RESULT) {
+    else if (description == BTN_TRDCLOSE) {
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+1);
         ObjectSetText(sparam, "");
-        resultTrade(StrToInteger(ObjectDescription(tradeIdx)));
+        viewTradeClose(StrToInteger(ObjectDescription(tradeIdx)));
         string viewBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-1);
-        ObjectSetText(viewBtn, BTN_HIDE);
+        ObjectSetText(viewBtn, BTN_TRDHIDE);
     }
     else if (description == BTN_RELOAD || description == BTN_START) {
         getData();
@@ -117,11 +119,17 @@ void handleClick(const string &sparam)
             drawDashboard();
         }
     }
+    else if (description == BTN_HIDEPN) {
+        hideDashboard();
+    }
+    else if (description == BTN_SHOWPN) {
+        drawDashboard();
+    }
 }
 //+------------------------------------------------------------------+
 
 /// @brief Action area
-void viewTrade(int tradeIdx)
+void viewTradeOpen(int tradeIdx)
 {
     getDataFrom(tradeIdx);
     string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
@@ -134,7 +142,7 @@ void viewTrade(int tradeIdx)
     ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
     ObjectSet(objName, OBJPROP_PRICE1, priceEN);
 }
-void resultTrade(int tradeIdx)
+void viewTradeClose(int tradeIdx)
 {
     getDataFrom(tradeIdx);
     string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
@@ -275,6 +283,7 @@ void drawDashboard()
     gLabelIndex = 0;
     gRowPos = 5;
     // header
+    createLabel(BTN_HIDEPN  , COL1+50, gRowPos);
     createLabel(BTN_RELOAD  , COL1+30, gRowPos);
     createLabel("Time_Date" , COL1, gRowPos);
     createLabel("Action"    , COL2, gRowPos);
@@ -298,13 +307,13 @@ void drawDashboard()
         objName = APP_TAG + "TradeEN" + IntegerToString(i);
         createLabel(strOpenOrder, COL1   , gRowPos);
         if (ObjectGet(objName, OBJPROP_PRICE1) == 0) {
-            createLabel(BTN_SHOW    , COL2   , gRowPos);
-            createLabel(BTN_RESULT  , COL2-25, gRowPos);
+            createLabel(BTN_TRDOPEN , COL2   , gRowPos);
+            createLabel(BTN_TRDCLOSE, COL2-25, gRowPos);
         }
         else {
-            createLabel(BTN_HIDE    , COL2   , gRowPos);
+            createLabel(BTN_TRDHIDE , COL2   , gRowPos);
             objName = APP_TAG + "TradeSL" + IntegerToString(i);
-            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_RESULT  , COL2-25, gRowPos);
+            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , COL2-25, gRowPos);
             else createLabel(""  , COL2-25, gRowPos);
         }
         createLabel(IntegerToString(i)  , 0      , gRowPos);
@@ -326,6 +335,13 @@ void drawDashboard()
     }
 
     ObjectSet(objBgBoard, OBJPROP_YDISTANCE, gRowPos);
+    hideItem(gLabelIndex, "Label");
+}
+void hideDashboard()
+{
+    gLabelIndex = 0;
+    createLabel(BTN_SHOWPN, 25, 20);
+    ObjectSet(objBgBoard, OBJPROP_YDISTANCE, 0);
     hideItem(gLabelIndex, "Label");
 }
 //+------------------------------------------------------------------+
