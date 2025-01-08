@@ -3,9 +3,8 @@
 #define LONG_IDX 0
 
 #define CTX_SPR         "+Spr."
-#define CTX_2R          "2R"
-#define CTX_3R          "3R"
-#define CTX_4R          "4R"
+#define CTX_2fR         "2R"
+#define CTX_2pR         "2R+"
 #define CTX_GOLIVE      "LIVE"
 #define CTX_ADDSLTP     "Sl/TP"
 #define CTX_AUTOBE      "Auto BE"
@@ -44,7 +43,7 @@ input double    Trd_SlSpace       = 2.0;     // Space for SL (point)
 input double    Trd_LotSize       = 0;       // LotSize (0=default)
 //-------------------------------------------------
 #endif
-input eAdjust   Trd_AdjustType   = E_FIXEN; // Adjust Type
+// input eAdjust   Trd_AdjustType   = E_FIXEN; // Adjust Type
 
 eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
 eDisplay    Trd_ShowDollar  = OPTION;   //Show Dollar
@@ -134,7 +133,7 @@ public:
     void restoreBacktestingTrade();
 private:
     void createTrade(int id, datetime _time1, datetime _time2, double _priceEN, double _priceSL, double _priceTP, double _priceBE);
-    void adjustRR(double rr);
+    void adjustRR(double rr, eAdjust adjType);
 
 // Alpha feature
     void initData();
@@ -161,9 +160,9 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     mTypeNum = 2;
 
     mContextType  =        CTX_SPR;
-    mContextType +=  "," + CTX_2R;
-    mContextType +=  "," + CTX_3R;
-    mContextType +=  "," + CTX_4R;
+    mContextType +=  "," + CTX_2fR;
+    mContextType +=  "," + CTX_2pR;
+    mContextType +=  "," + CTX_AUTOBE;
     mContextType +=  "," + CTX_GOLIVE;
 
     mLiveTradeCtx  =        CTX_AUTOBE;
@@ -340,7 +339,7 @@ void Trade::refreshData()
 
     setItemPos(iTxT2, centerTime, priceTP);
     setItemPos(iTxS2, centerTime, priceSL);
-    setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? 1 : -1)*Trd_Comm/gdLotSize);
+    setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? 1 : -1)*(mComPoint + mSpread));
     //-------------------------------------------------
     ObjectSet(iTxtE, OBJPROP_ANCHOR, ANCHOR_LOWER);
     ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_RIGHT);
@@ -413,7 +412,7 @@ void Trade::refreshData()
     }
     //-------------------------------------------------
     setTextContent(iTxT2, strTpInfo);
-    setTextContent(iTxE2, (Trd_Comm > 0 && (selectState || ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2)) ? "---" : STR_EMPTY);
+    setTextContent(iTxE2, (Trd_Comm + Trd_Spread > 0 && (selectState || ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2)) ? "---" : STR_EMPTY);
     setTextContent(iTxS2, STR_EMPTY);
     //-------------------------------------------------
     setTextContent(iTxtT, strRRInfo);
@@ -637,19 +636,14 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
         refreshData();
     }
     // Auto adjust 2R
-    else if (gContextMenu.mActiveItemStr == CTX_2R) {
+    else if (gContextMenu.mActiveItemStr == CTX_2fR) {
         onItemDrag(itemId, objId);
-        adjustRR(2.1);
+        adjustRR(2.1, E_FIXEN);
     }
-    // Auto adjust 3R
-    else if (gContextMenu.mActiveItemStr == CTX_3R) {
+    // Auto adjust 2R+
+    else if (gContextMenu.mActiveItemStr == CTX_2pR) {
         onItemDrag(itemId, objId);
-        adjustRR(3.1);
-    }
-    // Auto adjust 4R
-    else if (gContextMenu.mActiveItemStr == CTX_4R) {
-        onItemDrag(itemId, objId);
-        adjustRR(4.1);
+        adjustRR(2.1, E_FIXTP);
     }
     // Add TP/SL if they don't have
     else if (gContextMenu.mActiveItemStr == CTX_ADDSLTP) {
@@ -787,13 +781,13 @@ void Trade::restoreBacktestingTrade()
     }
 }
 
-void Trade::adjustRR(double rr)
+void Trade::adjustRR(double rr, eAdjust adjType)
 {
     bool isBUY = (priceTP > priceSL);
-    if (Trd_AdjustType == E_FIXTP){
+    if (adjType == E_FIXTP){
         priceEN = (priceTP + rr*priceSL) / (rr+1) + (isBUY ? -1 : 1) * mComPoint;
     }
-    else if (Trd_AdjustType == E_FIXEN){
+    else if (adjType == E_FIXEN){
         priceTP = (priceEN + (isBUY ? 1 : -1) * mComPoint) * (rr + 1) - rr*priceSL;
     }
     refreshData();

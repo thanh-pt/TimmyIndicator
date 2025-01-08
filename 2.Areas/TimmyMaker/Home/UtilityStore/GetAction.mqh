@@ -155,17 +155,19 @@ string getItemUnderMouse(int posX, int posY)
         ChartTimePriceToXY(0, 0, (datetime)ObjectGet(gObjSelectedList[2][i], OBJPROP_TIME2), ObjectGet(gObjSelectedList[2][i], OBJPROP_PRICE2), x2, y2);
 
         if (x1 > x2) {
-            int temp = x1;
-            x1 = x2;
-            x2 = temp;
+            if (posX > x1 + offset || posX < x2 - offset) continue;
         }
-        if (posX < (x1 - offset) || posX > (x2 + offset)) continue;
+        else {
+            if (posX < x1 - offset || posX > x2 + offset) continue;
+        }
+        
         if (y1 > y2) {
-            int temp = y1;
-            y1 = y2;
-            y2 = temp;
+            if (posY > y1 + offset || posY < y2 - offset) continue;
         }
-        if (posY >= (y1 - offset) && posY < (y2 + offset)) return objName;
+        else {
+            if (posY < y1 - offset || posY > y2 + offset) continue;
+        }
+        return gObjSelectedList[2][i];
     }
     return "";
 }
