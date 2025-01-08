@@ -9,7 +9,7 @@ Menu, Tray, Icon, FxHotkey.ico
 #Space::Send, {PrintScreen}
 
 ;------------------------------------------------------------ MT 4 Hotkey --------------------------------------------------------------------------------
-#IfWinActive, ahk_class MetaQuotes::MetaTrader::4.00
+#If WinActive("ahk_class MetaQuotes::MetaTrader::4.00") or WinActive("ahk_class AfxFrameOrView140s")
 ; #IfWinActive, ahk_exe terminal.exe
 	XButton1::End
 	^WheelUp::Send, {+}

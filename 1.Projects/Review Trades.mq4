@@ -18,7 +18,8 @@
 #define BTN_HIDEPN  "[H]"
 #define BTN_SHOWPN  "[S]"
 
-input int InpPageSize = 20;
+input double    InpRiskPerTrade = 1.5; //Risk per Trade ($)
+input int       InpPageSize     = 20;
 
 bool initStatus = false;
 
@@ -93,8 +94,8 @@ void handleClick(const string &sparam)
     }
     else if (description == BTN_TRDCLOSE) {
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+1);
-        ObjectSetText(sparam, "");
         viewTradeClose(StrToInteger(ObjectDescription(tradeIdx)));
+        ObjectSetText(sparam, orderResult);
         string viewBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-1);
         ObjectSetText(viewBtn, BTN_TRDHIDE);
     }
@@ -218,15 +219,16 @@ void getData()
         type = OrderType();
         if (type == OP_BUY || type == OP_SELL) {
             data = "";
-            data += TimeToString(OrderOpenTime(), TIME_DATE|TIME_MINUTES) + ";";
-            data += TimeToString(OrderCloseTime(), TIME_DATE|TIME_MINUTES) + ";";
-            data += IntegerToString(OrderType()) + ";";
-            data += DoubleToString(OrderLots(), 2)  + ";";
-            data += DoubleToString(OrderOpenPrice(), 5) + ";";
-            data += DoubleToString(OrderStopLoss(), 5) + ";";
-            data += DoubleToString(OrderTakeProfit(), 5) + ";";
-            if (StringFind(OrderComment(), "[tp]") >= 0) data += "1";
-            else data += "0";
+            data += TimeToString(OrderOpenTime()    , TIME_DATE|TIME_MINUTES)   + ";";
+            data += TimeToString(OrderCloseTime()   , TIME_DATE|TIME_MINUTES)   + ";";
+            data += IntegerToString(OrderType())                                + ";";
+            data += DoubleToString(OrderLots()      , 2)                        + ";";
+            data += DoubleToString(OrderOpenPrice() , 5)                        + ";";
+            data += DoubleToString(OrderStopLoss()  , 5)                        + ";";
+            data += DoubleToString(OrderTakeProfit(), 5)                        + ";";
+            if (StringFind(OrderComment(), "[tp]") >= 0) data += "[tp]";
+            else if (OrderProfit() < -InpRiskPerTrade/2) data += "[sl]";
+            else  data += "[be]";
             setDataTo(tradeIdx++, data);
         }
     }
@@ -314,7 +316,7 @@ void drawDashboard()
             createLabel(BTN_TRDHIDE , COL2   , gRowPos);
             objName = APP_TAG + "TradeSL" + IntegerToString(i);
             if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , COL2-25, gRowPos);
-            else createLabel(""  , COL2-25, gRowPos);
+            else createLabel(orderResult, COL2-25, gRowPos);
         }
         createLabel(IntegerToString(i)  , 0      , gRowPos);
         nextRow();
@@ -359,6 +361,7 @@ double   orderLots      ;
 double   priceEN        ;
 double   priceSL        ;
 double   priceTP        ;
+string   orderResult    ;
 bool     isTakeProfit   ;
 void setDataTo(int idx, string rawData)
 {
@@ -389,7 +392,8 @@ bool getDataFrom(int idx)
     priceEN        = StringToDouble  (data[4]);
     priceSL        = StringToDouble  (data[5]);
     priceTP        = StringToDouble  (data[6]);
-    isTakeProfit   = (bool)StringToInteger(data[7]);
+    orderResult    = data[7];
+    isTakeProfit   = (orderResult == "[tp]");
     return true;
 }
 bool removeData(int idx)
