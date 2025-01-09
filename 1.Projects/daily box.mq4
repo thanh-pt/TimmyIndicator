@@ -10,7 +10,7 @@
 
 input color             InpColor1 = clrGainsboro;   //Color1:
 input color             InpColor2 = clrGainsboro;   //Color2:
-input ENUM_LINE_STYLE   InpStyle = STYLE_SOLID;     //Style:
+input ENUM_LINE_STYLE   InpStyle  = STYLE_SOLID;    //Style:
 
 int          gChartPeriod = ChartPeriod();
 string       gSymbol      = Symbol();
@@ -52,9 +52,6 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
 //---
-    if (gTotalRate != rates_total) {
-        scanWindow();
-    }
     gTotalRate = rates_total;
 //--- return value of prev_calculated for next call
     return(rates_total);
@@ -68,7 +65,7 @@ void OnChartEvent(const int id,
                   const string &sparam)
 {
 //---
-    if (gTotalRate == 0) return;
+    // if (gTotalRate == 0) return;
     if (id == CHARTEVENT_CHART_CHANGE) {
         gFirstBar = WindowFirstVisibleBar();
         if (gFirstBar <= 0) return;
@@ -84,28 +81,26 @@ void OnChartEvent(const int id,
 //+------------------------------------------------------------------+
 
 void scanWindow(){
-    if (ChartPeriod() > PERIOD_H4) {
-        return;
-    }
-    // First bar Datetime
     int lastBar = gFirstBar - WindowBarsPerChart();
-    gDateTime = Time[gFirstBar];
     if (lastBar < 0) lastBar = 0;
-    int barIdx_D = 0;
-    int doW = 0;
-    while (gDateTime < Time[lastBar]){
-        barIdx_D = iBarShift(gSymbol, 1440, gDateTime, true);
-        doW = TimeDayOfWeek(gDateTime);
-        if (barIdx_D > 0 && doW != 0) {
-            gDateTime = iTime(gSymbol, 1440, barIdx_D);
-            // createBox(gDateTime, gDateTime+86400-gChartPeriod*60, dHigh(barIdx_D), dLow(barIdx_D));
-            createBox(gDateTime, gDateTime+86400, dHigh(barIdx_D), dLow(barIdx_D));
-        }
-        // Next day!
-        gDateTime += 86400;
-    }
-
+    drawBox(gFirstBar, lastBar, (ChartPeriod() >= PERIOD_H4) ? PERIOD_W1 : PERIOD_D1);
     drawLibEnd();
+}
+
+void drawBox(int firstBar, int lastBar, int period){
+    int barIdx = iBarShift(gSymbol, period, Time[firstBar], true);
+    datetime dtBegin = iTime(gSymbol, period, barIdx);
+    datetime dtEnd   = dtBegin + period*60;
+    color clr;
+    while (dtEnd < Time[lastBar]){
+        // createBox(dtBegin, dtEnd, iHigh(gSymbol, period, barIdx), iLow(gSymbol, period, barIdx));
+        clr = iOpen(gSymbol, period, barIdx) < iClose(gSymbol, period, barIdx) ? clrAliceBlue : clrLavenderBlush;
+        drawRect(dtBegin, dtEnd, iHigh(gSymbol, period, barIdx), iLow(gSymbol, period, barIdx), clr);
+        // Next day!
+        dtBegin = dtEnd;
+        dtEnd   += period * 60;
+        barIdx = iBarShift(gSymbol, period, dtBegin, true);
+    }
 }
 
 void createBox(datetime time1, datetime time2, double price1, double price2){
@@ -113,11 +108,4 @@ void createBox(datetime time1, datetime time2, double price1, double price2){
     drawLine(time2, time2, price1, price2, InpColor2, InpStyle);
     drawLine(time1, time2, price1, price1, InpColor1, InpStyle);
     drawLine(time1, time2, price2, price2, InpColor1, InpStyle);
-}
-
-double dHigh(int idx){
-    return iHigh(gSymbol,1440, idx);
-}
-double dLow(int idx){
-    return iLow(gSymbol,1440, idx);
 }
