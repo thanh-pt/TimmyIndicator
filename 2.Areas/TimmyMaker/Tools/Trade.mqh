@@ -650,6 +650,7 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
         /// TradeWorker Handler this one
     }
     else if (gContextMenu.mActiveItemStr == CTX_AUTOBE) {
+        onItemDrag(itemId, objId);
         setTextContent(cPtBE, "be");
         refreshData();
     }
@@ -706,6 +707,7 @@ void Trade::scanLiveTrade()
         
         // Không có SL/ hoặc đã BE nhưng cPtSL text không lưu
         if (priceSL == 0.0) {
+            tradeSize = OrderLots();
             if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
                 priceSL = priceEN - (mCost/tradeSize  - Trd_Comm) / gdLotSize;
             }
