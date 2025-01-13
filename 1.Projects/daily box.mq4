@@ -8,9 +8,15 @@
 #define APP_TAG "*dailyBox"
 #include "../3.Resource/DrawLib.mqh"
 
-input color             InpColor1 = clrGainsboro;   //Color1:
-input color             InpColor2 = clrGainsboro;   //Color2:
-input ENUM_LINE_STYLE   InpStyle  = STYLE_SOLID;    //Style:
+
+enum eBoxType
+{
+    eLineBox,   // Line Box
+    eBgBox,     // Background Box
+};
+
+input eBoxType          InpBoxType      = eLineBox;     // Box Type
+input ENUM_LINE_STYLE   InpLineStyle    = STYLE_SOLID;  //Line Style:
 
 int          gChartPeriod = ChartPeriod();
 string       gSymbol      = Symbol();
@@ -91,11 +97,15 @@ void drawBox(int firstBar, int lastBar, int period){
     int barIdx = iBarShift(gSymbol, period, Time[firstBar], true);
     datetime dtBegin = iTime(gSymbol, period, barIdx);
     datetime dtEnd   = dtBegin + period*60;
-    color clr;
+    color c;
     while (dtEnd < Time[lastBar]){
-        // createBox(dtBegin, dtEnd, iHigh(gSymbol, period, barIdx), iLow(gSymbol, period, barIdx));
-        clr = iOpen(gSymbol, period, barIdx) < iClose(gSymbol, period, barIdx) ? clrAliceBlue : clrLavenderBlush;
-        drawRect(dtBegin, dtEnd, iHigh(gSymbol, period, barIdx), iLow(gSymbol, period, barIdx), clr);
+        c = iOpen(gSymbol, period, barIdx) < iClose(gSymbol, period, barIdx) ? clrAliceBlue : clrLavenderBlush;
+        if (InpBoxType == eLineBox) {
+            createBox(dtBegin, dtEnd, iHigh(gSymbol, period, barIdx), iLow(gSymbol, period, barIdx), c);
+        }
+        else {
+            drawRect(dtBegin, dtEnd, iHigh(gSymbol, period, barIdx), iLow(gSymbol, period, barIdx), c);
+        }
         // Next day!
         dtBegin = dtEnd;
         dtEnd   += period * 60;
@@ -103,9 +113,9 @@ void drawBox(int firstBar, int lastBar, int period){
     }
 }
 
-void createBox(datetime time1, datetime time2, double price1, double price2){
-    drawLine(time1, time1, price1, price2, InpColor2, InpStyle);
-    drawLine(time2, time2, price1, price2, InpColor2, InpStyle);
-    drawLine(time1, time2, price1, price1, InpColor1, InpStyle);
-    drawLine(time1, time2, price2, price2, InpColor1, InpStyle);
+void createBox(datetime time1, datetime time2, double price1, double price2, color c){
+    drawLine(time1, time1, price1, price2, c, InpLineStyle);
+    drawLine(time2, time2, price1, price2, c, InpLineStyle);
+    drawLine(time1, time2, price1, price1, c, InpLineStyle);
+    drawLine(time1, time2, price2, price2, c, InpLineStyle);
 }

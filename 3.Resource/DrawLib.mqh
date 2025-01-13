@@ -30,7 +30,7 @@ void drawLine(datetime time1, datetime time2, double price1, double price2, colo
     ObjectSet(objName, OBJPROP_BACK, true);
     ObjectSet(objName, OBJPROP_COLOR, clr);
     ObjectSet(objName, OBJPROP_STYLE, style);
-    ObjectSet(objName, OBJPROP_WIDTH, 0);
+    ObjectSet(objName, OBJPROP_WIDTH, 3);
     // Basic
     ObjectSet(objName, OBJPROP_TIME1, time1);
     ObjectSet(objName, OBJPROP_TIME2, time2);

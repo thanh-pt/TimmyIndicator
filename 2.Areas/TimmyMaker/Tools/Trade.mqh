@@ -339,7 +339,7 @@ void Trade::refreshData()
 
     setItemPos(iTxT2, centerTime, priceTP);
     setItemPos(iTxS2, centerTime, priceSL);
-    setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? 1 : -1)*(mComPoint + mSpread));
+    setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? mComPoint : -mComPoint - mSpread));
     //-------------------------------------------------
     ObjectSet(iTxtE, OBJPROP_ANCHOR, ANCHOR_LOWER);
     ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_RIGHT);
