@@ -8,7 +8,7 @@
 
 #define APP_TAG "*ReviewTrade"
 #define COL1 140
-#define COL2 55
+#define COL2 60
 
 #define BTN_START   "[StartReview]"
 #define BTN_TRDOPEN "[➕]"
@@ -209,6 +209,7 @@ void getData()
     // retrieving info from trade history
     int type,hstTotal=OrdersHistoryTotal(),tradeIdx = 0;
     string data;
+    double profit;
     for(i=0;i<hstTotal;i++) {
         //---- check selection result
         if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false) {
@@ -226,8 +227,9 @@ void getData()
             data += DoubleToString(OrderOpenPrice() , 5)                        + ";";
             data += DoubleToString(OrderStopLoss()  , 5)                        + ";";
             data += DoubleToString(OrderTakeProfit(), 5)                        + ";";
-            if (StringFind(OrderComment(), "[tp]") >= 0) data += "[tp]";
-            else if (OrderProfit() < -InpRiskPerTrade/2) data += "[sl]";
+            profit = OrderProfit();
+            if (profit < -InpRiskPerTrade/2)   data += "[sl]";
+            else if (profit > InpRiskPerTrade) data += "[tp]";
             else  data += "[be]";
             setDataTo(tradeIdx++, data);
         }
