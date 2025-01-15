@@ -91,7 +91,7 @@ void LabelText::updateDefaultProperty()
 {
     ObjectSet(iTxBg, OBJPROP_SELECTABLE, false);
     setTextContent(cTxtM, getRandStr(), 10, FONT_BLOCK, gClrForegrnd);
-    setTextContent(iTxBg,           "", 20, FONT_BLOCK, gClrTextBgnd);
+    setTextContent(iTxBg,           "", 10, FONT_BLOCK, gClrTextBgnd);
     setMultiStrs(OBJPROP_TOOLTIP, "\n", cTxtM+iTxBg);
 }
 void LabelText::updateTypeProperty(){}
@@ -147,12 +147,17 @@ void LabelText::refreshData()
         objiTBgX = iTBgX +"#"+ IntegerToString(idx);
     }
     idx--;
-    string bgBlock = getHalfUpBL(maxLen);
+    string bgBlock = getFullBL(maxLen);
+    int fontSz = 10;
+    if (maxLen > 21) {
+        bgBlock = getHalfUpBL(maxLen);
+        fontSz = 20;
+    }
     while (idx >= 1){
         objiTBgX = iTBgX +"#"+ IntegerToString(idx--);
-        setTextContent(objiTBgX, bgBlock);
+        setTextContent(objiTBgX, bgBlock, fontSz);
     }
-    setTextContent(iTxBg, bgBlock);
+    setTextContent(iTxBg, bgBlock, fontSz);
 
     if (ObjectGet(cTxtM, OBJPROP_SELECTED) == 1) gContextMenu.openStaticCtxMenu(cTxtM, mContextType);
     else gContextMenu.clearStaticCtxMenu(cTxtM);
@@ -293,8 +298,7 @@ void LabelText::onUserRequest(const string &itemId, const string &objId)
 
     ObjectSet(objiTBgX, OBJPROP_XDISTANCE, posX);
     ObjectSet(objiTBgX, OBJPROP_YDISTANCE, posY+(newIdx)*spaceSize);
-    // todo: case bottom left/ bottom right -> getHalfDwBL
-    setTextContent(objiTBgX, getHalfUpBL(StringLen(ObjectDescription(objCTxtX))), size*2, font, gClrTextBgnd);
+    setTextContent(objiTBgX,"", size, FONT_BLOCK, gClrTextBgnd);
     ObjectSet(objiTBgX, OBJPROP_ANCHOR, anchor);
     ObjectSet(objiTBgX, OBJPROP_CORNER, corner);
     ObjectSet(objiTBgX, OBJPROP_SELECTABLE, false);

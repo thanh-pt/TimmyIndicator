@@ -95,7 +95,7 @@ void CallOut::updateTypeProperty()
     //-------------------------------------------------------------
     setTextContent(cTxtM, DoubleToString(pCommonData.mMousePrice, 5), CallOut_FontSize  , FONT_BLOCK, gClrForegrnd);
     setTextContent(iTxtU,                                    "_____", CallOut_FontSize  , FONT_BLOCK, gClrForegrnd);
-    setTextContent(iTxBg,                           getHalfDwBL(5), CallOut_FontSize*2, FONT_BLOCK, gClrTextBgnd);
+    setTextContent(iTxBg,                               getFullBL(5), CallOut_FontSize  , FONT_BLOCK, gClrTextBgnd);
     setCtrlItemSelectState(mAllItem, true);
 }
 void CallOut::activateItem(const string& itemId)
@@ -137,7 +137,12 @@ void CallOut::refreshData()
     string callOutValue = ObjectDescription(cTxtM);
     int calloutLen = StringLen(callOutValue);
     setTextContent(iTxtU, StringSubstr(BL_ULINE, 0, calloutLen));
-    setTextContent(iTxBg, getHalfDwBL(calloutLen));
+    if (calloutLen <= 21) {
+        setTextContent(iTxBg, getFullBL(calloutLen), CallOut_FontSize);
+    }
+    else {
+        setTextContent(iTxBg, getHalfDwBL(calloutLen), CallOut_FontSize*2);
+    }
     if (calloutLen == 7 && StrToDouble(callOutValue) != 0.0) {
         setTextContent(cTxtM, DoubleToString(price1,5));
     }
