@@ -160,7 +160,7 @@ void viewTradeClose(int tradeIdx)
     ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
     ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objName, OBJPROP_ARROWCODE, isTakeProfit ? 3 : 4);
+    ObjectSet(objName, OBJPROP_ARROWCODE, priceCL == priceTP ? 3 : 4);
     ObjectSet(objName, OBJPROP_COLOR , clrBlue);
     ObjectSet(objName, OBJPROP_TIME1 , orderCloseTime);
     ObjectSet(objName, OBJPROP_PRICE1, priceTP);
@@ -169,7 +169,7 @@ void viewTradeClose(int tradeIdx)
     ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
     ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objName, OBJPROP_ARROWCODE, isTakeProfit ? 4 : 3);
+    ObjectSet(objName, OBJPROP_ARROWCODE, priceCL == priceSL ? 3 : 4);
     ObjectSet(objName, OBJPROP_COLOR , clrRed);
     ObjectSet(objName, OBJPROP_TIME1 , orderCloseTime);
     ObjectSet(objName, OBJPROP_PRICE1, priceSL);
@@ -184,7 +184,7 @@ void viewTradeClose(int tradeIdx)
     ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
     ObjectSet(objName, OBJPROP_TIME2 , orderCloseTime);
     ObjectSet(objName, OBJPROP_PRICE1, priceEN);
-    ObjectSet(objName, OBJPROP_PRICE2, isTakeProfit ? priceTP : priceSL);
+    ObjectSet(objName, OBJPROP_PRICE2, priceCL);
 }
 void hideTrade(int tradeIdx)
 {
@@ -209,7 +209,6 @@ void getData()
     // retrieving info from trade history
     int type,hstTotal=OrdersHistoryTotal(),tradeIdx = 0;
     string data;
-    double profit;
     for(i=0;i<hstTotal;i++) {
         //---- check selection result
         if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false) {
@@ -225,12 +224,10 @@ void getData()
             data += IntegerToString(OrderType())                                + ";";
             data += DoubleToString(OrderLots()      , 2)                        + ";";
             data += DoubleToString(OrderOpenPrice() , 5)                        + ";";
+            data += DoubleToString(OrderClosePrice(), 5)                        + ";";
             data += DoubleToString(OrderStopLoss()  , 5)                        + ";";
             data += DoubleToString(OrderTakeProfit(), 5)                        + ";";
-            profit = OrderProfit();
-            if (profit < -InpRiskPerTrade/2)   data += "[sl]";
-            else if (profit > InpRiskPerTrade) data += "[tp]";
-            else  data += "[be]";
+            data += DoubleToString(OrderProfit()    , 2)                        + ";";
             setDataTo(tradeIdx++, data);
         }
     }
@@ -361,10 +358,11 @@ datetime orderCloseTime ;
 int      orderType      ;
 double   orderLots      ;
 double   priceEN        ;
+double   priceCL        ;
 double   priceSL        ;
 double   priceTP        ;
+double   orderProfit    ;
 string   orderResult    ;
-bool     isTakeProfit   ;
 void setDataTo(int idx, string rawData)
 {
     string str1 = StringSubstr(rawData, 0, 63);
@@ -392,10 +390,11 @@ bool getDataFrom(int idx)
     orderType      = (int)StringToInteger (data[2]);
     orderLots      = StringToDouble  (data[3]);
     priceEN        = StringToDouble  (data[4]);
-    priceSL        = StringToDouble  (data[5]);
-    priceTP        = StringToDouble  (data[6]);
-    orderResult    = data[7];
-    isTakeProfit   = (orderResult == "[tp]");
+    priceCL        = StringToDouble  (data[5]);
+    priceSL        = StringToDouble  (data[6]);
+    priceTP        = StringToDouble  (data[7]);
+    orderProfit    = StringToDouble  (data[8]);
+    orderResult    = orderProfit > InpRiskPerTrade ? "[tp]" : (orderProfit < -InpRiskPerTrade/3 ? "[sl]" : "[be]");
     return true;
 }
 bool removeData(int idx)
