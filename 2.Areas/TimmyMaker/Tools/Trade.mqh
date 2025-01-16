@@ -7,7 +7,8 @@
 #define CTX_2pR         "2R+"
 #define CTX_GOLIVE      "LIVE"
 #define CTX_ADDSLTP     "Sl/TP"
-#define CTX_AUTOBE      "Auto BE"
+#define CTX_BELINE      "BE Line"
+#define CTX_FALINE      "FA Line"
 
 #define TAG_TRADEID     ".TMTrade_1440#"
 
@@ -161,12 +162,13 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
 
     mContextType  =        CTX_SPR;
     mContextType +=  "," + CTX_2fR;
-    mContextType +=  "," + CTX_2pR;
-    mContextType +=  "," + CTX_AUTOBE;
+    mContextType +=  "," + CTX_FALINE;
+    mContextType +=  "," + CTX_BELINE;
     mContextType +=  "," + CTX_GOLIVE;
 
-    mLiveTradeCtx  =        CTX_AUTOBE;
-    mLiveTradeCtx +=  "," + CTX_ADDSLTP;
+    mLiveTradeCtx  =        CTX_BELINE;
+    mLiveTradeCtx +=  "," + CTX_FALINE;
+    // mLiveTradeCtx +=  "," + CTX_ADDSLTP;
 
     // Other initialize
     mCost     = Trd_Cost;
@@ -181,9 +183,9 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     ObjectCreate(TAG_STATIC + "Comm" , OBJ_ARROW, 0, 0, 0);
     ObjectCreate(TAG_STATIC + "LotSize" , OBJ_ARROW, 0, 0, 0);
 
-    ObjectSetText(TAG_STATIC + "Cost", DoubleToString(Trd_Cost, 6));
-    ObjectSetText(TAG_STATIC + "Comm", DoubleToString(Trd_Comm, 6));
-    ObjectSetText(TAG_STATIC + "LotSize", DoubleToString(gdLotSize));
+    setTextContent(TAG_STATIC + "Cost", DoubleToString(Trd_Cost, 6));
+    setTextContent(TAG_STATIC + "Comm", DoubleToString(Trd_Comm, 6));
+    setTextContent(TAG_STATIC + "LotSize", DoubleToString(gdLotSize));
     /* TODO: Chuyển đổi tỷ giá
         string strSymbol = Symbol();
         Example:
@@ -649,9 +651,16 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     else if (gContextMenu.mActiveItemStr == CTX_ADDSLTP) {
         /// TradeWorker Handler this one
     }
-    else if (gContextMenu.mActiveItemStr == CTX_AUTOBE) {
+    else if (gContextMenu.mActiveItemStr == CTX_BELINE) {
         onItemDrag(itemId, objId);
-        setTextContent(cPtBE, "be");
+        if (ObjectDescription(cPtBE) != "be") setTextContent(cPtBE, "be");
+        else setTextContent(cPtBE, "");
+        refreshData();
+    }
+    else if (gContextMenu.mActiveItemStr == CTX_FALINE) {
+        onItemDrag(itemId, objId);
+        if (ObjectDescription(cPtBE) != "fa") setTextContent(cPtBE, "fa");
+        else setTextContent(cPtBE, "");
         refreshData();
     }
 }
@@ -687,7 +696,7 @@ void Trade::scanLiveTrade()
         if (ObjectFind(strOrderTicket) < 0) {
             itemId = TAG_TRADEID + strOrderTicket;
             ObjectCreate(strOrderTicket, OBJ_LABEL, 0, 0, 0);
-            ObjectSetText(strOrderTicket, itemId);
+            setTextContent(strOrderTicket, itemId);
             ObjectSet(strOrderTicket, OBJPROP_YDISTANCE, -20);
         }
         else {
@@ -726,7 +735,7 @@ void Trade::scanLiveTrade()
             createTrade(OrderTicket(), OrderOpenTime(), OrderOpenTime()+getDistanceBar(10),
                                     priceEN, priceSL, priceTP, priceBE);
             itemId = TAG_TRADEID + IntegerToString(OrderTicket());
-            ObjectSetText(strOrderTicket, itemId);
+            setTextContent(strOrderTicket, itemId);
             ObjectSet(cPtEN, OBJPROP_ARROWCODE, 2);
             ObjectSet(cPtEN, OBJPROP_COLOR, clrRed);
             refreshData();

@@ -44,33 +44,34 @@ void setItemPos(const string& objName, datetime time1, const double price1)
 // - - - Begin: Overload Object Set Text
 void setTextContent(string objName, string content)
 {
-    if (content == "" || content == "Text") {
-        ObjectSetText(objName, STR_EMPTY);
-        return;
+    int objType = ObjectType(objName);
+    if (objType == OBJ_LABEL || objType == OBJ_TEXT) {
+        if (content == "" || content == "Text") content = STR_EMPTY;
     }
+
     ObjectSetText(objName, content);
 }
 void setTextContent(string objName, string content, int size)
 {
-    if (content == "" || content == "Text") {
-        ObjectSetText(objName, STR_EMPTY, size);
-        return;
+    int objType = ObjectType(objName);
+    if (objType == OBJ_LABEL || objType == OBJ_TEXT) {
+        if (content == "" || content == "Text") content = STR_EMPTY;
     }
     ObjectSetText(objName, content, size);
 }
 void setTextContent(string objName, string content, int size, string font)
 {
-    if (content == "" || content == "Text") {
-        ObjectSetText(objName, STR_EMPTY, size, font);
-        return;
+    int objType = ObjectType(objName);
+    if (objType == OBJ_LABEL || objType == OBJ_TEXT) {
+        if (content == "" || content == "Text") content = STR_EMPTY;
     }
     ObjectSetText(objName, content, size, font);
 }
 void setTextContent(string objName, string content, int size, string font, color clr)
 {
-    if (content == "" || content == "Text") {
-        ObjectSetText(objName, STR_EMPTY, size, font, clr);
-        return;
+    int objType = ObjectType(objName);
+    if (objType == OBJ_LABEL || objType == OBJ_TEXT) {
+        if (content == "" || content == "Text") content = STR_EMPTY;
     }
     ObjectSetText(objName, content, size, font, clr);
 }
