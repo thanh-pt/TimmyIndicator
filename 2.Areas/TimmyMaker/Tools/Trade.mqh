@@ -3,7 +3,8 @@
 #define LONG_IDX 0
 
 #define CTX_SPR         "+Spr."
-#define CTX_2fR         "2R"
+#define CTX_3SL         "3SL"
+#define CTX_FILLRR      "fill RR"
 #define CTX_2pR         "2R+"
 #define CTX_GOLIVE      "LIVE"
 #define CTX_ADDSLTP     "Sl/TP"
@@ -160,8 +161,9 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     mIndexType = 0;
     mTypeNum = 2;
 
-    mContextType  =        CTX_SPR;
-    mContextType +=  "," + CTX_2fR;
+    // mContextType  =        CTX_SPR;
+    mContextType  =        CTX_3SL;
+    mContextType +=  "," + CTX_FILLRR;
     mContextType +=  "," + CTX_FALINE;
     mContextType +=  "," + CTX_BELINE;
     mContextType +=  "," + CTX_GOLIVE;
@@ -348,16 +350,18 @@ void Trade::refreshData()
     if (priceTP > priceSL) {
         ObjectSet(iTxtS, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxtT, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
         ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        if (priceBE > priceEN) ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        else ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
     }
     else {
         ObjectSet(iTxtS, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSet(iTxtT, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
         ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        if (priceBE < priceEN) ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        else ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
     }
     //-------------------------------------------------
     //            TÍNH TOÁN CÁC THỨ
@@ -404,13 +408,15 @@ void Trade::refreshData()
         strEnInfo += DoubleToString(tradeSize,2) + "lot";
     }
     string strRRInfo = "";
-    string strRR = DoubleToString(absRR,1) + "r";
-    if (Trd_Comm > 0 && realCost > 0) {
-        strRR += "/" + DoubleToString(profit/realCost,1) + "ʀ";
-    }
-    for (int i = 0; i < StringLen(strRR); i++) {
-        strRRInfo += StringSubstr(strRR, i, 1);
-        strRRInfo += " ";
+    string strRR = "";
+    if (fabs(absRR) > 0.2) {
+        strRR += DoubleToString(absRR,1) + "r";
+        if (Trd_Comm > 0 && realCost > 0) strRR += "/" + DoubleToString(profit/realCost,1) + "ʀ";
+        strRRInfo = strRR;
+        // for (int i = 0; i < StringLen(strRR); i++) {
+        //     strRRInfo += StringSubstr(strRR, i, 1);
+        //     strRRInfo += " ";
+        // }
     }
     //-------------------------------------------------
     setTextContent(iTxT2, strTpInfo);
@@ -638,14 +644,27 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
         refreshData();
     }
     // Auto adjust 2R
-    else if (gContextMenu.mActiveItemStr == CTX_2fR) {
+    else if (gContextMenu.mActiveItemStr == CTX_FILLRR) {
         onItemDrag(itemId, objId);
-        adjustRR(2.1, E_FIXEN);
+        adjustRR(1.0, E_FIXEN);
     }
     // Auto adjust 2R+
     else if (gContextMenu.mActiveItemStr == CTX_2pR) {
         onItemDrag(itemId, objId);
         adjustRR(2.1, E_FIXTP);
+    }
+    else if (gContextMenu.mActiveItemStr == CTX_3SL) {
+        onItemDrag(itemId, objId);
+        bool isBUY = (priceTP > priceSL);
+
+        if (isBUY) {
+            priceEN += mSpread;
+            priceSL = priceEN - 3*(priceEN - priceSL) - mStlSpace;
+        }
+        else {
+            priceSL = priceEN - 3*(priceEN - priceSL) + mStlSpace + mSpread;
+        }
+        refreshData();
     }
     // Add TP/SL if they don't have
     else if (gContextMenu.mActiveItemStr == CTX_ADDSLTP) {
