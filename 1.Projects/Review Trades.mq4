@@ -394,7 +394,7 @@ bool getDataFrom(int idx)
     priceSL        = StringToDouble  (data[6]);
     priceTP        = StringToDouble  (data[7]);
     orderProfit    = StringToDouble  (data[8]);
-    orderResult    = orderProfit > InpRiskPerTrade ? "[tp]" : (orderProfit < -InpRiskPerTrade/3 ? "[sl]" : "[be]");
+    orderResult    = orderProfit > InpRiskPerTrade/3 ? "[tp]" : (orderProfit < -InpRiskPerTrade/3 ? "[sl]" : "[be]");
     return true;
 }
 bool removeData(int idx)
