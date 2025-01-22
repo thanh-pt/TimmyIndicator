@@ -343,7 +343,8 @@ void Trade::refreshData()
 
     setItemPos(iTxT2, centerTime, priceTP);
     setItemPos(iTxS2, centerTime, priceSL);
-    setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? mComPoint : -mComPoint - mSpread));
+    // setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? mComPoint : -mComPoint - mSpread));
+    setItemPos(iTxE2, time2, priceEN - mComPoint - mSpread);
     //-------------------------------------------------
     ObjectSet(iTxtE, OBJPROP_ANCHOR, ANCHOR_LOWER);
     ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_RIGHT);
@@ -393,9 +394,6 @@ void Trade::refreshData()
         strBeInfo += DoubleToString(absBe,1) + "r ~ " + DoubleToString(absBe * point / 10, 1) + "ᴘ ";
         strSlInfo += DoubleToString(point/10, 1) + "ᴘ";
     }
-    else {
-        if (strBeInfo != "") strBeInfo += ": " + DoubleToString(absBe,1) + "r";
-    }
     //-------------------------------------------------
     if (showDollar) {
         if (showStats) {
@@ -408,15 +406,9 @@ void Trade::refreshData()
         strEnInfo += DoubleToString(tradeSize,2) + "lot";
     }
     string strRRInfo = "";
-    string strRR = "";
     if (fabs(absRR) > 0.2) {
-        strRR += DoubleToString(absRR,1) + "r";
-        if (Trd_Comm > 0 && realCost > 0) strRR += "/" + DoubleToString(profit/realCost,1) + "ʀ";
-        strRRInfo = strRR;
-        // for (int i = 0; i < StringLen(strRR); i++) {
-        //     strRRInfo += StringSubstr(strRR, i, 1);
-        //     strRRInfo += " ";
-        // }
+        strRRInfo += DoubleToString(absRR,1) + "r";
+        if (Trd_Comm > 0 && realCost > 0) strRRInfo += "/" + DoubleToString(profit/realCost,1) + "ʀ";
     }
     //-------------------------------------------------
     setTextContent(iTxT2, strTpInfo);
