@@ -27,6 +27,12 @@ void setScaleChart(bool isUp)
     ChartSetDouble(0,CHART_FIXED_MIN,chartMin);
 }
 
+void togglePriceScale()
+{
+    bool bShow = ChartGetInteger(0, CHART_SHOW_PRICE_SCALE);
+    ChartSetInteger(0, CHART_SHOW_PRICE_SCALE, !bShow);
+}
+
 void setItemPos(const string& objName, datetime time1, datetime time2, const double price1, const double price2)
 {
     ObjectSet(objName, OBJPROP_TIME1 , time1);
