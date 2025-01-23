@@ -7,7 +7,7 @@
 #define CTX_FILLRR      "fill RR"
 #define CTX_2pR         "2R+"
 #define CTX_GOLIVE      "LIVE"
-#define CTX_ADDSLTP     "Sl/TP"
+#define CTX_ADDSLTP     "Add Sl/Tp"
 #define CTX_BELINE      "BE Line"
 #define CTX_FALINE      "FA Line"
 
@@ -69,7 +69,6 @@ private:
     double mStlSpace;
     double mSpread;
     double mComPoint;
-    string mLiveTradeCtx;
     bool   mUserActive;
     string mStrTradeItems;
     string mArrTradeItems[];
@@ -167,10 +166,7 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     mContextType +=  "," + CTX_FALINE;
     mContextType +=  "," + CTX_BELINE;
     mContextType +=  "," + CTX_GOLIVE;
-
-    mLiveTradeCtx  =        CTX_BELINE;
-    mLiveTradeCtx +=  "," + CTX_FALINE;
-    // mLiveTradeCtx +=  "," + CTX_ADDSLTP;
+    mContextType +=  "," + CTX_ADDSLTP;
 
     // Other initialize
     mCost     = Trd_Cost;
@@ -427,29 +423,18 @@ void Trade::refreshData()
     ObjectSetString(0, cPtBE, OBJPROP_TOOLTIP, DoubleToString(priceBE, Digits));
 
     int selected = (int)ObjectGet(cPtWD, OBJPROP_SELECTED);
-    if (ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2) {
-        if (selected) {
-            gContextMenu.openStaticCtxMenu(cPtWD, mLiveTradeCtx);
-            setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtWD+cPtBE);
-            ObjectSet(iLnBe, OBJPROP_COLOR, Trd_TpColor);
-        }
-        else {
-            gContextMenu.clearStaticCtxMenu(cPtWD);
-            setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtWD+cPtBE);
-            if (strBeInfo == "") ObjectSet(iLnBe, OBJPROP_COLOR, clrNONE);
-        }
+    if (selected) {
+        gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
+        setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+        ObjectSet(iLnBe, OBJPROP_COLOR, Trd_TpColor);
     }
     else {
-        if (selected) {
-            gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
-            setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
-            ObjectSet(iLnBe, OBJPROP_COLOR, Trd_TpColor);
-        }
-        else {
-            gContextMenu.clearStaticCtxMenu(cPtWD);
-            setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
-            if (strBeInfo == "") ObjectSet(iLnBe, OBJPROP_COLOR, clrNONE);
-        }
+        gContextMenu.clearStaticCtxMenu(cPtWD);
+        setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+        if (strBeInfo == "") ObjectSet(iLnBe, OBJPROP_COLOR, clrNONE);
+    }
+    if (ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2) {
+        ObjectSet(cPtEN, OBJPROP_COLOR, priceTP > priceSL ? clrBlue : clrRed);
     }
 }
 void Trade::finishedJobDone()
@@ -519,25 +504,17 @@ void Trade::onItemClick(const string &itemId, const string &objId)
 {
     if (StringFind(objId, TAG_CTRL) < 0) return;
     int selected = (int)ObjectGet(objId, OBJPROP_SELECTED);
-    if (ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2) {
-        if (selected) {
-            gContextMenu.openStaticCtxMenu(cPtWD, mLiveTradeCtx);
-            setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtWD+cPtBE);
-        }
-        else {
-            gContextMenu.clearStaticCtxMenu(cPtWD);
-            setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtWD+cPtBE);
-        }
+    if (selected) {
+        gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
+        setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
     }
     else {
-        if (selected) {
-            gContextMenu.openStaticCtxMenu(cPtWD, mContextType);
-            setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
-        }
-        else {
-            gContextMenu.clearStaticCtxMenu(cPtWD);
-            setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
-        }
+        gContextMenu.clearStaticCtxMenu(cPtWD);
+        setMultiProp(OBJPROP_COLOR, clrNONE, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
+    }
+    if (ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2) {
+        onItemDrag(itemId, objId);
+        ObjectSet(cPtEN, OBJPROP_COLOR, priceTP > priceSL ? clrBlue : clrRed);
     }
     setCtrlItemSelectState(mAllItem, selected);
 }
@@ -635,15 +612,10 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
         }
         refreshData();
     }
-    // Auto adjust 2R
+    // Auto adjust FillRR
     else if (gContextMenu.mActiveItemStr == CTX_FILLRR) {
         onItemDrag(itemId, objId);
         adjustRR(1.0, E_FIXEN);
-    }
-    // Auto adjust 2R+
-    else if (gContextMenu.mActiveItemStr == CTX_2pR) {
-        onItemDrag(itemId, objId);
-        adjustRR(2.1, E_FIXTP);
     }
     else if (gContextMenu.mActiveItemStr == CTX_3SL) {
         onItemDrag(itemId, objId);
@@ -700,6 +672,8 @@ void Trade::scanLiveTrade()
     double point = 0;
     double tradeSize = 0;
     double orgSL = 0;
+    int orderType;
+    bool buyOrder;
     for (int i = 0 ; i < OrdersTotal(); i++) {
         if (OrderSelect(i, SELECT_BY_POS) == false) continue;
         if (OrderSymbol() != Symbol()) continue;
@@ -716,33 +690,34 @@ void Trade::scanLiveTrade()
         strNewTradeItems += itemId;
         StringReplace(mStrTradeItems, itemId, "");
         activateItem(itemId);
+        orderType = OrderType();
         priceEN = OrderOpenPrice();
         priceSL = OrderStopLoss();
-
-        int orderType = OrderType();
-        // Trường hợp đã BE
-        if ((priceSL >= priceEN && orderType == OP_BUY) || (priceSL <= priceEN && orderType == OP_SELL)) {
-            priceSL = StrToDouble(ObjectDescription(cPtSL));
-        }
-        
-        // Không có SL/ hoặc đã BE nhưng cPtSL text không lưu
-        if (priceSL == 0.0) {
-            tradeSize = OrderLots();
-            if (orderType == OP_BUY || orderType == OP_BUYLIMIT || orderType == OP_BUYSTOP) {
-                priceSL = priceEN - (mCost/tradeSize  - Trd_Comm) / gdLotSize;
-            }
-            else {
-                priceSL = priceEN + (mCost/tradeSize  - Trd_Comm) / gdLotSize;
-            }
-        }
-        setTextContent(cPtSL, DoubleToString(priceSL, Digits));
-
         priceTP = OrderTakeProfit();
-        if (ObjectFind(cPtWD) < 0) {
-            if (priceTP <= 0.0) {
-                priceTP = 5*priceEN - 4*priceSL; // Set TP = 4R
+        // Priority OnlineTradeData >> Chart Data >> Generate by Cost
+        if (orderType == OP_BUY || orderType == OP_BUYLIMIT){
+            buyOrder = true;
+            if (priceSL == 0.0 || priceSL >= priceEN) {
+                priceSL = ObjectGet(cPtSL, OBJPROP_PRICE1);
             }
-            priceBE = 2*priceEN - priceSL;
+            if (priceTP == 0.0 || priceTP <= priceEN + mComPoint + mSpread) {
+                priceTP = ObjectGet(cPtTP, OBJPROP_PRICE1);
+            }
+        }
+        else {
+            buyOrder = false;
+            if (priceSL == 0.0 || priceSL <= priceEN) {
+                priceSL = ObjectGet(cPtSL, OBJPROP_PRICE1);
+            }
+            if (priceTP == 0.0 || priceTP >= priceEN - mComPoint - mSpread) {
+                priceTP = ObjectGet(cPtTP, OBJPROP_PRICE1);
+            }
+        }
+        if (ObjectFind(cPtWD) < 0) {
+            tradeSize = OrderLots();
+            if (priceSL == 0.0) priceSL = priceEN + (buyOrder? -1 : 1) * (mCost/tradeSize  - Trd_Comm) / gdLotSize;
+            if (priceTP == 0.0) priceTP = 2*priceEN - priceSL; // RRR = 1
+            priceBE = (priceEN + priceTP)/2;
             createTrade(OrderTicket(), OrderOpenTime(), OrderOpenTime()+getDistanceBar(10),
                                     priceEN, priceSL, priceTP, priceBE);
             itemId = TAG_TRADEID + IntegerToString(OrderTicket());
@@ -751,9 +726,6 @@ void Trade::scanLiveTrade()
             ObjectSet(cPtEN, OBJPROP_COLOR, clrRed);
             refreshData();
             continue;
-        }
-        if (priceTP <= 0.0) {
-            priceTP = ObjectGet(cPtTP, OBJPROP_PRICE1);
         }
         priceBE = ObjectGet(cPtBE, OBJPROP_PRICE1);
         time1 = (datetime)ObjectGet(cPtEN, OBJPROP_TIME1);
