@@ -88,13 +88,14 @@ private:
     string iLnEn ;
     string iLnSl ;
     string iLnBe ;
-    string iTxT2 ;
-    string iTxE2 ;
-    string iTxS2 ;
-    string iTxtT ;
-    string iTxtE ;
-    string iTxtS ;
-    string iTxtB ;
+    string iLnSp ;
+
+    string iTxT2 ; // Text TP outside
+    string iTxT1 ; // Text TP inside
+    string iTxS2 ; // Text SL outside
+    string iTxS1 ; // Text SL inside
+    string iTxEn ;
+    string iTxBe ;
 
 // Value define for Item
 private:
@@ -206,13 +207,13 @@ void Trade::createItem()
     ObjectCreate(iLnBe , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(iLnEn , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(iLnSl , OBJ_TREND     , 0, 0, 0);
+    ObjectCreate(iLnSp , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(iTxT2 , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(iTxE2 , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iTxS2 , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(iTxtT , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(iTxtE , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(iTxtS , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(iTxtB , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iTxT1 , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iTxEn , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iTxS1 , OBJ_TEXT      , 0, 0, 0);
+    ObjectCreate(iTxBe , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(cBgSl , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cPtTP , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPtSL , OBJ_ARROW     , 0, 0, 0);
@@ -235,30 +236,30 @@ void Trade::initData()
 void Trade::updateDefaultProperty()
 {
     //-------------------------------------------------
-    setMultiProp(OBJPROP_BACK, true , iBgTP+iLnTp+iLnBe+iLnEn+iLnSl+iTxT2+iTxE2+iTxS2+iTxtT+iTxtE+iTxtS+iTxtB);
+    setMultiProp(OBJPROP_BACK, true , iBgTP+iLnTp+iLnBe+iLnEn+iLnSl+iTxT2+iLnSp+iTxS2+iTxT1+iTxEn+iTxS1+iTxBe);
     setMultiProp(OBJPROP_BACK, false, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
     //-------------------------------------------------
     setMultiProp(OBJPROP_ARROWCODE , 4    , cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
     
     setMultiProp(OBJPROP_SELECTED  , true , cBgSl+cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
-    setMultiProp(OBJPROP_RAY       , false, iLnTp+iLnBe+iLnEn+iLnSl);
-    setMultiProp(OBJPROP_SELECTABLE, false, iBgTP+iLnTp+iLnBe+iLnEn+iLnSl+iTxT2+iTxE2+iTxS2+iTxtT+iTxtE+iTxtS+iTxtB);
+    setMultiProp(OBJPROP_RAY       , false, iLnTp+iLnBe+iLnEn+iLnSl+iLnSp);
+    setMultiProp(OBJPROP_SELECTABLE, false, iBgTP+iLnTp+iLnBe+iLnEn+iLnSl+iTxT2+iLnSp+iTxS2+iTxT1+iTxEn+iTxS1+iTxBe);
 
     setMultiProp(OBJPROP_COLOR, gClrPointer, cPtTP+cPtSL+cPtEN+cPtWD+cPtBE);
     //-------------------------------------------------
     ObjectSet(cBgSl, OBJPROP_COLOR, Trd_SlBkgrdColor);
     ObjectSet(iBgTP, OBJPROP_COLOR, Trd_TpBkgrdColor);
-    ObjectSet(iLnBe, OBJPROP_WIDTH, 1);
-    ObjectSet(iLnBe, OBJPROP_STYLE, 2);
+    setMultiProp(OBJPROP_WIDTH, 1        , iLnSp+iLnBe);
+    setMultiProp(OBJPROP_STYLE, STYLE_DOT, iLnSp+iLnBe);
     //-------------------------------------------------
     setMultiProp(OBJPROP_COLOR, Trd_TpColor  , iLnTp+iLnBe);
+    setMultiProp(OBJPROP_COLOR, Trd_SlColor  , iLnSl+iLnSp);
     setMultiProp(OBJPROP_COLOR, Trd_EnColor  , iLnEn);
-    setMultiProp(OBJPROP_COLOR, Trd_SlColor  , iLnSl);
-    setMultiProp(OBJPROP_COLOR, gClrForegrnd   , iTxtT+iTxtE+iTxtS+iTxtB+iTxT2+iTxE2+iTxS2);
+    setMultiProp(OBJPROP_COLOR, gClrForegrnd , iTxT1+iTxT2+iTxS1+iTxS2+iTxBe+iTxEn);
     //-------------------------------------------------
     setMultiProp(OBJPROP_WIDTH   , Trd_LineWidth, iLnTp+iLnEn+iLnSl);
-    setMultiProp(OBJPROP_FONTSIZE, Trd_TextSize , iTxT2+iTxE2+iTxS2+iTxtT+iTxtE+iTxtS+iTxtB+iTxT2+iTxE2+iTxS2);
-    setMultiStrs(OBJPROP_FONT    , FONT_TEXT    , iTxT2+iTxE2+iTxS2+iTxtT+iTxtE+iTxtS+iTxtB+iTxT2+iTxE2+iTxS2);
+    setMultiProp(OBJPROP_FONTSIZE, Trd_TextSize , iTxT1+iTxT2+iTxS1+iTxS2+iTxBe+iTxEn);
+    setMultiStrs(OBJPROP_FONT    , FONT_TEXT    , iTxT1+iTxT2+iTxS1+iTxS2+iTxBe+iTxEn);
     //-------------------------------------------------
     setMultiStrs(OBJPROP_TOOLTIP, "\n", mAllItem);
 }
@@ -276,15 +277,15 @@ void Trade::activateItem(const string& itemId)
     iLnEn = itemId + TAG_INFO + "iLnEn";
     iLnSl = itemId + TAG_INFO + "iLnSl";
     iLnBe = itemId + TAG_INFO + "iLnBe";
+    iLnSp = itemId + TAG_INFO + "iLnSp";
     iTxT2 = itemId + TAG_INFO + "iTxT2";
-    iTxE2 = itemId + TAG_INFO + "iTxE2";
     iTxS2 = itemId + TAG_INFO + "iTxS2";
-    iTxtT = itemId + TAG_INFO + "iTxtT";
-    iTxtE = itemId + TAG_INFO + "iTxtE";
-    iTxtS = itemId + TAG_INFO + "iTxtS";
-    iTxtB = itemId + TAG_INFO + "iTxtB";
+    iTxT1 = itemId + TAG_INFO + "iTxT1";
+    iTxEn = itemId + TAG_INFO + "iTxEn";
+    iTxS1 = itemId + TAG_INFO + "iTxS1";
+    iTxBe = itemId + TAG_INFO + "iTxBe";
 
-    mAllItem += iBgTP+iLnTp+iLnEn+iLnSl+iLnBe+iTxT2+iTxE2+iTxS2+iTxtT+iTxtE+iTxtS+iTxtB;
+    mAllItem += iBgTP+iLnTp+iLnEn+iLnSl+iLnBe+iTxT2+iLnSp+iTxS2+iTxT1+iTxEn+iTxS1+iTxBe;
     mAllItem += cPtTP+cPtSL+cPtEN+cPtWD+cPtBE+cBgSl;
 }
 
@@ -296,13 +297,13 @@ string Trade::getAllItem(string itemId)
     allItem += itemId + TAG_INFO + "iLnEn";
     allItem += itemId + TAG_INFO + "iLnSl";
     allItem += itemId + TAG_INFO + "iLnBe";
+    allItem += itemId + TAG_INFO + "iLnSp";
     allItem += itemId + TAG_INFO + "iTxT2";
-    allItem += itemId + TAG_INFO + "iTxE2";
     allItem += itemId + TAG_INFO + "iTxS2";
-    allItem += itemId + TAG_INFO + "iTxtT";
-    allItem += itemId + TAG_INFO + "iTxtE";
-    allItem += itemId + TAG_INFO + "iTxtS";
-    allItem += itemId + TAG_INFO + "iTxtB";
+    allItem += itemId + TAG_INFO + "iTxT1";
+    allItem += itemId + TAG_INFO + "iTxEn";
+    allItem += itemId + TAG_INFO + "iTxS1";
+    allItem += itemId + TAG_INFO + "iTxBe";
     //--- Control item ---
     allItem += itemId + TAG_CTRL + "cBgSl";
     allItem += itemId + TAG_CTRM + "cPtWD";
@@ -325,6 +326,7 @@ void Trade::refreshData()
     setItemPos(iLnEn  , time1, time2, priceEN, priceEN);
     setItemPos(iLnSl  , time1, time2, priceSL, priceSL);
     setItemPos(iLnBe  , time1, time2, priceBE, priceBE);
+    setItemPos(iLnSp  , time1, time2, priceEN-mComPoint-mSpread, priceEN-mComPoint-mSpread);
     //-------------------------------------------------
     setItemPos(cPtTP , time1, priceTP);
     setItemPos(cPtSL , time1, priceSL);
@@ -332,33 +334,30 @@ void Trade::refreshData()
     setItemPos(cPtWD , time2, priceEN);
     setItemPos(cPtBE , time2, priceBE);
     //-------------------------------------------------
-    setItemPos(iTxtT  , centerTime, priceTP);
-    setItemPos(iTxtE  , centerTime, priceEN);
-    setItemPos(iTxtS  , centerTime, priceSL);
-    setItemPos(iTxtB  , time2, priceBE);
+    setItemPos(iTxT1  , centerTime, priceTP);
+    setItemPos(iTxEn  , centerTime, priceEN);
+    setItemPos(iTxS1  , centerTime, priceSL);
+    setItemPos(iTxBe  , time2, priceBE);
 
     setItemPos(iTxT2, centerTime, priceTP);
     setItemPos(iTxS2, centerTime, priceSL);
-    // setItemPos(iTxE2, time2, priceEN+(priceTP > priceSL ? mComPoint : -mComPoint - mSpread));
-    setItemPos(iTxE2, time2, priceEN - mComPoint - mSpread);
     //-------------------------------------------------
-    ObjectSet(iTxtE, OBJPROP_ANCHOR, ANCHOR_LOWER);
-    ObjectSet(iTxE2, OBJPROP_ANCHOR, ANCHOR_RIGHT);
+    ObjectSet(iTxEn, OBJPROP_ANCHOR, ANCHOR_LOWER);
     if (priceTP > priceSL) {
-        ObjectSet(iTxtS, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        ObjectSet(iTxtT, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        ObjectSet(iTxS1, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(iTxT1, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        if (priceBE > priceEN) ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-        else ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        if (priceBE > priceEN) ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        else ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
     }
     else {
-        ObjectSet(iTxtS, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        ObjectSet(iTxtT, OBJPROP_ANCHOR, ANCHOR_UPPER);
+        ObjectSet(iTxS1, OBJPROP_ANCHOR, ANCHOR_LOWER);
+        ObjectSet(iTxT1, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        if (priceBE < priceEN) ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
-        else ObjectSet(iTxtB, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        if (priceBE < priceEN) ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        else ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
     }
     //-------------------------------------------------
     //            TÍNH TOÁN CÁC THỨ
@@ -408,13 +407,14 @@ void Trade::refreshData()
     }
     //-------------------------------------------------
     setTextContent(iTxT2, strTpInfo);
-    setTextContent(iTxE2, (Trd_Comm + Trd_Spread > 0 && (selectState || ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2)) ? "---" : STR_EMPTY);
     setTextContent(iTxS2, STR_EMPTY);
+    bool isShowSpr = (Trd_Comm + Trd_Spread > 0 && (selectState || ObjectGet(cPtEN, OBJPROP_ARROWCODE) == 2));
+    ObjectSet(iLnSp, OBJPROP_COLOR, isShowSpr ? Trd_SlColor : clrNONE);
     //-------------------------------------------------
-    setTextContent(iTxtT, strRRInfo);
-    setTextContent(iTxtE, strEnInfo);
-    setTextContent(iTxtS, strSlInfo);
-    setTextContent(iTxtB, strBeInfo);
+    setTextContent(iTxT1, strRRInfo);
+    setTextContent(iTxEn, strEnInfo);
+    setTextContent(iTxS1, strSlInfo);
+    setTextContent(iTxBe, strBeInfo);
     //-----------POINT TOOLTIP-------------------------
     ObjectSetString(0, cPtTP, OBJPROP_TOOLTIP, DoubleToString(priceTP, Digits));
     ObjectSetString(0, cPtSL, OBJPROP_TOOLTIP, DoubleToString(priceSL, Digits));
@@ -560,23 +560,24 @@ void Trade::showHistory(bool isShow)
         ObjectSet(cBgSl, OBJPROP_PRICE1, 0);
         ObjectSet(iBgTP, OBJPROP_PRICE1, 0);
         ObjectSet(iLnTp, OBJPROP_PRICE1, 0);
+        ObjectSet(iLnSp, OBJPROP_PRICE1, 0);
         ObjectSet(iLnBe, OBJPROP_PRICE1, 0);
         ObjectSet(iLnEn, OBJPROP_PRICE1, 0);
         ObjectSet(iLnSl, OBJPROP_PRICE1, 0);
         ObjectSet(cBgSl, OBJPROP_PRICE2, 0);
         ObjectSet(iBgTP, OBJPROP_PRICE2, 0);
         ObjectSet(iLnTp, OBJPROP_PRICE2, 0);
+        ObjectSet(iLnSp, OBJPROP_PRICE2, 0);
         ObjectSet(iLnBe, OBJPROP_PRICE2, 0);
         ObjectSet(iLnEn, OBJPROP_PRICE2, 0);
         ObjectSet(iLnSl, OBJPROP_PRICE2, 0);
 
         ObjectSet(iTxT2, OBJPROP_TIME1, 0);
-        ObjectSet(iTxE2, OBJPROP_TIME1, 0);
         ObjectSet(iTxS2, OBJPROP_TIME1, 0);
-        ObjectSet(iTxtT, OBJPROP_TIME1, 0);
-        ObjectSet(iTxtE, OBJPROP_TIME1, 0);
-        ObjectSet(iTxtS, OBJPROP_TIME1, 0);
-        ObjectSet(iTxtB, OBJPROP_TIME1, 0);
+        ObjectSet(iTxT1, OBJPROP_TIME1, 0);
+        ObjectSet(iTxEn, OBJPROP_TIME1, 0);
+        ObjectSet(iTxS1, OBJPROP_TIME1, 0);
+        ObjectSet(iTxBe, OBJPROP_TIME1, 0);
         ObjectSet(cPtTP, OBJPROP_TIME1, 0);
         ObjectSet(cPtSL, OBJPROP_TIME1, 0);
         ObjectSet(cPtEN, OBJPROP_TIME1, 0);
