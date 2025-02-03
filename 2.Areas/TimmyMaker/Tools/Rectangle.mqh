@@ -238,7 +238,7 @@ void Rectangle::refreshData()
     setTextContent(iTxtR, ObjectDescription(cPtC2));
     setMultiStrs(OBJPROP_TOOLTIP, DoubleToString(price1, Digits), cPtL1+cPtR1);
     setMultiStrs(OBJPROP_TOOLTIP, DoubleToString(price2, Digits), cPtL2+cPtR2);
-    setMultiStrs(OBJPROP_TOOLTIP, DoubleToString(centerPrice, Digits), cPtC1+cPtC2);
+    setMultiStrs(OBJPROP_TOOLTIP, DoubleToString(fabs(price2-price1)*10000, 1), cPtC1+cPtC2);
     //-------------------------------------------------
     scanBackgroundOverlap(cBgM0);
     //-------------------------------------------------
