@@ -726,6 +726,7 @@ void Trade::scanLiveTrade()
             activateItem(itemId);
             ObjectSet(cPtEN, OBJPROP_ARROWCODE, 4);
         }
+        showHistory(false);
     }
     mStrTradeItems = strNewTradeItems;
 }

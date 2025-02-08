@@ -31,6 +31,7 @@ void togglePriceScale()
 {
     bool bShow = ChartGetInteger(0, CHART_SHOW_PRICE_SCALE);
     ChartSetInteger(0, CHART_SHOW_PRICE_SCALE, !bShow);
+    ChartSetInteger(0, CHART_SHOW_DATE_SCALE, !bShow);
 }
 
 void setItemPos(const string& objName, datetime time1, datetime time2, const double price1, const double price2)
