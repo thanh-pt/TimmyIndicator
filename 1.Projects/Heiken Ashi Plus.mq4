@@ -18,9 +18,10 @@
 #property indicator_width4 3
 
 //---
-input bool  ExtAutoON = false;    // Auto ON Heiken Ashi Chart
-input color ExtColor1 = Red;    // Bear candlestick
-input color ExtColor2 = Green;  // Bull candlestick
+input string    ExtOnOffHk = "L";     // Hotkey ON/OFF (Heiken Ashi <-> Candles)
+input bool      ExtAutoON  = false;   // Auto ON Heiken Ashi Chart
+input color     ExtColor1  = Red;   // Bear candlestick
+input color     ExtColor2  = Green; // Bull candlestick
 //--- buffers
 double ExtLowHighBuffer[];
 double ExtHighLowBuffer[];
@@ -135,14 +136,28 @@ int OnCalculate(const int rates_total,
 //+------------------------------------------------------------------+
 
 int gChartMode = 0;
-int gPreChartMode = 0;
+int gPreChartMode = -1;
 int gChartScale = 0;
-int gPreChartScale = 0;
+int gPreChartScale = -1;
 void OnChartEvent(const int id,
                   const long &lparam,
                   const double &dparam,
                   const string &sparam)
-{
+{   
+    if (id == CHARTEVENT_KEYDOWN) {
+        if (lparam == ExtOnOffHk[0]){
+            if (gChartMode == CHART_LINE) {
+                ChartSetInteger(0, CHART_MODE, CHART_CANDLES);
+                gChartMode = CHART_CANDLES;
+            }
+            else {
+                ChartSetInteger(0, CHART_MODE, CHART_LINE);
+                gChartMode = CHART_LINE;
+            }
+            updateStyle();
+            return;
+        }
+    }
     gChartMode  = (int)ChartGetInteger(0, CHART_MODE);
     if (gChartMode != gPreChartMode) {
         gPreChartMode = gChartMode;

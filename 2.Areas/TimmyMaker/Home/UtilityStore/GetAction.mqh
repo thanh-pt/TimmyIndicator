@@ -122,13 +122,13 @@ string getItemUnderMouse(int posX, int posY)
 
         objType = ObjectType(objName);
         if (objType == OBJ_LABEL) {
-            gObjSelectedList[0][gObjSelectedIdx0++] = objName;
+            if (gObjSelectedIdx0 < 20) gObjSelectedList[0][gObjSelectedIdx0++] = objName;
         }
         else if (objType == OBJ_ARROW || objType == OBJ_TEXT) {
-            gObjSelectedList[1][gObjSelectedIdx1++] = objName;
+            if (gObjSelectedIdx1 < 20) gObjSelectedList[1][gObjSelectedIdx1++] = objName;
         }
         else if (objType == OBJ_TREND || objType == OBJ_RECTANGLE){
-            gObjSelectedList[2][gObjSelectedIdx2++] = objName;
+            if (gObjSelectedIdx2 < 20) gObjSelectedList[2][gObjSelectedIdx2++] = objName;
         }
     }
     int x1, x2, y1, y2, offset;

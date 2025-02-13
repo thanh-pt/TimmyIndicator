@@ -218,12 +218,12 @@ void displayData()
             gWkData[0] = 0; gWkData[1] = 0; gWkData[2] = 0; gWkData[3] = 0; gWkData[4] = 0; gWkData[5] = 0; gWkData[6] = 0;
             wkNum = gListTrades[i].WeekNum;
         }
-        if (gListTrades[i].PnL > RiskPerTrade){
+        if (gListTrades[i].PnL > RiskPerTrade*0.6){
             tp++;
             tpPipSum += gListTrades[i].PlPip;
             tpRRSum  += gListTrades[i].RR;
         }
-        else if (gListTrades[i].PnL < 0) sl++;
+        else if (gListTrades[i].PnL < -RiskPerTrade*0.6) sl++;
         else be++;
         gWkData[gListTrades[i].DayOfWk] += gListTrades[i].RR;
         costPipSum += gListTrades[i].CostPip;

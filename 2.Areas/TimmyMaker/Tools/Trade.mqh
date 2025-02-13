@@ -329,7 +329,7 @@ void Trade::refreshData()
     setItemPos(iTxT1  , centerTime, priceTP);
     setItemPos(iTxEn  , centerTime, priceEN);
     setItemPos(iTxS1  , centerTime, priceSL);
-    setItemPos(iTxBe  , time2, priceBE);
+    setItemPos(iTxBe  , time1, priceBE);
 
     setItemPos(iTxT2, centerTime, priceTP);
     setItemPos(iTxS2, centerTime, priceSL);
@@ -340,8 +340,8 @@ void Trade::refreshData()
         ObjectSet(iTxT1, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_LOWER);
-        if (priceBE > priceEN) ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
-        else ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+        if (priceBE > priceEN) ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+        else ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
         if (mSpread != 0) setItemPos(iLnSp, time1, time2, priceEN-mSpread, priceEN-mSpread);
         else setItemPos(iLnSp, time1, time2, 0, 0);
     }
@@ -350,8 +350,8 @@ void Trade::refreshData()
         ObjectSet(iTxT1, OBJPROP_ANCHOR, ANCHOR_UPPER);
         ObjectSet(iTxT2, OBJPROP_ANCHOR, ANCHOR_LOWER);
         ObjectSet(iTxS2, OBJPROP_ANCHOR, ANCHOR_UPPER);
-        if (priceBE < priceEN) ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
-        else ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        if (priceBE < priceEN) ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+        else ObjectSet(iTxBe, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
 
         if (mSpread != 0) setItemPos(iLnSp, time1, time2, priceSL-mSpread, priceSL-mSpread);
         else setItemPos(iLnSp, time1, time2, 0, 0);
