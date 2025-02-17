@@ -15,16 +15,15 @@
 #define COL4 170
 #define COL5 210
 #define COL6 280
+#define COL7 350
 
-#define BTN_START   "[StartReview]"
-#define BTN_PnLON   " [PnL on]"
-#define BTN_PnLOFF  "[PnL off]"
-#define BTN_TRDOPEN "[➕]"
-#define BTN_TRDCLOSE "[✔]"
-#define BTN_TRDHIDE "[✖]"
-#define BTN_RELOAD  "[Reload]"
-#define BTN_HIDEPN  "[H]"
-#define BTN_SHOWPN  "[S]"
+#define BTN_START       "[StartReview]"
+#define BTN_PnLON       " [PnL on]"
+#define BTN_PnLOFF      "[PnL off]"
+#define BTN_TRDOPEN     "[➕]"
+#define BTN_TRDCLOSE    "[✔]"
+#define BTN_TRDHIDE     "[✖]"
+#define BTN_RELOAD      "[Reload]"
 
 input double    InpRiskPerTrade = 1.5; //Risk per Trade ($)
 input int       InpPageSize     = 20;
@@ -91,7 +90,6 @@ void handleClick(const string &sparam)
     string description = ObjectDescription(sparam);
     string tradeIdx;
     int btnId;
-    int curPage;
     // Print("handleClick on[", description, "]");
     if (description == BTN_TRDOPEN){
         tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+2);
@@ -104,8 +102,8 @@ void handleClick(const string &sparam)
         hideTrade(StrToInteger(ObjectDescription(tradeIdx)));
         ObjectSetText(sparam, BTN_TRDOPEN);
         if (gPnlOn == false) {
-            string txtPnL = APP_TAG + "Label" + IntegerToString(btnId-2);
-            ObjectSetText(txtPnL, "    ***", 7);
+            string txtPnL = APP_TAG + "Label" + IntegerToString(btnId-1);
+            ObjectSetText(txtPnL, "    ***");
         }
         string resultBtn = APP_TAG + "Label" + IntegerToString(btnId+1);
         ObjectSetText(resultBtn, BTN_TRDCLOSE);
@@ -135,26 +133,20 @@ void handleClick(const string &sparam)
         drawDashboard();
     }
     else if (description == "[>]") {
-        curPage = (int)StringToInteger(ObjectDescription(objLasPage));
-        int allPage = (int)StringToInteger(ObjectDescription(objAllPage));
-        if (curPage < allPage) {
-            ObjectSetText(objCurPage, IntegerToString(curPage));
+        string curPage = ObjectDescription(objCurPage);
+        string nexPage = ObjectDescription(objNexPage);
+        if (curPage != nexPage) {
+            ObjectSetText(objCurPage, nexPage);
             drawDashboard();
         }
     }
     else if (description == "[<]") {
-        // curPage = (int)StringToInteger(ObjectDescription(objCurPage));
-        // if (curPage > 0) {
-        //     curPage--;
-        //     ObjectSetText(objCurPage, IntegerToString(curPage));
-        //     drawDashboard();
-        // }
-    }
-    else if (description == BTN_HIDEPN) {
-        hideDashboard();
-    }
-    else if (description == BTN_SHOWPN) {
-        drawDashboard();
+        string curPage = ObjectDescription(objCurPage);
+        string prePage = ObjectDescription(objPrePage);
+        if (curPage != prePage) {
+            ObjectSetText(objCurPage, prePage);
+            drawDashboard();
+        }
     }
 }
 //+------------------------------------------------------------------+
@@ -239,6 +231,8 @@ void getData()
     // retrieving info from trade history
     int type,hstTotal=OrdersHistoryTotal(),tradeIdx = 0;
     string data;
+    string firstDay = "";
+    string secondDay = "";
     for(i=0;i<hstTotal;i++) {
         //---- check selection result
         if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false) {
@@ -259,35 +253,41 @@ void getData()
             data += DoubleToString(OrderTakeProfit(), 5)                        + ";";
             data += DoubleToString(OrderProfit()+OrderCommission(), 2)          + ";";
             setDataTo(tradeIdx++, data);
+            if (firstDay == "") {
+                firstDay = StringSubstr(TimeToStr(OrderOpenTime(), TIME_DATE), 5);
+            } else if (secondDay == "") {
+                secondDay = StringSubstr(TimeToStr(OrderOpenTime(), TIME_DATE), 5);
+            }
         }
     }
-    ObjectSetText(objCurPage, "0");
-    ObjectSetText(objAllPage, IntegerToString(tradeIdx-1));
+    ObjectSetText(objCurPage, firstDay);
+    ObjectSetText(objPrePage, firstDay);
+    ObjectSetText(objNexPage, secondDay);
 }
 //+------------------------------------------------------------------+
 
 /// @brief HMI creatation
 string objInitDboard    = APP_TAG   + "initDashboard";
 string objCurPage       = APP_TAG   + "CurPage";
-string objLasPage       = APP_TAG   + "LasPage";
-string objAllPage       = APP_TAG   + "AllPage";
+string objPrePage       = APP_TAG   + "PrePage";
+string objNexPage       = APP_TAG   + "NexPage";
 int gRowPos = 0;
 void initDashboard()
 {
     ObjectCreate(objInitDboard, OBJ_TEXT, gWinId, 0, 0);
 
     ObjectCreate(objCurPage, OBJ_LABEL, gWinId, 0, 0);
-    ObjectCreate(objLasPage, OBJ_LABEL, gWinId, 0, 0);
-    ObjectCreate(objAllPage, OBJ_LABEL, gWinId, 0, 0);
+    ObjectCreate(objPrePage, OBJ_LABEL, gWinId, 0, 0);
+    ObjectCreate(objNexPage, OBJ_LABEL, gWinId, 0, 0);
     ObjectSetText(objCurPage, "0", 10, "Consolas", clrBlack);
-    ObjectSetText(objLasPage, "0", 10, "Consolas", clrBlack);
-    ObjectSetText(objAllPage, "0", 10, "Consolas", clrBlack);
+    ObjectSetText(objPrePage, "0", 10, "Consolas", clrBlack);
+    ObjectSetText(objNexPage, "0", 10, "Consolas", clrBlack);
     ObjectSet(objCurPage, OBJPROP_YDISTANCE, -20);
-    ObjectSet(objLasPage, OBJPROP_YDISTANCE, -20);
-    ObjectSet(objAllPage, OBJPROP_YDISTANCE, -20);
+    ObjectSet(objPrePage, OBJPROP_YDISTANCE, -20);
+    ObjectSet(objNexPage, OBJPROP_YDISTANCE, -20);
     ObjectSet(objCurPage, OBJPROP_XDISTANCE, 0);
-    ObjectSet(objLasPage, OBJPROP_XDISTANCE, 0);
-    ObjectSet(objAllPage, OBJPROP_XDISTANCE, 0);
+    ObjectSet(objPrePage, OBJPROP_XDISTANCE, 0);
+    ObjectSet(objNexPage, OBJPROP_XDISTANCE, 0);
 
     // init function
     gLabelIndex = 0;
@@ -310,22 +310,28 @@ void drawDashboard()
     nextRow(); separateRow();
     // table
     string currentDate, objName, strOpenOrder;
-    int curPage = (int)StringToInteger(ObjectDescription(objCurPage));
-    int allPage = (int)StringToInteger(ObjectDescription(objAllPage));
-    int i = curPage;
+    string curPage = ObjectDescription(objCurPage);
+    string prePage = curPage;
+    string nexPage = curPage;
+    int i = 0;
     double sPnl = 0;
+    bool printedData = false;
     while (getDataFrom(i) == true) {
-        if (StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5) != currentDate) {
-            if (curPage != i) {
-                ObjectSetText(objLasPage, IntegerToString(i));
+        currentDate = StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
+        if (currentDate != curPage) {
+            if (printedData == false) prePage = currentDate;
+            else {
+                nexPage = currentDate;
                 break;
             }
-            currentDate = StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
+            i++;
+            continue;
+        }
+        if (printedData == false) {
             strOpenOrder = currentDate;
+            printedData = true;
         }
-        else {
-            strOpenOrder = "     ";
-        }
+        else strOpenOrder = "     ";
         createLabel(IntegerToString(i), COL1, gRowPos);
         strOpenOrder += " " + TimeToStr(orderOpenTime, TIME_MINUTES);
         createLabel(strOpenOrder, COL2, gRowPos);
@@ -353,19 +359,24 @@ void drawDashboard()
     separateRow();
     if (gPnlOn) createLabel(fixedText(DoubleToString(sPnl,2), 7), COL5, gRowPos);
     else createLabel("    ***", COL5, gRowPos);
-    // function
-    if (i < allPage){
-        createLabel("[<]"       , COL6      , gRowPos);
-        createLabel("[>]"       , COL6+25   , gRowPos);
-    }
     nextRow();separateRow();
+    // function
+    gRowPos = 5;
+    if (prePage != curPage){
+       createLabel("[<]"    , COL7, gRowPos);
+       createLabel(prePage  , COL7+25, gRowPos);
+    }
+    nextRow();
+    if (curPage != nexPage){
+       createLabel("[>]"    , COL7, gRowPos);
+       createLabel(nexPage  , COL7+25, gRowPos);
+    }
 
-    hideItem(gLabelIndex, "Label");
-}
-void hideDashboard()
-{
-    gLabelIndex = 0;
-    createLabel(BTN_SHOWPN, 25, 20);
+    
+    ObjectSetText(objCurPage, curPage);
+    ObjectSetText(objPrePage, prePage);
+    ObjectSetText(objNexPage, nexPage);
+
     hideItem(gLabelIndex, "Label");
 }
 //+------------------------------------------------------------------+
