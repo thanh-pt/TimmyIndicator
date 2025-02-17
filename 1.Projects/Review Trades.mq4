@@ -4,17 +4,25 @@
 // #property icon      "../3.Resource/WorldClock.ico"
 #property description "This tool helps trader to review their trades"
 #property strict
-#property indicator_chart_window
+#property indicator_separate_window
 
 #define APP_TAG "*ReviewTrade"
-#define COL1 140
-#define COL2 60
+#define TXT_SPACE_BLOCK "                    "
+
+#define COL1 10 
+#define COL2 40 
+#define COL3 130 
+#define COL4 170
+#define COL5 210
+#define COL6 280
 
 #define BTN_START   "[StartReview]"
+#define BTN_PnLON   " [PnL on]"
+#define BTN_PnLOFF  "[PnL off]"
 #define BTN_TRDOPEN "[➕]"
 #define BTN_TRDCLOSE "[✔]"
 #define BTN_TRDHIDE "[✖]"
-#define BTN_RELOAD  "[R]"
+#define BTN_RELOAD  "[Reload]"
 #define BTN_HIDEPN  "[H]"
 #define BTN_SHOWPN  "[S]"
 
@@ -23,11 +31,15 @@ input int       InpPageSize     = 20;
 
 bool initStatus = false;
 
+
+int gWinId;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
 int OnInit()
 {
+    IndicatorShortName("");
+    gWinId = ChartWindowFind();
     if (ObjectFind(objInitDboard) < 0) initDashboard();
     return(INIT_SUCCEEDED);
 }
@@ -78,6 +90,7 @@ void handleClick(const string &sparam)
 {
     string description = ObjectDescription(sparam);
     string tradeIdx;
+    int btnId;
     int curPage;
     // Print("handleClick on[", description, "]");
     if (description == BTN_TRDOPEN){
@@ -86,39 +99,56 @@ void handleClick(const string &sparam)
         ObjectSetText(sparam, BTN_TRDHIDE);
     }
     if (description == BTN_TRDHIDE){
-        tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+2);
+        btnId = getLabelIndex(sparam);
+        tradeIdx = APP_TAG + "Label" + IntegerToString(btnId+2);
         hideTrade(StrToInteger(ObjectDescription(tradeIdx)));
         ObjectSetText(sparam, BTN_TRDOPEN);
-        string resultBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+1);
+        if (gPnlOn == false) {
+            string txtPnL = APP_TAG + "Label" + IntegerToString(btnId-2);
+            ObjectSetText(txtPnL, "    ***", 7);
+        }
+        string resultBtn = APP_TAG + "Label" + IntegerToString(btnId+1);
         ObjectSetText(resultBtn, BTN_TRDCLOSE);
     }
     else if (description == BTN_TRDCLOSE) {
-        tradeIdx = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)+1);
+        btnId = getLabelIndex(sparam);
+        tradeIdx = APP_TAG + "Label" + IntegerToString(btnId+1);
         viewTradeClose(StrToInteger(ObjectDescription(tradeIdx)));
         ObjectSetText(sparam, orderResult);
-        string viewBtn = APP_TAG + "Label" + IntegerToString(getLabelIndex(sparam)-1);
+        if (gPnlOn == false) {
+            string txtPnL = APP_TAG + "Label" + IntegerToString(btnId-2);
+            ObjectSetText(txtPnL, fixedText(DoubleToString(orderProfit,2), 7));
+        }
+        string viewBtn = APP_TAG + "Label" + IntegerToString(btnId-1);
         ObjectSetText(viewBtn, BTN_TRDHIDE);
     }
     else if (description == BTN_RELOAD || description == BTN_START) {
         getData();
         drawDashboard();
     }
+    else if (description == BTN_PnLON) {
+        gPnlOn = false;
+        drawDashboard();
+    }
+    else if (description == BTN_PnLOFF) {
+        gPnlOn = true;
+        drawDashboard();
+    }
     else if (description == "[>]") {
-        curPage = (int)StringToInteger(ObjectDescription(objCurPage));
+        curPage = (int)StringToInteger(ObjectDescription(objLasPage));
         int allPage = (int)StringToInteger(ObjectDescription(objAllPage));
         if (curPage < allPage) {
-            curPage++;
             ObjectSetText(objCurPage, IntegerToString(curPage));
             drawDashboard();
         }
     }
     else if (description == "[<]") {
-        curPage = (int)StringToInteger(ObjectDescription(objCurPage));
-        if (curPage > 0) {
-            curPage--;
-            ObjectSetText(objCurPage, IntegerToString(curPage));
-            drawDashboard();
-        }
+        // curPage = (int)StringToInteger(ObjectDescription(objCurPage));
+        // if (curPage > 0) {
+        //     curPage--;
+        //     ObjectSetText(objCurPage, IntegerToString(curPage));
+        //     drawDashboard();
+        // }
     }
     else if (description == BTN_HIDEPN) {
         hideDashboard();
@@ -227,122 +257,115 @@ void getData()
             data += DoubleToString(OrderClosePrice(), 5)                        + ";";
             data += DoubleToString(OrderStopLoss()  , 5)                        + ";";
             data += DoubleToString(OrderTakeProfit(), 5)                        + ";";
-            data += DoubleToString(OrderProfit()    , 2)                        + ";";
+            data += DoubleToString(OrderProfit()+OrderCommission(), 2)          + ";";
             setDataTo(tradeIdx++, data);
         }
     }
     ObjectSetText(objCurPage, "0");
-    ObjectSetText(objAllPage, IntegerToString((int)MathCeil((float)tradeIdx/InpPageSize)-1));
+    ObjectSetText(objAllPage, IntegerToString(tradeIdx-1));
 }
 //+------------------------------------------------------------------+
 
 /// @brief HMI creatation
-string objBgBoard       = APP_TAG   + "objBgBoard";
 string objInitDboard    = APP_TAG   + "initDashboard";
 string objCurPage       = APP_TAG   + "CurPage";
+string objLasPage       = APP_TAG   + "LasPage";
 string objAllPage       = APP_TAG   + "AllPage";
 int gRowPos = 0;
 void initDashboard()
 {
-    ObjectCreate(objInitDboard, OBJ_TEXT, 0, 0, 0);
-    
-    ObjectCreate(objBgBoard, OBJ_LABEL, 0, 0, 0);
-    ObjectSetText(objBgBoard, "██████", 10000, "Consolas", clrWhiteSmoke);
-    ObjectSetString(0, objBgBoard, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objBgBoard, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
-    ObjectSet(objBgBoard, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
-    ObjectSet(objBgBoard, OBJPROP_SELECTABLE, false);
-    ObjectSet(objBgBoard, OBJPROP_XDISTANCE, COL1+5);
-    ObjectSet(objBgBoard, OBJPROP_YDISTANCE, 25);
+    ObjectCreate(objInitDboard, OBJ_TEXT, gWinId, 0, 0);
 
-    ObjectCreate(objCurPage, OBJ_LABEL, 0, 0, 0);
-    ObjectCreate(objAllPage, OBJ_LABEL, 0, 0, 0);
+    ObjectCreate(objCurPage, OBJ_LABEL, gWinId, 0, 0);
+    ObjectCreate(objLasPage, OBJ_LABEL, gWinId, 0, 0);
+    ObjectCreate(objAllPage, OBJ_LABEL, gWinId, 0, 0);
     ObjectSetText(objCurPage, "0", 10, "Consolas", clrBlack);
+    ObjectSetText(objLasPage, "0", 10, "Consolas", clrBlack);
     ObjectSetText(objAllPage, "0", 10, "Consolas", clrBlack);
-    ObjectSetString(0, objCurPage, OBJPROP_TOOLTIP, "\n");
-    ObjectSetString(0, objAllPage, OBJPROP_TOOLTIP, "\n");
     ObjectSet(objCurPage, OBJPROP_YDISTANCE, -20);
+    ObjectSet(objLasPage, OBJPROP_YDISTANCE, -20);
     ObjectSet(objAllPage, OBJPROP_YDISTANCE, -20);
-
-    ObjectSet(objCurPage, OBJPROP_SELECTABLE, false);
-    ObjectSet(objCurPage, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
-    ObjectSet(objCurPage, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
-    ObjectSet(objAllPage, OBJPROP_SELECTABLE, false);
-    ObjectSet(objAllPage, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
-    ObjectSet(objAllPage, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
-
-    ObjectSet(objCurPage, OBJPROP_XDISTANCE, COL2-25);
-    ObjectSet(objAllPage, OBJPROP_XDISTANCE, COL2-50);
+    ObjectSet(objCurPage, OBJPROP_XDISTANCE, 0);
+    ObjectSet(objLasPage, OBJPROP_XDISTANCE, 0);
+    ObjectSet(objAllPage, OBJPROP_XDISTANCE, 0);
 
     // init function
     gLabelIndex = 0;
     createLabel(BTN_START, COL1, 5);
     hideItem(gLabelIndex, "Label");
 }
+
+bool gPnlOn = false;
 void drawDashboard()
 {
     gLabelIndex = 0;
     gRowPos = 5;
     // header
-    createLabel(BTN_HIDEPN  , COL1+50, gRowPos);
-    createLabel(BTN_RELOAD  , COL1+30, gRowPos);
-    createLabel("Time_Date" , COL1, gRowPos);
-    createLabel("Action"    , COL2, gRowPos);
+    createLabel("No."      , COL1, gRowPos, true);
+    createLabel("Time"     , COL2, gRowPos, true);
+    createLabel("Type"     , COL3, gRowPos, true);
+    createLabel("Size"     , COL4, gRowPos, true);
+    createLabel(gPnlOn ? BTN_PnLON : BTN_PnLOFF, COL5, gRowPos, true);
+    createLabel(BTN_RELOAD , COL6, gRowPos);
     nextRow(); separateRow();
     // table
     string currentDate, objName, strOpenOrder;
     int curPage = (int)StringToInteger(ObjectDescription(objCurPage));
     int allPage = (int)StringToInteger(ObjectDescription(objAllPage));
-    int i = curPage * InpPageSize;
-    int fullPage = 0;
-    while (getDataFrom(i) == true && fullPage < InpPageSize) {
+    int i = curPage;
+    double sPnl = 0;
+    while (getDataFrom(i) == true) {
         if (StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5) != currentDate) {
-            // if (fullPage != 0) nextRow(); TODO: Nghiên cứu phương cách mà next row vẫn được mà không bị cắt ngày.
+            if (curPage != i) {
+                ObjectSetText(objLasPage, IntegerToString(i));
+                break;
+            }
             currentDate = StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
             strOpenOrder = currentDate;
         }
         else {
             strOpenOrder = "     ";
         }
+        createLabel(IntegerToString(i), COL1, gRowPos);
         strOpenOrder += " " + TimeToStr(orderOpenTime, TIME_MINUTES);
+        createLabel(strOpenOrder, COL2, gRowPos);
+        createLabel(orderType == OP_BUY ? " buy" : "sell", COL3, gRowPos);
+        createLabel(DoubleToString(orderLots,2)          , COL4, gRowPos);
+        sPnl += orderProfit;
+        if (gPnlOn) createLabel(fixedText(DoubleToString(orderProfit,2), 7), COL5, gRowPos);
+        else createLabel("    ***", COL5, gRowPos);
+
         objName = APP_TAG + "TradeEN" + IntegerToString(i);
-        createLabel(strOpenOrder, COL1   , gRowPos);
         if (ObjectGet(objName, OBJPROP_PRICE1) == 0) {
-            createLabel(BTN_TRDOPEN , COL2   , gRowPos);
-            createLabel(BTN_TRDCLOSE, COL2-25, gRowPos);
+            createLabel(BTN_TRDOPEN , COL6   , gRowPos);
+            createLabel(BTN_TRDCLOSE, COL6+25, gRowPos);
         }
         else {
-            createLabel(BTN_TRDHIDE , COL2   , gRowPos);
+            createLabel(BTN_TRDHIDE , COL6   , gRowPos);
             objName = APP_TAG + "TradeSL" + IntegerToString(i);
-            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , COL2-25, gRowPos);
-            else createLabel(orderResult, COL2-25, gRowPos);
+            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , COL6+25, gRowPos);
+            else createLabel(orderResult, COL6+25, gRowPos);
         }
-        createLabel(IntegerToString(i)  , 0      , gRowPos);
+        createLabel(IntegerToString(i)  , 0, -10);
         nextRow();
-        fullPage++;
         i++;
     }
+    separateRow();
+    if (gPnlOn) createLabel(fixedText(DoubleToString(sPnl,2), 7), COL5, gRowPos);
+    else createLabel("    ***", COL5, gRowPos);
     // function
-    if (allPage > 0){
-        createLabel("――――――――――――――" + IntegerToString(curPage+1) + "/" + IntegerToString(allPage+1) + "―", COL1, gRowPos);
-        nextRow();
-        createLabel("[<]"       , COL2      , gRowPos);
-        createLabel("[>]"       , COL2-25   , gRowPos);
-        nextRow();
-        separateRow();
+    if (i < allPage){
+        createLabel("[<]"       , COL6      , gRowPos);
+        createLabel("[>]"       , COL6+25   , gRowPos);
     }
-    else {
-        separateRow();
-    }
+    nextRow();separateRow();
 
-    ObjectSet(objBgBoard, OBJPROP_YDISTANCE, gRowPos);
     hideItem(gLabelIndex, "Label");
 }
 void hideDashboard()
 {
     gLabelIndex = 0;
     createLabel(BTN_SHOWPN, 25, 20);
-    ObjectSet(objBgBoard, OBJPROP_YDISTANCE, 0);
     hideItem(gLabelIndex, "Label");
 }
 //+------------------------------------------------------------------+
@@ -369,10 +392,10 @@ void setDataTo(int idx, string rawData)
     string str2 = StringSubstr(rawData, 63);
 
     string objTradeData = APP_TAG + "TradeData1" + IntegerToString(idx);
-    ObjectCreate(objTradeData, OBJ_TEXT, 0, 0, 0);
+    ObjectCreate(objTradeData, OBJ_TEXT, gWinId, 0, 0);
     ObjectSetText(objTradeData, str1);
     objTradeData = APP_TAG + "TradeData2" + IntegerToString(idx);
-    ObjectCreate(objTradeData, OBJ_TEXT, 0, 0, 0);
+    ObjectCreate(objTradeData, OBJ_TEXT, gWinId, 0, 0);
     ObjectSetText(objTradeData, str2);
 }
 bool getDataFrom(int idx)
@@ -420,9 +443,9 @@ void createLabel(string text, int posX, int posY, string tooltip){
 void createLabel(string text, int posX, int posY, bool editable, string tooltip)
 {
     string objName = APP_TAG + "Label" + IntegerToString(gLabelIndex++);
-    ObjectCreate(objName, OBJ_LABEL, 0, 0, 0);
+    ObjectCreate(objName, OBJ_LABEL, gWinId, 0, 0);
     // Default
-    ObjectSet(objName, OBJPROP_CORNER, CORNER_RIGHT_UPPER);
+    ObjectSet(objName, OBJPROP_CORNER, CORNER_LEFT_UPPER);
     ObjectSet(objName, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
     ObjectSet(objName, OBJPROP_BACK, false);
     ObjectSetString(0, objName, OBJPROP_TOOLTIP, tooltip);
@@ -436,7 +459,7 @@ void hideItem(int index, string tag){
     string objName = APP_TAG + tag + IntegerToString(index);
     while(ObjectFind(objName) >= 0){
         ObjectSet(objName, OBJPROP_XDISTANCE, 0);
-        ObjectSet(objName, OBJPROP_YDISTANCE, 0);
+        ObjectSet(objName, OBJPROP_YDISTANCE, -20);
         // ObjectSet(objName, OBJPROP_TIME1, 0);
         // ObjectSet(objName, OBJPROP_TIME2, 0);
         objName = APP_TAG + tag + IntegerToString(index++);
@@ -455,7 +478,12 @@ void nextRow() {
     gRowPos += 15;
 }
 void separateRow() {
-    createLabel("―――――――――――――――――――", COL1, gRowPos);
+    createLabel("-----------------------------------------------", COL1, gRowPos, true);
     gRowPos += 15;
+}
+string fixedText(string str, int size) {
+    int spaceSize = size - StringLen(str);
+    if (spaceSize <= 0) return str;
+    return StringSubstr(TXT_SPACE_BLOCK, 0, spaceSize) + str;
 }
 //+------------------------------------------------------------------+
