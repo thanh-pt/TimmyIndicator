@@ -46,6 +46,7 @@ void OnDeinit(const int reason)
 {
     if (reason <= REASON_RECOMPILE || reason == REASON_PARAMETERS){
         initStatus = true;
+        // TODO: save list deleted object -> delete in all charts
         for (int i = ObjectsTotal() - 1; i >= 0; i--) {
             string objName = ObjectName(i);
             if (StringFind(objName, APP_TAG) != -1) ObjectDelete(objName);
@@ -156,72 +157,102 @@ void viewTradeOpen(int tradeIdx)
 {
     getDataFrom(tradeIdx);
     string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
-    ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
-    ObjectSet(objName, OBJPROP_BACK, false);
-    ObjectSet(objName, OBJPROP_ARROWCODE, 2);
 
-    ObjectSetString(0, objName, OBJPROP_TOOLTIP,"Size:" + DoubleToString(orderLots,2));
-    ObjectSet(objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
-    ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
-    ObjectSet(objName, OBJPROP_PRICE1, priceEN);
+    long chartID = ChartID();
+    long curChart = ChartFirst();
+    string chartSymbol = ChartSymbol();
+    while(curChart > 0) {
+        if (ChartSymbol(curChart) == chartSymbol) {
+            ObjectCreate(curChart, objName, OBJ_ARROW, 0, 0, 0);
+            ObjectSetInteger(curChart, objName, OBJPROP_BACK, false);
+            ObjectSetInteger(curChart, objName, OBJPROP_ARROWCODE, 2);
+        
+            ObjectSetString(curChart, objName, OBJPROP_TOOLTIP,"Size:" + DoubleToString(orderLots,2));
+            ObjectSetInteger(curChart, objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , orderOpenTime);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE1, priceEN);
+        }
+        curChart = ChartNext(curChart);
+    }
+
 }
 void viewTradeClose(int tradeIdx)
 {
     getDataFrom(tradeIdx);
     string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
-    ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
-    ObjectSet(objName, OBJPROP_BACK, false);
-    ObjectSet(objName, OBJPROP_ARROWCODE, 2);
 
-    ObjectSetString(0, objName, OBJPROP_TOOLTIP,"Size:" + DoubleToString(orderLots,2));
-    ObjectSet(objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
-    ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
-    ObjectSet(objName, OBJPROP_PRICE1, priceEN);
+    long chartID = ChartID();
+    long curChart = ChartFirst();
+    string chartSymbol = ChartSymbol();
+    while(curChart > 0) {
+        if (ChartSymbol(curChart) == chartSymbol) {
+            objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
+            ObjectCreate(curChart, objName, OBJ_ARROW, 0, 0, 0);
+            ObjectSetInteger(curChart, objName, OBJPROP_BACK, false);
+            ObjectSetInteger(curChart, objName, OBJPROP_ARROWCODE, 2);
+        
+            ObjectSetString(curChart, objName, OBJPROP_TOOLTIP,"Size:" + DoubleToString(orderLots,2));
+            ObjectSetInteger(curChart, objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , orderOpenTime);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE1, priceEN);
+        
+            objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
+            ObjectCreate(curChart, objName, OBJ_ARROW, 0, 0, 0);
+            ObjectSetInteger(curChart, objName, OBJPROP_BACK, false);
+            ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
+            ObjectSetInteger(curChart, objName, OBJPROP_ARROWCODE, priceCL == priceTP ? 3 : 4);
+            ObjectSetInteger(curChart, objName, OBJPROP_COLOR , clrBlue);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , orderCloseTime);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE1, priceTP);
+        
+            objName = APP_TAG + "TradeSL" + IntegerToString(tradeIdx);
+            ObjectCreate(curChart, objName, OBJ_ARROW, 0, 0, 0);
+            ObjectSetInteger(curChart, objName, OBJPROP_BACK, false);
+            ObjectSetString(curChart, objName, OBJPROP_TOOLTIP, "\n");
+            ObjectSetInteger(curChart, objName, OBJPROP_ARROWCODE, priceCL == priceSL ? 3 : 4);
+            ObjectSetInteger(curChart, objName, OBJPROP_COLOR , clrRed);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , orderCloseTime);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE1, priceSL);
+        
+            objName = APP_TAG + "TradeLn" + IntegerToString(tradeIdx);
+            ObjectCreate(curChart, objName, OBJ_TREND, 0, 0, 0);
+            ObjectSetString(curChart, objName, OBJPROP_TOOLTIP, "\n");
+            ObjectSetInteger(curChart, objName, OBJPROP_BACK, false);
+            ObjectSetInteger(curChart, objName, OBJPROP_RAY, false);
+            ObjectSetInteger(curChart, objName, OBJPROP_STYLE, 2);
+            ObjectSetInteger(curChart, objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , orderOpenTime);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME2 , orderCloseTime);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE1, priceEN);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE2, priceCL);
+        }
+        curChart = ChartNext(curChart);
+    }
 
-    objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
-    ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
-    ObjectSet(objName, OBJPROP_BACK, false);
-    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objName, OBJPROP_ARROWCODE, priceCL == priceTP ? 3 : 4);
-    ObjectSet(objName, OBJPROP_COLOR , clrBlue);
-    ObjectSet(objName, OBJPROP_TIME1 , orderCloseTime);
-    ObjectSet(objName, OBJPROP_PRICE1, priceTP);
-
-    objName = APP_TAG + "TradeSL" + IntegerToString(tradeIdx);
-    ObjectCreate(objName, OBJ_ARROW, 0, 0, 0);
-    ObjectSet(objName, OBJPROP_BACK, false);
-    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objName, OBJPROP_ARROWCODE, priceCL == priceSL ? 3 : 4);
-    ObjectSet(objName, OBJPROP_COLOR , clrRed);
-    ObjectSet(objName, OBJPROP_TIME1 , orderCloseTime);
-    ObjectSet(objName, OBJPROP_PRICE1, priceSL);
-
-    objName = APP_TAG + "TradeLn" + IntegerToString(tradeIdx);
-    ObjectCreate(objName, OBJ_TREND, 0, 0, 0);
-    ObjectSetString(0, objName, OBJPROP_TOOLTIP, "\n");
-    ObjectSet(objName, OBJPROP_BACK, false);
-    ObjectSet(objName, OBJPROP_RAY, false);
-    ObjectSet(objName, OBJPROP_STYLE, 2);
-    ObjectSet(objName, OBJPROP_COLOR , orderType == OP_BUY ? clrBlue : clrRed);
-    ObjectSet(objName, OBJPROP_TIME1 , orderOpenTime);
-    ObjectSet(objName, OBJPROP_TIME2 , orderCloseTime);
-    ObjectSet(objName, OBJPROP_PRICE1, priceEN);
-    ObjectSet(objName, OBJPROP_PRICE2, priceCL);
 }
 void hideTrade(int tradeIdx)
 {
     string objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
-    ObjectSet(objName, OBJPROP_PRICE1 , 0);
-    objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
-    ObjectSet(objName, OBJPROP_PRICE1 , 0);
-    objName = APP_TAG + "TradeSL" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
-    ObjectSet(objName, OBJPROP_PRICE1 , 0);
-    objName = APP_TAG + "TradeLn" + IntegerToString(tradeIdx);
-    ObjectSet(objName, OBJPROP_TIME1 , 0);
-    ObjectSet(objName, OBJPROP_TIME2 , 0);
+    long chartID = ChartID();
+    long curChart = ChartFirst();
+    string chartSymbol = ChartSymbol();
+    while(curChart > 0) {
+        if (ChartSymbol(curChart) == chartSymbol) {
+            objName = APP_TAG + "TradeEN" + IntegerToString(tradeIdx);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , 0);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE1 , 0);
+            objName = APP_TAG + "TradeTP" + IntegerToString(tradeIdx);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , 0);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE1 , 0);
+            objName = APP_TAG + "TradeSL" + IntegerToString(tradeIdx);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , 0);
+            ObjectSetDouble(curChart, objName, OBJPROP_PRICE1 , 0);
+            objName = APP_TAG + "TradeLn" + IntegerToString(tradeIdx);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME1 , 0);
+            ObjectSetInteger(curChart, objName, OBJPROP_TIME2 , 0);
+        }
+        curChart = ChartNext(curChart);
+    }
 }
 void getData()
 {
