@@ -26,7 +26,6 @@
 #define BTN_RELOAD      "[Reload]"
 
 input double    InpRiskPerTrade = 1.5; //Risk per Trade ($)
-input int       InpPageSize     = 20;
 
 bool initStatus = false;
 
@@ -285,9 +284,9 @@ void getData()
             data += DoubleToString(OrderProfit()+OrderCommission(), 2)          + ";";
             setDataTo(tradeIdx++, data);
             if (firstDay == "") {
-                firstDay = StringSubstr(TimeToStr(OrderOpenTime(), TIME_DATE), 5);
+                firstDay = StringSubstr(TimeToStr(OrderCloseTime(), TIME_DATE), 5);
             } else if (secondDay == "") {
-                secondDay = StringSubstr(TimeToStr(OrderOpenTime(), TIME_DATE), 5);
+                secondDay = StringSubstr(TimeToStr(OrderCloseTime(), TIME_DATE), 5);
             }
         }
     }
@@ -340,7 +339,7 @@ void drawDashboard()
     createLabel(BTN_RELOAD , COL6, gRowPos);
     nextRow(); separateRow();
     // table
-    string currentDate, objName, strOpenOrder;
+    string currentDate, objName, strCloseOrder;
     string curPage = ObjectDescription(objCurPage);
     string prePage = curPage;
     string nexPage = curPage;
@@ -348,7 +347,7 @@ void drawDashboard()
     double sPnl = 0;
     bool printedData = false;
     while (getDataFrom(i) == true) {
-        currentDate = StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
+        currentDate = StringSubstr(TimeToStr(orderCloseTime, TIME_DATE), 5);
         if (currentDate != curPage) {
             if (printedData == false) prePage = currentDate;
             else {
@@ -359,13 +358,13 @@ void drawDashboard()
             continue;
         }
         if (printedData == false) {
-            strOpenOrder = currentDate;
+            strCloseOrder = currentDate;
             printedData = true;
         }
-        else strOpenOrder = "     ";
+        else strCloseOrder = "     ";
         createLabel(IntegerToString(i), COL1, gRowPos);
-        strOpenOrder += " " + TimeToStr(orderOpenTime, TIME_MINUTES);
-        createLabel(strOpenOrder, COL2, gRowPos);
+        strCloseOrder += " " + TimeToStr(orderCloseTime, TIME_MINUTES);
+        createLabel(strCloseOrder, COL2, gRowPos);
         createLabel(orderType == OP_BUY ? " buy" : "sell", COL3, gRowPos);
         createLabel(DoubleToString(orderLots,2)          , COL4, gRowPos);
         sPnl += orderProfit;
