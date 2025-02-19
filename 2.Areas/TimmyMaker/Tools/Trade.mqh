@@ -217,12 +217,12 @@ void Trade::initData()
     static int wd = 0;
     ChartXYToTimePrice(0, (int)pCommonData.mMouseX+100, (int)pCommonData.mMouseY+(mIndexType == LONG_IDX ? 50:-50), wd,  time2, priceSL);
     if (mIndexType == LONG_IDX) {
-        priceSL = priceEN - 150 / gdLotSize;
-        priceTP = priceEN + (150 + Trd_Comm*2) / gdLotSize;
+        priceSL = priceEN - (150 - Trd_Comm) / gdLotSize;
+        priceTP = priceEN + (150 + Trd_Comm) / gdLotSize;
     }
     else {
-        priceSL = priceEN + 150 / gdLotSize;
-        priceTP = priceEN - (150 + Trd_Comm*2) / gdLotSize;
+        priceSL = priceEN + (150 - Trd_Comm) / gdLotSize;
+        priceTP = priceEN - (150 + Trd_Comm) / gdLotSize;
     }
     priceBE = (priceEN + priceTP)/2;
 }
@@ -599,20 +599,20 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     else if (gContextMenu.mActiveItemStr == CTX_FILLTP) {
         onItemDrag(itemId, objId);
         if (priceTP > priceSL) {
-            priceTP = priceEN + 150/gdLotSize+mComPoint*2;
+            priceTP = priceEN + 150/gdLotSize+mComPoint;
         }
         else {
-            priceTP = priceEN - 150/gdLotSize-mComPoint*2;
+            priceTP = priceEN - 150/gdLotSize-mComPoint;
         }
         refreshData();
     }
     else if (gContextMenu.mActiveItemStr == CTX_FILLSL) {
         onItemDrag(itemId, objId);
         if (priceTP > priceSL) {
-            priceSL = priceEN - 150/gdLotSize;
+            priceSL = priceEN - 150/gdLotSize + mComPoint;
         }
         else {
-            priceSL = priceEN + 150/gdLotSize;
+            priceSL = priceEN + 150/gdLotSize - mComPoint;
         }
         refreshData();
     }
