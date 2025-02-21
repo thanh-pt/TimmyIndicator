@@ -10,12 +10,12 @@
 #define TXT_SPACE_BLOCK "                    "
 
 #define COL1 10 
-#define COL2 40 
-#define COL3 130 
-#define COL4 170
-#define COL5 210
-#define COL6 280
-#define COL7 350
+#define COL2 50 
+#define COL3 110 
+#define COL4 150
+#define COL5 190
+#define COL6 260
+#define COL7 330
 
 #define BTN_START       "[StartReview]"
 #define BTN_PnLON       " [PnL on]"
@@ -306,18 +306,12 @@ void initDashboard()
 {
     ObjectCreate(objInitDboard, OBJ_TEXT, gWinId, 0, 0);
 
-    ObjectCreate(objCurPage, OBJ_LABEL, gWinId, 0, 0);
-    ObjectCreate(objPrePage, OBJ_LABEL, gWinId, 0, 0);
-    ObjectCreate(objNexPage, OBJ_LABEL, gWinId, 0, 0);
+    ObjectCreate(objCurPage, OBJ_TEXT, gWinId, 0, 0);
+    ObjectCreate(objPrePage, OBJ_TEXT, gWinId, 0, 0);
+    ObjectCreate(objNexPage, OBJ_TEXT, gWinId, 0, 0);
     ObjectSetText(objCurPage, "0", 10, "Consolas", clrBlack);
     ObjectSetText(objPrePage, "0", 10, "Consolas", clrBlack);
     ObjectSetText(objNexPage, "0", 10, "Consolas", clrBlack);
-    ObjectSet(objCurPage, OBJPROP_YDISTANCE, -20);
-    ObjectSet(objPrePage, OBJPROP_YDISTANCE, -20);
-    ObjectSet(objNexPage, OBJPROP_YDISTANCE, -20);
-    ObjectSet(objCurPage, OBJPROP_XDISTANCE, 0);
-    ObjectSet(objPrePage, OBJPROP_XDISTANCE, 0);
-    ObjectSet(objNexPage, OBJPROP_XDISTANCE, 0);
 
     // init function
     gLabelIndex = 0;
@@ -330,26 +324,26 @@ void drawDashboard()
 {
     gLabelIndex = 0;
     gRowPos = 5;
+    string curPage = ObjectDescription(objCurPage);
+    if (curPage == "") return;
     // header
     createLabel("No."      , COL1, gRowPos, true);
-    createLabel("Time"     , COL2, gRowPos, true);
+    createLabel(curPage    , COL2, gRowPos); // createLabel("Time"     , COL2, gRowPos, true);
     createLabel("Type"     , COL3, gRowPos, true);
     createLabel("Size"     , COL4, gRowPos, true);
     createLabel(gPnlOn ? BTN_PnLON : BTN_PnLOFF, COL5, gRowPos, true);
     createLabel(BTN_RELOAD , COL6, gRowPos);
     nextRow(); separateRow();
     // table
-    string currentDate, objName, strCloseOrder;
-    string curPage = ObjectDescription(objCurPage);
+    string currentDate, objName;
     string prePage = curPage;
     string nexPage = curPage;
-    int i = 0;
+    int i = 0, num = 0;
     double sPnl = 0;
-    bool printedData = false;
     while (getDataFrom(i) == true) {
         currentDate = StringSubstr(TimeToStr(orderCloseTime, TIME_DATE), 5);
         if (currentDate != curPage) {
-            if (printedData == false) prePage = currentDate;
+            if (num == 0) prePage = currentDate;
             else {
                 nexPage = currentDate;
                 break;
@@ -357,20 +351,18 @@ void drawDashboard()
             i++;
             continue;
         }
-        if (printedData == false) {
-            strCloseOrder = currentDate;
-            printedData = true;
-        }
-        else strCloseOrder = "     ";
-        createLabel(IntegerToString(i), COL1, gRowPos);
-        strCloseOrder += " " + TimeToStr(orderCloseTime, TIME_MINUTES);
-        createLabel(strCloseOrder, COL2, gRowPos);
-        createLabel(orderType == OP_BUY ? " buy" : "sell", COL3, gRowPos);
-        createLabel(DoubleToString(orderLots,2)          , COL4, gRowPos);
-        sPnl += orderProfit;
-        if (gPnlOn) createLabel(fixedText(DoubleToString(orderProfit,2), 7), COL5, gRowPos);
-        else createLabel("    ***", COL5, gRowPos);
+        num++;
 
+        createLabel(IntegerToString(num)                    , COL1, gRowPos);
+        createLabel(TimeToStr(orderCloseTime, TIME_MINUTES) , COL2, gRowPos);
+        createLabel(orderType == OP_BUY ? " buy" : "sell"   , COL3, gRowPos);
+        createLabel(DoubleToString(orderLots,2)             , COL4, gRowPos);
+        if (gPnlOn) {
+            createLabel(fixedText(DoubleToString(orderProfit,2), 7), COL5, gRowPos);
+            sPnl += orderProfit;
+        }
+        else createLabel("    ***", COL5, gRowPos);
+        
         objName = APP_TAG + "TradeEN" + IntegerToString(i);
         if (ObjectGet(objName, OBJPROP_PRICE1) == 0) {
             createLabel(BTN_TRDOPEN , COL6   , gRowPos);
@@ -382,7 +374,7 @@ void drawDashboard()
             if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , COL6+25, gRowPos);
             else createLabel(orderResult, COL6+25, gRowPos);
         }
-        createLabel(IntegerToString(i)  , 0, -10);
+        createLabel(IntegerToString(i)  , 0, -20);
         nextRow();
         i++;
     }
@@ -392,15 +384,8 @@ void drawDashboard()
     nextRow();separateRow();
     // function
     gRowPos = 5;
-    if (prePage != curPage){
-       createLabel("[<]"    , COL7, gRowPos);
-       createLabel(prePage  , COL7+25, gRowPos);
-    }
-    nextRow();
-    if (curPage != nexPage){
-       createLabel("[>]"    , COL7, gRowPos);
-       createLabel(nexPage  , COL7+25, gRowPos);
-    }
+    if (prePage != curPage) createLabel("[<]", COL2-20, gRowPos);
+    if (curPage != nexPage) createLabel("[>]", COL2+35, gRowPos);
 
     
     ObjectSetText(objCurPage, curPage);
@@ -434,10 +419,14 @@ void setDataTo(int idx, string rawData)
 
     string objTradeData = APP_TAG + "TradeData1" + IntegerToString(idx);
     ObjectCreate(objTradeData, OBJ_TEXT, gWinId, 0, 0);
+    ObjectSet(objTradeData, OBJPROP_XDISTANCE, 0);
+    ObjectSet(objTradeData, OBJPROP_YDISTANCE, 250);
     ObjectSetText(objTradeData, str1);
     objTradeData = APP_TAG + "TradeData2" + IntegerToString(idx);
     ObjectCreate(objTradeData, OBJ_TEXT, gWinId, 0, 0);
     ObjectSetText(objTradeData, str2);
+    ObjectSet(objTradeData, OBJPROP_XDISTANCE, 0);
+    ObjectSet(objTradeData, OBJPROP_YDISTANCE, 250);
 }
 bool getDataFrom(int idx)
 {
