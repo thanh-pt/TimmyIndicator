@@ -1,6 +1,6 @@
 #property copyright "mt4 tools - WIKI"
 #property link      "https://aforexstory.notion.site/1104379b17ec80218296ccaa5eb0ff14"
-#property icon      "Imbalance Bar.ico"
+#property icon      "../3.Resource/icons/Imbalance Bar.ico"
 #property version   "2.00"
 #property description "The Imbalance Bar shows strong momentum in price movement, making it an important part of technical analysis. Clearly spotting imbalances is a significant advantage for any trader.\nGo to WIKI for detail..."
 #property strict

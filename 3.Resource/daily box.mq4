@@ -1,6 +1,6 @@
 #property copyright "aForexStory Wiki"
 #property link      "https://aforexstory.notion.site/aa613be6d2fc4c5a84722fe629d5b3c4"
-#property icon      "../3.Resource/a-Forex-Story.ico"
+#property icon      "../3.Resource/icons/a-Forex-Story.ico"
 #property version   "1.00"
 #property strict
 #property indicator_chart_window

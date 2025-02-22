@@ -1,6 +1,6 @@
 #property copyright "aForexStory Wiki"
 #property link      "https://aforexstory.notion.site/aa613be6d2fc4c5a84722fe629d5b3c4"
-#property icon      "../3.Resource/a-Forex-Story.ico"
+#property icon      "../3.Resource/icons/a-Forex-Story.ico"
 #property version   "2.01"
 #property description "Inside Bar is usually indicate for a fight between Supply and Demand which is leading to price was holded between High and Low of mother bar.\nThis will be an early signal of who wona control market next."
 #property strict

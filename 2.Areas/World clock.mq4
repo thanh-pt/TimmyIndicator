@@ -1,7 +1,7 @@
 #property copyright "mt4 tools - WIKI"
 #property link      "https://aforexstory.notion.site/1104379b17ec80218296ccaa5eb0ff14"
 #property version   "1.00"
-#property icon      "../3.Resource/WorldClock.ico"
+#property icon      "../3.Resource/icons/WorldClock.ico"
 #property description "Display a world clock which helps trader to visualize time in the world"
 #property strict
 #property indicator_chart_window

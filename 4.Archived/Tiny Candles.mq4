@@ -1,6 +1,6 @@
 #property copyright "Timmy Ham Hoc"
 #property link "https://www.youtube.com/@TimmyTraderHamHoc"
-#property icon "../3.Resource/Timmy-Ham-học-Logo.ico"
+#property icon "../3.Resource/icons/Timmy-Ham-học-Logo.ico"
 #property version "1.00"
 #property strict
 #property indicator_chart_window
