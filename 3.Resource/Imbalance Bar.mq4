@@ -156,7 +156,7 @@ void loadBarEnhance(int totalBar)
         LineUp02[idx] = EMPTY_VALUE;
         LineDn01[idx] = EMPTY_VALUE;
         LineDn02[idx] = EMPTY_VALUE;
-        if (idx <= 1) continue;
+        // if (idx <= 1) continue;
         // Define bar type:
         isDoji      = false;
         isFuncBar   = false;
@@ -168,7 +168,7 @@ void loadBarEnhance(int totalBar)
         }
 
         // Imb
-        if (isDoji == false) {
+        if (isDoji == false && idx >= 1) {
             if (gbImbOn == true && (Low[idx+1] > High[idx-1] || High[idx+1] < Low[idx-1])){
                 IsmbBuf1[idx] = Open[idx];
                 IsmbBuf2[idx] = Close[idx];
