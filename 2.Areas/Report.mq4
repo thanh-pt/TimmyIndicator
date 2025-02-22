@@ -5,16 +5,19 @@
 #property strict
 #property indicator_separate_window
 
-#define APP_TAG "*ReviewTrade"
+#define APP_TAG "*Report"
 #define TXT_SPACE_BLOCK "                    "
 
-#define COL1 10 
-#define COL2 50 
-#define COL3 110 
-#define COL4 150
-#define COL5 190
-#define COL6 260
-#define COL7 330
+#define DETAIL_COL1 10 
+#define DETAIL_COL2 50 
+#define DETAIL_COL3 110 
+#define DETAIL_COL4 150
+#define DETAIL_COL5 190
+#define DETAIL_COL6 260
+#define DETAIL_COL7 330
+
+#define WEEKLY_COL1 10
+#define WEEKLY_COL2 30
 
 #define BTN_START       "[StartReview]"
 #define BTN_PnLON       " [PnL on]"
@@ -28,8 +31,9 @@ input double    InpRiskPerTrade = 1.5; //Risk per Trade ($)
 
 bool initStatus = false;
 
-
 int gWinId;
+bool gPnlOn = false;
+string gStrDbSetting = "";
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -37,7 +41,11 @@ int OnInit()
 {
     IndicatorShortName("");
     gWinId = ChartWindowFind();
-    if (ObjectFind(objInitDboard) < 0) initDashboard();
+    if (ObjectFind(objDbSetting) < 0) initDashboard();
+    else {
+        gStrDbSetting = ObjectDescription(objDbSetting);
+    }
+    if (StringFind(gStrDbSetting, "gPnlOn") != -1) gPnlOn = true;;
     return(INIT_SUCCEEDED);
 }
 void OnDeinit(const int reason)
@@ -121,22 +129,31 @@ void handleClick(const string &sparam)
     }
     else if (description == BTN_RELOAD || description == BTN_START) {
         getData();
-        drawDashboard();
+        if (StringFind(gStrDbSetting, "tab1") != -1) {
+            drawDailyDashboard();
+        }
+        else if (StringFind(gStrDbSetting, "tab2") != -1) {
+            drawWeeklyDashboard();
+        }
     }
     else if (description == BTN_PnLON) {
         gPnlOn = false;
-        drawDashboard();
+        StringReplace(gStrDbSetting, "gPnlOn", "");
+        ObjectSetText(objDbSetting, gStrDbSetting);
+        drawDailyDashboard();
     }
     else if (description == BTN_PnLOFF) {
         gPnlOn = true;
-        drawDashboard();
+        gStrDbSetting += "gPnlOn";
+        ObjectSetText(objDbSetting, gStrDbSetting);
+        drawDailyDashboard();
     }
     else if (description == "[>]") {
         string curPage = ObjectDescription(objCurPage);
         string nexPage = ObjectDescription(objNexPage);
         if (curPage != nexPage) {
             ObjectSetText(objCurPage, nexPage);
-            drawDashboard();
+            drawDailyDashboard();
         }
     }
     else if (description == "[<]") {
@@ -144,8 +161,20 @@ void handleClick(const string &sparam)
         string prePage = ObjectDescription(objPrePage);
         if (curPage != prePage) {
             ObjectSetText(objCurPage, prePage);
-            drawDashboard();
+            drawDailyDashboard();
         }
+    }
+    else if (description == "[Daily]") {
+        StringReplace(gStrDbSetting, "tab2", "");
+        gStrDbSetting += "tab1";
+        ObjectSetText(objDbSetting, gStrDbSetting);
+        drawDailyDashboard();
+    }
+    else if (description == "[Weekly]") {
+        StringReplace(gStrDbSetting, "tab1", "");
+        gStrDbSetting += "tab2";
+        ObjectSetText(objDbSetting, gStrDbSetting);
+        drawWeeklyDashboard();
     }
 }
 //+------------------------------------------------------------------+
@@ -296,42 +325,119 @@ void getData()
 //+------------------------------------------------------------------+
 
 /// @brief HMI creatation
-string objInitDboard    = APP_TAG   + "initDashboard";
-string objCurPage       = APP_TAG   + "CurPage";
-string objPrePage       = APP_TAG   + "PrePage";
-string objNexPage       = APP_TAG   + "NexPage";
+string objDbSetting = APP_TAG   + "initDB";
+string objCurPage   = APP_TAG   + "CurPage";
+string objPrePage   = APP_TAG   + "PrePage";
+string objNexPage   = APP_TAG   + "NexPage";
 int gRowPos = 0;
 void initDashboard()
 {
-    ObjectCreate(objInitDboard, OBJ_TEXT, gWinId, 0, 0);
+    gStrDbSetting = "tab1";
+    //
+    ObjectCreate(objDbSetting, OBJ_TEXT, gWinId, 0, 0);
 
     ObjectCreate(objCurPage, OBJ_TEXT, gWinId, 0, 0);
     ObjectCreate(objPrePage, OBJ_TEXT, gWinId, 0, 0);
     ObjectCreate(objNexPage, OBJ_TEXT, gWinId, 0, 0);
-    ObjectSetText(objCurPage, "0", 10, "Consolas", clrBlack);
-    ObjectSetText(objPrePage, "0", 10, "Consolas", clrBlack);
-    ObjectSetText(objNexPage, "0", 10, "Consolas", clrBlack);
+    ObjectSetText(objCurPage, "0");
+    ObjectSetText(objPrePage, "0");
+    ObjectSetText(objNexPage, "0");
+    ObjectSetText(objDbSetting, gStrDbSetting);
 
     // init function
     gLabelIndex = 0;
-    createLabel(BTN_START, COL1, 5);
+    createLabel(BTN_START, DETAIL_COL1, 5);
     hideItem(gLabelIndex, "Label");
 }
 
-bool gPnlOn = false;
-void drawDashboard()
+void drawWeeklyDashboard()
 {
     gLabelIndex = 0;
     gRowPos = 5;
+    // tab
+    createLabel("tab_weekly", -20, -20);
+    createLabel("[Daily]", DETAIL_COL1, gRowPos, true);
+    createLabel("________", 70, gRowPos, true);
+    createLabel(" Weekly ", 70, gRowPos, true);
+    createLabel(BTN_RELOAD, WEEKLY_COL2 + 70*5, gRowPos);
+    gRowPos = 25;
+    // header
+    createLabel("No."      , DETAIL_COL1, gRowPos, true);
+    createLabel("       T2", WEEKLY_COL2 + 70*0, gRowPos, true);
+    createLabel("       T3", WEEKLY_COL2 + 70*1, gRowPos, true);
+    createLabel("       T4", WEEKLY_COL2 + 70*2, gRowPos, true);
+    createLabel("       T5", WEEKLY_COL2 + 70*3, gRowPos, true);
+    createLabel("       T6", WEEKLY_COL2 + 70*4, gRowPos, true);
+    createLabel("      P/L", WEEKLY_COL2 + 70*5, gRowPos, true);
+    nextRow(); separateRow2();
+
+    // table
+    int i = 0, wknum, preWkNum=-1;
+    double wPnl = 0;
+    double dPnl = 0;
+    double sPnl = 0;
+    string currentDate, strPreDate = "";
+    datetime dtPreDate = orderCloseTime;
+    while (getDataFrom(i) == true) {
+        currentDate = StringSubstr(TimeToStr(orderCloseTime, TIME_DATE), 5);
+        wknum = WeeknumOfYear(orderCloseTime);
+        if (strPreDate == "") {
+            preWkNum = wknum;
+            strPreDate = currentDate;
+            dtPreDate = orderCloseTime;
+        }
+        else if (strPreDate != currentDate) {
+            // Print dtPreDate
+            createLabel(fixedText(DoubleToString(dPnl,2), 9), WEEKLY_COL2 + 70*(TimeDayOfWeek(dtPreDate)-1), gRowPos);
+            if (wknum != preWkNum) {
+                createLabel(IntegerToString(preWkNum), WEEKLY_COL1, gRowPos);
+                createLabel(fixedText(DoubleToString(wPnl,2), 9), WEEKLY_COL2 + 70*5, gRowPos);
+                nextRow(); separateRow2();
+                sPnl += wPnl;
+                preWkNum = wknum;
+                wPnl = 0;
+            }
+            strPreDate = currentDate;
+            dtPreDate = orderCloseTime;
+            wPnl += dPnl;
+            dPnl = 0;
+        }
+        else {
+            dPnl += orderProfit;
+        }
+        i++;
+    }
+    if (strPreDate != ""){
+        createLabel(fixedText(DoubleToString(dPnl,2), 9), WEEKLY_COL2 + 70*(TimeDayOfWeek(dtPreDate)-1), gRowPos);
+        createLabel(IntegerToString(preWkNum), WEEKLY_COL1, gRowPos);
+        createLabel(fixedText(DoubleToString(wPnl,2), 9), WEEKLY_COL2 + 70*5, gRowPos);
+        nextRow(); separateRow2();
+        sPnl += wPnl;
+        createLabel(fixedText(DoubleToString(sPnl,2), 9), WEEKLY_COL2 + 70*5, gRowPos);
+    }
+    
+    hideItem(gLabelIndex, "Label");
+}
+
+void drawDailyDashboard()
+{
+    gLabelIndex = 0;
+    gRowPos = 5;
+    // tab
+    createLabel("_______", DETAIL_COL1, gRowPos, true);
+    createLabel(" Daily ", DETAIL_COL1, gRowPos, true);
+    createLabel("[Weekly]", 70, gRowPos, true);
+    createLabel(BTN_RELOAD, DETAIL_COL6, gRowPos);
+    gRowPos = 25;
+
     string curPage = ObjectDescription(objCurPage);
     if (curPage == "") return;
     // header
-    createLabel("No."      , COL1, gRowPos, true);
-    createLabel(curPage    , COL2, gRowPos); // createLabel("Time"     , COL2, gRowPos, true);
-    createLabel("Type"     , COL3, gRowPos, true);
-    createLabel("Size"     , COL4, gRowPos, true);
-    createLabel(gPnlOn ? BTN_PnLON : BTN_PnLOFF, COL5, gRowPos, true);
-    createLabel(BTN_RELOAD , COL6, gRowPos);
+    createLabel("No."      , DETAIL_COL1, gRowPos, true);
+    createLabel(curPage    , DETAIL_COL2, gRowPos); // createLabel("Time"     , DETAIL_COL2, gRowPos, true);
+    createLabel("Type"     , DETAIL_COL3, gRowPos, true);
+    createLabel("Size"     , DETAIL_COL4, gRowPos, true);
+    createLabel(gPnlOn ? BTN_PnLON : BTN_PnLOFF, DETAIL_COL5, gRowPos, true);
     nextRow(); separateRow();
     // table
     string currentDate, objName;
@@ -352,40 +458,39 @@ void drawDashboard()
         }
         num++;
 
-        createLabel(IntegerToString(num)                    , COL1, gRowPos);
-        createLabel(TimeToStr(orderCloseTime, TIME_MINUTES) , COL2, gRowPos);
-        createLabel(orderType == OP_BUY ? " buy" : "sell"   , COL3, gRowPos);
-        createLabel(DoubleToString(orderLots,2)             , COL4, gRowPos);
+        createLabel(IntegerToString(num)                    , DETAIL_COL1, gRowPos);
+        createLabel(TimeToStr(orderCloseTime, TIME_MINUTES) , DETAIL_COL2, gRowPos);
+        createLabel(orderType == OP_BUY ? " buy" : "sell"   , DETAIL_COL3, gRowPos);
+        createLabel(DoubleToString(orderLots,2)             , DETAIL_COL4, gRowPos);
         if (gPnlOn) {
-            createLabel(fixedText(DoubleToString(orderProfit,2), 7), COL5, gRowPos);
+            createLabel(fixedText(DoubleToString(orderProfit,2), 7), DETAIL_COL5, gRowPos);
             sPnl += orderProfit;
         }
-        else createLabel("    ***", COL5, gRowPos);
+        else createLabel("    ***", DETAIL_COL5, gRowPos);
         
         objName = APP_TAG + "TradeEN" + IntegerToString(i);
         if (ObjectGet(objName, OBJPROP_PRICE1) == 0) {
-            createLabel(BTN_TRDOPEN , COL6   , gRowPos);
-            createLabel(BTN_TRDCLOSE, COL6+25, gRowPos);
+            createLabel(BTN_TRDOPEN , DETAIL_COL6   , gRowPos);
+            createLabel(BTN_TRDCLOSE, DETAIL_COL6+25, gRowPos);
         }
         else {
-            createLabel(BTN_TRDHIDE , COL6   , gRowPos);
+            createLabel(BTN_TRDHIDE , DETAIL_COL6   , gRowPos);
             objName = APP_TAG + "TradeSL" + IntegerToString(i);
-            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , COL6+25, gRowPos);
-            else createLabel(orderResult, COL6+25, gRowPos);
+            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , DETAIL_COL6+25, gRowPos);
+            else createLabel(orderResult, DETAIL_COL6+25, gRowPos);
         }
         createLabel(IntegerToString(i)  , 0, -20);
         nextRow();
         i++;
     }
     separateRow();
-    if (gPnlOn) createLabel(fixedText(DoubleToString(sPnl,2), 7), COL5, gRowPos);
-    else createLabel("    ***", COL5, gRowPos);
+    if (gPnlOn) createLabel(fixedText(DoubleToString(sPnl,2), 7), DETAIL_COL5, gRowPos);
+    else createLabel("    ***", DETAIL_COL5, gRowPos);
     nextRow();separateRow();
     // function
-    gRowPos = 5;
-    if (prePage != curPage) createLabel("[<]", COL2-20, gRowPos);
-    if (curPage != nexPage) createLabel("[>]", COL2+35, gRowPos);
-
+    gRowPos = 25;
+    if (prePage != curPage) createLabel("[<]", DETAIL_COL2-20, gRowPos);
+    if (curPage != nexPage) createLabel("[>]", DETAIL_COL2+35, gRowPos);
     
     ObjectSetText(objCurPage, curPage);
     ObjectSetText(objPrePage, prePage);
@@ -456,6 +561,10 @@ bool removeData(int idx)
     objTradeData = APP_TAG + "TradeData2" + IntegerToString(idx);
     return ObjectDelete(objTradeData);
 }
+int WeeknumOfYear(datetime date)
+{
+    return (TimeDayOfYear(date)+TimeDayOfWeek(StrToTime(IntegerToString(TimeYear(date))+".01.01"))-2)/7;
+}
 //+------------------------------------------------------------------+
 
 /// @brief Drawing Utilidies
@@ -507,7 +616,11 @@ void nextRow() {
     gRowPos += 15;
 }
 void separateRow() {
-    createLabel("-----------------------------------------------", COL1, gRowPos, true);
+    createLabel("-------------------------------------------", DETAIL_COL1, gRowPos, true);
+    gRowPos += 15;
+}
+void separateRow2() {
+    createLabel("--------------------------------------------------------------", DETAIL_COL1, gRowPos, true);
     gRowPos += 15;
 }
 string fixedText(string str, int size) {
