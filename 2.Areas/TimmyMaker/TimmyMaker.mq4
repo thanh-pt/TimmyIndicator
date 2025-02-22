@@ -5,13 +5,13 @@
 //+------------------------------------------------------------------+
 #property strict
 #property indicator_chart_window
-// #define Lver
 
 #include "Home/Controller.mqh"
 #include "Home/CommonData.mqh"
 #include "InfoItem/CrossHair.mqh"
 #include "InfoItem/ContextMenu.mqh"
 #include "InfoItem/MouseInfo.mqh"
+#include "InfoItem/AskBid.mqh"
 
 void FinishedJobFunc();
 void detectMouseDraging(const string &sparam);
@@ -21,6 +21,7 @@ MouseInfo   gMouseInfo(&gCommonData);
 Controller  gController(&gCommonData, &gMouseInfo);
 CrossHair   gCrossHair(&gCommonData);
 ContextMenu gContextMenu();
+AskBid      gAskBid();
 
 int OnInit()
 {
@@ -56,6 +57,7 @@ int OnCalculate(const int rates_total,
 
 //--- return value of prev_calculated for next call
     gController.handleOntick();
+    gAskBid.onTick();
     return(rates_total);
 }
 
@@ -77,6 +79,7 @@ void OnChartEvent(const int id,
         gCommonData.updateMousePosition(lparam, dparam, sparam);
         gCrossHair.onMouseMove();
         gMouseInfo.onMouseMove();
+        gAskBid.onChartChange();
         detectMouseDraging(sparam);
     case CHARTEVENT_CLICK:
         gController.handleEvent(id);
@@ -94,6 +97,7 @@ void OnChartEvent(const int id,
         gController.handleEvent(id, sparam);
     break;
     case CHARTEVENT_CHART_CHANGE:
+        gAskBid.onChartChange();
     break;
     default:
         // PrintFormat("%d", id);

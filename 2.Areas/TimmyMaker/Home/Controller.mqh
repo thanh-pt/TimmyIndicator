@@ -102,10 +102,8 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'C') return eCALLOUT   ;
     if (key == 'G') return eLABEL     ;
     if (key == 'S') return ePOINT     ;
-#ifndef Lver
     if (key == 'X') return eALERT     ;
     if (key == 'W') return eTRADE     ;
-#endif
     return eNONE;
 }
 
