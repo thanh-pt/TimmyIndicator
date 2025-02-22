@@ -6,6 +6,7 @@
 #property indicator_separate_window
 
 #define APP_TAG "*Report"
+#define MAXTRADE 1000
 #define TXT_SPACE_BLOCK "                    "
 
 #define DETAIL_COL1 10 
@@ -27,7 +28,15 @@
 #define BTN_TRDHIDE     "[✖]"
 #define BTN_RELOAD      "[Reload]"
 
-input double    InpRiskPerTrade = 1.5; //Risk per Trade ($)
+enum eReportType {
+    eServerDirect,  // Server direct
+    eSoft4fx,       // Soft4fx
+    eOfflineReport, // Offline Report
+};
+
+
+input eReportType   InpReportType = eServerDirect; // Report from:
+input double        InpRiskPerTrade = 1.5; //Risk per Trade ($)
 
 bool initStatus = false;
 
@@ -286,38 +295,83 @@ void getData()
     // Remove old data
     int i = 0;
     while (removeData(i) == true) i++;
-    // retrieving info from trade history
-    int type,hstTotal=OrdersHistoryTotal(),tradeIdx = 0;
-    string data;
-    string firstDay = "";
+    int tradeIdx     = 0;
+    string data      = "";
+    string firstDay  = "";
     string secondDay = "";
-    for(i=0;i<hstTotal;i++) {
-        //---- check selection result
-        if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false) {
-            Print("Access to history failed with error (",GetLastError(),")");
-            break;
-        }
-        // some work with order
-        type = OrderType();
-        if (type == OP_BUY || type == OP_SELL) {
+    //--- retrieving information from Backtesting
+    if (InpReportType == eSoft4fx) {
+        string objEn    = "";
+        string objEx    = "";
+        string strData  = "";
+    
+        string enDatas[];
+        string exDatas[];
+    
+        for (int idx = 0; idx < MAXTRADE; idx++) {
+            //--- Step 1: Find obj
+            objEn = "sim#3d_en#" + IntegerToString(idx);
+            if (ObjectFind(objEn) < 0) continue;
+            objEx = "sim#3d_ex#" + IntegerToString(idx);
+    
+            //--- Step 2: extract data
+            strData = ObjectGetString(0, objEn, OBJPROP_TOOLTIP);
+            StringSplit(strData,'\n',enDatas);
+            strData = ObjectGetString(0, objEx, OBJPROP_TOOLTIP);
+            StringSplit(strData,'\n',exDatas);
+    
+            //--- Step 3: Write data    
             data = "";
-            data += TimeToString(OrderOpenTime()    , TIME_DATE|TIME_MINUTES)   + ";";
-            data += TimeToString(OrderCloseTime()   , TIME_DATE|TIME_MINUTES)   + ";";
-            data += IntegerToString(OrderType())                                + ";";
-            data += DoubleToString(OrderLots()      , 2)                        + ";";
-            data += DoubleToString(OrderOpenPrice() , 5)                        + ";";
-            data += DoubleToString(OrderClosePrice(), 5)                        + ";";
-            data += DoubleToString(OrderStopLoss()  , 5)                        + ";";
-            data += DoubleToString(OrderTakeProfit(), 5)                        + ";";
-            data += DoubleToString(OrderProfit()+OrderCommission(), 2)          + ";";
+            data += TimeToString((datetime)ObjectGet(objEn, OBJPROP_TIME1), TIME_DATE|TIME_MINUTES) + ";"; //orderOpenTime 
+            data += TimeToString((datetime)ObjectGet(objEx, OBJPROP_TIME1), TIME_DATE|TIME_MINUTES) + ";"; //orderCloseTime
+            data += ((color)ObjectGet(objEn, OBJPROP_COLOR) == clrBlue ? "0" : "1")                 + ";"; //orderType     
+            data += StringSubstr(enDatas[1], 6, 4)                                                  + ";"; //orderLots     
+            data += DoubleToString(ObjectGet(objEn, OBJPROP_PRICE1), 5)                             + ";"; //priceEN       
+            data += DoubleToString(ObjectGet(objEn, OBJPROP_PRICE2), 5)                             + ";"; //priceCL       
+            data += "0"                                                                             + ";"; //priceSL       
+            data += "0"                                                                             + ";"; //priceTP       
+            data += StringSubstr(exDatas[3], 5, 6)                                                  + ";"; //orderProfit   
+    
             setDataTo(tradeIdx++, data);
             if (firstDay == "") {
-                firstDay = StringSubstr(TimeToStr(OrderCloseTime(), TIME_DATE), 5);
+                firstDay = StringSubstr(TimeToStr((datetime)ObjectGet(objEx, OBJPROP_TIME1), TIME_DATE), 5);
             } else if (secondDay == "") {
-                secondDay = StringSubstr(TimeToStr(OrderCloseTime(), TIME_DATE), 5);
+                secondDay = StringSubstr(TimeToStr((datetime)ObjectGet(objEx, OBJPROP_TIME1), TIME_DATE), 5);
             }
         }
     }
+    //--- retrieving info from trade history
+    else if (InpReportType == eServerDirect) {
+        int type,hstTotal=OrdersHistoryTotal();
+        for(i=0;i<hstTotal;i++) {
+            //---- check selection result
+            if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false) {
+                Print("Access to history failed with error (",GetLastError(),")");
+                break;
+            }
+            // some work with order
+            type = OrderType();
+            if (type == OP_BUY || type == OP_SELL) {
+                data = "";
+                data += TimeToString(OrderOpenTime()    , TIME_DATE|TIME_MINUTES)   + ";";
+                data += TimeToString(OrderCloseTime()   , TIME_DATE|TIME_MINUTES)   + ";";
+                data += IntegerToString(OrderType())                                + ";";
+                data += DoubleToString(OrderLots()      , 2)                        + ";";
+                data += DoubleToString(OrderOpenPrice() , 5)                        + ";";
+                data += DoubleToString(OrderClosePrice(), 5)                        + ";";
+                data += DoubleToString(OrderStopLoss()  , 5)                        + ";";
+                data += DoubleToString(OrderTakeProfit(), 5)                        + ";";
+                data += DoubleToString(OrderProfit()+OrderCommission(), 2)          + ";";
+                setDataTo(tradeIdx++, data);
+                if (firstDay == "") {
+                    firstDay = StringSubstr(TimeToStr(OrderCloseTime(), TIME_DATE), 5);
+                } else if (secondDay == "") {
+                    secondDay = StringSubstr(TimeToStr(OrderCloseTime(), TIME_DATE), 5);
+                }
+            }
+        }
+    }
+    //--------------
     ObjectSetText(objCurPage, firstDay);
     ObjectSetText(objPrePage, firstDay);
     ObjectSetText(objNexPage, secondDay);
@@ -357,8 +411,8 @@ void drawWeeklyDashboard()
     // tab
     createLabel("tab_weekly", -20, -20);
     createLabel("[Daily]", DETAIL_COL1, gRowPos, true);
-    createLabel("________", 70, gRowPos, true);
-    createLabel(" Weekly ", 70, gRowPos, true);
+    createLabel(" ______", 70, gRowPos, true);
+    createLabel(" Weekly", 70, gRowPos, true);
     createLabel(BTN_RELOAD, WEEKLY_COL2 + 70*5, gRowPos);
     gRowPos = 25;
     // header
@@ -424,8 +478,8 @@ void drawDailyDashboard()
     gLabelIndex = 0;
     gRowPos = 5;
     // tab
-    createLabel("_______", DETAIL_COL1, gRowPos, true);
-    createLabel(" Daily ", DETAIL_COL1, gRowPos, true);
+    createLabel(" _____", DETAIL_COL1, gRowPos, true);
+    createLabel(" Daily", DETAIL_COL1, gRowPos, true);
     createLabel("[Weekly]", 70, gRowPos, true);
     createLabel(BTN_RELOAD, DETAIL_COL6, gRowPos);
     gRowPos = 25;
