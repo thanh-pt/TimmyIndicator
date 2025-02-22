@@ -24,14 +24,25 @@ enum eAdjust
     E_FIXTP, // Fixed TP
 };
 
+enum eFillType
+{
+    BY_PIP,         // Defined Pip
+    BY_ADD_SPACE,   // Add Space Only (SL)
+    BY_FIXED_RRR,   // Fixed RRR (TP)
+};
+
 input string    Trd_; // ●  T R A D E  ●
 //-------------------------------------------------
 input bool      Trd_TrackTrade    = false;   // Track Trade
 input double    Trd_Cost          = 1.5;     // Cost ($)
 input double    Trd_Comm          = 7;       // Commission ($)
 input double    Trd_Spread        = 0.0;     // Spread (point)
-input double    Trd_SlSpace       = 2.0;     // Space for SL (point)
+input eFillType Trd_FillSlType    = BY_ADD_SPACE;  // Fill SL Type:
+input double    Trd_FillSlOpt     = 2.0;     // Fill SL Opt (pt):
+input eFillType Trd_FillTpType    = BY_FIXED_RRR;  // Fill TP Type:
+input double    Trd_FillTpOpt     = 2.0;     // Fill TP Opt (pt):
 input double    Trd_LotSize       = 0;       // LotSize (0=default)
+input bool      Trd_FunctionLine  = false;   // Function Line
 //-------------------------------------------------
 
 eDisplay    Trd_ShowStats   = OPTION;   //Show Stats
@@ -53,7 +64,8 @@ class Trade : public BaseItem
 // Internal Value
 private:
     double mCost;
-    double mStlSpace;
+    double mFillSlPip;
+    double mFillTpPip;
     double mSpread;
     double mComPoint;
     bool   mUserActive;
@@ -159,9 +171,10 @@ Trade::Trade(CommonData* commonData, MouseInfo* mouseInfo)
     mCost     = Trd_Cost;
     if (Trd_LotSize != 0) gdLotSize = Trd_LotSize;
     if (gdLotSize == 0) gdLotSize = 100000;
-    mSpread   = Trd_Spread  / gdLotSize;
-    mStlSpace = Trd_SlSpace / gdLotSize;
-    mComPoint = Trd_Comm    / gdLotSize;
+    mSpread     = Trd_Spread    / gdLotSize;
+    mFillSlPip  = Trd_FillSlOpt / gdLotSize;
+    mFillTpPip  = Trd_FillTpOpt / gdLotSize;
+    mComPoint   = Trd_Comm      / gdLotSize;
 
     
     ObjectCreate(TAG_STATIC + "Cost" , OBJ_ARROW, 0, 0, 0);
@@ -190,7 +203,6 @@ void Trade::createItem()
 {
     ObjectCreate(iBgTP , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(iLnTp , OBJ_TREND     , 0, 0, 0);
-    ObjectCreate(iLnBe , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(iLnEn , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(iLnSl , OBJ_TREND     , 0, 0, 0);
     ObjectCreate(iLnSp , OBJ_TREND     , 0, 0, 0);
@@ -199,13 +211,16 @@ void Trade::createItem()
     ObjectCreate(iTxT1 , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iTxEn , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(iTxS1 , OBJ_TEXT      , 0, 0, 0);
-    ObjectCreate(iTxBe , OBJ_TEXT      , 0, 0, 0);
     ObjectCreate(cBgSl , OBJ_RECTANGLE , 0, 0, 0);
     ObjectCreate(cPtTP , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPtSL , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPtEN , OBJ_ARROW     , 0, 0, 0);
     ObjectCreate(cPtWD , OBJ_ARROW     , 0, 0, 0);
-    ObjectCreate(cPtBE , OBJ_ARROW     , 0, 0, 0);
+    if (Trd_FunctionLine) {
+        ObjectCreate(iLnBe , OBJ_TREND     , 0, 0, 0);
+        ObjectCreate(iTxBe , OBJ_TEXT      , 0, 0, 0);
+        ObjectCreate(cPtBE , OBJ_ARROW     , 0, 0, 0);
+    }
 
     updateTypeProperty();
     updateDefaultProperty();
@@ -598,21 +613,36 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
     // Auto adjust FillRR
     else if (gContextMenu.mActiveItemStr == CTX_FILLTP) {
         onItemDrag(itemId, objId);
-        if (priceTP > priceSL) {
-            priceTP = priceEN + 150/gdLotSize+mComPoint;
+        if (Trd_FillTpType == BY_PIP) {
+            if (priceTP > priceSL) {
+                priceTP = priceEN + 150/gdLotSize+mComPoint;
+            }
+            else {
+                priceTP = priceEN - 150/gdLotSize-mComPoint;
+            }
         }
-        else {
-            priceTP = priceEN - 150/gdLotSize-mComPoint;
+        else if (Trd_FillTpType == BY_FIXED_RRR){
+            adjustRR(Trd_FillTpOpt, E_FIXEN);
         }
         refreshData();
     }
     else if (gContextMenu.mActiveItemStr == CTX_FILLSL) {
         onItemDrag(itemId, objId);
-        if (priceTP > priceSL) {
-            priceSL = priceEN - 150/gdLotSize + mComPoint;
+        if (Trd_FillSlType == BY_PIP) {
+            if (priceTP > priceSL) {
+                priceSL = priceEN - mFillSlPip + mComPoint;
+            }
+            else {
+                priceSL = priceEN + mFillSlPip - mComPoint;
+            }
         }
-        else {
-            priceSL = priceEN + 150/gdLotSize - mComPoint;
+        else if (Trd_FillSlType == BY_ADD_SPACE){
+            if (priceTP > priceSL) {
+                priceSL -= mFillSlPip;
+            }
+            else {
+                priceSL += mFillSlPip + mSpread;
+            }
         }
         refreshData();
     }
