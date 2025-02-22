@@ -9,7 +9,8 @@
 #define APP_TAG "*WorldClock"
 
 input string InpLable = "";//Lable (ex:London):
-input int InpTimeZone = 0; //Time Zone:
+input int  InpTimeZone = 0; //Time Zone:
+input bool InpIsOffline = false; //Is Offline:
 
 string gObjWorldClock = APP_TAG + StringTrimRight(InpLable);
 
@@ -54,7 +55,12 @@ int OnCalculate(const int rates_total,
 //+------------------------------------------------------------------+
 void OnTimer()
 {
-    ObjectSetText(gObjWorldClock, InpLable+TimeToString(TimeGMT()+InpTimeZone*3600, TIME_SECONDS));
+    if (InpIsOffline) {
+        ObjectSetText(gObjWorldClock, InpLable+TimeToString(Time[0]+InpTimeZone*3600, TIME_SECONDS));
+    }
+    else {
+        ObjectSetText(gObjWorldClock, InpLable+TimeToString(TimeGMT()+InpTimeZone*3600, TIME_SECONDS));
+    }
 }
 //+------------------------------------------------------------------+
 void OnChartEvent(const int id,
