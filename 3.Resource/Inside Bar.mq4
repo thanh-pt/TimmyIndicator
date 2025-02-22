@@ -8,7 +8,7 @@
 #property indicator_buffers 6
 #property indicator_plots   6
 
-#resource           "kofi-donation.bmp"
+#resource           "icons/kofi-donation.bmp"
 class Donation{
     string donateLabelObj;
 public:
