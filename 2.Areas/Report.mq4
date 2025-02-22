@@ -9,17 +9,19 @@
 #define MAXTRADE 1000
 #define TXT_SPACE_BLOCK "                    "
 
-#define DETAIL_COL1 10 
-#define DETAIL_COL2 50 
-#define DETAIL_COL3 110 
-#define DETAIL_COL4 150
-#define DETAIL_COL5 190
-#define DETAIL_COL6 260
-#define DETAIL_COL7 330
-
 #define WEEKLY_COL1 10
 #define WEEKLY_COL2 30
-#define WEEKLY_CWD  70
+#define WEEKLY_COLW 70
+
+#define DAILY_COLW 70
+#define DAILY_COL1 10
+#define DAILY_COL2 60+DAILY_COLW*0
+#define DAILY_COL3 60+DAILY_COLW*1
+#define DAILY_COL4 60+DAILY_COLW*2
+#define DAILY_COL5 60+DAILY_COLW*3
+#define DAILY_COL6 60+DAILY_COLW*4
+#define DAILY_COL7 60+DAILY_COLW*5
+
 
 #define BTN_START       "[StartReview]"
 #define BTN_PnLON       " [PnL on]"
@@ -405,7 +407,7 @@ void initDashboard()
 
     // init function
     gLabelIndex = 0;
-    createLabel(BTN_START, DETAIL_COL1, 5);
+    createLabel(BTN_START, DAILY_COL1, 5);
     hideItem(gLabelIndex, "Label");
 }
 
@@ -414,20 +416,20 @@ void drawWeeklyDashboard()
     gLabelIndex = 0;
     gRowPos = 5;
     // tab
-    createLabel("[Daily]", DETAIL_COL1, gRowPos);
+    createLabel("[Daily]", WEEKLY_COL1, gRowPos);
     createLabel(" ______", 70, gRowPos);
     createLabel(" Weekly", 70, gRowPos);
-    createLabel(BTN_RELOAD, WEEKLY_COL2 + WEEKLY_CWD*5, gRowPos);
+    createLabel(BTN_RELOAD, WEEKLY_COL2 + WEEKLY_COLW*5, gRowPos);
     gRowPos = 25;
     // header
-    createLabel("No."      , DETAIL_COL1, gRowPos);
-    createLabel("       T2", WEEKLY_COL2 + WEEKLY_CWD*0, gRowPos);
-    createLabel("       T3", WEEKLY_COL2 + WEEKLY_CWD*1, gRowPos);
-    createLabel("       T4", WEEKLY_COL2 + WEEKLY_CWD*2, gRowPos);
-    createLabel("       T5", WEEKLY_COL2 + WEEKLY_CWD*3, gRowPos);
-    createLabel("       T6", WEEKLY_COL2 + WEEKLY_CWD*4, gRowPos);
-    createLabel("      P/L", WEEKLY_COL2 + WEEKLY_CWD*5, gRowPos);
-    nextRow(); separateRow2();
+    createLabel("No."      , WEEKLY_COL1                , gRowPos);
+    createLabel("       T2", WEEKLY_COL2 + WEEKLY_COLW*0, gRowPos);
+    createLabel("       T3", WEEKLY_COL2 + WEEKLY_COLW*1, gRowPos);
+    createLabel("       T4", WEEKLY_COL2 + WEEKLY_COLW*2, gRowPos);
+    createLabel("       T5", WEEKLY_COL2 + WEEKLY_COLW*3, gRowPos);
+    createLabel("       T6", WEEKLY_COL2 + WEEKLY_COLW*4, gRowPos);
+    createLabel("      P/L", WEEKLY_COL2 + WEEKLY_COLW*5, gRowPos);
+    nextRow(); weeklySeparateRow();
 
     // table
     int i = 0, wknum, preWkNum=-1;
@@ -441,13 +443,13 @@ void drawWeeklyDashboard()
         wknum = WeeknumOfYear(orderCloseTime);
         // Print and reset data:
         if (strPreDate != currentDate && strPreDate != "") {
-            createLabel(fixedText(DoubleToString(dPnl,2), 9), WEEKLY_COL2 + WEEKLY_CWD*(TimeDayOfWeek(dtPreDate)-1), gRowPos);
+            createLabel(fixedText(DoubleToString(dPnl,2), 9), WEEKLY_COL2 + WEEKLY_COLW*(TimeDayOfWeek(dtPreDate)-1), gRowPos);
             wPnl += dPnl;
             dPnl = 0;
             if (wknum != preWkNum) {
                 createLabel(IntegerToString(preWkNum), WEEKLY_COL1, gRowPos);
-                createLabel(fixedText(DoubleToString(wPnl,2), 9), WEEKLY_COL2 + WEEKLY_CWD*5, gRowPos);
-                nextRow(); separateRow2();
+                createLabel(fixedText(DoubleToString(wPnl,2), 9), WEEKLY_COL2 + WEEKLY_COLW*5, gRowPos);
+                nextRow(); weeklySeparateRow();
                 sPnl += wPnl;
                 wPnl = 0;
             }
@@ -461,11 +463,11 @@ void drawWeeklyDashboard()
     if (strPreDate != ""){
         wPnl += dPnl;
         sPnl += wPnl;
-        createLabel(fixedText(DoubleToString(dPnl,2), 9), WEEKLY_COL2 + WEEKLY_CWD*(TimeDayOfWeek(dtPreDate)-1), gRowPos);
+        createLabel(fixedText(DoubleToString(dPnl,2), 9), WEEKLY_COL2 + WEEKLY_COLW*(TimeDayOfWeek(dtPreDate)-1), gRowPos);
         createLabel(IntegerToString(preWkNum), WEEKLY_COL1, gRowPos);
-        createLabel(fixedText(DoubleToString(wPnl,2), 9), WEEKLY_COL2 + WEEKLY_CWD*5, gRowPos);
-        nextRow(); separateRow2();
-        createLabel(fixedText(DoubleToString(sPnl,2), 9), WEEKLY_COL2 + WEEKLY_CWD*5, gRowPos);
+        createLabel(fixedText(DoubleToString(wPnl,2), 9), WEEKLY_COL2 + WEEKLY_COLW*5, gRowPos);
+        nextRow(); weeklySeparateRow();
+        createLabel(fixedText(DoubleToString(sPnl,2), 9), WEEKLY_COL2 + WEEKLY_COLW*5, gRowPos);
     }
     
     hideItem(gLabelIndex, "Label");
@@ -476,20 +478,20 @@ void drawDailyDashboard()
     gLabelIndex = 0;
     gRowPos = 5;
     // tab
-    createLabel(" _____", DETAIL_COL1, gRowPos, true);
-    createLabel(" Daily", DETAIL_COL1, gRowPos, true);
+    createLabel(" _____", DAILY_COL1, gRowPos, true);
+    createLabel(" Daily", DAILY_COL1, gRowPos, true);
     createLabel("[Weekly]", 70, gRowPos, true);
-    createLabel(BTN_RELOAD, DETAIL_COL6, gRowPos);
+    createLabel(BTN_RELOAD, DAILY_COL6, gRowPos);
     gRowPos = 25;
 
     string curPage = ObjectDescription(objCurPage);
     // header
-    createLabel("No."      , DETAIL_COL1, gRowPos, true);
-    createLabel(curPage    , DETAIL_COL2, gRowPos); // createLabel("Time"     , DETAIL_COL2, gRowPos, true);
-    createLabel("Type"     , DETAIL_COL3, gRowPos, true);
-    createLabel("Size"     , DETAIL_COL4, gRowPos, true);
-    createLabel(gPnlOn ? BTN_PnLON : BTN_PnLOFF, DETAIL_COL5, gRowPos, true);
-    nextRow(); separateRow();
+    createLabel("No."      , DAILY_COL1, gRowPos, true);
+    createLabel(curPage    , DAILY_COL2, gRowPos); // createLabel("Time"     , DAILY_COL2, gRowPos, true);
+    createLabel("Type"     , DAILY_COL3, gRowPos, true);
+    createLabel("Size"     , DAILY_COL4, gRowPos, true);
+    createLabel(gPnlOn ? BTN_PnLON : BTN_PnLOFF, DAILY_COL5, gRowPos, true);
+    nextRow(); dailySeparateRow();
     // table
     string currentDate, objName;
     string prePage = curPage;
@@ -509,38 +511,38 @@ void drawDailyDashboard()
         }
         num++;
 
-        createLabel(IntegerToString(num)                    , DETAIL_COL1, gRowPos);
-        createLabel(TimeToStr(orderCloseTime, TIME_MINUTES) , DETAIL_COL2, gRowPos);
-        createLabel(orderType == OP_BUY ? " buy" : "sell"   , DETAIL_COL3, gRowPos);
-        createLabel(DoubleToString(orderLots,2)             , DETAIL_COL4, gRowPos);
+        createLabel(IntegerToString(num)                    , DAILY_COL1, gRowPos);
+        createLabel(TimeToStr(orderCloseTime, TIME_MINUTES) , DAILY_COL2, gRowPos);
+        createLabel(orderType == OP_BUY ? " buy" : "sell"   , DAILY_COL3, gRowPos);
+        createLabel(DoubleToString(orderLots,2)             , DAILY_COL4, gRowPos);
         if (gPnlOn) {
-            createLabel(fixedText(DoubleToString(orderProfit,2), 7), DETAIL_COL5, gRowPos);
+            createLabel(fixedText(DoubleToString(orderProfit,2), 7), DAILY_COL5, gRowPos);
             sPnl += orderProfit;
         }
-        else createLabel("    ***", DETAIL_COL5, gRowPos);
+        else createLabel("    ***", DAILY_COL5, gRowPos);
         
         objName = APP_TAG + "TradeEN" + IntegerToString(i);
         if (ObjectGet(objName, OBJPROP_PRICE1) == 0) {
-            createLabel(BTN_TRDOPEN , DETAIL_COL6   , gRowPos);
-            createLabel(BTN_TRDCLOSE, DETAIL_COL6+25, gRowPos);
+            createLabel(BTN_TRDOPEN , DAILY_COL6   , gRowPos);
+            createLabel(BTN_TRDCLOSE, DAILY_COL6+25, gRowPos);
         }
         else {
-            createLabel(BTN_TRDHIDE , DETAIL_COL6   , gRowPos);
+            createLabel(BTN_TRDHIDE , DAILY_COL6   , gRowPos);
             objName = APP_TAG + "TradeSL" + IntegerToString(i);
-            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , DETAIL_COL6+25, gRowPos);
-            else createLabel(orderResult, DETAIL_COL6+25, gRowPos);
+            if (ObjectGet(objName, OBJPROP_PRICE1) == 0) createLabel(BTN_TRDCLOSE  , DAILY_COL6+25, gRowPos);
+            else createLabel(orderResult, DAILY_COL6+25, gRowPos);
         }
         createLabel(IntegerToString(i)  , 0, -20);
         nextRow();
         i++;
     }
-    separateRow();
-    if (gPnlOn) createLabel(fixedText(DoubleToString(sPnl,2), 7), DETAIL_COL5, gRowPos);
-    else createLabel("    ***", DETAIL_COL5, gRowPos);
+    dailySeparateRow();
+    if (gPnlOn) createLabel(fixedText(DoubleToString(sPnl,2), 7), DAILY_COL5, gRowPos);
+    else createLabel("    ***", DAILY_COL5, gRowPos);
     // function
     gRowPos = 25;
-    if (prePage != curPage) createLabel("[<]", DETAIL_COL2-20, gRowPos);
-    if (curPage != nexPage) createLabel("[>]", DETAIL_COL2+35, gRowPos);
+    if (prePage != curPage) createLabel("[<]", DAILY_COL6, gRowPos);
+    if (curPage != nexPage) createLabel("[>]", DAILY_COL6+35, gRowPos);
     
     ObjectSetText(objCurPage, curPage);
     ObjectSetText(objPrePage, prePage);
@@ -665,12 +667,12 @@ int getLabelIndex(string objIdLabel)
 void nextRow() {
     gRowPos += 15;
 }
-void separateRow() {
-    createLabel("-------------------------------------------", DETAIL_COL1, gRowPos, true);
+void dailySeparateRow() {
+    createLabel("-------------------------------------------------------", DAILY_COL1, gRowPos, true);
     gRowPos += 15;
 }
-void separateRow2() {
-    createLabel("--------------------------------------------------------------", DETAIL_COL1, gRowPos, true);
+void weeklySeparateRow() {
+    createLabel("--------------------------------------------------------------", DAILY_COL1, gRowPos, true);
     gRowPos += 15;
 }
 string fixedText(string str, int size) {
