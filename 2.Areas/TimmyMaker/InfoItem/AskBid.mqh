@@ -67,6 +67,7 @@ public:
     void onTick(){
         mClock = (int)(Time[0] + Period()*60 - CurTime());
         loadTimer();
+        updateLocation();
     }
     // Not implement yet:
     void onTimer(){

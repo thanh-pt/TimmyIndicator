@@ -24,7 +24,7 @@
 
 
 #define BTN_START       "[StartReview]"
-#define BTN_PnLON       " [PnL on]"
+#define BTN_PnLON       "[PnL  on]"
 #define BTN_PnLOFF      "[PnL off]"
 #define BTN_TRDOPEN     "[➕]"
 #define BTN_TRDCLOSE    "[✔]"
