@@ -231,14 +231,15 @@ void Trade::initData()
     priceEN = pCommonData.mMousePrice;
     static int wd = 0;
     ChartXYToTimePrice(0, (int)pCommonData.mMouseX+100, (int)pCommonData.mMouseY+(mIndexType == LONG_IDX ? 50:-50), wd,  time2, priceSL);
-    if (mIndexType == LONG_IDX) {
-        priceSL = priceEN - (150 - Trd_Comm) / gdLotSize;
-        priceTP = priceEN + (150 + Trd_Comm) / gdLotSize;
-    }
-    else {
-        priceSL = priceEN + (150 - Trd_Comm) / gdLotSize;
-        priceTP = priceEN - (150 + Trd_Comm) / gdLotSize;
-    }
+    adjustRR(1, E_FIXEN);
+    // if (mIndexType == LONG_IDX) {
+    //     priceSL = priceEN - (150 - Trd_Comm) / gdLotSize;
+    //     priceTP = priceEN + (150 + Trd_Comm) / gdLotSize;
+    // }
+    // else {
+    //     priceSL = priceEN + (150 - Trd_Comm) / gdLotSize;
+    //     priceTP = priceEN - (150 + Trd_Comm) / gdLotSize;
+    // }
     priceBE = (priceEN + priceTP)/2;
 }
 void Trade::updateDefaultProperty()
@@ -598,6 +599,7 @@ void Trade::showHistory(bool isShow)
     }
 }
 
+#define REVERT_ENGINE
 void Trade::onUserRequest(const string &itemId, const string &objId)
 {
     // Add Live Trade
@@ -605,10 +607,15 @@ void Trade::onUserRequest(const string &itemId, const string &objId)
         priceEN   = NormalizeDouble(priceEN, Digits);
         priceSL   = NormalizeDouble(priceSL, Digits);
         priceTP   = NormalizeDouble(priceTP, Digits);
-        
+#ifndef REVERT_ENGINE
         ObjectSet("sim#3d_visual_sl", OBJPROP_PRICE1, priceSL);
         ObjectSet("sim#3d_visual_ap", OBJPROP_PRICE1, priceEN);
         ObjectSet("sim#3d_visual_tp", OBJPROP_PRICE1, priceTP);
+#else
+        ObjectSet("sim#3d_visual_sl", OBJPROP_PRICE1, priceTP);
+        ObjectSet("sim#3d_visual_ap", OBJPROP_PRICE1, priceEN);
+        ObjectSet("sim#3d_visual_tp", OBJPROP_PRICE1, priceSL);
+#endif
     }
     // Auto adjust FillRR
     else if (gContextMenu.mActiveItemStr == CTX_FILLTP) {

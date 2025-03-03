@@ -102,7 +102,7 @@ int Controller::findItemIdByKey(const int key)
     if (key == 'C') return eCALLOUT   ;
     if (key == 'G') return eLABEL     ;
     if (key == 'S') return ePOINT     ;
-    if (key == 'X') return eALERT     ;
+    if (key == 'A') return eALERT     ;
     if (key == 'W') return eTRADE     ;
     return eNONE;
 }
@@ -185,7 +185,7 @@ void Controller::handleEvent(const long &key)
         setScaleChart(true);
         break;
     case 'L':
-        ((Trade*)mListItem[eTRADE]).restoreBacktestingTrade();
+        // ((Trade*)mListItem[eTRADE]).restoreBacktestingTrade();
         break;
     default:
         bFunctionKey = false;
