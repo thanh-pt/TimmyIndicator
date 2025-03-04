@@ -97,16 +97,17 @@ void OnChartEvent(const int id,
         ObjectSetDouble(0,  gStrDay + "-LdL", OBJPROP_PRICE, 1, lo);
         ObjectSetInteger(0, gStrDay + "-LdL", OBJPROP_TIME, 0, gLdOpenTime);
         ObjectSetInteger(0, gStrDay + "-LdL", OBJPROP_TIME, 1, gLdCloseTime);
-        ObjectCreate(0,     gStrDay + "-EOD", OBJ_TREND, 0, 0, 0);
+        ObjectCreate(0,     gStrDay + "-EOD", OBJ_VLINE, 0, 0, 0);
         ObjectSetInteger(0, gStrDay + "-EOD", OBJPROP_RAY_RIGHT, true);
         ObjectSetInteger(0, gStrDay + "-EOD", OBJPROP_RAY_LEFT, true);
         ObjectSetInteger(0, gStrDay + "-EOD", OBJPROP_BACK, true);
-        ObjectSetInteger(0, gStrDay + "-EOD", OBJPROP_COLOR, clrGray);
+        ObjectSetInteger(0, gStrDay + "-EOD", OBJPROP_COLOR, clrRed);
         ObjectSetInteger(0, gStrDay + "-EOD", OBJPROP_STYLE, STYLE_DOT);
         ObjectSetDouble(0,  gStrDay + "-EOD", OBJPROP_PRICE, 0, hi);
         ObjectSetDouble(0,  gStrDay + "-EOD", OBJPROP_PRICE, 1, lo);
         ObjectSetInteger(0, gStrDay + "-EOD", OBJPROP_TIME, 0, gLdEodTime);
         ObjectSetInteger(0, gStrDay + "-EOD", OBJPROP_TIME, 1, gLdEodTime);
+        ObjectSetString(0,  gStrDay + "-EOD", OBJPROP_TEXT, "EOD");
     }
 
 }
