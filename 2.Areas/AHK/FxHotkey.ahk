@@ -23,25 +23,27 @@ Menu, Tray, Icon, FxHotkey.ico
 #If WinActive("ahk_class MetaQuotes::MetaTrader::4.00") or WinActive("ahk_class AfxFrameOrView140s")
 ; #IfWinActive, ahk_exe terminal.exe
 	XButton1::End
+	XButton2::Esc
 	^WheelUp::Send, {+}
 	^WheelDown::Send, {-}
 	+WheelUp::Send, {,}
 	+WheelDown::Send, {.}
+	^XButton1::Send, {/}
 ;==== Timmy Maker Compatible
-	^XButton1::
-		Send, J ;Chart Force
-		sleep, 100
-		Send, H ;Chart Free
-	return
-	XButton2::
-		Send, {Esc}
-		Send, H ;Chart Free
-	return
-	^MButton::
-		Send, J ;Chart Force
-		Send, H ;Chart Free
-	return
-	+Q::Send, P
+	; ^XButton1::
+	; 	Send, J ;Chart Force
+	; 	sleep, 100
+	; 	Send, H ;Chart Free
+	; return
+	; XButton2::
+	; 	Send, {Esc}
+	; 	Send, H ;Chart Free
+	; return
+	; ^MButton::
+	; 	Send, J ;Chart Force
+	; 	Send, H ;Chart Free
+	; return
+	; +Q::Send, P
 
 ;==== Disable [Backspace] -> Khắc phục lỗi xung đột với Unikey
 	BackSpace::

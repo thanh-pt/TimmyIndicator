@@ -10,6 +10,8 @@ input ENUM_TIMEFRAMES InpTimeFrame  = PERIOD_D1;
 input color           InpColorUp    = LightSteelBlue;
 input color           InpColorDn    = LightCoral;
 
+bool gIndiOn = true;
+
 int OnCalculate(const int rates_total,
                 const int prev_calculated,
                 const datetime &time[],
@@ -42,6 +44,13 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
+    if (id == CHARTEVENT_KEYDOWN && lparam == 'D') gIndiOn = !gIndiOn;
+    if (InpTimeFrame <= _Period || gIndiOn == false) {
+        gCandleIdx = 0;
+        gPreDate = "";
+        hideUnusedCandle();
+        return;
+    }
     // Update Death Candles
     int fstVisibleBar   = (int)ChartGetInteger(0, CHART_FIRST_VISIBLE_BAR);
     int lstVisibleBar   = fstVisibleBar - (int)ChartGetInteger(0, CHART_VISIBLE_BARS);
@@ -65,8 +74,8 @@ void OnChartEvent(const int id,
                 Lo = iLow(_Symbol, InpTimeFrame, barIdx);
                 Op = iOpen(_Symbol, InpTimeFrame, barIdx);
                 Cl = iClose(_Symbol, InpTimeFrame, barIdx);
-                dtOp = (iTime(_Symbol, InpTimeFrame, barIdx) + PeriodSeconds(_Period));
-                dtCl = (dtOp + PeriodSeconds(InpTimeFrame) - 2*PeriodSeconds(_Period));
+                dtOp = iTime(_Symbol, InpTimeFrame, barIdx);
+                dtCl = dtOp + PeriodSeconds(InpTimeFrame);
                 drawingCandle(Hi, Lo, Op, Cl, dtOp, dtCl);
             }
             dt += PeriodSeconds(InpTimeFrame);
@@ -129,6 +138,15 @@ void hideUnusedCandle ()
 void updateLiveCandle(double hi, double lo, double op, double cl, datetime dtOp, datetime dtCl)
 {
     string candleTag = APP_TAG + "Live";
+    if (InpTimeFrame <= _Period || gIndiOn == false) {
+        ObjectSetDouble(0,  candleTag + "-Body", OBJPROP_PRICE, 0, 0);
+        ObjectSetDouble(0,  candleTag + "-Wick1", OBJPROP_PRICE, 0, 0);
+        ObjectSetDouble(0,  candleTag + "-Wick2", OBJPROP_PRICE, 0, 0);
+        ObjectSetDouble(0,  candleTag + "-Body", OBJPROP_PRICE, 1, 0);
+        ObjectSetDouble(0,  candleTag + "-Wick1", OBJPROP_PRICE, 1, 0);
+        ObjectSetDouble(0,  candleTag + "-Wick2", OBJPROP_PRICE, 1, 0);
+        return;
+    }
     datetime wichTime = (dtOp+dtCl)/2;
     ObjectCreate(0,     candleTag + "-Body", OBJ_RECTANGLE, 0, 0, 0);
     ObjectSetInteger(0, candleTag + "-Body", OBJPROP_BACK, true);
