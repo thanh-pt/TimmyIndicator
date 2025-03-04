@@ -98,6 +98,7 @@ public:
     }
     
     void updateLocation(){
+        if (Time[0] == NULL) return;
         ChartTimePriceToXY(0, 0, Time[0], Bid, mPosX, mPosY);
         ObjectSet(mObjCDBkgnd, OBJPROP_YDISTANCE, mPosY);
         ObjectSet(mObjCDTimer, OBJPROP_YDISTANCE, mPosY);
