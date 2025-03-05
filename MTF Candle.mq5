@@ -4,11 +4,18 @@
 #property indicator_chart_window
 #property indicator_plots 0
 
-#define APP_TAG "*MTF Candles"
+#define APP_TAG "Static*MTF Candles"
 
+enum eCandleType{
+    eBackground,    // Background
+    eBorder,        // Boder
+};
+
+// input eCandleType     InpCandleType = eBackground; // TODO
 input ENUM_TIMEFRAMES InpTimeFrame  = PERIOD_D1;
-input color           InpColorUp    = LightSteelBlue;
-input color           InpColorDn    = LightCoral;
+input color           InpColorUp    = Gainsboro;
+input color           InpColorDn    = Thistle;
+input string          InpHotkey     = "D";
 
 bool gIndiOn = true;
 
@@ -44,7 +51,7 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
-    if (id == CHARTEVENT_KEYDOWN && lparam == 'D') gIndiOn = !gIndiOn;
+    if (id == CHARTEVENT_KEYDOWN && lparam == InpHotkey[0]) gIndiOn = !gIndiOn;
     if (InpTimeFrame <= _Period || gIndiOn == false) {
         gCandleIdx = 0;
         gPreDate = "";
@@ -102,7 +109,7 @@ void drawingCandle(double hi, double lo, double op, double cl, datetime dtOp, da
     ObjectCreate(0,     candleTag + "-Wick1", OBJ_TREND, 0, 0, 0);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_BACK, true);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_RAY, false);
-    ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_WIDTH, 2);
+    ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_WIDTH, 3);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_COLOR, op>cl ? InpColorDn : InpColorUp);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_TIME, 0, wichTime);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_TIME, 1, wichTime);
@@ -112,7 +119,7 @@ void drawingCandle(double hi, double lo, double op, double cl, datetime dtOp, da
     ObjectCreate(0,     candleTag + "-Wick2", OBJ_TREND, 0, 0, 0);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_BACK, true);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_RAY, false);
-    ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_WIDTH, 2);
+    ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_WIDTH, 3);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_COLOR, op>cl ? InpColorDn : InpColorUp);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_TIME, 0, wichTime);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_TIME, 1, wichTime);
@@ -160,7 +167,7 @@ void updateLiveCandle(double hi, double lo, double op, double cl, datetime dtOp,
     ObjectCreate(0,     candleTag + "-Wick1", OBJ_TREND, 0, 0, 0);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_BACK, true);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_RAY, false);
-    ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_WIDTH, 2);
+    ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_WIDTH, 3);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_COLOR, op>cl ? InpColorDn : InpColorUp);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_TIME, 0, wichTime);
     ObjectSetInteger(0, candleTag + "-Wick1", OBJPROP_TIME, 1, wichTime);
@@ -170,7 +177,7 @@ void updateLiveCandle(double hi, double lo, double op, double cl, datetime dtOp,
     ObjectCreate(0,     candleTag + "-Wick2", OBJ_TREND, 0, 0, 0);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_BACK, true);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_RAY, false);
-    ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_WIDTH, 2);
+    ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_WIDTH, 3);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_COLOR, op>cl ? InpColorDn : InpColorUp);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_TIME, 0, wichTime);
     ObjectSetInteger(0, candleTag + "-Wick2", OBJPROP_TIME, 1, wichTime);
