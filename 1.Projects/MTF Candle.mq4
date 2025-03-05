@@ -18,6 +18,9 @@ input color           InpColorDn    = Thistle;
 input string          InpHotkey     = "D";
 
 bool gIndiOn = true;
+double gLiveHi, gLiveLo, gLiveOp, gLiveCl;
+datetime gLivedtOp;
+datetime gLivedtCl;
 
 int OnCalculate(const int rates_total,
                 const int prev_calculated,
@@ -31,16 +34,13 @@ int OnCalculate(const int rates_total,
                 const int& spread[])
 {
     // Update live candle
-    double Hi, Lo, Op, Cl;
-    datetime dtOp;
-    datetime dtCl;
-    Hi = iHigh(_Symbol, InpTimeFrame, 0);
-    Lo = iLow(_Symbol, InpTimeFrame, 0);
-    Op = iOpen(_Symbol, InpTimeFrame, 0);
-    Cl = iClose(_Symbol, InpTimeFrame, 0);
-    dtOp = (iTime(_Symbol, InpTimeFrame, 0) + PeriodSeconds(_Period));
-    dtCl = (dtOp + PeriodSeconds(InpTimeFrame) - 2*PeriodSeconds(_Period));
-    updateLiveCandle(Hi, Lo, Op, Cl, dtOp, dtCl);
+    gLiveHi = iHigh(_Symbol, InpTimeFrame, 0);
+    gLiveLo = iLow(_Symbol, InpTimeFrame, 0);
+    gLiveOp = iOpen(_Symbol, InpTimeFrame, 0);
+    gLiveCl = iClose(_Symbol, InpTimeFrame, 0);
+    gLivedtOp = iTime(_Symbol, InpTimeFrame, 0);
+    gLivedtCl = gLivedtOp + PeriodSeconds(InpTimeFrame);
+    updateLiveCandle(gLiveHi, gLiveLo, gLiveOp, gLiveCl, gLivedtOp, gLivedtCl);
     return rates_total;
 }
 
@@ -51,7 +51,10 @@ void OnChartEvent(const int id,
                   const double &dparam,
                   const string &sparam)
 {
-    if (id == CHARTEVENT_KEYDOWN && lparam == InpHotkey[0]) gIndiOn = !gIndiOn;
+    if (id == CHARTEVENT_KEYDOWN && lparam == InpHotkey[0]) {
+        gIndiOn = !gIndiOn;
+        updateLiveCandle(gLiveHi, gLiveLo, gLiveOp, gLiveCl, gLivedtOp, gLivedtCl);
+    }
     if (InpTimeFrame <= _Period || gIndiOn == false) {
         gCandleIdx = 0;
         gPreDate = "";
