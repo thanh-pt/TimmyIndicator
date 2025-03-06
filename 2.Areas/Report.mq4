@@ -371,9 +371,9 @@ void getData()
                 data += DoubleToString(OrderProfit()+OrderCommission(), 2)          + ";";
                 setDataTo(tradeIdx++, data);
                 if (firstDay == "") {
-                    firstDay = StringSubstr(TimeToStr(OrderCloseTime(), TIME_DATE), 5);
+                    firstDay = StringSubstr(TimeToStr(OrderOpenTime(), TIME_DATE), 5);
                 } else if (secondDay == "") {
-                    secondDay = StringSubstr(TimeToStr(OrderCloseTime(), TIME_DATE), 5);
+                    secondDay = StringSubstr(TimeToStr(OrderOpenTime(), TIME_DATE), 5);
                 }
             }
         }
@@ -393,7 +393,7 @@ string objNexPage   = APP_TAG   + "NexPage";
 int gRowPos = 0;
 void initDashboard()
 {
-    gStrDbSetting = "tab1";
+    gStrDbSetting = "tab2";
     //
     ObjectCreate(objDbSetting, OBJ_TEXT, gWinId, 0, 0);
 
@@ -417,8 +417,8 @@ void drawWeeklyDashboard()
     gRowPos = 5;
     // tab
     createLabel("[Daily]", WEEKLY_COL1, gRowPos);
-    createLabel(" ______", 70, gRowPos);
     createLabel(" Weekly", 70, gRowPos);
+    createLabel(" ______", 70, gRowPos);
     createLabel(BTN_RELOAD, WEEKLY_COL2 + WEEKLY_COLW*5, gRowPos);
     gRowPos = 25;
     // header
@@ -437,10 +437,10 @@ void drawWeeklyDashboard()
     double dPnl = 0;
     double sPnl = 0;
     string currentDate, strPreDate = "";
-    datetime dtPreDate = orderCloseTime;
+    datetime dtPreDate = orderOpenTime;
     while (getDataFrom(i) == true) {
-        currentDate = StringSubstr(TimeToStr(orderCloseTime, TIME_DATE), 5);
-        wknum = WeeknumOfYear(orderCloseTime);
+        currentDate = StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
+        wknum = WeeknumOfYear(orderOpenTime);
         // Print and reset data:
         if (strPreDate != currentDate && strPreDate != "") {
             createLabel(fixedText(DoubleToString(dPnl,2), 9), WEEKLY_COL2 + WEEKLY_COLW*(TimeDayOfWeek(dtPreDate)-1), gRowPos);
@@ -457,7 +457,7 @@ void drawWeeklyDashboard()
         dPnl += orderProfit;
         preWkNum = wknum;
         strPreDate = currentDate;
-        dtPreDate = orderCloseTime;
+        dtPreDate = orderOpenTime;
         i++;
     }
     if (strPreDate != ""){
@@ -478,8 +478,8 @@ void drawDailyDashboard()
     gLabelIndex = 0;
     gRowPos = 5;
     // tab
-    createLabel(" _____", DAILY_COL1, gRowPos, true);
     createLabel(" Daily", DAILY_COL1, gRowPos, true);
+    createLabel(" _____", DAILY_COL1, gRowPos, true);
     createLabel("[Weekly]", 70, gRowPos, true);
     createLabel(BTN_RELOAD, DAILY_COL6, gRowPos);
     gRowPos = 25;
@@ -499,7 +499,7 @@ void drawDailyDashboard()
     int i = 0, num = 0;
     double sPnl = 0;
     while (getDataFrom(i) == true) {
-        currentDate = StringSubstr(TimeToStr(orderCloseTime, TIME_DATE), 5);
+        currentDate = StringSubstr(TimeToStr(orderOpenTime, TIME_DATE), 5);
         if (currentDate != curPage) {
             if (num == 0) prePage = currentDate;
             else {
@@ -512,7 +512,7 @@ void drawDailyDashboard()
         num++;
 
         createLabel(IntegerToString(num)                    , DAILY_COL1, gRowPos);
-        createLabel(TimeToStr(orderCloseTime, TIME_MINUTES) , DAILY_COL2, gRowPos);
+        createLabel(TimeToStr(orderOpenTime, TIME_MINUTES) , DAILY_COL2, gRowPos);
         createLabel(orderType == OP_BUY ? " buy" : "sell"   , DAILY_COL3, gRowPos);
         createLabel(DoubleToString(orderLots,2)             , DAILY_COL4, gRowPos);
         if (gPnlOn) {
